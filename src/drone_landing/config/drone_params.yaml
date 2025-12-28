@@ -1,0 +1,22 @@
+# Configuración del dron y su controlador
+
+drone_controller:
+  ros__parameters:
+    # Posición inicial del dron en el mundo
+    initial_height: 3.0          # metros sobre el suelo
+    position_x: 0.0              # posición X fija en el mundo
+    position_y: 0.0              # posición Y fija en el mundo
+    
+    # Movimiento vertical
+    vertical_range: 1.0          # rango de movimiento vertical (±1m)
+    vertical_velocity: 0.2       # velocidad de movimiento vertical (m/s)
+    
+    # Ruido de posición (simula error GPS, turbulencias)
+    noise_position_std: 0.05     # desviación estándar posición (5cm)
+    noise_orientation_std: 0.035 # desviación estándar orientación (~2°)
+    
+    # Tasa de actualización
+    update_rate: 50.0            # Hz
+    
+    # Usar tiempo de simulación
+    use_sim_time: true
