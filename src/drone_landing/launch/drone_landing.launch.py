@@ -65,7 +65,7 @@ def generate_launch_description():
             '-topic', '/drone/robot_description',
             '-x', '0.0',
             '-y', '0.0',
-            '-z', '3.0',  # Altura inicial
+            '-z', '2.0',  # Altura inicial (reducida para ver mejor el ArUco)
         ],
         parameters=[{'use_sim_time': use_sim_time}]
     )

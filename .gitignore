@@ -1,8 +1,16 @@
 /build
 /install
 /log
-/rosbags
+/rosbags/*
+!rosbags/code-example.md
+!rosbags/record_marine_simulation.sh
+!rosbags/play_bag_rviz.sh
 src/unitree-go2-ros2
 # lo ignoro porque es un repo aparte 
 
 drone_camera_test
+
+# Videos generados por image_view
+output.avi
+*.avi
+*.mp4
