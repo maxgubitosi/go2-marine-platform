@@ -143,4 +143,5 @@ drone_landing/
 
 ## Autor
 
-Maximiliano Gubitosi - mgubitosi@udesa.edu.ar
+Maximo Gubitosi - mgubitosi@udesa.edu.ar
+Jack Spolski - jspolski@udesa.edu.ar

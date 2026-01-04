@@ -1,7 +1,19 @@
 #!/usr/bin/env python3
 """
-Launch file para el dron con cámara
-Spawns el modelo del dron en Gazebo y lanza el controlador
+Launch file para el dron con c    spawn_drone = Node(
+        package='gazebo_ros',
+        executable='spawn_entity.py',
+        name='spawn_drone',
+        output='screen',
+        arguments=[
+            '-entity', 'drone',
+            '-topic', '/drone/robot_description',
+            '-x', '0.0',
+            '-y', '-0.3',
+            '-z', '2.0',
+        ],
+        parameters=[{'use_sim_time': use_sim_time}]
+    )l modelo del dron en Gazebo y lanza el controlador
 """
 
 import os

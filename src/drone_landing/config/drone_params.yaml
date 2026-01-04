@@ -5,7 +5,7 @@ drone_controller:
     # Posición inicial del dron en el mundo
     initial_height: 2.0          # metros sobre el suelo (ajustado para ver mejor el ArUco)
     position_x: 0.0              # posición X fija en el mundo
-    position_y: 0.0              # posición Y fija en el mundo
+    position_y: -0.3             # posición Y fija en el mundo
     
     # Movimiento vertical
     vertical_range: 0.5          # rango de movimiento vertical (±0.5m, más controlado)
