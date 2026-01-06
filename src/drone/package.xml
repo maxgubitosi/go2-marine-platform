@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>drone_landing</name>
+  <name>drone</name>
   <version>0.0.0</version>
-  <description>Drone landing simulation with downward-facing camera for ArUco detection</description>
+  <description>Drone simulation with downward-facing camera for ArUco detection</description>
   <maintainer email="mgubitosi@udesa.edu.ar">linar</maintainer>
   <license>Apache-2.0</license>
 
@@ -18,11 +18,6 @@
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>gazebo_ros_pkgs</exec_depend>
   <exec_depend>xacro</exec_depend>
-
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
-  <test_depend>python3-pytest</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

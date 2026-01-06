@@ -1,0 +1,11 @@
+drone_controller:
+  ros__parameters:
+    initial_height: 2.0
+    position_x: 0.0
+    position_y: 0.0
+    vertical_range: 0.5
+    vertical_velocity: 0.2
+    noise_position_std: 0.03
+    noise_orientation_std: 0.025
+    update_rate: 50.0
+    use_sim_time: true

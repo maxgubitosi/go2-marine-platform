@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""
-Launch file para el dron con c    spawn_drone = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        name='spawn_drone',
-        output='screen',
-        arguments=[
-            '-entity', 'drone',
-            '-topic', '/drone/robot_description',
-            '-x', '0.0',
-            '-y', '-0.3',
-            '-z', '2.0',
-        ],
-        parameters=[{'use_sim_time': use_sim_time}]
-    )l modelo del dron en Gazebo y lanza el controlador
-"""
 
 import os
 from ament_index_python.packages import get_package_share_directory
@@ -26,29 +10,24 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    # Obtener directorios del paquete
-    pkg_drone_landing = get_package_share_directory('drone_landing')
+    pkg_drone = get_package_share_directory('drone')
     
-    # Paths a archivos
-    urdf_file = os.path.join(pkg_drone_landing, 'urdf', 'drone_camera.xacro')
-    config_file = os.path.join(pkg_drone_landing, 'config', 'drone_params.yaml')
+    urdf_file = os.path.join(pkg_drone, 'urdf', 'drone_camera.xacro')
+    config_file = os.path.join(pkg_drone, 'config', 'drone_params.yaml')
     
-    # Argumentos de launch
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='true',
-        description='Use simulation (Gazebo) clock if true'
+        description='Use simulation clock'
     )
     
-    # Procesar XACRO a URDF usando Command
     robot_description_content = ParameterValue(
         Command(['xacro ', urdf_file]),
         value_type=str
     )
     
-    # Robot state publisher para el dron
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -66,7 +45,6 @@ def generate_launch_description():
         ]
     )
     
-    # Spawn del dron en Gazebo
     spawn_drone = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -77,21 +55,19 @@ def generate_launch_description():
             '-topic', '/drone/robot_description',
             '-x', '0.0',
             '-y', '0.0',
-            '-z', '2.0',  # Altura inicial (reducida para ver mejor el ArUco)
+            '-z', '2.0',
         ],
         parameters=[{'use_sim_time': use_sim_time}]
     )
     
-    # Nodo controlador del dron
     drone_controller = Node(
-        package='drone_landing',
+        package='drone',
         executable='drone_controller',
         name='drone_controller',
         output='screen',
         parameters=[config_file, {'use_sim_time': use_sim_time}]
     )
     
-    # Static transform: world -> odom (para compatibilidad)
     static_tf_world_odom = Node(
         package='tf2_ros',
         executable='static_transform_publisher',

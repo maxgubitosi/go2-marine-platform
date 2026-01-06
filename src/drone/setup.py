@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'drone_landing'
+package_name = 'drone'
 
 setup(
     name=package_name,
@@ -20,12 +20,12 @@ setup(
     zip_safe=True,
     maintainer='linar',
     maintainer_email='mgubitosi@udesa.edu.ar',
-    description='Drone landing simulation with downward-facing camera',
+    description='Drone simulation with downward-facing camera',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'drone_controller = drone_landing.drone_controller:main',
+            'drone_controller = drone.drone_controller:main',
         ],
     },
 )

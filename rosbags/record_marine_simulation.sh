@@ -40,13 +40,13 @@ if ! ros2 topic list | grep -q "/clock"; then
     echo "   Por favor lanzá primero:"
     echo "   Terminal 1: ros2 launch go2_config gazebo.launch.py rviz:=true"
     echo "   Terminal 2: ros2 run go2_tools marine_platform_simulator"
-    echo "   Terminal 3: ros2 launch drone_landing drone_landing.launch.py"
+    echo "   Terminal 3: ros2 launch drone drone.launch.py"
     exit 1
 fi
 
 if ! ros2 topic list | grep -q "/drone/camera/image_raw"; then
     echo "⚠️  WARNING: El dron no está publicando imágenes."
-    echo "   Asegurate de haber lanzado: ros2 launch drone_landing drone_landing.launch.py"
+    echo "   Asegurate de haber lanzado: ros2 launch drone drone.launch.py"
 fi
 
 echo "✅ Simulación detectada"
@@ -176,7 +176,7 @@ echo "✅ Grabación completa finalizada"
 # 2. Lanzar simulación primero (3 terminales):
 #    Terminal 1: ros2 launch go2_config gazebo.launch.py rviz:=true
 #    Terminal 2: ros2 run go2_tools marine_platform_simulator
-#    Terminal 3: ros2 launch drone_landing drone_landing.launch.py
+#    Terminal 3: ros2 launch drone drone.launch.py
 #
 # 3. Grabar (en una 4ta terminal):
 #    cd ~/gazebo-no-seas-malo/rosbags

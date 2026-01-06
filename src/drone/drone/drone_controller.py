@@ -66,28 +66,27 @@ class DroneController(Node):
         # Periodo = 2 * pi * vertical_range / vertical_velocity
         period = 2.0 * math.pi * self.vertical_range / self.vertical_velocity
         omega = 2.0 * math.pi / period
-        
-        # Altura ideal (sin ruido)
         height_ideal = self.initial_height + self.vertical_range * math.sin(omega * self.time_elapsed)
         
-        # Añadir ruido a la posición
+        # Ruido en posición
         noise_x = np.random.normal(0, self.noise_pos_std)
         noise_y = np.random.normal(0, self.noise_pos_std)
-        noise_z = np.random.normal(0, self.noise_pos_std * 0.5)  # Menos ruido en Z
+        noise_z = np.random.normal(0, self.noise_pos_std * 0.5)
         
         position_x = self.position_x + noise_x
         position_y = self.position_y + noise_y
         position_z = height_ideal + noise_z
         
-        # Añadir ruido a la orientación (pequeñas perturbaciones)
+        # Ruido en orientación
         roll = np.random.normal(0, self.noise_ori_std)
         pitch = np.random.normal(0, self.noise_ori_std)
-        yaw = 0.0  # Sin rotación en yaw por ahora
+        yaw = 0.0
         
-        # Convertir RPY a quaternion
+        # Convertir a quaternion
         qx, qy, qz, qw = self.euler_to_quaternion(roll, pitch, yaw)
+
         
-        # Crear mensaje Pose
+        # Publicar pose
         pose_msg = Pose()
         pose_msg.position.x = position_x
         pose_msg.position.y = position_y
@@ -96,8 +95,6 @@ class DroneController(Node):
         pose_msg.orientation.y = qy
         pose_msg.orientation.z = qz
         pose_msg.orientation.w = qw
-        
-        # Publicar pose
         self.pose_pub.publish(pose_msg)
         
         # Publicar TF
@@ -112,12 +109,10 @@ class DroneController(Node):
         t.transform.rotation.y = qy
         t.transform.rotation.z = qz
         t.transform.rotation.w = qw
-        
         self.tf_broadcaster.sendTransform(t)
     
     @staticmethod
     def euler_to_quaternion(roll, pitch, yaw):
-        """Convierte ángulos de Euler (RPY) a quaternion"""
         cy = math.cos(yaw * 0.5)
         sy = math.sin(yaw * 0.5)
         cp = math.cos(pitch * 0.5)
@@ -131,6 +126,7 @@ class DroneController(Node):
         qz = cr * cp * sy - sr * sp * cy
         
         return qx, qy, qz, qw
+
 
 
 def main(args=None):

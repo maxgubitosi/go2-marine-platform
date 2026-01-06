@@ -11,7 +11,7 @@ ros2 run go2_tools marine_platform_simulator
 # Terminal 3: Lanzar dron con cámara
 cd ~/gazebo-no-seas-malo
 source install/setup.bash
-ros2 launch drone_landing drone_landing.launch.py
+ros2 launch drone drone.launch.py
 
 # Terminal 4: Ver topics activos y grabarlos en bag
 ros2 topic list

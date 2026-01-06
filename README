@@ -18,8 +18,8 @@ ros2 run go2_tools marine_platform_simulator
 ## Terminal 3
 Lanzar simulacion del dron (por ahora camara estatica)
 ```bash
-colcon build --packages-select drone_landing
-ros2 launch drone_landing drone_landing.launch.py
+colcon build --packages-select drone
+ros2 launch drone drone.launch.py
 ```
 
 ## Terminal 4
