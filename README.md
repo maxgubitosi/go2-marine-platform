@@ -79,6 +79,24 @@ cd rosbags
 
 ## Componentes principales
 
+### Unitree Go2 ROS2
+
+Paquetes base del robot cuadrúpedo Unitree Go2 para ROS2. Incluye descripción URDF, controladores, configuración de Gazebo y navegación autónoma.
+
+**Instalación:**
+```bash
+cd ~/gazebo-no-seas-malo/src
+git clone https://github.com/maxgubitosi/unitree-go2-ros2
+```
+
+Este repositorio contiene:
+- `champ` - Framework base para robots cuadrúpedos
+- `go2_config` - Configuración específica del Unitree Go2
+- `go2_description` - Descripción URDF y meshes del robot
+- Launch files para Gazebo, RViz, SLAM y navegación
+
+Ver el [repositorio](https://github.com/maxgubitosi/unitree-go2-ros2) para más detalles.
+
 ### Drone Package
 Simulación de dron cuadricóptero con cámara mirando hacia abajo para experimentos de aterrizaje visual. Ver `src/drone/README.md` para más detalles.
 
