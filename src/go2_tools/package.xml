@@ -3,9 +3,9 @@
 <package format="3">
   <name>go2_tools</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="linar@todo.todo">linar</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Tools for Unitree Go2 marine platform simulation</description>
+  <maintainer email="mgubitosi@udesa.edu.ar">linar</maintainer>
+  <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
@@ -14,12 +14,6 @@
   <exec_depend>rcl_interfaces</exec_depend>
   <exec_depend>tf2_geometry_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
-
-
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
-  <test_depend>python3-pytest</test_depend>
 
   <export>
     <build_type>ament_python</build_type>
