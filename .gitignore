@@ -14,3 +14,12 @@ drone_camera_test
 output.avi
 *.avi
 *.mp4
+
+# Python venv y datasets
+marine_robot_dataset/venv/
+marine_robot_dataset/datasets/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
