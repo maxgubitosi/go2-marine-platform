@@ -2,6 +2,8 @@
 """
 Script para extraer frames de video sincronizados con el dataset.
 Debe ejecutarse DESPUÉS de extract_dataset.py
+NOTA: Ahora usa el mapeo correcto de frame_path del dataset que ya tiene
+la sincronización correcta con los frames reales del video.
 """
 
 import cv2
@@ -13,9 +15,10 @@ import sys
 
 def extract_frames_from_video(video_path, dataset_csv, output_frames_dir):
     """
-    Extrae frames del video y los sincroniza con el dataset.
+    Extrae frames del video según el mapeo del dataset.
+    El dataset ya tiene la sincronización correcta entre frames y timestamps.
     """
-    # Leer dataset para obtener timestamps
+    # Leer dataset
     df = pd.read_csv(dataset_csv)
     
     # Abrir video
@@ -27,54 +30,52 @@ def extract_frames_from_video(video_path, dataset_csv, output_frames_dir):
     fps = cap.get(cv2.CAP_PROP_FPS)
     
     # Contar frames manualmente (CAP_PROP_FRAME_COUNT no funciona con Motion JPEG)
-    print("📹 Contando frames del video...")
-    total_frames_video = 0
+    print("📹 Analizando video...")
+    all_frames = []
     while True:
-        ret, _ = cap.read()
+        ret, frame = cap.read()
         if not ret:
             break
-        total_frames_video += 1
+        all_frames.append(frame)
     cap.release()
     
-    # Reabrir el video para extracción
-    cap = cv2.VideoCapture(str(video_path))
+    total_frames_video = len(all_frames)
     duration_video = total_frames_video / fps if fps > 0 else 0
     
     print(f"📹 Video info:")
-    print(f"  - FPS: {fps}")
+    print(f"  - FPS: {fps:.2f}")
     print(f"  - Total frames: {total_frames_video}")
     print(f"  - Duración: {duration_video:.2f}s")
     
-    # Tiempo inicial del dataset
-    t_start_dataset = df['timestamp'].min()
-    t_end_dataset = df['timestamp'].max()
-    
     print(f"\n📊 Dataset info:")
     print(f"  - Total samples: {len(df)}")
-    print(f"  - Duración: {t_end_dataset - t_start_dataset:.2f}s")
+    print(f"  - Rango timestamps: {df['timestamp'].min():.2f}s - {df['timestamp'].max():.2f}s")
     
-    # Extraer frames
-    print(f"\n🎬 Extrayendo frames...")
+    # Extraer números de frame del dataset (frame_XXXXXX.png -> XXXXXX)
+    print(f"\n🎬 Extrayendo frames según mapeo del dataset...")
     frames_saved = 0
+    frames_skipped = 0
     
     for idx, row in df.iterrows():
-        timestamp_relative = row['timestamp'] - t_start_dataset
-        frame_idx = int(timestamp_relative * fps)
-        
-        if frame_idx >= total_frames_video:
-            print(f"⚠️  Frame {frame_idx} fuera de rango del video")
+        frame_filename = row['frame_path']
+        # Extraer número de frame: frame_000042.png -> 42
+        try:
+            frame_num = int(frame_filename.split('_')[1].split('.')[0])
+        except:
+            print(f"⚠️  No se pudo parsear número de frame de: {frame_filename}")
+            frames_skipped += 1
             continue
         
-        # Posicionar en el frame correcto
-        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
-        ret, frame = cap.read()
-        
-        if not ret:
-            print(f"⚠️  No se pudo leer frame {frame_idx}")
+        # Verificar que el frame existe en el video
+        if frame_num >= total_frames_video:
+            print(f"⚠️  Frame {frame_num} fuera de rango (video tiene {total_frames_video} frames)")
+            frames_skipped += 1
             continue
+        
+        # Obtener frame directamente del array
+        frame = all_frames[frame_num]
         
         # Guardar frame
-        frame_filename = row['frame_path']
         frame_path = output_frames_dir / frame_filename
         cv2.imwrite(str(frame_path), frame)
         frames_saved += 1
@@ -82,8 +83,9 @@ def extract_frames_from_video(video_path, dataset_csv, output_frames_dir):
         if (idx + 1) % 50 == 0:
             print(f"  Procesados {idx + 1}/{len(df)} frames...")
     
-    cap.release()
     print(f"\n✅ Guardados {frames_saved} frames en {output_frames_dir}")
+    if frames_skipped > 0:
+        print(f"⚠️  {frames_skipped} frames omitidos (fuera de rango o error)")
     return True
 
 
