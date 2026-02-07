@@ -15,6 +15,17 @@ output.avi
 *.avi
 *.mp4
 
+# Imagenes generadas / datasets
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tif
+*.tiff
+
+# CSV generados
+*.csv
+
 # Python venv y datasets
 marine_robot_dataset/venv/
 marine_robot_dataset/datasets/
