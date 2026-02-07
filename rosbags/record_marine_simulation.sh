@@ -6,7 +6,9 @@ set -e
 # Source ROS 2 environment
 source /opt/ros/humble/setup.bash
 
-WORKSPACE_DIR="$HOME/Documents/gazebo-no-seas-malo"
+# Detectar automáticamente el workspace (directorio padre de rosbags)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
 BAG_DIR="$WORKSPACE_DIR/rosbags"
 DURATION=${1:-60}
 
@@ -20,7 +22,8 @@ BAG_NAME="marine_sim_${TIMESTAMP}"
 echo "=================================="
 echo "  GRABANDO SIMULACIÓN MARINA"
 echo "=================================="
-echo "Carpeta: $BAG_DIR"
+echo "Workspace: $WORKSPACE_DIR"
+echo "Carpeta bags: $BAG_DIR"
 echo "Rosbag: $BAG_NAME"
 echo "Duración: $DURATION segundos"
 echo "=================================="

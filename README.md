@@ -75,6 +75,7 @@ ros2 launch drone drone.launch.py
 # Terminal 4 (opcional): Grabar datos
 cd rosbags
 ./record_marine_simulation.sh 60
+vlc LINK_VIDEO_DRONE_CAMARA
 ```
 
 ## Componentes principales
