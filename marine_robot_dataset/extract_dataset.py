@@ -16,8 +16,10 @@ from rclpy.serialization import deserialize_message
 from sensor_msgs.msg import JointState, Imu
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
+from tf2_msgs.msg import TFMessage
 import yaml
 import math
+import numpy as np
 
 
 class RosbagDatasetExtractor:
@@ -72,19 +74,20 @@ class RosbagDatasetExtractor:
             metadata = yaml.safe_load(f)
         return metadata
     
-    def get_video_frame_timestamps(self, video_path, video_start_delay=3.0):
-        """Obtiene timestamps ROS para cada frame del video"""
+    def get_video_info(self, video_path):
+        """Obtiene información real del video (FPS, frame count, duración)"""
         if not video_path.exists():
             print(f"⚠️  Video no encontrado: {video_path}")
             return None
         
-        # Obtener info del video
         cap = cv2.VideoCapture(str(video_path))
         if not cap.isOpened():
             print(f"⚠️  No se pudo abrir el video: {video_path}")
             return None
         
         fps = cap.get(cv2.CAP_PROP_FPS)
+        
+        # Contar frames reales leyendo el video completo
         frame_count = 0
         while True:
             ret, _ = cap.read()
@@ -93,25 +96,13 @@ class RosbagDatasetExtractor:
             frame_count += 1
         cap.release()
         
-        # Obtener timestamp de inicio del rosbag
-        metadata = self.read_metadata()
-        rosbag_start_ns = metadata['rosbag2_bagfile_information']['starting_time']['nanoseconds_since_epoch']
+        duration = frame_count / fps if fps > 0 else 0
         
-        # El video comienza video_start_delay segundos después del rosbag
-        video_start_ns = rosbag_start_ns + int(video_start_delay * 1e9)
-        frame_duration_ns = int((1.0 / fps) * 1e9)
-        
-        # Mapear cada frame a su timestamp
-        frame_timestamps = {}
-        for frame_num in range(frame_count):
-            timestamp_ns = video_start_ns + (frame_num * frame_duration_ns)
-            frame_timestamps[frame_num] = timestamp_ns
-        
-        print(f"📹 Video: {frame_count} frames @ {fps:.2f} FPS")
-        print(f"   Inicio video: {video_start_ns / 1e9:.3f}s")
-        print(f"   Fin video: {(video_start_ns + frame_count * frame_duration_ns) / 1e9:.3f}s")
-        
-        return frame_timestamps, fps
+        return {
+            'fps': fps,
+            'frame_count': frame_count,
+            'duration': duration
+        }
     
     def extract_messages(self, topic_name, message_type):
         """Extrae mensajes de un topic específico del rosbag"""
@@ -151,42 +142,48 @@ class RosbagDatasetExtractor:
     def process_rosbag(self):
         """Procesa el rosbag completo"""
         print(f"📂 Procesando rosbag: {self.rosbag_path}")
+        print()
         
-        # Obtener mapeo de frames de video a timestamps
+        # Obtener información del video
         video_path = self.rosbag_path / "output.avi"
-        frame_timestamps = None
-        fps = None
+        video_info = None
         
         if video_path.exists():
-            result = self.get_video_frame_timestamps(video_path)
-            if result:
-                frame_timestamps, fps = result
+            video_info = self.get_video_info(video_path)
+            if video_info:
+                print(f"📹 Video info:")
+                print(f"   FPS: {video_info['fps']:.2f}")
+                print(f"   Frames totales: {video_info['frame_count']}")
+                print(f"   Duración: {video_info['duration']:.2f}s")
+                print()
         
         # Extraer datos de topics
-        print("📥 Extrayendo joint_states...")
+        print("📥 Extrayendo datos del rosbag...")
         joint_states = self.extract_messages('/joint_states', JointState)
-        
-        print("📥 Extrayendo odometry...")
         odom_messages = self.extract_messages('/odom', Odometry)
-        
-        print("📥 Extrayendo IMU data...")
         imu_messages = self.extract_messages('/imu/data', Imu)
+        tf_messages = self.extract_messages('/tf', TFMessage)
         
-        print(f"✅ Extraídos {len(joint_states)} joint_states, {len(odom_messages)} odom, {len(imu_messages)} imu")
+        print(f"✅ Extraídos:")
+        print(f"   - {len(joint_states)} joint_states")
+        print(f"   - {len(odom_messages)} odometry")
+        print(f"   - {len(imu_messages)} IMU")
+        print(f"   - {len(tf_messages)} TF messages")
+        print()
         
         # Sincronizar datos con frames de video
-        if frame_timestamps:
-            self.synchronize_with_video_frames(frame_timestamps, joint_states, odom_messages, imu_messages)
+        if video_info:
+            self.synchronize_with_video_frames(video_info, joint_states, odom_messages, imu_messages, tf_messages=tf_messages)
             # Guardar mapeo de frames a timestamps
-            self.save_frame_mapping(frame_timestamps)
+            self.save_frame_mapping()
         else:
             print("⚠️  No se encontró video, sincronizando solo datos del rosbag")
-            self.synchronize_data(joint_states, odom_messages, imu_messages)
+            self.synchronize_data(joint_states, odom_messages, imu_messages, tf_messages=tf_messages)
         
         # Guardar dataset
         self.save_dataset()
     
-    def synchronize_data(self, joint_states, odom_messages, imu_messages, time_threshold=50000000):
+    def synchronize_data(self, joint_states, odom_messages, imu_messages, tf_messages=None, time_threshold=50000000):
         """
         Sincroniza joint_states con odometry e IMU por timestamp.
         time_threshold en nanosegundos (default: 50ms)
@@ -222,11 +219,24 @@ class RosbagDatasetExtractor:
             self.data['timestamp'].append(js_timestamp / 1e9)  # Convertir a segundos
             self.data['frame_path'].append(f"frame_{frame_count:06d}.png")
             
-            # Posición (de odometry)
-            pos = odom_msg.pose.pose.position
-            self.data['position_x'].append(pos.x)
-            self.data['position_y'].append(pos.y)
-            self.data['position_z'].append(pos.z)
+            # Posición del lomo (trunk)
+            # La odometría da la posición de base_footprint (punto de apoyo, z=0)
+            # Necesitamos la posición de trunk (lomo) = base_footprint + transformación base_footprint->base_link
+            # Como base_link y trunk son el mismo frame, solo necesitamos la transformación base_footprint->base_link
+            pos_footprint = odom_msg.pose.pose.position
+            
+            # Obtener transformación base_footprint -> base_link para obtener altura del lomo
+            trunk_pos = (pos_footprint.x, pos_footprint.y, pos_footprint.z)
+            if tf_messages:
+                tf_result = self.get_tf_transform(tf_messages, js_timestamp, 'base_footprint', 'base_link', time_threshold=100000000)
+                if tf_result:
+                    translation, rotation = tf_result
+                    # Aplicar transformación para obtener posición del lomo
+                    trunk_pos = self.apply_transform((pos_footprint.x, pos_footprint.y, pos_footprint.z), translation, rotation)
+            
+            self.data['position_x'].append(trunk_pos[0])
+            self.data['position_y'].append(trunk_pos[1])
+            self.data['position_z'].append(trunk_pos[2])
             
             # Orientación (de IMU - más preciso para roll y pitch)
             orient = imu_msg.orientation
@@ -244,13 +254,70 @@ class RosbagDatasetExtractor:
         
         print(f"✅ Sincronizados {frame_count} frames")
     
-    def synchronize_with_video_frames(self, frame_timestamps, joint_states, odom_messages, imu_messages, time_threshold=50000000):
+    def get_tf_transform(self, tf_messages, target_timestamp_ns, parent_frame, child_frame, time_threshold=100000000):
+        """
+        Obtiene la transformación TF más cercana a un timestamp dado.
+        Retorna (translation, rotation) o None si no se encuentra.
+        """
+        closest_tf = None
+        min_diff = float('inf')
+        
+        for tf_timestamp_ns, tf_msg in tf_messages:
+            time_diff = abs(tf_timestamp_ns - target_timestamp_ns)
+            if time_diff < min_diff and time_diff < time_threshold:
+                for transform in tf_msg.transforms:
+                    if transform.header.frame_id == parent_frame and transform.child_frame_id == child_frame:
+                        closest_tf = transform.transform
+                        min_diff = time_diff
+                        break
+        
+        if closest_tf:
+            return (closest_tf.translation, closest_tf.rotation)
+        return None
+    
+    def apply_transform(self, position, translation, rotation):
+        """
+        Aplica una transformación TF a una posición.
+        position: (x, y, z)
+        translation: geometry_msgs/Vector3
+        rotation: geometry_msgs/Quaternion
+        Retorna nueva posición (x, y, z)
+        """
+        # Convertir quaternion a matriz de rotación
+        qx, qy, qz, qw = rotation.x, rotation.y, rotation.z, rotation.w
+        
+        # Matriz de rotación desde quaternion
+        R = np.array([
+            [1 - 2*(qy**2 + qz**2), 2*(qx*qy - qz*qw), 2*(qx*qz + qy*qw)],
+            [2*(qx*qy + qz*qw), 1 - 2*(qx**2 + qz**2), 2*(qy*qz - qx*qw)],
+            [2*(qx*qz - qy*qw), 2*(qy*qz + qx*qw), 1 - 2*(qx**2 + qy**2)]
+        ])
+        
+        # Aplicar rotación y luego traslación
+        pos_vec = np.array([position[0], position[1], position[2]])
+        trans_vec = np.array([translation.x, translation.y, translation.z])
+        
+        rotated = R @ pos_vec
+        transformed = rotated + trans_vec
+        
+        return (transformed[0], transformed[1], transformed[2])
+    
+    def synchronize_with_video_frames(self, video_info, joint_states, odom_messages, imu_messages, video_start_delay=3.0, time_threshold=50000000, tf_messages=None):
         """
         Sincroniza datos del rosbag con los frames reales del video.
-        frame_timestamps: dict {frame_num: timestamp_ns}
+        Usa timestamps reales del rosbag, no timestamps teóricos calculados.
+        video_info: dict con 'fps', 'frame_count', 'duration'
         time_threshold en nanosegundos (default: 50ms)
         """
-        print(f"🔄 Sincronizando {len(frame_timestamps)} frames de video con datos del rosbag...")
+        print(f"🔄 Sincronizando {video_info['frame_count']} frames de video con datos del rosbag...")
+        
+        # Obtener timestamp de inicio del rosbag
+        metadata = self.read_metadata()
+        rosbag_start_ns = metadata['rosbag2_bagfile_information']['starting_time']['nanoseconds_since_epoch']
+        
+        # El video comienza video_start_delay segundos después del rosbag
+        video_start_ns = rosbag_start_ns + int(video_start_delay * 1e9)
+        frame_duration_ns = int((1.0 / video_info['fps']) * 1e9)
         
         # Crear diccionarios para búsqueda rápida
         joint_states_dict = {ts: msg for ts, msg in joint_states}
@@ -263,40 +330,68 @@ class RosbagDatasetExtractor:
         imu_timestamps = sorted(imu_dict.keys())
         
         synced_count = 0
+        skipped_count = 0
         
-        # Para cada frame del video, buscar datos cercanos en el rosbag
-        for frame_num in sorted(frame_timestamps.keys()):
-            video_timestamp_ns = frame_timestamps[frame_num]
+        # Para cada frame real del video, calcular timestamp teórico y buscar datos reales del rosbag
+        for frame_num in range(video_info['frame_count']):
+            # Timestamp teórico del frame (basado en FPS)
+            theoretical_timestamp_ns = video_start_ns + (frame_num * frame_duration_ns)
             
-            # Buscar joint_state más cercano
-            closest_js_ts = min(js_timestamps, key=lambda x: abs(x - video_timestamp_ns))
-            if abs(closest_js_ts - video_timestamp_ns) > time_threshold:
+            # Buscar joint_state más cercano en el rosbag (usar timestamp real del rosbag)
+            closest_js_ts = min(js_timestamps, key=lambda x: abs(x - theoretical_timestamp_ns))
+            time_diff_js = abs(closest_js_ts - theoretical_timestamp_ns)
+            
+            if time_diff_js > time_threshold:
+                skipped_count += 1
                 continue
             
             # Buscar odometry más cercana
-            closest_odom_ts = min(odom_timestamps, key=lambda x: abs(x - video_timestamp_ns))
-            if abs(closest_odom_ts - video_timestamp_ns) > time_threshold:
+            closest_odom_ts = min(odom_timestamps, key=lambda x: abs(x - theoretical_timestamp_ns))
+            time_diff_odom = abs(closest_odom_ts - theoretical_timestamp_ns)
+            
+            if time_diff_odom > time_threshold:
+                skipped_count += 1
                 continue
             
             # Buscar IMU más cercana
-            closest_imu_ts = min(imu_timestamps, key=lambda x: abs(x - video_timestamp_ns))
-            if abs(closest_imu_ts - video_timestamp_ns) > time_threshold:
+            closest_imu_ts = min(imu_timestamps, key=lambda x: abs(x - theoretical_timestamp_ns))
+            time_diff_imu = abs(closest_imu_ts - theoretical_timestamp_ns)
+            
+            if time_diff_imu > time_threshold:
+                skipped_count += 1
                 continue
+            
+            # Usar el timestamp real del rosbag (del joint_state, que es el más representativo)
+            # Esto asegura que el timestamp corresponde a datos reales, no teóricos
+            real_timestamp_ns = closest_js_ts
             
             # Obtener mensajes
             js_msg = joint_states_dict[closest_js_ts]
             odom_msg = odom_dict[closest_odom_ts]
             imu_msg = imu_dict[closest_imu_ts]
             
-            # Guardar datos sincronizados
-            self.data['timestamp'].append(video_timestamp_ns / 1e9)  # Convertir a segundos
+            # Guardar datos sincronizados con timestamp REAL del rosbag
+            self.data['timestamp'].append(real_timestamp_ns / 1e9)  # Convertir a segundos
             self.data['frame_path'].append(f"frame_{frame_num:06d}.png")
             
-            # Posición (de odometry)
-            pos = odom_msg.pose.pose.position
-            self.data['position_x'].append(pos.x)
-            self.data['position_y'].append(pos.y)
-            self.data['position_z'].append(pos.z)
+            # Posición del lomo (trunk)
+            # La odometría da la posición de base_footprint (punto de apoyo, z=0)
+            # Necesitamos la posición de trunk (lomo) = base_footprint + transformación base_footprint->base_link
+            # Como base_link y trunk son el mismo frame, solo necesitamos la transformación base_footprint->base_link
+            pos_footprint = odom_msg.pose.pose.position
+            
+            # Obtener transformación base_footprint -> base_link para obtener altura del lomo
+            trunk_pos = (pos_footprint.x, pos_footprint.y, pos_footprint.z)
+            if tf_messages:
+                tf_result = self.get_tf_transform(tf_messages, real_timestamp_ns, 'base_footprint', 'base_link', time_threshold=100000000)
+                if tf_result:
+                    translation, rotation = tf_result
+                    # Aplicar transformación para obtener posición del lomo
+                    trunk_pos = self.apply_transform((pos_footprint.x, pos_footprint.y, pos_footprint.z), translation, rotation)
+            
+            self.data['position_x'].append(trunk_pos[0])
+            self.data['position_y'].append(trunk_pos[1])
+            self.data['position_z'].append(trunk_pos[2])
             
             # Orientación (de IMU - más preciso para roll y pitch)
             orient = imu_msg.orientation
@@ -313,17 +408,31 @@ class RosbagDatasetExtractor:
             synced_count += 1
         
         print(f"✅ Sincronizados {synced_count} frames con datos del rosbag")
+        if skipped_count > 0:
+            print(f"⚠️  Omitidos {skipped_count} frames (sin datos sincronizados dentro del umbral)")
     
-    def save_frame_mapping(self, frame_timestamps):
-        """Guarda el mapeo de frames a timestamps en CSV"""
+    def save_frame_mapping(self):
+        """Guarda el mapeo de frames a timestamps basado en el dataset generado"""
         mapping_path = self.output_dir / "frame_to_timestamp_mapping.csv"
         print(f"💾 Guardando mapeo de frames a timestamps en {mapping_path.name}...")
         
+        # Crear DataFrame desde los datos ya sincronizados
+        df = pd.DataFrame({
+            'frame_path': self.data['frame_path'],
+            'timestamp': self.data['timestamp']
+        })
+        
+        # Extraer número de frame del nombre
+        df['frame_number'] = df['frame_path'].str.extract(r'frame_(\d+)\.png').astype(int)
+        
+        # Ordenar por frame number
+        df = df.sort_values('frame_number')
+        
+        # Guardar mapeo
         with open(mapping_path, 'w') as f:
             f.write("frame_number,timestamp_ros_sec,timestamp_ros_nsec,timestamp_formatted\n")
-            for frame_num in sorted(frame_timestamps.keys()):
-                timestamp_ns = frame_timestamps[frame_num]
-                timestamp_sec = timestamp_ns / 1e9
+            for _, row in df.iterrows():
+                timestamp_sec = row['timestamp']
                 ts_sec_part = int(timestamp_sec)
                 ts_nsec_part = int((timestamp_sec - ts_sec_part) * 1e9)
                 
@@ -332,9 +441,9 @@ class RosbagDatasetExtractor:
                 dt = datetime.fromtimestamp(timestamp_sec)
                 formatted = dt.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
                 
-                f.write(f"{frame_num},{ts_sec_part},{ts_nsec_part},{formatted}\n")
+                f.write(f"{int(row['frame_number'])},{ts_sec_part},{ts_nsec_part},{formatted}\n")
         
-        print(f"✅ Mapeo guardado: {len(frame_timestamps)} frames")
+        print(f"✅ Mapeo guardado: {len(df)} frames")
     
     def save_dataset(self):
         """Guarda el dataset en CSV"""
