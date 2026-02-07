@@ -8,6 +8,22 @@ camera:
   # Distorsion (k1, k2, p1, p2, k3) del sensor simulado
   dist_coeffs: [-0.05, 0.02, 0.001, -0.001, 0.0]
 
+  # Pose fija del dron en world (si aplica)
+  fixed_pose_world:
+    x: 0.0
+    y: 0.0
+    z: 2.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0
+
+  # Extrinsecas cámara respecto a drone_base_link
+  extrinsics:
+    base_to_camera_link_xyz: [0.0, 0.0, -0.055]
+    base_to_camera_link_rpy: [0.0, 1.57079632679, 0.0]
+    camera_link_to_optical_xyz: [0.0, 0.0, 0.0]
+    camera_link_to_optical_rpy: [-1.57079632679, 0.0, -1.57079632679]
+
 aruco:
   # Diccionario ArUco base
   dictionary: DICT_6X6_250
@@ -15,6 +31,8 @@ aruco:
   marker_length_m: 0.50
   # ID del marcador (si aplica)
   target_id: 0
+  # Offset de yaw para alinear con GT (rad)
+  yaw_offset_rad: -1.57079632679
 
   # Patron 6x6 (1 blanco, 0 negro) con borde negro completo
   bit_pattern:
@@ -25,6 +43,9 @@ aruco:
     - "101110"
     - "011001"
   bit_one_is_white: true
+
+  # Offset del marcador respecto al trunk (m)
+  marker_offset_xyz: [0.0, 0.0, 0.091]
 
   # (Opcional) Xacro con el patrón 6x6 (se usa solo si no hay bit_pattern)
   xacro_path: src/unitree-go2-ros2/robots/descriptions/go2_description/xacro/platform.xacro

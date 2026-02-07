@@ -67,6 +67,11 @@ Ground truth copiado desde `dataset.csv`:
 
 - `gt_x`, `gt_y`, `gt_z`, `gt_roll`, `gt_pitch`, `gt_yaw`
 
+Ground truth transformado al frame de camara (para comparar directo con estimado):
+
+- `gt_cam_marker_x`, `gt_cam_marker_y`, `gt_cam_marker_z`
+- `gt_cam_marker_roll`, `gt_cam_marker_pitch`, `gt_cam_marker_yaw`
+
 ## Notas importantes
 
 - OpenCV usa el frame de cámara con **X derecha, Y abajo, Z hacia adelante**.

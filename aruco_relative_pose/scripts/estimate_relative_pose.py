@@ -261,6 +261,22 @@ def rotation_matrix_to_euler_xyz(R: np.ndarray) -> Tuple[float, float, float]:
     return roll, pitch, yaw
 
 
+
+def rpy_to_rotation_matrix(roll: float, pitch: float, yaw: float) -> np.ndarray:
+    cr, sr = np.cos(roll), np.sin(roll)
+    cp, sp = np.cos(pitch), np.sin(pitch)
+    cy, sy = np.cos(yaw), np.sin(yaw)
+    Rz = np.array([[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64)
+    Ry = np.array([[cp, 0.0, sp], [0.0, 1.0, 0.0], [-sp, 0.0, cp]], dtype=np.float64)
+    Rx = np.array([[1.0, 0.0, 0.0], [0.0, cr, -sr], [0.0, sr, cr]], dtype=np.float64)
+    return Rz @ Ry @ Rx
+
+
+
+def wrap_angle(angle: float) -> float:
+    return (angle + np.pi) % (2 * np.pi) - np.pi
+
+
 def build_detector(dictionary_name: str):
     if dictionary_name not in ARUCO_DICTS:
         raise ValueError(f"Diccionario ArUco no soportado: {dictionary_name}")
@@ -346,6 +362,35 @@ def main() -> int:
         raise SystemExit("camera.matrix debe ser 3x3 en config.yaml")
     dist_coeffs = np.array(camera_cfg.get("dist_coeffs", [0, 0, 0, 0, 0]), dtype=np.float64).reshape(-1, 1)
 
+    # Fixed camera pose in world (drone is fixed)
+    cam_pose_cfg = camera_cfg.get("fixed_pose_world", {}) or {}
+    cam_world = np.array([
+    float(cam_pose_cfg.get("x", 0.0)),
+    float(cam_pose_cfg.get("y", 0.0)),
+    float(cam_pose_cfg.get("z", 2.0)),
+    ], dtype=np.float64)
+    cam_world_rpy = np.array([
+    float(cam_pose_cfg.get("roll", 0.0)),
+    float(cam_pose_cfg.get("pitch", 0.0)),
+    float(cam_pose_cfg.get("yaw", 0.0)),
+    ], dtype=np.float64)
+    
+    extr_cfg = camera_cfg.get("extrinsics", {}) or {}
+    base_to_camlink_xyz = np.array(extr_cfg.get("base_to_camera_link_xyz", [0.0, 0.0, -0.055]), dtype=np.float64)
+    base_to_camlink_rpy = np.array(extr_cfg.get("base_to_camera_link_rpy", [0.0, np.pi / 2.0, 0.0]), dtype=np.float64)
+    camlink_to_opt_xyz = np.array(extr_cfg.get("camera_link_to_optical_xyz", [0.0, 0.0, 0.0]), dtype=np.float64)
+    camlink_to_opt_rpy = np.array(extr_cfg.get("camera_link_to_optical_rpy", [-np.pi / 2.0, 0.0, -np.pi / 2.0]), dtype=np.float64)
+    
+    R_w_base = rpy_to_rotation_matrix(cam_world_rpy[0], cam_world_rpy[1], cam_world_rpy[2])
+    R_base_camlink = rpy_to_rotation_matrix(base_to_camlink_rpy[0], base_to_camlink_rpy[1], base_to_camlink_rpy[2])
+    R_camlink_opt = rpy_to_rotation_matrix(camlink_to_opt_rpy[0], camlink_to_opt_rpy[1], camlink_to_opt_rpy[2])
+    
+    R_w_camopt = R_w_base @ R_base_camlink @ R_camlink_opt
+    t_w_camopt = cam_world + R_w_base @ base_to_camlink_xyz + (R_w_base @ R_base_camlink) @ camlink_to_opt_xyz
+    R_cw = R_w_camopt.T
+    
+    marker_offset_xyz = np.array(aruco_cfg.get("marker_offset_xyz", [0.0, 0.0, 0.091]), dtype=np.float64)
+
     dictionary_name = aruco_cfg.get("dictionary", "DICT_4X4_50")
     marker_length = float(aruco_cfg.get("marker_length_m", 0.1))
     target_id = aruco_cfg.get("target_id", None)
@@ -356,6 +401,7 @@ def main() -> int:
     tm_threshold = float(tm_cfg.get("threshold", 0.38))
     tm_scales = tm_cfg.get("scales", [0.1, 0.12, 0.15, 0.18, 0.2, 0.25, 0.3, 0.35])
     tm_template_path = aruco_cfg.get("template_path", None)
+    yaw_offset_rad = float(aruco_cfg.get("yaw_offset_rad", 0.0))
     bit_pattern_rows = aruco_cfg.get("bit_pattern", None)
     bit_one_is_white = bool(aruco_cfg.get("bit_one_is_white", True))
     quad_cfg = aruco_cfg.get("quad_detection", {}) or {}
@@ -439,6 +485,24 @@ def main() -> int:
             "n_markers": 0,
             "frame_missing": False,
             "detector": "none",
+            "gt_cam_marker_x": np.nan,
+            "gt_cam_marker_y": np.nan,
+            "gt_cam_marker_z": np.nan,
+            "gt_cam_marker_roll": np.nan,
+            "gt_cam_marker_pitch": np.nan,
+            "gt_cam_marker_yaw": np.nan,
+            "roll_wrapped": np.nan,
+            "pitch_wrapped": np.nan,
+            "yaw_wrapped": np.nan,
+            "gt_cam_marker_roll_wrapped": np.nan,
+            "gt_cam_marker_pitch_wrapped": np.nan,
+            "gt_cam_marker_yaw_wrapped": np.nan,
+            "roll_err_rad": np.nan,
+            "pitch_err_rad": np.nan,
+            "yaw_err_rad": np.nan,
+            "roll_err_deg": np.nan,
+            "pitch_err_deg": np.nan,
+            "yaw_err_deg": np.nan,
         }
 
         if not frame_path.exists():
@@ -486,6 +550,10 @@ def main() -> int:
             tvec = tvecs[0].reshape(3, 1)
             R, _ = cv2.Rodrigues(rvec)
             roll, pitch, yaw = rotation_matrix_to_euler_xyz(R)
+            yaw = wrap_angle(yaw + yaw_offset_rad)
+            record["roll_wrapped"] = float(wrap_angle(roll))
+            record["pitch_wrapped"] = float(wrap_angle(pitch))
+            record["yaw_wrapped"] = float(wrap_angle(yaw))
             err = reprojection_error(corner_in[0], rvec, tvec, camera_matrix, dist_coeffs, marker_length)
 
             record.update({
@@ -510,6 +578,48 @@ def main() -> int:
                 cv2.drawFrameAxes(img, camera_matrix, dist_coeffs, rvec, tvec, marker_length * 0.5)
                 out_path = viz_dir / Path(frame_rel).name
                 cv2.imwrite(str(out_path), img)
+
+
+        # Ground truth in camera frame (marker pose)
+        try:
+            gt_x = row.get(gt_cfg.get("x", ""), np.nan)
+            gt_y = row.get(gt_cfg.get("y", ""), np.nan)
+            gt_z = row.get(gt_cfg.get("z", ""), np.nan)
+            gt_roll = row.get(gt_cfg.get("roll", ""), np.nan)
+            gt_pitch = row.get(gt_cfg.get("pitch", ""), np.nan)
+            gt_yaw = row.get(gt_cfg.get("yaw", ""), np.nan)
+
+            if (not np.isnan(gt_x) and not np.isnan(gt_y) and not np.isnan(gt_z) and
+                not np.isnan(gt_roll) and not np.isnan(gt_pitch) and not np.isnan(gt_yaw)):
+                t_w_trunk = np.array([gt_x, gt_y, gt_z], dtype=np.float64)
+                R_w_trunk = rpy_to_rotation_matrix(gt_roll, gt_pitch, gt_yaw)
+                t_w_marker = t_w_trunk + R_w_trunk @ marker_offset_xyz
+                R_w_marker = R_w_trunk
+
+                t_c_marker = R_cw @ (t_w_marker - t_w_camopt)
+                R_c_marker = R_cw @ R_w_marker
+                r_c_roll, r_c_pitch, r_c_yaw = rotation_matrix_to_euler_xyz(R_c_marker)
+
+                record["gt_cam_marker_x"] = float(t_c_marker[0])
+                record["gt_cam_marker_y"] = float(t_c_marker[1])
+                record["gt_cam_marker_z"] = float(t_c_marker[2])
+                record["gt_cam_marker_roll"] = float(wrap_angle(r_c_roll))
+                record["gt_cam_marker_pitch"] = float(wrap_angle(r_c_pitch))
+                record["gt_cam_marker_yaw"] = float(wrap_angle(r_c_yaw))
+                record["gt_cam_marker_roll_wrapped"] = float(wrap_angle(r_c_roll))
+                record["gt_cam_marker_pitch_wrapped"] = float(wrap_angle(r_c_pitch))
+                record["gt_cam_marker_yaw_wrapped"] = float(wrap_angle(r_c_yaw))
+
+                # Error envuelto entre estimado y GT (solo si hay estimado)
+                if not np.isnan(record["roll_wrapped"]):
+                    record["roll_err_rad"] = float(wrap_angle(record["roll_wrapped"] - record["gt_cam_marker_roll_wrapped"]))
+                    record["pitch_err_rad"] = float(wrap_angle(record["pitch_wrapped"] - record["gt_cam_marker_pitch_wrapped"]))
+                    record["yaw_err_rad"] = float(wrap_angle(record["yaw_wrapped"] - record["gt_cam_marker_yaw_wrapped"]))
+                    record["roll_err_deg"] = float(np.degrees(record["roll_err_rad"]))
+                    record["pitch_err_deg"] = float(np.degrees(record["pitch_err_rad"]))
+                    record["yaw_err_deg"] = float(np.degrees(record["yaw_err_rad"]))
+        except Exception:
+            pass
 
         # Ground truth columns
         if gt_cfg:
