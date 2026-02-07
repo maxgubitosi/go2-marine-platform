@@ -19,16 +19,15 @@ def visualize_sample(dataset_path, sample_idx=0):
     dataset_dir = Path(dataset_path).parent
     
     if sample_idx >= len(df):
-        print(f"❌ Sample {sample_idx} fuera de rango (máx: {len(df)-1})")
+        print(f"Sample {sample_idx} fuera de rango (max: {len(df)-1})")
         return
     
     row = df.iloc[sample_idx]
     
-    # Cargar imagen (buscar en subdirectorio frames/)
     frame_path = dataset_dir / "frames" / row['frame_path']
     if not frame_path.exists():
-        print(f"⚠️  Frame no encontrado: {frame_path}")
-        print("Ejecutá primero: python3 extract_video_frames.py")
+        print(f"Frame no encontrado: {frame_path}")
+        print("Ejecuta primero: python3 extract_dataset.py <rosbag>")
         return
     
     img = cv2.imread(str(frame_path))
@@ -52,7 +51,9 @@ def visualize_sample(dataset_path, sample_idx=0):
     y_offset += 30
     
     # Posición
-    cv2.putText(vis, f"Position: X={row['position_x']:.3f} Y={row['position_y']:.3f} Z={row['position_z']:.3f}", 
+    heave_dt = row.get('heave_dt_ms', None)
+    heave_info = f" (dt={heave_dt:.0f}ms)" if heave_dt is not None else ""
+    cv2.putText(vis, f"Position: X={row['position_x']:.3f} Y={row['position_y']:.3f} Heave={row['heave']:.4f}{heave_info}", 
                 (10, y_offset), font, 0.5, (0, 255, 0), 1)
     y_offset += 25
     
@@ -90,8 +91,8 @@ def play_dataset(dataset_path, fps=30):
     df = pd.read_csv(dataset_path)
     dataset_dir = Path(dataset_path).parent
     
-    print(f"🎬 Reproduciendo dataset ({len(df)} frames)")
-    print("Presioná 'q' para salir, 'p' para pausar")
+    print(f"Reproduciendo dataset ({len(df)} frames)")
+    print("Presiona 'q' para salir, 'p' para pausar")
     
     paused = False
     for idx in range(len(df)):
@@ -103,7 +104,7 @@ def play_dataset(dataset_path, fps=30):
             break
         elif key == ord('p'):
             paused = not paused
-            print("⏸️  Pausado" if paused else "▶️  Reproduciendo")
+            print("Pausado" if paused else "Reproduciendo")
     
     cv2.destroyAllWindows()
 
@@ -118,7 +119,7 @@ def main():
     dataset_path = Path(sys.argv[1])
     
     if not dataset_path.exists():
-        print(f"❌ Dataset no encontrado: {dataset_path}")
+        print(f"Dataset no encontrado: {dataset_path}")
         sys.exit(1)
     
     if len(sys.argv) > 2:

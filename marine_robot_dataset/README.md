@@ -6,34 +6,32 @@ Scripts para generar datasets de entrenamiento a partir de rosbags de la simulac
 
 ```
 marine_robot_dataset/
-├── extract_dataset.py               # Extrae datos de rosbag + mapeo de frames
-├── extract_video_frames.py          # Extrae frames de video sincronizados
-├── map_video_to_timestamps.py       # Mapea frames a timestamps (standalone)
+├── extract_dataset.py               # Extrae imagenes y datos del rosbag
+├── extract_complete_dataset.py      # Wrapper que ejecuta extract_dataset.py
 ├── visualize_dataset.py             # Visualiza muestras del dataset
 ├── requirements.txt                 # Dependencias Python
-├── README.md                        # Esta documentación
-├── venv/                            # Entorno virtual Python
 └── datasets/                        # Datasets generados
     └── marine_sim_YYYYMMDD_HHMMSS/
         ├── dataset.csv                      # Timestamps, poses, joints
         ├── frame_to_timestamp_mapping.csv   # Mapeo frame -> timestamp
-        └── frames/                          # Frames de video extraídos
+        └── frames/                          # Imagenes extraidas del rosbag
             ├── frame_000000.png
             ├── frame_000001.png
             └── ...
 ```
 
-## ⚠️ Sincronización Importante
+## Sincronización
 
-Los videos de la simulación **NO tienen todos los frames esperados**:
-- Duración del rosbag: ~62 segundos
-- Duración del video: ~20-30 segundos (310-425 frames @ 15 FPS)
-- **Problema**: La cámara no publica frames constantemente debido a carga de CPU
+Las imágenes de la cámara del drone se graban directamente en el rosbag
+(topic `/drone/camera/image_raw`), por lo que cada frame tiene su timestamp
+ROS exacto. El script de extracción usa búsqueda binaria para emparejar
+cada imagen con los datos de joints, odometría e IMU más cercanos
+temporalmente (umbral: 50ms).
 
-**Solución implementada**: 
-1. `extract_dataset.py` mapea cada frame REAL del video a su timestamp ROS correcto
-2. Solo se sincronizan los frames que realmente existen en el video
-3. El mapeo considera que el video empieza 3 segundos después del rosbag
+La altura del trunk (heave) se obtiene preferentemente del topic
+`/base_to_footprint_pose` publicado a 50 Hz por el nodo `state_estimation`.
+Si el rosbag no contiene ese topic (grabaciones anteriores), se usa la TF
+`base_footprint → base_link` (~2 Hz) con interpolación lineal como fallback.
 
 ## Instalación
 
@@ -44,90 +42,65 @@ pip3 install -r requirements.txt
 
 ## Uso
 
-### 1. Extraer datos del rosbag (con sincronización automática de video)
+### 1. Grabar simulación
 
 ```bash
-python3 extract_dataset.py ../rosbags/marine_sim_20260116_172734
+cd rosbags
+./record_marine_simulation.sh 60
 ```
 
-Esto:
-- Analiza el video `output.avi` y cuenta frames REALES
-- Mapea cada frame a su timestamp ROS correcto (considerando delay de 3s)
-- Sincroniza datos del rosbag (joints, odom, IMU) con cada frame del video
-- Genera `datasets/marine_sim_20260116_172734/dataset.csv`
-
-El CSV incluye:
-- `timestamp`: Tiempo ROS en segundos (del frame de video)
-- `frame_path`: Nombre del frame correspondiente (ej: `frame_000042.png`)
-- `position_x/y/z`: Posición del robot
-- `roll/pitch/yaw`: Orientación (Euler angles en radianes)
-- `joint_names`: Nombres de las articulaciones
-- `joint_positions`: Ángulos de las articulaciones (rad)
-- `joint_velocities`: Velocidades de las articulaciones (rad/s)
-
-### 2. Extraer frames del video
+### 2. Extraer dataset
 
 ```bash
-python3 extract_video_frames.py \
-    ../rosbags/marine_sim_20260116_172734/output.avi \
-    datasets/marine_sim_20260116_172734/dataset.csv
+python3 extract_dataset.py ../rosbags/marine_sim_20260207_143824
 ```
 
-Esto extrae SOLO los frames que están en el dataset (sincronización garantizada).
+Esto extrae del rosbag:
+- Imágenes de `/drone/camera/image_raw` como PNGs con timestamps exactos
+- Datos de `/joint_states`, `/odom`, `/imu/data`, `/tf`
+- Sincroniza todo por timestamp y genera un CSV
 
-### 3. Visualizar el dataset
+O usando el wrapper:
 
 ```bash
-# Ver una muestra específica
-python3 visualize_dataset.py datasets/marine_sim_20260116_172734/dataset.csv 0
-
-# Reproducir todo el dataset
-python3 visualize_dataset.py datasets/marine_sim_20260116_172734/dataset.csv play
+python3 extract_complete_dataset.py ../rosbags/marine_sim_20260207_143824
 ```
 
-### 4. (Opcional) Generar solo el mapeo de frames a timestamps
-
-Si solo necesitas el mapeo sin procesar el dataset completo:
+### 3. Visualizar
 
 ```bash
-python3 map_video_to_timestamps.py ../rosbags/marine_sim_20260119_102639
+# Ver una muestra
+python3 visualize_dataset.py datasets/marine_sim_20260207_143824/dataset.csv 0
+
+# Reproducir como video
+python3 visualize_dataset.py datasets/marine_sim_20260207_143824/dataset.csv play
 ```
 
-Esto genera un CSV standalone en la carpeta del rosbag con el mapeo completo.
-
-## Archivos Generados
-
-## Formato del Dataset
-
-Cada fila del CSV representa un instante de tiempo con:
+## Formato del CSV
 
 | Campo | Descripción | Unidad |
 |-------|-------------|--------|
-| `timestamp` | Tiempo desde inicio | segundos |
-| `frame_path` | Path al frame de video | - |
-| `position_x/y/z` | Posición del robot base | metros |
-| `orientation_x/y/z/w` | Orientación (quaternion) | - |
-| `joint_names` | Lista de nombres de joints | - |
+| `timestamp` | Timestamp ROS de la imagen | segundos |
+| `frame_path` | Nombre del archivo PNG | - |
+| `position_x/y` | Posición XY del trunk (odometría) | metros |
+| `heave` | Altura del trunk sobre base_footprint | metros |
+| `heave_dt_ms` | Distancia temporal al dato de heave más cercano | milisegundos |
+| `roll/pitch/yaw` | Orientación (Euler) | radianes |
+| `joint_names` | Nombres de articulaciones | - |
 | `joint_positions` | Ángulos de articulaciones | radianes |
 | `joint_velocities` | Velocidades angulares | rad/s |
 
-## Aplicaciones
+### Columna `heave_dt_ms`
 
-- **Aprendizaje supervisado**: Predecir pose del robot desde imágenes
-- **Detección de ArUco**: Entrenar detector de marcadores en movimiento
-- **Control predictivo**: Predecir estado futuro del robot
-- **Análisis de datos**: Estadísticas sobre el comportamiento del robot
+La columna `heave_dt_ms` indica la distancia temporal (en milisegundos)
+al dato de heave real más cercano. La fuente depende de lo disponible
+en el rosbag:
 
-## Notas
+- **`/base_to_footprint_pose`** (50 Hz): publicado por `state_estimation`,
+  contiene directamente la altura del trunk. Con esta fuente, `heave_dt_ms`
+  es típicamente < 20 ms.
+- **TF `base_footprint → base_link`** (~2 Hz, fallback): se usa si el
+  topic anterior no está en el rosbag. El heave se interpola linealmente
+  entre TFs y `heave_dt_ms` puede llegar a cientos de ms.
 
-- Los timestamps están sincronizados entre video y datos de ROS 2
-- Los frames del video son opcionales (el dataset funciona sin video)
-- Los ángulos están en radianes (usar `np.degrees()` para convertir)
-- La orientación es un quaternion `[x, y, z, w]`
-
-## Próximos pasos
-
-1. Agregar datos de `/marine_motion` (heave, pitch, roll de la plataforma)
-2. Agregar datos de IMU
-3. Exportar a formato HDF5 para mejor performance
-4. Augmentación de datos (rotaciones, crops, etc.)
+Esto permite filtrar por calidad según el caso de uso.
