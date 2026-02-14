@@ -1,6 +1,7 @@
 /build
 /install
 /log
+/extra
 /rosbags/*
 !rosbags/code-example.md
 !rosbags/record_marine_simulation.sh

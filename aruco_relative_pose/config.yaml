@@ -35,20 +35,22 @@ aruco:
   yaw_offset_rad: -1.57079632679
 
   # Patron 6x6 (1 blanco, 0 negro) con borde negro completo
-  bit_pattern:
-    - "110100"
-    - "001101"
-    - "010011"
-    - "111000"
-    - "101110"
-    - "011001"
-  bit_one_is_white: true
+  # Ya no se necesita: usamos el diccionario estandar DICT_6X6_250 ID 0 directamente.
+  # bit_pattern:
+  #   - "000111"
+  #   - "100011"
+  #   - "110111"
+  #   - "011000"
+  #   - "001010"
+  #   - "100110"
+  # bit_one_is_white: true
 
   # Offset del marcador respecto al trunk (m)
   marker_offset_xyz: [0.0, 0.0, 0.091]
 
   # (Opcional) Xacro con el patrón 6x6 (se usa solo si no hay bit_pattern)
-  xacro_path: src/unitree-go2-ros2/robots/descriptions/go2_description/xacro/platform.xacro
+  # Ya no necesario con ArUco estandar
+  # xacro_path: src/unitree-go2-ros2/robots/descriptions/go2_description/xacro/platform.xacro
 
   # Deteccion por cuadrado oscuro (fallback)
   quad_detection:
