@@ -14,6 +14,7 @@ def generate_launch_description():
     
     urdf_file = os.path.join(pkg_drone, 'urdf', 'drone_camera.xacro')
     config_file = os.path.join(pkg_drone, 'config', 'drone_params.yaml')
+    aruco_config = os.path.join(pkg_drone, 'config', 'aruco_detector_params.yaml')
     
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     
@@ -67,6 +68,14 @@ def generate_launch_description():
         output='screen',
         parameters=[config_file, {'use_sim_time': use_sim_time}]
     )
+
+    aruco_detector = Node(
+        package='drone',
+        executable='aruco_detector',
+        name='aruco_detector',
+        output='screen',
+        parameters=[aruco_config, {'use_sim_time': use_sim_time}]
+    )
     
     static_tf_world_odom = Node(
         package='tf2_ros',
@@ -82,4 +91,5 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_drone,
         drone_controller,
+        aruco_detector,
     ])

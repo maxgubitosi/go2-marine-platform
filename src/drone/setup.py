@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'drone_controller = drone.drone_controller:main',
+            'aruco_detector = drone.aruco_detector:main',
         ],
     },
 )

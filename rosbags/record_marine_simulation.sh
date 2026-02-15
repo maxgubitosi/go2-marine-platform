@@ -43,7 +43,11 @@ TOPICS=(
     /imu/data
     /marine_motion
     /drone/camera/image_raw
+    /drone/camera/camera_info
+    /drone/pose
     /base_to_footprint_pose
+    /aruco/pose
+    /aruco/detection
 )
 
 echo "Iniciando grabación..."

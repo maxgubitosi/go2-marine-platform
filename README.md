@@ -16,11 +16,27 @@ Este proyecto implementa un entorno de simulación que combina:
 ```
 gazebo-no-seas-malo/
 ├── src/
-│   ├── drone/              # Simulación de dron con cámara
-│   ├── go2_tools/          # Simulador de plataforma marina
-│   └── unitree-go2-ros2/   # Paquetes del robot Unitree Go2
-│                           # https://github.com/maxgubitosi/unitree-go2-ros2
-├── rosbags/                # Grabaciones y scripts de reproducción
+│   ├── drone/                      # Simulación de dron con cámara
+│   │   ├── drone/
+│   │   │   ├── drone_controller.py     # Control de posición del dron
+│   │   │   └── aruco_detector.py       # Detección ArUco en tiempo real
+│   │   ├── launch/
+│   │   │   ├── drone.launch.py         # Solo dron
+│   │   │   └── drone_landing.launch.py # Dron + detector ArUco
+│   │   └── config/
+│   │       ├── drone_params.yaml
+│   │       └── aruco_detector_params.yaml
+│   ├── go2_tools/                  # Simulador de plataforma marina
+│   └── unitree-go2-ros2/           # Paquetes del robot Unitree Go2
+│                                   # https://github.com/maxgubitosi/unitree-go2-ros2
+├── aruco_relative_pose/            # Estimación de pose offline y evaluación
+│   ├── scripts/
+│   │   ├── estimate_relative_pose.py       # Estimación offline desde dataset
+│   │   ├── analyze_pose_results.py         # Análisis y gráficos
+│   │   └── evaluate_realtime_aruco.py      # Evaluación offline vs GT desde rosbag
+│   └── config.yaml
+├── marine_robot_dataset/           # Extracción de datasets desde rosbags
+├── rosbags/                        # Grabaciones y scripts de reproducción
 └── README.md
 ```
 
@@ -78,6 +94,48 @@ cd rosbags
 vlc LINK_VIDEO_DRONE_CAMARA
 ```
 
+### Opción 3: Con detección ArUco en tiempo real
+
+Lanza el dron con el nodo de detección ArUco incluido. Estima la pose del marcador (DICT_6X6_250 id=0, 0.50m) relativa a la cámara en tiempo real usando `cv2.aruco` + `solvePnP`.
+
+```bash
+# Terminal 1: Gazebo y RViz
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch go2_config gazebo.launch.py rviz:=true
+
+# Terminal 2: Simulador de plataforma marina
+source install/setup.bash
+ros2 run go2_tools marine_platform_simulator
+
+# Terminal 3: Dron con cámara + detector ArUco
+source install/setup.bash
+ros2 launch drone drone_landing.launch.py
+
+# Terminal 4: Visualizar detección en tiempo real
+source /opt/ros/humble/setup.bash
+ros2 run rqt_image_view rqt_image_view
+# Seleccionar el topic /aruco/debug_image en el dropdown
+
+# Terminal 5 (opcional): Ver pose estimada
+source install/setup.bash
+ros2 topic echo /aruco/pose
+
+# Terminal 6 (opcional): Grabar datos para evaluación offline
+cd rosbags
+./record_marine_simulation.sh 60
+```
+
+#### Evaluación offline (post-proceso)
+
+Una vez grabado el rosbag, se puede comparar la estimación en tiempo real con el ground truth del Go2 (odometría + IMU + heave). El script calcula las transformaciones necesarias para llevar el GT al frame de la cámara y lo compara con las estimaciones del detector:
+
+```bash
+python3 aruco_relative_pose/scripts/evaluate_realtime_aruco.py rosbags/<nombre_rosbag>
+```
+
+Genera un CSV con errores por frame y gráficos de posición/orientación estimada vs GT en `aruco_relative_pose/outputs/`.
+
 ## Componentes principales
 
 ### Unitree Go2 ROS2
@@ -113,7 +171,9 @@ Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scrip
 - `/drone/camera/camera_info` - Parámetros intrínsecos de cámara
 - `/drone/pose` - Pose del dron en el mundo
 - `/go2/pose_rphz_cmd` - Comandos de movimiento marino [roll, pitch, heave]
-- `/aruco_marker/pose` - Pose del marcador ArUco en la plataforma
+- `/aruco/pose` - Pose estimada del marcador ArUco en frame cámara (PoseStamped)
+- `/aruco/detection` - Flag de detección del ArUco (Bool)
+- `/aruco/debug_image` - Imagen anotada con bordes y ejes del ArUco detectado
 
 ## Desarrollo
 

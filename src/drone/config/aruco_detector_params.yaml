@@ -1,0 +1,7 @@
+aruco_detector:
+  ros__parameters:
+    dictionary: "DICT_6X6_250"
+    target_id: 0
+    marker_length_m: 0.50
+    publish_debug_image: true
+    use_sim_time: true
