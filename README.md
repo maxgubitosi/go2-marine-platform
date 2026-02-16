@@ -7,7 +7,8 @@ Simulación de una plataforma marina usando un robot cuadrúpedo Unitree Go2 con
 Este proyecto implementa un entorno de simulación que combina:
 - Robot cuadrúpedo Unitree Go2 operando sobre una plataforma marina simulada
 - Movimientos marinos realistas (heave, pitch, roll)
-- Dron con cámara nadir para aterrizaje visual
+- **Cámara fija** nadir para captura visual sin movimiento
+- **Dron sjtu_drone** con vuelo real y cámara bottom para aterrizaje visual
 - Marcador ArUco en la plataforma para detección visual
 - Sistema de grabación y reproducción de datos
 
@@ -16,15 +17,31 @@ Este proyecto implementa un entorno de simulación que combina:
 ```
 gazebo-no-seas-malo/
 ├── src/
-│   ├── drone/                      # Simulación de dron con cámara
-│   │   ├── drone/
-│   │   │   ├── drone_controller.py     # Control de posición del dron
+│   ├── fixed_camera/               # Cámara fija nadir (sin movimiento)
+│   │   ├── fixed_camera/
+│   │   │   ├── camera_controller.py    # Publica pose fija + TF estático
 │   │   │   └── aruco_detector.py       # Detección ArUco en tiempo real
 │   │   ├── launch/
-│   │   │   └── drone.launch.py         # Dron (+ detector ArUco con aruco:=true)
+│   │   │   └── fixed_camera.launch.py  # Cámara fija (+ ArUco con aruco:=true)
+│   │   ├── urdf/
+│   │   │   └── fixed_camera.xacro      # Modelo URDF de la cámara
 │   │   └── config/
-│   │       ├── drone_params.yaml
+│   │       ├── fixed_camera_params.yaml
 │   │       └── aruco_detector_params.yaml
+│   ├── sjtu_drone/                 # Dron con vuelo real (sjtu_drone)
+│   │   ├── sjtu_drone_description/     # URDF, plugin de Gazebo, worlds
+│   │   ├── sjtu_drone_bringup/         # Launch files y configs
+│   │   │   ├── launch/
+│   │   │   │   └── sjtu_drone_spawn.launch.py
+│   │   │   └── config/
+│   │   │       ├── drone.yaml
+│   │   │       ├── drone_position_params.yaml
+│   │   │       └── aruco_detector_params.yaml
+│   │   └── sjtu_drone_control/         # Nodos de control
+│   │       └── sjtu_drone_control/
+│   │           ├── drone_position_controller.py
+│   │           ├── aruco_detector.py
+│   │           └── teleop.py
 │   ├── go2_tools/                  # Simulador de plataforma marina
 │   └── unitree-go2-ros2/           # Paquetes del robot Unitree Go2
 │                                   # https://github.com/maxgubitosi/unitree-go2-ros2
@@ -71,7 +88,9 @@ source install/setup.bash
 ./run_marine_simulation.sh
 ```
 
-### Opción 2: Lanzamiento manual (recomendado)
+### Opción 2: Cámara fija (sin movimiento)
+
+Spawnea una cámara estática mirando hacia abajo sobre la plataforma. No se mueve en ningún sentido — lo que se ve en Gazebo es exactamente lo que dicen los datos.
 
 ```bash
 # Terminal 1: Gazebo y RViz
@@ -83,19 +102,18 @@ ros2 launch go2_config gazebo.launch.py rviz:=true
 source install/setup.bash
 ros2 run go2_tools marine_platform_simulator
 
-# Terminal 3: Dron con cámara (sin ArUco)
+# Terminal 3: Cámara fija (sin ArUco)
 source install/setup.bash
-ros2 launch drone drone.launch.py aruco:=false
+ros2 launch fixed_camera fixed_camera.launch.py aruco:=false
 
 # Terminal 4 (opcional): Grabar datos
 cd rosbags
 ./record_marine_simulation.sh 60
-vlc LINK_VIDEO_DRONE_CAMARA
 ```
 
-### Opción 3: Con detección ArUco en tiempo real
+### Opción 3: Cámara fija + detección ArUco
 
-Lanza el dron con el nodo de detección ArUco incluido. Estima la pose del marcador (DICT_6X6_250 id=0, 0.50m) relativa a la cámara en tiempo real usando `cv2.aruco` + `solvePnP`.
+Lanza la cámara fija con el nodo de detección ArUco incluido. Estima la pose del marcador (DICT_6X6_250 id=0, 0.50m) relativa a la cámara en tiempo real usando `cv2.aruco` + `solvePnP`.
 
 ```bash
 # Terminal 1: Gazebo y RViz
@@ -107,9 +125,9 @@ ros2 launch go2_config gazebo.launch.py rviz:=true
 source install/setup.bash
 ros2 run go2_tools marine_platform_simulator
 
-# Terminal 3: Dron con cámara + detector ArUco
+# Terminal 3: Cámara fija + detector ArUco
 source install/setup.bash
-ros2 launch drone drone.launch.py
+ros2 launch fixed_camera fixed_camera.launch.py
 
 # Terminal 4: Visualizar detección en tiempo real
 source /opt/ros/humble/setup.bash
@@ -123,6 +141,34 @@ ros2 topic echo /aruco/pose
 # Terminal 6 (opcional): Grabar datos para evaluación offline
 cd rosbags
 ./record_marine_simulation.sh 60
+```
+
+### Opción 4: Dron sjtu_drone (vuelo real + ArUco)
+
+Spawnea un dron sjtu_drone que despega automáticamente, vuela sobre la plataforma y detecta el ArUco desde la cámara bottom.
+
+```bash
+# Terminal 1: Gazebo y RViz
+colcon build --symlink-install
+source install/setup.bash
+ros2 launch go2_config gazebo.launch.py rviz:=true
+
+# Terminal 2: Simulador de plataforma marina
+source install/setup.bash
+ros2 run go2_tools marine_platform_simulator
+
+# Terminal 3: sjtu_drone (spawn + takeoff + hover + ArUco)
+source install/setup.bash
+ros2 launch sjtu_drone_bringup sjtu_drone_spawn.launch.py
+
+# Terminal 4: Visualizar detección en tiempo real
+source /opt/ros/humble/setup.bash
+ros2 run rqt_image_view rqt_image_view
+# Seleccionar el topic /aruco/debug_image en el dropdown
+
+# Terminal 5 (opcional): Grabar datos
+cd rosbags
+./record_sjtu_drone_simulation.sh 60
 ```
 
 #### Evaluación offline (post-proceso)
@@ -155,8 +201,11 @@ Este repositorio contiene:
 
 Ver el [repositorio](https://github.com/maxgubitosi/unitree-go2-ros2) para más detalles.
 
-### Drone Package
-Simulación de dron cuadricóptero con cámara mirando hacia abajo para experimentos de aterrizaje visual. Ver `src/drone/README.md` para más detalles.
+### Fixed Camera
+Cámara fija nadir (mirando hacia abajo) para captura visual sobre la plataforma marina. No se mueve — posición estática configurable. Ver `src/fixed_camera/README.md` para más detalles.
+
+### sjtu_drone
+Dron cuadricóptero con vuelo real simulado en Gazebo (plugin C++). Despega automáticamente, vuela sobre la plataforma y detecta ArUco desde cámara bottom. Ver `src/sjtu_drone/` para más detalles.
 
 ### Go2 Tools
 Herramientas para simulación de movimientos marinos en el robot Unitree Go2. Incluye generación automática de ondas y control manual. Ver `src/go2_tools/README.md` para más detalles.
@@ -166,9 +215,19 @@ Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scrip
 
 ## Topics principales
 
-- `/drone/camera/image_raw` - Imagen de cámara del dron (640x480 @ 30Hz)
-- `/drone/camera/camera_info` - Parámetros intrínsecos de cámara
-- `/drone/pose` - Pose del dron en el mundo
+### Cámara fija
+- `/fixed_camera/image_raw` - Imagen de cámara fija (640x480 @ 30Hz)
+- `/fixed_camera/camera_info` - Parámetros intrínsecos de cámara
+- `/fixed_camera/pose` - Pose fija de la cámara en el mundo
+
+### sjtu_drone
+- `/drone/bottom/image_raw` - Imagen de cámara bottom del dron
+- `/drone/bottom/camera_info` - Parámetros intrínsecos de cámara bottom
+- `/drone/gt_pose` - Ground truth pose del dron desde Gazebo
+- `/drone/pose` - Pose del dron (PoseStamped)
+- `/drone/state` - Estado del dron (0=LANDED, 1=FLYING, 2=TAKINGOFF, 3=LANDING)
+
+### Comunes
 - `/go2/pose_rphz_cmd` - Comandos de movimiento marino [roll, pitch, heave]
 - `/aruco/pose` - Pose estimada del marcador ArUco en frame cámara (PoseStamped)
 - `/aruco/detection` - Flag de detección del ArUco (Bool)
@@ -178,8 +237,9 @@ Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scrip
 
 ```bash
 # Compilar un paquete específico
-colcon build --packages-select drone
+colcon build --packages-select fixed_camera
 colcon build --packages-select go2_tools
+colcon build --packages-select sjtu_drone_bringup sjtu_drone_control sjtu_drone_description
 
 # Limpiar build completo
 rm -rf build install log

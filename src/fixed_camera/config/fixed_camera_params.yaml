@@ -1,0 +1,7 @@
+camera_controller:
+  ros__parameters:
+    position_x: 0.0
+    position_y: 0.0
+    position_z: 2.0
+    publish_rate: 10.0
+    use_sim_time: true

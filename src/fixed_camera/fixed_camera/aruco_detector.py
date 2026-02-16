@@ -2,7 +2,7 @@
 """
 ArUco Detector Node – Real-time marker pose estimation.
 
-Subscribes to the drone camera image, detects an ArUco marker (DICT_6X6_250
+Subscribes to the camera image, detects an ArUco marker (DICT_6X6_250
 id 0 by default) and publishes the marker pose **in the camera optical frame**.
 
 No ground-truth or robot model knowledge is used here.  Error analysis is
@@ -58,8 +58,8 @@ class ArucoDetector(Node):
         self.declare_parameter("target_id", 0)
         self.declare_parameter("marker_length_m", 0.50)
         self.declare_parameter("publish_debug_image", True)
-        self.declare_parameter("image_topic", "/drone/camera/image_raw")
-        self.declare_parameter("camera_info_topic", "/drone/camera/camera_info")
+        self.declare_parameter("image_topic", "/fixed_camera/image_raw")
+        self.declare_parameter("camera_info_topic", "/fixed_camera/camera_info")
 
         dict_name = self.get_parameter("dictionary").value
         self.target_id = self.get_parameter("target_id").value

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'drone'
+package_name = 'fixed_camera'
 
 setup(
     name=package_name,
@@ -20,13 +20,13 @@ setup(
     zip_safe=True,
     maintainer='linar',
     maintainer_email='mgubitosi@udesa.edu.ar',
-    description='Drone simulation with downward-facing camera',
+    description='Fixed downward-facing camera for ArUco detection over marine platform',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'drone_controller = drone.drone_controller:main',
-            'aruco_detector = drone.aruco_detector:main',
+            'camera_controller = fixed_camera.camera_controller:main',
+            'aruco_detector = fixed_camera.aruco_detector:main',
         ],
     },
 )

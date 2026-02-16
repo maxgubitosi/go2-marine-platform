@@ -4,4 +4,6 @@ aruco_detector:
     target_id: 0
     marker_length_m: 0.50
     publish_debug_image: true
+    image_topic: "/fixed_camera/image_raw"
+    camera_info_topic: "/fixed_camera/camera_info"
     use_sim_time: true

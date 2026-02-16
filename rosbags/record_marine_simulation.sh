@@ -42,9 +42,9 @@ TOPICS=(
     /cmd_vel
     /imu/data
     /marine_motion
-    /drone/camera/image_raw
-    /drone/camera/camera_info
-    /drone/pose
+    /fixed_camera/image_raw
+    /fixed_camera/camera_info
+    /fixed_camera/pose
     /base_to_footprint_pose
     /aruco/pose
     /aruco/detection
