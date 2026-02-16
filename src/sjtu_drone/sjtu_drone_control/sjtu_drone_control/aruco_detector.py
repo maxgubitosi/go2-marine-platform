@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """
-ArUco Detector Node – Real-time marker pose estimation.
+ArUco Detector Node – Real-time marker pose estimation for sjtu_drone.
 
-Subscribes to the drone camera image, detects an ArUco marker (DICT_6X6_250
-id 0 by default) and publishes the marker pose **in the camera optical frame**.
-
-No ground-truth or robot model knowledge is used here.  Error analysis is
-done offline from a recorded rosbag.
+Subscribes to the drone bottom camera image, detects an ArUco marker
+(DICT_6X6_250 id 0 by default) and publishes the marker pose
+**in the camera optical frame**.
 
 Published topics:
     /aruco/pose          (geometry_msgs/PoseStamped) – marker in camera frame
@@ -48,7 +46,7 @@ ARUCO_DICTS = {
 
 
 class ArucoDetector(Node):
-    """Lightweight real-time ArUco detector."""
+    """Lightweight real-time ArUco detector for sjtu_drone bottom camera."""
 
     def __init__(self) -> None:
         super().__init__("aruco_detector")
@@ -58,8 +56,8 @@ class ArucoDetector(Node):
         self.declare_parameter("target_id", 0)
         self.declare_parameter("marker_length_m", 0.50)
         self.declare_parameter("publish_debug_image", True)
-        self.declare_parameter("image_topic", "/drone/camera/image_raw")
-        self.declare_parameter("camera_info_topic", "/drone/camera/camera_info")
+        self.declare_parameter("image_topic", "/drone/bottom/image_raw")
+        self.declare_parameter("camera_info_topic", "/drone/bottom/camera_info")
 
         dict_name = self.get_parameter("dictionary").value
         self.target_id = self.get_parameter("target_id").value
@@ -96,7 +94,8 @@ class ArucoDetector(Node):
 
         self.get_logger().info(
             f"ArucoDetector started – dict={dict_name}  id={self.target_id}  "
-            f"side={self.marker_length}m  debug_img={self.publish_debug}"
+            f"side={self.marker_length}m  debug_img={self.publish_debug}  "
+            f"image={image_topic}  cam_info={camera_info_topic}"
         )
 
     # ── CameraInfo callback ──────────────────────────────────────────
@@ -173,16 +172,10 @@ class ArucoDetector(Node):
 
                 # Debug image
                 if self.publish_debug:
-                    cv2.aruco.drawDetectedMarkers(
-                        cv_image, corners, ids
-                    )
+                    cv2.aruco.drawDetectedMarkers(cv_image, corners, ids)
                     cv2.drawFrameAxes(
-                        cv_image,
-                        self.camera_matrix,
-                        self.dist_coeffs,
-                        rvec,
-                        tvec,
-                        self.marker_length * 0.5,
+                        cv_image, self.camera_matrix, self.dist_coeffs,
+                        rvec, tvec, self.marker_length * 0.5,
                     )
 
         # Always publish detection flag
@@ -190,10 +183,9 @@ class ArucoDetector(Node):
         det_msg.data = detected
         self.pub_detection.publish(det_msg)
 
-        # Publish debug image (even if no detection, so we can see the raw feed)
+        # Publish debug image (even if no detection)
         if self.publish_debug:
             try:
-                # Convert BGR→RGB for rqt_image_view compatibility
                 cv_rgb = cv2.cvtColor(cv_image, cv2.COLOR_BGR2RGB)
                 cv_out = np.ascontiguousarray(cv_rgb)
                 debug_msg = Image()

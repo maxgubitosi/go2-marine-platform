@@ -1,0 +1,46 @@
+# Configuración del sjtu_drone para la simulación marina
+# Este archivo es leído por el xacro del sjtu_drone para configurar el plugin
+
+# ROS namespace for the drone. All topics and tf frames will be prefixed with this namespace.
+namespace: /drone
+
+# PID gains para roll y pitch
+rollpitchProportionalGain: 10.0
+rollpitchDifferentialGain: 5.0
+rollpitchLimit: 0.5
+
+# PID gains para yaw
+yawProportionalGain: 2.0
+yawDifferentialGain: 1.0
+yawLimit: 1.5
+
+# PID gains para velocidad XY
+velocityXYProportionalGain: 5.0
+velocityXYDifferentialGain: 2.3
+velocityXYLimit: 2
+
+# PID gains para velocidad Z
+velocityZProportionalGain: 5.0
+velocityZIntegralGain: 0.0
+velocityZDifferentialGain: 1.0
+velocityZLimit: -1
+
+# PID gains para posición XY
+positionXYProportionalGain: 1.1
+positionXYDifferentialGain: 0.0
+positionXYIntegralGain: 0.0
+positionXYLimit: 5
+
+# PID gains para posición Z
+positionZProportionalGain: 1.0
+positionZDifferentialGain: 0.2
+positionZIntegralGain: 0.0
+positionZLimit: -1
+
+# Fuerza máxima del dron
+maxForce: 30
+
+# Ruido de movimiento (0 = sin ruido)
+motionSmallNoise: 0.0
+motionDriftNoise: 0.0
+motionDriftNoiseTime: 50

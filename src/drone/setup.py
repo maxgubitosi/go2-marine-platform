@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'drone_controller = drone.drone_controller:main',
             'aruco_detector = drone.aruco_detector:main',
+            'drone_position_controller = drone.drone_position_controller:main',
         ],
     },
 )

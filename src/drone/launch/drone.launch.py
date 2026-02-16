@@ -4,6 +4,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -14,13 +15,21 @@ def generate_launch_description():
     
     urdf_file = os.path.join(pkg_drone, 'urdf', 'drone_camera.xacro')
     config_file = os.path.join(pkg_drone, 'config', 'drone_params.yaml')
+    aruco_config = os.path.join(pkg_drone, 'config', 'aruco_detector_params.yaml')
     
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    aruco = LaunchConfiguration('aruco')
     
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='true',
         description='Use simulation clock'
+    )
+    
+    declare_aruco = DeclareLaunchArgument(
+        'aruco',
+        default_value='true',
+        description='Launch ArUco detector node'
     )
     
     robot_description_content = ParameterValue(
@@ -67,6 +76,15 @@ def generate_launch_description():
         output='screen',
         parameters=[config_file, {'use_sim_time': use_sim_time}]
     )
+
+    aruco_detector = Node(
+        package='drone',
+        executable='aruco_detector',
+        name='aruco_detector',
+        output='screen',
+        parameters=[aruco_config, {'use_sim_time': use_sim_time}],
+        condition=IfCondition(aruco)
+    )
     
     static_tf_world_odom = Node(
         package='tf2_ros',
@@ -78,8 +96,10 @@ def generate_launch_description():
     
     return LaunchDescription([
         declare_use_sim_time,
+        declare_aruco,
         static_tf_world_odom,
         robot_state_publisher,
         spawn_drone,
         drone_controller,
+        aruco_detector,
     ])

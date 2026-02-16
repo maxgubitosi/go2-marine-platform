@@ -21,8 +21,7 @@ gazebo-no-seas-malo/
 │   │   │   ├── drone_controller.py     # Control de posición del dron
 │   │   │   └── aruco_detector.py       # Detección ArUco en tiempo real
 │   │   ├── launch/
-│   │   │   ├── drone.launch.py         # Solo dron
-│   │   │   └── drone_landing.launch.py # Dron + detector ArUco
+│   │   │   └── drone.launch.py         # Dron (+ detector ArUco con aruco:=true)
 │   │   └── config/
 │   │       ├── drone_params.yaml
 │   │       └── aruco_detector_params.yaml
@@ -84,9 +83,9 @@ ros2 launch go2_config gazebo.launch.py rviz:=true
 source install/setup.bash
 ros2 run go2_tools marine_platform_simulator
 
-# Terminal 3: Dron con cámara
+# Terminal 3: Dron con cámara (sin ArUco)
 source install/setup.bash
-ros2 launch drone drone.launch.py
+ros2 launch drone drone.launch.py aruco:=false
 
 # Terminal 4 (opcional): Grabar datos
 cd rosbags
@@ -110,7 +109,7 @@ ros2 run go2_tools marine_platform_simulator
 
 # Terminal 3: Dron con cámara + detector ArUco
 source install/setup.bash
-ros2 launch drone drone_landing.launch.py
+ros2 launch drone drone.launch.py
 
 # Terminal 4: Visualizar detección en tiempo real
 source /opt/ros/humble/setup.bash

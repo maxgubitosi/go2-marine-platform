@@ -1,0 +1,14 @@
+# Parámetros del controlador de posición del sjtu_drone
+drone_position_controller:
+  ros__parameters:
+    drone_namespace: "drone"
+    # Posición target del dron (hovering) — justo arriba del perro
+    target_x: 0.5
+    target_y: 0.0
+    target_z: 3.0
+    target_yaw: 0.0    # radianes
+    # Delay antes de activar position control (segundos después del takeoff)
+    hover_delay_sec: 3.0
+    # Frecuencia del loop de control (Hz)
+    control_rate: 20.0
+    use_sim_time: true

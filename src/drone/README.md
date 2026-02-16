@@ -30,6 +30,9 @@ source install/setup.bash
 
 # Lanzar con Gazebo corriendo
 ros2 launch drone drone.launch.py
+
+# Sin detector ArUco
+ros2 launch drone drone.launch.py aruco:=false
 ```
 
 ## Topics principales
@@ -51,7 +54,7 @@ Parámetros configurables en `config/drone_params.yaml`:
 drone/
 ├── drone/drone_controller.py  # Nodo que controla movimiento y publica pose
 ├── urdf/drone_camera.xacro    # Definición del modelo del dron
-├── launch/drone.launch.py     # Launch file
+├── launch/drone.launch.py     # Launch file (aruco:=true|false)
 └── config/drone_params.yaml   # Parámetros de configuración
 ```
 
