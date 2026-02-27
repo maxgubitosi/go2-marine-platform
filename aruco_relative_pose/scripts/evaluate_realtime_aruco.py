@@ -2,24 +2,44 @@
 """
 Offline evaluation: compare real-time ArUco pose estimates with ground truth.
 
+Supports two camera sources:
+  • fixed_camera  – static camera mounted at a known world position
+                    (rosbags: marine_sim_*)
+  • sjtu_drone    – bottom camera of the SJTU drone (moves with the drone)
+                    (rosbags: sjtu_drone_sim_*)
+
+The camera source is auto-detected from the rosbag name prefix, or can be
+forced via --camera-source.
+
 Reads a rosbag that contains:
-  - /aruco/pose          (PoseStamped)  – real-time estimated marker in camera frame
-  - /odom                (Odometry)     – Go2 position (x, y) in world
-  - /imu/data            (Imu)          – Go2 orientation (roll, pitch, yaw)
-  - /base_to_footprint_pose (PoseWithCovarianceStamped) – heave (trunk z)
-  - /drone/pose          (Pose)         – drone position/orientation in world
-  - /tf, /tf_static                     – for drone_base_link → camera_optical
+  common:
+    /aruco/pose                   (PoseStamped)  – ArUco estimate (cam frame)
+    /odom                         (Odometry)     – Go2 x,y in world
+    /imu/data                     (Imu)          – Go2 orientation
+    /base_to_footprint_pose       (PoseWithCov)  – Go2 trunk z (heave)
+
+  fixed_camera bags:
+    /drone/pose                   (Pose)         – fixed-camera "drone" pose
+
+  sjtu_drone bags:
+    /drone/pose                   (PoseStamped)  – estimated drone pose
+    /drone/gt_pose                (Pose)         – ground-truth drone pose
 
 Computes the ground-truth marker pose in camera frame using:
   1. Go2 trunk pose in world  (from odom + imu + heave)
   2. Marker = trunk + offset [0, 0, 0.091]
-  3. Camera optical frame in world (from drone pose + URDF extrinsics)
+  3. Camera optical frame in world (from camera source transforms)
   4. marker_in_cam = R_cam_world @ (marker_world - cam_world)
 
-Then compares with the ArUco estimations and produces error metrics + plots.
-
 Usage:
-    python3 evaluate_realtime_aruco.py <path_to_rosbag> [--output-dir DIR]
+    # Fixed camera (auto-detected from bag name):
+    python3 evaluate_realtime_aruco.py rosbags/marine_sim_20260215_190303
+
+    # SJTU drone (auto-detected from bag name):
+    python3 evaluate_realtime_aruco.py rosbags/sjtu_drone_sim_20260216_180434
+
+    # Force camera source:
+    python3 evaluate_realtime_aruco.py rosbags/some_bag --camera-source sjtu_drone
 """
 from __future__ import annotations
 
@@ -52,12 +72,35 @@ except ImportError:
 # Marker offset from Go2 trunk (platform height above trunk center)
 MARKER_OFFSET_XYZ = np.array([0.0, 0.0, 0.091], dtype=np.float64)
 
-# Drone camera extrinsics (base_link → camera_optical)
-# These come from drone_camera.xacro and are combined into one transform.
-BASE_TO_CAMLINK_XYZ = np.array([0.0, 0.0, -0.055], dtype=np.float64)
-BASE_TO_CAMLINK_RPY = np.array([0.0, np.pi / 2.0, 0.0], dtype=np.float64)
-CAMLINK_TO_OPT_XYZ = np.array([0.0, 0.0, 0.0], dtype=np.float64)
-CAMLINK_TO_OPT_RPY = np.array([-np.pi / 2.0, 0.0, -np.pi / 2.0], dtype=np.float64)
+# ── Fixed-camera extrinsics (camera_base_link → optical) ────────────
+# From src/fixed_camera/urdf/fixed_camera.xacro
+FIXED_BASE_TO_CAMLINK_XYZ = np.array([0.0, 0.0, -0.055], dtype=np.float64)
+FIXED_BASE_TO_CAMLINK_RPY = np.array([0.0, np.pi / 2.0, 0.0], dtype=np.float64)
+FIXED_CAMLINK_TO_OPT_XYZ  = np.array([0.0, 0.0, 0.0], dtype=np.float64)
+FIXED_CAMLINK_TO_OPT_RPY  = np.array([-np.pi / 2.0, 0.0, -np.pi / 2.0], dtype=np.float64)
+
+# ── SJTU drone extrinsics (base_link → bottom_cam_link → optical) ───
+# From src/sjtu_drone/sjtu_drone_description/urdf/sjtu_drone.urdf.xacro
+SJTU_BASE_TO_CAMLINK_XYZ = np.array([0.0, 0.0, 0.0], dtype=np.float64)
+SJTU_BASE_TO_CAMLINK_RPY = np.array([0.0, np.pi / 2.0, 0.0], dtype=np.float64)
+SJTU_CAMLINK_TO_OPT_XYZ  = np.array([0.0, 0.0, 0.0], dtype=np.float64)
+SJTU_CAMLINK_TO_OPT_RPY  = np.array([-np.pi / 2.0, 0.0, -np.pi / 2.0], dtype=np.float64)
+
+# ── Go2 spawn offset ────────────────────────────────────────────────
+# La odometría de pata de CHAMP siempre arranca en (0,0) sin importar
+# dónde se spawneó el Go2 en Gazebo.  En nuestra simulación el Go2 se
+# spawnea en world_init_x = 0.40 m (ver bringup launch), así que ese
+# es el default.  Sobreescribir con --world-init-x si fuera distinto.
+WORLD_INIT_X: float = 0.40
+WORLD_INIT_Y: float = 0.0
+
+# ── Fixed-camera mode ───────────────────────────────────────────────
+# Position is: spawn_z(=2.0) + camera_joint_z(-0.045) = 1.955 m
+USE_FIXED_CAMERA: bool = False
+FIXED_CAM_POS: np.ndarray = np.array([0.0, 0.0, 1.955], dtype=np.float64)
+
+# ── Camera source ───────────────────────────────────────────────────
+CAMERA_SOURCES = ("fixed_camera", "sjtu_drone")
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -161,34 +204,97 @@ def find_closest(sorted_ts: List[int], target: int, threshold_ns: int = 100_000_
 #  Pre-compute static transforms
 # ══════════════════════════════════════════════════════════════════════
 
-def compute_base_to_optical():
+def compute_base_to_optical(
+    base_to_camlink_xyz: np.ndarray,
+    base_to_camlink_rpy: np.ndarray,
+    camlink_to_opt_xyz: np.ndarray,
+    camlink_to_opt_rpy: np.ndarray,
+):
     """Return (R_base_opt, t_base_opt) from URDF extrinsics."""
-    R_bl_cl = rpy_to_rotation_matrix(*BASE_TO_CAMLINK_RPY)
-    R_cl_opt = rpy_to_rotation_matrix(*CAMLINK_TO_OPT_RPY)
+    R_bl_cl = rpy_to_rotation_matrix(*base_to_camlink_rpy)
+    R_cl_opt = rpy_to_rotation_matrix(*camlink_to_opt_rpy)
     R_base_opt = R_bl_cl @ R_cl_opt
-    t_base_opt = BASE_TO_CAMLINK_XYZ + R_bl_cl @ CAMLINK_TO_OPT_XYZ
+    t_base_opt = base_to_camlink_xyz + R_bl_cl @ camlink_to_opt_xyz
     return R_base_opt, t_base_opt
+
+
+def detect_camera_source(rosbag_name: str) -> str:
+    """Auto-detect camera source from rosbag directory name.
+
+    Returns 'fixed_camera' for marine_sim_* bags and
+    'sjtu_drone' for sjtu_drone_sim_* bags.
+    """
+    name = rosbag_name.lower()
+    if name.startswith("sjtu_drone"):
+        return "sjtu_drone"
+    if name.startswith("marine_sim"):
+        return "fixed_camera"
+    # Fallback: look at keywords
+    if "sjtu" in name or "drone_sim" in name:
+        return "sjtu_drone"
+    return "fixed_camera"
+
+
+def get_extrinsics_for_source(source: str):
+    """Return (base_to_cam_xyz, base_to_cam_rpy, cam_to_opt_xyz, cam_to_opt_rpy)."""
+    if source == "sjtu_drone":
+        return (SJTU_BASE_TO_CAMLINK_XYZ, SJTU_BASE_TO_CAMLINK_RPY,
+                SJTU_CAMLINK_TO_OPT_XYZ, SJTU_CAMLINK_TO_OPT_RPY)
+    else:  # fixed_camera
+        return (FIXED_BASE_TO_CAMLINK_XYZ, FIXED_BASE_TO_CAMLINK_RPY,
+                FIXED_CAMLINK_TO_OPT_XYZ, FIXED_CAMLINK_TO_OPT_RPY)
 
 
 # ══════════════════════════════════════════════════════════════════════
 #  Main evaluation
 # ══════════════════════════════════════════════════════════════════════
 
-def evaluate(rosbag_path: Path, output_dir: Path):
+def evaluate(
+    rosbag_path: Path,
+    output_dir: Path,
+    world_init_x: float = 0.0,
+    world_init_y: float = 0.0,
+    camera_source: str = "fixed_camera",
+    fixed_cam_pos: Optional[np.ndarray] = None,
+):
     print(f"Reading rosbag: {rosbag_path}")
+    print(f"  Camera source: {camera_source.upper()}")
+    if world_init_x != 0.0 or world_init_y != 0.0:
+        print(f"  Go2 spawn offset: world_init_x={world_init_x:.3f} m, world_init_y={world_init_y:.3f} m")
+
+    is_fixed = (camera_source == "fixed_camera")
+    is_sjtu  = (camera_source == "sjtu_drone")
+
+    if is_fixed:
+        _cam_pos = fixed_cam_pos if fixed_cam_pos is not None else FIXED_CAM_POS
+        print(f"  Camera mode: FIXED at world {_cam_pos.tolist()}")
+    else:
+        print(f"  Camera mode: SJTU DRONE (from /drone/pose PoseStamped)")
 
     # 1) Read all topics
     aruco_msgs = extract_messages(rosbag_path, "/aruco/pose", PoseStamped)
     odom_msgs = extract_messages(rosbag_path, "/odom", Odometry)
     imu_msgs = extract_messages(rosbag_path, "/imu/data", Imu)
     heave_msgs = extract_messages(rosbag_path, "/base_to_footprint_pose", PoseWithCovarianceStamped)
-    drone_msgs = extract_messages(rosbag_path, "/drone/pose", Pose)
+
+    # /drone/pose type differs between bags:
+    #   fixed_camera → geometry_msgs/Pose
+    #   sjtu_drone   → geometry_msgs/PoseStamped
+    if is_sjtu:
+        drone_msgs = extract_messages(rosbag_path, "/drone/pose", PoseStamped)
+        drone_gt_msgs = extract_messages(rosbag_path, "/drone/gt_pose", Pose)
+    else:
+        drone_msgs = extract_messages(rosbag_path, "/drone/pose", Pose)
+        drone_gt_msgs = []
 
     print(f"  /aruco/pose:              {len(aruco_msgs)} messages")
     print(f"  /odom:                    {len(odom_msgs)} messages")
     print(f"  /imu/data:                {len(imu_msgs)} messages")
     print(f"  /base_to_footprint_pose:  {len(heave_msgs)} messages")
-    print(f"  /drone/pose:              {len(drone_msgs)} messages")
+    print(f"  /drone/pose:              {len(drone_msgs)} messages"
+          f" ({'PoseStamped' if is_sjtu else 'Pose'})")
+    if drone_gt_msgs:
+        print(f"  /drone/gt_pose:           {len(drone_gt_msgs)} messages")
 
     if not aruco_msgs:
         print("ERROR: No /aruco/pose messages found in rosbag.")
@@ -211,11 +317,21 @@ def evaluate(rosbag_path: Path, output_dir: Path):
         heave_dict = {ts: msg.pose.pose.position.z for ts, msg in heave_msgs}
     heave_ts = sorted(heave_dict.keys())
 
-    drone_dict = {ts: msg for ts, msg in drone_msgs}
+    # For SJTU drone, /drone/pose is PoseStamped → extract .pose (Pose)
+    # For fixed camera, /drone/pose is already Pose
+    if is_sjtu:
+        drone_dict = {ts: msg.pose for ts, msg in drone_msgs}  # PoseStamped → .pose
+    else:
+        drone_dict = {ts: msg for ts, msg in drone_msgs}       # already Pose
     drone_ts = sorted(drone_dict.keys())
 
-    # 3) Pre-compute static transforms
-    R_base_opt, t_base_opt = compute_base_to_optical()
+    # SJTU drone also has /drone/gt_pose (Pose) for GT drone position
+    drone_gt_dict = {ts: msg for ts, msg in drone_gt_msgs} if drone_gt_msgs else {}
+    drone_gt_ts = sorted(drone_gt_dict.keys())
+
+    # 3) Pre-compute static transforms using source-specific extrinsics
+    extrinsics = get_extrinsics_for_source(camera_source)
+    R_base_opt, t_base_opt = compute_base_to_optical(*extrinsics)
 
     # 4) For each ArUco estimation, find the closest GT and drone pose
     threshold_ns = 100_000_000  # 100ms
@@ -248,8 +364,11 @@ def evaluate(rosbag_path: Path, output_dir: Path):
         imu_msg = imu_dict[imu_ts[imu_idx]]
 
         # Go2 trunk pose in world
-        trunk_x = odom_msg.pose.pose.position.x
-        trunk_y = odom_msg.pose.pose.position.y
+        # NOTE: CHAMP leg odometry starts at (0,0) regardless of the Gazebo
+        # spawn position (world_init_x / world_init_y).  Add the spawn offset
+        # so the trunk position is expressed in the true world frame.
+        trunk_x = world_init_x + odom_msg.pose.pose.position.x
+        trunk_y = world_init_y + odom_msg.pose.pose.position.y
 
         # Heave (trunk z)
         if heave_ts:
@@ -273,24 +392,42 @@ def evaluate(rosbag_path: Path, output_dir: Path):
         R_w_marker = R_w_trunk  # marker orientation = trunk orientation
 
         # Drone pose in world
-        if drone_ts:
-            drone_idx = find_closest(drone_ts, aruco_ts, threshold_ns)
-            if drone_idx is not None:
-                dm = drone_dict[drone_ts[drone_idx]]
-                drone_pos = np.array([dm.position.x, dm.position.y, dm.position.z], dtype=np.float64)
-                dq = dm.orientation
-                R_w_drone = quaternion_to_rotation_matrix(dq.x, dq.y, dq.z, dq.w)
-            else:
-                skipped += 1
-                continue
-        else:
-            # Fallback: fixed drone pose (for older rosbags without /drone/pose)
-            drone_pos = np.array([0.0, 0.0, 2.0], dtype=np.float64)
-            R_w_drone = np.eye(3)
+        if is_fixed:
+            # Images come from the fixed_camera node (static, not on the drone).
+            _cam_pos = fixed_cam_pos if fixed_cam_pos is not None else FIXED_CAM_POS
+            R_w_opt = R_base_opt.copy()
+            t_w_opt = _cam_pos.copy()
+            drone_pos = _cam_pos.copy()
+        elif is_sjtu:
+            # SJTU drone: prefer /drone/gt_pose for GT accuracy, fallback to
+            # /drone/pose (PoseStamped.pose, already extracted above).
+            _use_gt = bool(drone_gt_ts)
+            if _use_gt:
+                dgt_idx = find_closest(drone_gt_ts, aruco_ts, threshold_ns)
+                if dgt_idx is not None:
+                    dm = drone_gt_dict[drone_gt_ts[dgt_idx]]
+                else:
+                    _use_gt = False
 
-        # Camera optical frame in world
-        R_w_opt = R_w_drone @ R_base_opt
-        t_w_opt = drone_pos + R_w_drone @ t_base_opt
+            if not _use_gt:
+                # Fallback to /drone/pose (PoseStamped.pose)
+                if drone_ts:
+                    dp_idx = find_closest(drone_ts, aruco_ts, threshold_ns)
+                    if dp_idx is not None:
+                        dm = drone_dict[drone_ts[dp_idx]]
+                    else:
+                        skipped += 1
+                        continue
+                else:
+                    skipped += 1
+                    continue
+
+            drone_pos = np.array([dm.position.x, dm.position.y, dm.position.z], dtype=np.float64)
+            dq = dm.orientation
+            R_w_drone = quaternion_to_rotation_matrix(dq.x, dq.y, dq.z, dq.w)
+
+            R_w_opt = R_w_drone @ R_base_opt
+            t_w_opt = drone_pos + R_w_drone @ t_base_opt
 
         # GT: marker in camera optical frame
         R_opt_w = R_w_opt.T
@@ -346,6 +483,7 @@ def evaluate(rosbag_path: Path, output_dir: Path):
             "drone_x": drone_pos[0],
             "drone_y": drone_pos[1],
             "drone_z": drone_pos[2],
+            "camera_source": camera_source,
         })
         matched += 1
 
@@ -366,7 +504,7 @@ def evaluate(rosbag_path: Path, output_dir: Path):
 
     # ── Print summary ─────────────────────────────────────────────────
     print("\n" + "=" * 60)
-    print("  POSITION ERROR SUMMARY (marker in camera frame)")
+    print(f"  POSITION ERROR SUMMARY – {camera_source} (marker in camera frame)")
     print("=" * 60)
     for axis in ["x", "y", "z"]:
         col = f"err_{axis}"
@@ -376,7 +514,7 @@ def evaluate(rosbag_path: Path, output_dir: Path):
           f"max={df['err_pos'].max():.4f}m")
 
     print("\n" + "=" * 60)
-    print("  ORIENTATION ERROR SUMMARY")
+    print(f"  ORIENTATION ERROR SUMMARY – {camera_source}")
     print("=" * 60)
     for axis in ["roll", "pitch", "yaw"]:
         col = f"err_{axis}_deg"
@@ -390,7 +528,8 @@ def evaluate(rosbag_path: Path, output_dir: Path):
         import matplotlib.pyplot as plt
 
         fig, axes = plt.subplots(3, 2, figsize=(16, 14))
-        fig.suptitle("Real-time ArUco Pose Evaluation", fontsize=14, fontweight="bold")
+        source_label = camera_source.replace('_', ' ').title()
+        fig.suptitle(f"Real-time ArUco Pose Evaluation ({source_label})", fontsize=14, fontweight="bold")
 
         t = df["t_rel"]
 
@@ -427,7 +566,7 @@ def evaluate(rosbag_path: Path, output_dir: Path):
 
         # Orientation plots
         fig2, axes2 = plt.subplots(3, 2, figsize=(16, 14))
-        fig2.suptitle("Orientation: Estimated vs GT", fontsize=14, fontweight="bold")
+        fig2.suptitle(f"Orientation: Estimated vs GT ({source_label})", fontsize=14, fontweight="bold")
 
         for i, axis in enumerate(["roll", "pitch", "yaw"]):
             ax = axes2[i, 0]
@@ -459,7 +598,7 @@ def evaluate(rosbag_path: Path, output_dir: Path):
 
         # Error distribution histograms
         fig3, axes3 = plt.subplots(2, 3, figsize=(16, 8))
-        fig3.suptitle("Error Distributions", fontsize=14, fontweight="bold")
+        fig3.suptitle(f"Error Distributions ({source_label})", fontsize=14, fontweight="bold")
 
         for i, axis in enumerate(["x", "y", "z"]):
             ax = axes3[0, i]
@@ -490,10 +629,54 @@ def evaluate(rosbag_path: Path, output_dir: Path):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Evaluate real-time ArUco pose vs GT from rosbag")
+    parser = argparse.ArgumentParser(
+        description="Evaluate real-time ArUco pose vs GT from rosbag",
+        epilog=(
+            "Camera source is auto-detected from the bag name:\n"
+            "  marine_sim_*       → fixed_camera\n"
+            "  sjtu_drone_sim_*   → sjtu_drone\n"
+            "Override with --camera-source if needed."
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("rosbag", type=str, help="Path to the rosbag directory")
     parser.add_argument("--output-dir", type=str, default=None,
-                        help="Output directory (default: aruco_relative_pose/outputs/<bag_name>_evaluation)")
+                        help="Output directory (default: aruco_relative_pose/outputs/<bag_name>_realtime_eval)")
+    parser.add_argument(
+        "--camera-source", type=str, default="auto",
+        choices=["auto", "fixed_camera", "sjtu_drone"],
+        help=(
+            "Camera source: fixed_camera (static 640×480), sjtu_drone "
+            "(moving 640×360 bottom cam), or auto (detect from bag name). "
+            "Default: auto"
+        ),
+    )
+    parser.add_argument(
+        "--world-init-x", type=float, default=WORLD_INIT_X,
+        help=(
+            "Go2 spawn X offset in Gazebo world frame (metres). "
+            "CHAMP leg odometry starts at 0 regardless of the spawn position. "
+            "(default: %(default)s)"
+        ),
+    )
+    parser.add_argument(
+        "--world-init-y", type=float, default=WORLD_INIT_Y,
+        help="Go2 spawn Y offset (metres). (default: %(default)s)",
+    )
+    # Legacy flag kept for backwards compatibility
+    parser.add_argument(
+        "--fixed-camera", action="store_true", default=False,
+        help="(Deprecated) Use --camera-source fixed_camera instead.",
+    )
+    parser.add_argument(
+        "--cam-pos", type=float, nargs=3, default=None,
+        metavar=("X", "Y", "Z"),
+        help=(
+            "Fixed camera optical-frame world position [x y z] in metres. "
+            "Only used with fixed_camera source. "
+            f"Default: {FIXED_CAM_POS.tolist()}"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -504,13 +687,32 @@ def main():
         print(f"ERROR: Rosbag not found: {rosbag_path}")
         sys.exit(1)
 
+    # Determine camera source
+    if args.camera_source != "auto":
+        camera_source = args.camera_source
+    elif args.fixed_camera:
+        # Legacy --fixed-camera flag
+        camera_source = "fixed_camera"
+    else:
+        camera_source = detect_camera_source(rosbag_path.name)
+        print(f"Auto-detected camera source: {camera_source} (from bag name '{rosbag_path.name}')")
+
     if args.output_dir:
         output_dir = Path(args.output_dir)
     else:
         bag_name = rosbag_path.name
         output_dir = Path("aruco_relative_pose/outputs") / f"{bag_name}_realtime_eval"
 
-    evaluate(rosbag_path, output_dir)
+    fixed_cam_pos = np.array(args.cam_pos, dtype=np.float64) if args.cam_pos else None
+
+    evaluate(
+        rosbag_path,
+        output_dir,
+        world_init_x=args.world_init_x,
+        world_init_y=args.world_init_y,
+        camera_source=camera_source,
+        fixed_cam_pos=fixed_cam_pos,
+    )
 
 
 if __name__ == "__main__":

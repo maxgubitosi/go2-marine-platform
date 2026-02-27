@@ -1,14 +1,16 @@
+# ══════════════════════════════════════════════════════════════════════
+#  Cámara fija  (fixed_camera)
+#  Fuente: src/fixed_camera/urdf/fixed_camera.xacro
+#  Resolución 640×480, horizontal_fov=1.396 → fx=fy≈381.46
+# ══════════════════════════════════════════════════════════════════════
 camera:
-  # Intrinsecos del dron (Gazebo): calculados desde horizontal_fov y resolucion.
-  # Fuente: src/drone/urdf/drone_camera.xacro
   matrix:
     - [381.4631664, 0.0, 320.0]
     - [0.0, 381.4631664, 240.0]
     - [0.0, 0.0, 1.0]
-  # Distorsion (k1, k2, p1, p2, k3) del sensor simulado
   dist_coeffs: [-0.05, 0.02, 0.001, -0.001, 0.0]
 
-  # Pose fija del dron en world (si aplica)
+  # Pose fija de la cámara en world (la cámara NO se mueve)
   fixed_pose_world:
     x: 0.0
     y: 0.0
@@ -17,9 +19,28 @@ camera:
     pitch: 0.0
     yaw: 0.0
 
-  # Extrinsecas cámara respecto a drone_base_link
+  # Extrinsecas: camera_base_link → camera_link → camera_link_optical
   extrinsics:
     base_to_camera_link_xyz: [0.0, 0.0, -0.055]
+    base_to_camera_link_rpy: [0.0, 1.57079632679, 0.0]
+    camera_link_to_optical_xyz: [0.0, 0.0, 0.0]
+    camera_link_to_optical_rpy: [-1.57079632679, 0.0, -1.57079632679]
+
+# ══════════════════════════════════════════════════════════════════════
+#  SJTU Drone  (sjtu_drone)
+#  Fuente: src/sjtu_drone/sjtu_drone_description/urdf/sjtu_drone.urdf.xacro
+#  Bottom camera: 640×360, horizontal_fov=1.047 → fx=fy≈554.26
+# ══════════════════════════════════════════════════════════════════════
+sjtu_drone_camera:
+  matrix:
+    - [554.382713, 0.0, 320.0]
+    - [0.0, 554.382713, 180.0]
+    - [0.0, 0.0, 1.0]
+  dist_coeffs: [0.0, 0.0, 0.0, 0.0, 0.0]
+
+  # Extrinsecas: base_link → bottom_cam_link → optical (convención ROS)
+  extrinsics:
+    base_to_camera_link_xyz: [0.0, 0.0, 0.0]
     base_to_camera_link_rpy: [0.0, 1.57079632679, 0.0]
     camera_link_to_optical_xyz: [0.0, 0.0, 0.0]
     camera_link_to_optical_rpy: [-1.57079632679, 0.0, -1.57079632679]
@@ -72,3 +93,35 @@ gt:
     roll: roll
     pitch: pitch
     yaw: yaw
+
+# ──────────────────────────────────────────────────────────────────
+# Parámetros para evaluate_realtime_aruco.py
+# ──────────────────────────────────────────────────────────────────
+evaluation:
+  # Offset de spawn del Go2 en el mundo Gazebo (metros).
+  #
+  # La odometría de pata de CHAMP empieza siempre en (0,0) sin importar
+  # dónde se spawneó el Go2.  En nuestra simulación el Go2 se lanza con
+  # world_init_x = 0.40 m (ver bringup launch), por lo que ese es el
+  # default.  Sobreescribir con --world-init-x si fuera distinto.
+  world_init_x: 0.40   # metros
+  world_init_y: 0.0    # metros
+
+  # Fuente de la cámara.
+  # Valores: "fixed_camera" | "sjtu_drone"
+  #
+  # fixed_camera  → cámara estática, posición fija en world (config camera)
+  #                  Rosbags: marine_sim_*
+  #                  /drone/pose es geometry_msgs/Pose
+  #
+  # sjtu_drone    → cámara bottom del sjtu_drone, se mueve con el dron
+  #                  Rosbags: sjtu_drone_sim_*
+  #                  /drone/pose es geometry_msgs/PoseStamped
+  #                  También publica /drone/gt_pose (Pose) como GT del dron
+  #
+  # Si se omite, se auto-detecta a partir del nombre del rosbag.
+  camera_source: auto
+
+  # (Deprecated, se mantiene por compatibilidad. Usar camera_source.)
+  use_fixed_camera: false
+  fixed_cam_pos: [0.0, 0.0, 1.955]   # metros [x, y, z]

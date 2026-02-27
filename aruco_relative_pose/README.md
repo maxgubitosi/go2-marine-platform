@@ -1,6 +1,15 @@
 # Estimación de pose relativa (ArUco)
 
-Esta carpeta toma los `frames/` del dataset y estima la pose del marcador ArUco (sobre el cuadrúpedo) **en el frame de la cámara del dron** usando OpenCV. También copia el ground truth del `dataset.csv` para comparar.
+Esta carpeta toma los `frames/` del dataset y estima la pose del marcador ArUco (sobre el cuadrúpedo) **en el frame de la cámara** usando OpenCV. También copia el ground truth del `dataset.csv` para comparar.
+
+Soporta **dos fuentes de cámara**:
+
+| Fuente | Rosbags | Resolución | Cámara |
+|---|---|---|---|
+| `fixed_camera` | `marine_sim_*` | 640×480, FOV=1.396 | Estática en el mundo |
+| `sjtu_drone` | `sjtu_drone_sim_*` | 640×360, FOV=1.047 | Bottom cam del SJTU drone (se mueve) |
+
+La fuente se **auto-detecta** a partir del prefijo del nombre del rosbag, o se puede forzar con `--camera-source`.
 
 ## Requisitos
 
@@ -76,3 +85,46 @@ Ground truth transformado al frame de camara (para comparar directo con estimado
 
 - OpenCV usa el frame de cámara con **X derecha, Y abajo, Z hacia adelante**.
 - El ground truth del CSV corresponde al trunk del robot en el frame de odometría. Si ese frame coincide con el de la cámara (o conoces la extrínseca), la comparación es directa. Si no, necesitarás transformar los GT antes de comparar.
+
+## Evaluación en tiempo real desde rosbag
+
+Compara las estimaciones `/aruco/pose` grabadas en un rosbag con el ground truth calculado a partir de odometría + IMU + pose del dron.
+
+### Cámara fija (fixed_camera)
+
+```bash
+python3 aruco_relative_pose/scripts/evaluate_realtime_aruco.py \
+  rosbags/marine_sim_20260215_190303
+```
+
+### SJTU Drone (bottom camera)
+
+```bash
+python3 aruco_relative_pose/scripts/evaluate_realtime_aruco.py \
+  rosbags/sjtu_drone_sim_20260216_180434
+```
+
+### Forzar fuente de cámara
+
+```bash
+python3 aruco_relative_pose/scripts/evaluate_realtime_aruco.py \
+  rosbags/some_bag --camera-source sjtu_drone
+```
+
+La salida se guarda en `aruco_relative_pose/outputs/<bag_name>_realtime_eval/` con:
+- `realtime_aruco_evaluation.csv`
+- Plots de posición, orientación y distribución de errores
+
+### Parámetro `--world-init-x`
+
+La odometría de pata de CHAMP siempre arranca en (0,0) sin importar dónde se
+spawneó el Go2 en Gazebo. El script necesita conocer ese offset para calcular
+el ground truth correctamente.
+
+**El default es 0.40 m** (valor usado en nuestro bringup launch). Si en tu
+simulación el Go2 se spawneó en otra posición, sobreescríbelo:
+
+```bash
+python3 aruco_relative_pose/scripts/evaluate_realtime_aruco.py \
+  rosbags/some_bag --world-init-x 0.0
+```
