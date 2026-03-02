@@ -10,6 +10,7 @@ Controles:
   a/d: Aumentar/disminuir roll  
   q/e: Aumentar/disminuir heave
   r: Reset a posición neutral
+  SPACE: Emergency stop (modo real — DAMP)
   ESC/Ctrl+C: Salir
 
 Uso:
@@ -70,6 +71,7 @@ class MarineManualControl(Node):
         print("  a/d: Roll +/- (balanceo)")  
         print("  q/e: Heave +/- (vertical)")
         print("  r:   Reset a posición neutral")
+        print("  SPACE: EMERGENCY STOP (modo real)")
         print("  ESC: Salir")
         print("="*50)
         self.print_state()
@@ -115,6 +117,16 @@ class MarineManualControl(Node):
                 self.pitch = 0.0
                 self.heave = 0.0
                 print("\n[RESET] Posición neutral")
+            elif key == ' ':  # SPACE = Emergency stop
+                self.roll = 0.0
+                self.pitch = 0.0
+                self.heave = 0.0
+                # Enviar señal de emergencia (999, 999, 999)
+                msg = Float64MultiArray()
+                msg.data = [999.0, 999.0, 999.0]
+                self.cmd_pub.publish(msg)
+                print("\n!!! EMERGENCY STOP ENVIADO !!!")
+                return
             elif ord(key) == 27:  # ESC
                 self.shutdown()
                 return

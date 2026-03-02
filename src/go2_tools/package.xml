@@ -15,6 +15,11 @@
   <exec_depend>tf2_geometry_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
 
+  <!-- Unitree Go2 real mode (optional — only needed for mode:=real) -->
+  <!-- Compilar en ~/unitree_ros2/cyclonedds_ws y hacer source antes de usar -->
+  <exec_depend>unitree_api</exec_depend>
+  <exec_depend>unitree_go</exec_depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>
