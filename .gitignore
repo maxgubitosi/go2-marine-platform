@@ -17,13 +17,17 @@ output.avi
 *.avi
 *.mp4
 
-# Imagenes generadas / datasets
+# Imagenes generadas / datasets (excluir docs/media/ que va al repo)
 *.png
 *.jpg
 *.jpeg
 *.bmp
 *.tif
 *.tiff
+!docs/media/*.png
+!docs/media/*.jpg
+!docs/media/*.gif
+!docs/media/*.jpeg
 
 # CSV generados
 *.csv

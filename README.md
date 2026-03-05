@@ -1,16 +1,47 @@
-# Simulación de plataforma marina
+# go2-marine-platform
 
-Simulación de una plataforma marina usando un robot cuadrúpedo Unitree Go2 con una plataforma y patron aruco encima. El robot se encuentra fijo en el lugar, (las 4 patas fijas al piso) pero usa las articulaciones para mover el torso del robot simulando el movimimiento de una plataforma marina. El movimiento resultante de la plataforma sobre el robot es en términos de roll, pitch y heave.
+> Framework de simulación de plataforma marina para el desarrollo y validación de algoritmos de estimación de pose visual en entornos marinos.
+
+![ROS2](https://img.shields.io/badge/ROS2-Humble-blue) ![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange) ![Python](https://img.shields.io/badge/Python-3.10+-green)
+
+Un robot cuadrúpedo Unitree Go2 simula el movimiento de una plataforma marina (roll, pitch, heave) mientras una cámara fija o un dron detectan en tiempo real un marcador ArUco colocado sobre la plataforma. El pipeline completo — simulación → detección → grabación → evaluación offline contra ground truth — permite desarrollar y validar algoritmos de estimación de pose sin riesgo de hardware.
+
+<table>
+  <tr>
+    <td align="center"><b>Plataforma marina con marcador ArUco</b></td>
+    <td align="center"><b>Dron SJTU hovering sobre la plataforma</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/media/unitree-aruco.png" alt="Go2 con marcador ArUco" width="300"></td>
+    <td align="center"><img src="docs/media/drone-unitree-aruco.png" alt="Dron sobre Go2 con ArUco" width="500"></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/media/aruco_detection_realtime.gif" alt="Detección ArUco en tiempo real" width="400"><br>
+  <em>Detección ArUco en tiempo real desde la cámara del dron</em>
+</p>
 
 ## Descripción
 
 Este proyecto implementa un entorno de simulación que combina:
-- Robot cuadrúpedo Unitree Go2 operando sobre una plataforma marina simulada
+- Robot cuadrúpedo Unitree Go2 operando como si fuese una plataforma marina simulada
 - Movimientos marinos realistas (heave, pitch, roll)
 - **Cámara fija** nadir para captura visual sin movimiento
 - **Dron sjtu_drone** con vuelo real y cámara bottom para aterrizaje visual
 - Marcador ArUco en la plataforma para detección visual
 - Sistema de grabación y reproducción de datos
+
+## Motivación
+
+Aterrizar drones de forma autónoma sobre embarcaciones en movimiento es un problema complejo: el oleaje genera movimientos impredecibles de la plataforma y cualquier prueba real implica el riesgo de perder el hardware. Este proyecto provee un **framework de simulación completo** que permite:
+
+- Reproducir condiciones de mar de forma controlada y repetible
+- Validar la precisión de la estimación de pose visual (ArUco + `solvePnP`) antes de pasar a hardware real
+- Generar datasets con ground truth exacto para benchmarking o entrenamiento
+- Comparar estimaciones en tiempo real contra el ground truth del simulador frame a frame
+
+El branch `real` extiende este pipeline a pruebas de laboratorio con hardware real.
 
 ## Arquitectura
 
@@ -56,29 +87,80 @@ gazebo-no-seas-malo/
 └── README.md
 ```
 
+## Pipeline
+
+```
+ Gazebo + Go2 (fijo)
+       │
+       ▼
+ marine_platform_simulator  ──── publica Pose (roll/pitch/heave) ──▶ /body_pose
+       │
+       ▼
+ Fuente de imagen
+  ├─ Cámara fija nadir (z = 2 m)   →  /fixed_camera/image_raw
+  └─ SJTU Drone (hover z = 3 m)    →  /drone/bottom/image_raw
+       │
+       ▼
+ aruco_detector (solvePnP)
+       │  /aruco/pose  /aruco/debug_image
+       ▼
+ rosbag recording
+       │
+       ▼
+ evaluate_realtime_aruco.py
+  └─ estimación vs ground truth (odom + IMU + heave + pose del dron)
+       │
+       ▼
+ analyze_pose_results.py  →  gráficos + CSV de error
+```
+
+1. **Gazebo + Go2** — el robot está fijo al suelo; sus articulaciones mueven el torso simulando oleaje marino.
+2. **marine_platform_simulator** — genera ondas sinusoidales o irregulares y publica `Pose` a `/body_pose` @ 20 Hz.
+3. **Fuente de imagen** — cámara fija nadir a 2 m (cámara sintética estática en Gazebo) o dron SJTU que despega automáticamente y hovea a 3 m.
+4. **aruco_detector** — detecta el marcador ArUco DICT_6X6_250 (id=0, 0.50 m) y estima la pose relativa con `solvePnP` en tiempo real.
+5. **Evaluación offline** — compara cada estimación con el ground truth calculado desde odometría + IMU + heave del simulador.
+
 ## Requisitos
 
-- ROS2 Humble
+- ROS2 Humble (Desktop)
 - Gazebo Classic
 - Python 3.10+
-- Paquetes ROS2:
-  - `gazebo_ros_pkgs`
-  - `robot_state_publisher`
-  - `xacro`
-  - `cv_bridge`
-  - `tf2_ros`
+
+**Paquetes de sistema (apt):**
+```bash
+sudo apt install \
+  ros-humble-gazebo-ros-pkgs ros-humble-gazebo-ros2-control \
+  ros-humble-robot-state-publisher ros-humble-joint-state-publisher \
+  ros-humble-xacro ros-humble-cv-bridge ros-humble-tf2-ros \
+  ros-humble-robot-localization ros-humble-ros2-controllers ros-humble-ros2-control \
+  ros-humble-velodyne ros-humble-imu-tools ros-humble-teleop-twist-keyboard \
+  python3-opencv xterm
+```
+
+**Python (pip) — evaluación offline:**
+```bash
+pip install opencv-contrib-python numpy pandas PyYAML
+```
 
 ## Instalación
 
 ```bash
-# Clonar repositorio
+# 1. Clonar el repositorio
 git clone https://github.com/maxgubitosi/gazebo-no-seas-malo.git
 cd gazebo-no-seas-malo
 
-# Compilar workspace
+# 2. Clonar unitree-go2-ros2 dentro de src/
+#    (contiene: CHAMP controller, go2_config, go2_description y launch files del Go2)
+cd src
+git clone https://github.com/maxgubitosi/unitree-go2-ros2
+cd ..
+
+# 3. Compilar el workspace
 colcon build --symlink-install
 source install/setup.bash
 ```
+
+> **Nota:** `unitree-go2-ros2` es un fork de [anujjain-dev/unitree-go2-ros2](https://github.com/anujjain-dev/unitree-go2-ros2) con adaptaciones para la plataforma marina. Debe clonarse manualmente dentro de `src/` antes de compilar.
 
 ## Uso básico
 
@@ -213,6 +295,17 @@ Herramientas para simulación de movimientos marinos en el robot Unitree Go2. In
 ### Rosbags
 Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scripts y ejemplos.
 
+## Nodos ROS2
+
+| Nodo | Paquete | Entrada | Salida | Descripción |
+|------|---------|---------|--------|-------------|
+| `marine_platform_simulator` | `go2_tools` | parámetros de onda | `/body_pose` | Genera oleaje sinusoidal/irregular (roll, pitch, heave) @ 20 Hz |
+| `marine_manual_control` | `go2_tools` | teclado | `/marine_platform/manual_cmd` | Control manual de roll/pitch/heave desde teclado |
+| `camera_controller` | `fixed_camera` | — | `/fixed_camera/pose`, TF `world→camera` | Publica pose fija y TF estático de la cámara nadir |
+| `aruco_detector` | `fixed_camera` | `/fixed_camera/image_raw` | `/aruco/pose`, `/aruco/debug_image` | Detecta ArUco DICT_6X6_250 (id=0, 0.50 m) con `solvePnP` |
+| `drone_position_controller` | `sjtu_drone_control` | `/drone/gt_pose` | `/drone/cmd_vel` | Auto-takeoff → hover a z = 3.0 m sobre la plataforma |
+| `aruco_detector` | `sjtu_drone_control` | `/drone/bottom/image_raw` | `/aruco/pose`, `/aruco/debug_image` | Mismo pipeline ArUco desde cámara bottom del dron |
+
 ## Topics principales
 
 ### Cámara fija
@@ -233,6 +326,38 @@ Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scrip
 - `/aruco/detection` - Flag de detección del ArUco (Bool)
 - `/aruco/debug_image` - Imagen anotada con bordes y ejes del ArUco detectado
 
+## Resultados
+
+Resultados sobre sesiones grabadas con el dron SJTU hovering a ~3 m sobre la plataforma Go2 con oleaje activo:
+
+| Métrica | Valor |
+|---------|-------|
+| Error euclidiano medio | ~7 cm (a 2.7 m de distancia) |
+| Error relativo | ~2.5% de la distancia cámara–marcador |
+| Eje con mayor varianza | Z (profundidad), std 5–8 cm |
+| Orientación más precisa | Yaw < 0.2° de error |
+| Tasa de detección | 2.4–3.6 Hz |
+
+### Detección en tiempo real — dron SJTU
+
+| Posición estimada vs GT | Orientación estimada vs GT |
+|:---:|:---:|
+| ![](docs/media/drone_position_est_vs_gt.png) | ![](docs/media/drone_orientation_est_vs_gt.png) |
+
+![Histogramas de error de posición y orientación](docs/media/drone_error_histograms.png)
+
+### Análisis offline — cámara fija
+
+| Error de posición | Scatter estimado vs GT |
+|:---:|:---:|
+| ![](docs/media/position_errors.png) | ![](docs/media/scatter_est_vs_gt.png) |
+
+### Frame de detección ArUco
+
+![Detección ArUco en tiempo real con ejes dibujados](docs/media/aruco_detection_frame.png)
+
+*Marcador ArUco DICT_6X6_250 (id=0, lado=0.50 m) sobre el torso del Go2. Ejes de pose estimada superpuestos en tiempo real.*
+
 ## Desarrollo
 
 ```bash
@@ -250,3 +375,14 @@ colcon build --symlink-install
 
 Maximo Gubitosi - mgubitosi@udesa.edu.ar  
 Jack Spolski - jspolski@udesa.edu.ar
+
+---
+
+## Roadmap
+
+- [ ] Pruebas de laboratorio con hardware real (branch `real`)
+- [ ] Control de aterrizaje autónomo basado en la estimación de pose ArUco
+- [ ] Soporte para espectro de oleaje irregular (Pierson-Moskowitz)
+- [ ] Integración con modelos de visión más robustos ante condiciones adversas
+
+
