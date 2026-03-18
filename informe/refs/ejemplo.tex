@@ -1,0 +1,341 @@
+\documentclass[12pt]{article}
+\usepackage{palatino}
+\usepackage[round]{natbib}
+\usepackage{chapterbib}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{multicol}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{multirow,array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{dcolumn}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage[labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{breaklinks=true}
+\usepackage[hang,flushmargin]{footmisc} 
+\usepackage{wrapfig, framed}
+\usepackage[section]{placeins}
+\usepackage{threeparttable}
+\usepackage{lscape}
+\usepackage{pdfpages}
+\usepackage[nodisplayskipstretch]{setspace}
+\usepackage{etoolbox}
+\AtBeginEnvironment{quote}{\singlespacing\small}
+\setstretch{1.5}
+\singlespacing
+\newcommand\fnote[1]{\captionsetup{font=footnotesize}\caption*{#1}}
+\sloppy
+\usepackage{comment}
+\usepackage{txfonts}
+\usepackage{verbatim}
+\usepackage{endnotes}
+\usepackage{upgreek}
+\usepackage[T1]{fontenc}
+\usepackage{arydshln}
+\usepackage{soul}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage[main=english,bidi=default]{babel}
+
+
+\begin{document}
+
+\bibliographystyle{plainnat}
+	
+\begin{titlepage} % Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+	\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for horizontal lines, change thickness here
+	
+	\centering % Centre everything on the page
+	
+	%------------------------------------------------
+	%	Headings
+	%------------------------------------------------
+	\includegraphics[width=0.4\linewidth]{images/logoudesa.jpg}	
+	\\[1cm]
+	\textsc{\Large Universidad de San Andrés}
+	\\[1cm] % Major heading such as course name
+	\textsc{Departamento de Economía}\\[1cm]
+        \textsc{Maestr\'ia en Econom\'ia}
+	\vspace{4pt}
+	
+	%------------------------------------------------
+	%	Title
+	%------------------------------------------------
+	\textcolor{white}{\HRule}\\[0.6cm]
+	\huge\bfseries Determinants of Cash and Money Demand: the role of banknote denomination
+
+	\textcolor{white}{\HRule}\\[1.5cm]
+	
+	%------------------------------------------------
+	%	Author(s)
+	%------------------------------------------------
+	\begin{center}
+		\Large
+		\textsc{Theo von Kesselstatt}\\
+                    \vspace{4pt}
+
+            \textsc{DNI: 42375065}\\
+                        \vspace{4pt}
+
+            \textsc{Mentor: Federico Sturzenegger}\\
+            
+            \vspace{4pt}
+            
+            \textsc{Buenos Aires, Argentina}
+                        \vspace{4pt}
+
+            \textsc{Julio 2025}
+	\end{center}
+
+\end{titlepage}
+
+\newpage
+
+\begin{center}
+    \textit{Tesis de Maestría en Economía de} \\[0.2cm]
+    \textbf{\LARGE Theo von Kesselstatt}
+\end{center}
+
+\vspace{0.8cm}
+
+\noindent
+\textbf{Determinantes de la demanda de dinero y efectivo: el rol de la denominación de los billetes}
+
+\vspace{0.3cm}
+\noindent
+\textbf{Resumen}
+
+\noindent
+¿Afecta la denominación de la moneda a la demanda de dinero? Para responder a esta pregunta, construí una base de datos con el valor de los billetes de mayor denominación de 79 países en la última década. Primero, proporcioné estadísticas descriptivas de estas denominaciones máximas y luego desarrollé una extensión del modelo Baumol-Tobin que permite que el costo de retiro dependa del número de billetes retirados. Estimé la demanda de dinero derivada del modelo y observé que el valor de compra de estos billetes, un indicador de la eficiencia del dinero, afecta no solo la demanda real de efectivo, sino también la demanda de dinero en países con billetes de baja denominación.
+
+\vspace{0.5cm}
+\noindent
+\textbf{Demanda de dinero, denominación de billetes, modelos de inventarios, eficiencia del dinero.}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Determinants of Cash and Money Demand: the role of banknote denomination}
+
+\vspace{0.3cm}
+\noindent
+\textbf{Abstract}
+
+\noindent
+Does currency denomination affect the demand for money? To answer this question, I constructed a database with the value of the maximum denomination banknote for 79 countries in the last decade. I first provide descriptive statistics of these maximum denominations and then develop an extension of the Baumol-Tobin model, allowing for the withdrawal cost to depend on the number of bills being withdrawn. I estimate the money demand derived from the model and find that the purchase value of these banknotes, a proxy for the efficiency of money, affects not only the real demand for cash but also the demand for broad money in countries with low-denomination bills.
+
+\vspace{0.5cm}
+\noindent
+\textbf{Keywords:} \textbf{Money demand, inventory models, money efficiency, Baumol-Tobin, banknote denomination.}
+
+\vspace{1cm}
+
+Códigos JEL: E41, E50, E52, E58.
+
+\newpage
+
+\doublespacing
+
+\setcounter{page}{0}
+
+\section{Introduction } \label{intro}
+
+The growing adoption of digital payment systems has resulted in a decline in the use of small-denomination banknotes, primarily due to the transaction costs associated with handling physical cash compared to digital alternatives, as highlighted by \cite{Amromin2009}, \cite{payment_wang_2016} and \cite{cash_chen_2019}. Nonetheless, these same studies show that the overall demand for physical currency has increased worldwide.
+
+Concurrently, \cite{rogoff2016} advocates for policymakers to consider prohibiting large-denomination bills, citing their prevalent use in illegal transactions. However, such a measure entails trade-offs. Specifically, reducing the maximum denomination of banknotes may decrease seigniorage revenue for monetary authorities, as noted by \cite{Hendrickson2021}. The size of the reduction in seigniorage would depend on the elasticity of money demand with respect to the purchasing power of the highest denomination bill.
+
+These discussions converge on a critical issue regarding the future of physical currency: the role of the purchasing power of large bills in shaping overall money demand.
+
+In mainstream money demand models, the interest rate is the sole variable controlled by monetary authorities that influences money demand. These models are usually in the benchmark form $ M_t = P_t y_t \phi(r_t) $. For practical reasons, there is extensive literature examining the properties of the function $\phi$, including the works of \cite{monetary_freeman_1998}, \cite{stability_lucas_2015} and \cite{Benati2021}. 
+
+Conversely, a relatively smaller body of research focuses on the role of currency denominations. These studies primarily investigate how denomination properties influence transaction costs between buyers and sellers (\cite{cash_chen_2019} and \cite{currency_shy_2020}) or determine the optimal denomination for minimizing those costs\footnote{The pioneering works of \cite{Sumner1993} and \cite{TELSER1995} showed that the optimal denomination problem associated with conducting exact transactions is analogous to Bâchet's weight minimizing problem, meaning that optimal denomination arrangements would have bill denominations differing between them by factors of three. \cite{TschoeglAdrianE1997Todo} explored how this rule is not followed by any country, biased by the decimal counting system.}. Other studies explore the impact of banknote denomination on the use of cash as a store of value (\cite{cash_shy_2023}).
+
+However, limited effort has been dedicated to connecting these two strands of the literature to address whether currency denominations influence aggregate money demand. Bridging the gap could yield valuable insights into the intrinsic value of money as a medium of exchange and assess the optimality of the policy recommendations proposed by \cite{rogoff2016}. In this study, I aim to address this issue by evaluating whether currency denominations have a broader impact on cash and money demand at an aggregate level.
+
+Several studies estimate richer variants of Baumol-Tobin models, including \cite{Attanasio2002}, \cite{financial_alvarez_2009}, and \cite{ALVAREZ2019206}. This work is more closely related to \cite{Amromin2009}. They first demonstrate that the demand for cash varies qualitatively based on the denomination size—small, medium, or large banknotes. They then assess how changes in various factors influencing currency demand, including short-term interest rates and payment infrastructure (both cash and alternative methods), impact the demand for each denomination segment. In contrast, this paper focuses on how changes in the purchasing power of those large banknotes affect overall cash demand and money.
+
+To achieve this, I first created a database of maximum denomination banknotes, which includes data from 79 countries over the last 10 years. In section \ref{database}, I present descriptive statistics that show that the average values of the maximum denomination bills exhibit significant cross-country variation. Moreover, even if the purchasing power of those bills declines, new banknotes with higher denominations are rarely issued.
+
+In section \ref{model}, I provide a simple extension to the canonical models developed by \cite{transactions_baumol_1952} and \cite{interestelasticity_tobin_1956}. This extension allows the cost of withdrawals to depend on the amount of cash being withdrawn, similar to \cite{optimal_milbourne_1983}, but allowing for nonlinear costs per bill. I identify necessary conditions on the parameters that determine the direction of the effect of the real purchasing power of banknotes on currency demand.
+
+In section \ref{econometric}, I estimate the cash and money demand using panel data for 35 countries for the last 10 years, using the standard variables in the literature and including the purchasing power of the maximum denomination banknote. I found that the purchasing power of banknotes does affect cash demand for all countries but particularly affects money demand in countries where the average dollar value of the maximum denomination banknote is below the median, suggesting that there might be increasing marginal costs per bill in terms of the model developed in section \ref{model}. My findings imply that if the real purchasing power of the maximum denomination banknote of a low-denomination country were halved, there would be a decrease of 6.9\% in the broad money demand.
+
+\section{A database of currency denominations} \label{database}
+
+The database with each country's maximum denomination banknote (MDB) was constructed using multiple sources, including information from each country's central banks and other publicly available documentation. The resulting database contains the evolution of the MDBs of 78 countries over the last decade.
+
+To facilitate cross-country comparisons, I converted the value of each banknote into its equivalent in current US dollars. Figure \ref{fig:histogram} illustrates the distribution of the average dollar value of the MDBs for each country during the sample period. The data reveals substantial cross-country variation, with values ranging from 3.12 USD in Nigeria to 7,315 USD in Brunei Darussalam.
+
+
+\begin{figure}[h!]
+    \centering
+    \caption{Average maximum denomination banknote in USD}
+    \includegraphics[scale=0.8]{images/nothresh.png}
+    \label{fig:histogram}
+\end{figure}
+
+
+To exploit the variability in the purchasing power of each country's maximum denomination banknote (MDB), I adjusted the nominal values by dividing them by the Consumer Price Index (CPI) and then normalized the resulting series to 1 at the point of maximum purchasing power within the sample period.\footnote{From this point forward, I focus exclusively on the subset of countries that report data on circulating currency, broad money, CPI and GDP in the International and Financial Statistics database, as these are essential for the empirical estimations.} Figure \ref{fig:real} depicts the evolution of the real purchasing power of these banknotes over time.
+
+\begin{figure}[h!]
+    \centering
+    \caption{Evolution of purchasing power and dollar values of maximum denomination bill}
+    \includegraphics[scale=0.65]{images/Real.png}
+    \includegraphics[scale=0.65]{images/USD.png}
+    \label{fig:real}
+\end{figure}
+
+Three key observations emerge from these figures. First, all countries in the sample experienced a steady decline in the purchasing power of their MDBs over the past decade, with this trend accelerating in the post-pandemic period due to the generalized surge in inflation. Second, only 6 out of the 35 countries in the sample updated the denomination of their highest-value banknotes, with most of these updates occurring when the MDB's equivalent value was less than 30 USD. Third, the within-country variability in the real dollar value of the MDB is considerably smaller than the variability in purchasing power when adjusted by the CPI.
+
+\section{Theoretical Model} \label{model}
+
+To analyze the effect of the denomination on money demand, I developed a simple extension of the Baumol-Tobin model that allows the cost of extracting currency to depend on the size of the withdrawal as in \cite{optimal_milbourne_1983} but allows for nonlinearity in the marginal cost for the transaction.
+
+As in the benchmark model, a consumer selects the amount and frequency of withdrawals required to sustain a steady flow of consumption. In this extension of the model, the extraction costs are disaggregated into two components: a fixed cost, as in the canonical versions of the model, and a variable cost that depends on the quantity of bills withdrawn. The following function captures this relationship:
+
+\begin{equation}
+    C\left(\frac{M_e}{\phi}\right) = \alpha + \left(\frac{M_e}{\phi}\right)^\sigma
+    \label{obj}
+\end{equation}
+
+The cost of each withdrawal has a fixed component, $\alpha$, but also depends on the number of bills withdrawn (i.e., the amount of money extracted $M_e$ in $\phi$ sized banknotes). The parameter $\sigma$ determines whether there are increasing or decreasing marginal costs associated with the amount of bills withdrawn.
+
+The consumer evaluates the trade-off between the cost of withdrawing currency and the opportunity cost of holding that money instead of holding an interest-bearing alternative that cannot be used as a means of exchange. Thus, the consumer faces the following cost-minimizing problem:
+
+\begin{equation}
+    \min_n \hspace{4pt} Rm + \left(\alpha + \left(\frac{M_e}{\phi}\right)^\sigma\right) n
+    \label{obj1}
+\end{equation}
+
+Where $R$ is the interest rate that the alternative form of savings yields, $m$ is the average real money balance, and $n$ is the amount of withdrawals the agent performs in the period. 
+
+As in the standard Baumol-Tobin model, the average real money balance is given by $ m = \frac{Y}{2n} $. In addition, the currency withdrawn must equal the consumption over the period, given by the equation $n M_e = PY $. Replacing these equations into (\ref{obj1}) results in the agent's objective function
+
+\begin{equation}
+    \min_n \hspace{4pt} \frac{RY}{2n} + \alpha n + \left(\frac{PY}{n\phi}\right)^\sigma n
+\end{equation}
+
+Defining $\varphi \coloneqq \frac{\phi}{P}$ as the real purchasing power of the maximum denomination banknote, the following objective function is obtained
+
+\begin{equation}
+    \min_n \hspace{4pt} \frac{RY}{2n} + \alpha n + \left(\frac{Y}{n\varphi}\right)^\sigma n
+\end{equation}
+
+Notice that if $\sigma = 1$, the problem is equivalent to the benchmark Baumol-Tobin as, in this particular case, changes in the number of withdrawals $n$ do not affect the cost associated with the number of bills extracted. Hence, the only relevant trade-off faced by the consumer would be balancing the fixed cost of withdrawing currency versus the benefit of gaining interest with the alternative means of savings.
+
+The first-order condition for the cost-minimizing problem is 
+
+\begin{equation}
+    \alpha = \frac{RY}{2n^2} + \left(\frac{Y}{n\varphi}\right)^\sigma (\sigma - 1)
+    \label{foc}
+\end{equation}
+
+This equation shows that the fixed cost of going one more time to the bank has to be equal to the marginal benefit of earning more interest plus the marginal utility of carrying fewer bills on those trips. As in \cite{Benati2021}, the solution cannot be solved algebraically.
+
+The second order condition is 
+
+\begin{equation}
+    \frac{RY}{(n^*)^3} + \frac{\sigma (\sigma - 1) Y^\sigma}{\varphi^\sigma (n^*)^{\sigma+1}}  > 0
+    \label{soc}
+\end{equation}
+
+In absence of an analytical solution for $n^*$, numerical methods suggest that the second order condition is positive for all values of $\sigma$ when evaluated at the solution for $n$, confirming that the optimal number of trips to the bank that arises from equation (\ref{foc}) indeed minimizes the consumer's objective function.
+
+To determine the effect of the change in the real purchasing power of the banknotes on the velocity of money, we apply implicit differentiation of equation (\ref{foc}) with respect to $\varphi$ to find how the optimal value of $n^*$ changes as the real denomination changes. The partial derivative yields the following equation:
+
+\begin{equation}
+    \frac{\partial n^*}{\partial \varphi} = - \frac{Y^\sigma \sigma (\sigma - 1) \varphi^{-\sigma - 1} (n^*)^{-\sigma}}{\frac{RY}{(n^*)^3} + \frac{\sigma (\sigma - 1) Y^\sigma}{\varphi^\sigma (n^*)^{\sigma+1}}}
+\end{equation}
+
+Evaluating this equation at the equilibrium value of $n$, given that the denominator is the second order condition, it follows that
+
+\begin{equation*}
+    \frac{\partial n^*}{\partial \varphi} = \left\{\begin{array}{lr}
+        < 0, & \text{for } \sigma > 1\\
+        = 0, & \text{for } \sigma = 1\\
+        > 0, & \text{for }\sigma < 1
+        \end{array} \right.
+\end{equation*}
+
+
+This simple extension of the model shows that changes in the purchasing power of the maximum denomination bill on money demand depend on the convexity of the cost function associated with carrying more bills.
+
+When the purchasing power of the MDB falls, the cash-in-advance constraint forces the agent to extract a greater number of bills over the same period. If the marginal costs were increasing, the agent would prefer to spread those costs over more trips, thus decreasing the average currency holdings and increasing the velocity of money. If marginal costs were constant, there would be no effect as the problem would return to the canonical version of Baumol Tobin. In the less intuitive case of concave costs, the agent would rather go to the bank less often and take advantage of the increasing returns to scale associated with the increase in the amount of bills to be withdrawn over the period.
+
+\section{Econometric Estimation} \label{econometric}
+
+To assess whether the real purchasing power of banknotes influences currency demand (in the model, it would imply that $\sigma \neq 1$), I estimated cash and broad money demand equations, incorporating the standard variables commonly used in the literature—such as the opportunity cost of money, country fixed effects, and time trends—while also including the normalized real purchasing power of the maximum denomination banknote.
+
+\subsection{The pandemic shock}
+
+As this study is primarily focused on the transactional demand for cash, it is necessary to address the shock to the money demand that arose in the early stages of the COVID-19 pandemic. As documented by \cite{ChenHeng2020CaCT} for the Canadian context, the pandemic period saw a sharp decline in the velocity of both cash and money, primarily driven by an increase in firms' demand for cash due to precautionary motives. This finding suggests that the rise in demand was largely attributable to the use of currency as a store of value. To find if the same pattern is replicated in other countries, I ran the regression
+
+$$y_{it} = \alpha_i + \delta_t + \varepsilon_{it} $$
+
+Where $y_{it}$ are the cash and broad money as a percentage of GDP, and I include only country and time effects. Figure \ref{fig:series} displays, on the left, the coefficients of $\delta_t$, and to the right, the log change in M1 and as a percentage of GDP. These figures suggest that all countries experienced an increase in both currency and broad money as a percentage of GDP, implying that the pattern identified by \cite{ChenHeng2020CaCT} probably extends to all countries in the sample.
+
+\begin{figure}[h!]
+  \centering
+    \caption{Pandemic Shock on velocity}
+    \includegraphics[scale=0.68]{images/coefs.png}
+    \includegraphics[scale=0.7]{images/pandemic.png}
+    \label{fig:series}
+\end{figure}
+
+Moreover, to determine if cash and money velocity were stationary variables, I conducted the \cite{evidence_zivot_1992} unit root tests, which allow for an endogenously determined breakpoint for the trend and intercept of the stochastic process. The test rejected the null hypothesis of a unit root for almost all countries, in line with the discussions in \cite{Amromin2009} and \cite{Benati2021}. Furthermore, the breakpoint was always in the second trimester of 2020, which is what I defined as the start of the pandemic period in the sample.
+
+For this reason, in the econometric specification, I include controls for observations of the post-pandemic period and also include a trend to that specific window to retain only the variability in the data that is not associated with the pandemic shock and the posterior reversal to the mean.
+
+\subsection{Specification}
+
+The econometric model was defined as follows:
+
+\begin{equation}
+    y_{it} = \alpha_i + \beta_1 R_{it} + \beta_2 \varphi_{it} + Pandemic_t*t + \varepsilon_{it}
+\end{equation}
+
+Where $y_{it}$ are the outcome variables (cash and broad money as a percentage of GDP), $\alpha_i$ controls for country fixed effects, and $R_{it}$ controls for the opportunity cost of money.\footnote{In the data, I used the central bank policy rates from the BIS. When not available, I used inflation as a proxy for the opportunity cost of money.} Finally, $\beta_2$ is the variable of interest to determine whether the real purchasing power of banknotes, $\varphi$, explains part of the cash and money demands. In a second specification of the model, I allow for the semi-elasticities of the interest rate to vary for each country. Table \ref{table:regression} shows the OLS estimates for each outcome variable and model specification.
+
+As indicated by the results, a lower purchasing power of the maximum denomination banknote is associated with reduced currency demand. Specifically, a 50\% depreciation in the value of banknotes corresponds to a 12\% decrease in the ratio of circulating currency to GDP. This coefficient is consistent with a value of $\sigma > 1$ in the model presented in Section \ref{model}, suggesting that there may be increasing marginal costs associated with the withdrawal of bills. Intuitively, carrying a few extra bills may not be burdensome initially, but as the number of bills increases, it eventually makes the use of cash a less convenient experience overall.
+
+Surprisingly, the effect is also significant for broad money. Nevertheless, the coefficient is more modest, as a decrease of 50\% in the purchasing power of the bill is associated with a 5.4\% reduction in the ratio of broad money to GDP. Reassuringly, the coefficients associated with the opportunity cost of money are negative across the sample, providing further confidence in the model specification. Results are robust to alternative specifications for the interest rates and real denomination. 
+
+%Moreover, results remain significant at the 5\% level when bootstrapped standard errors are clustered at the country level, allowing for within-country serial correlation.
+
+However, one may suspect that there is heterogeneity in the effect of changes in the purchasing power of banknotes. As the model of section \ref{model} suggests, the size of the impact depends on the denomination. For that reason, I estimated the econometric models from this section but allowed for heterogeneity in the effect of real denominations for countries with low and high denominations. I defined the threshold as the median of the average dollar values of the maximum denomination bill. The results for this estimation are shown in Table \ref{table:heterogeneity}.
+
+The results suggest that all countries experience the same correlation between real denomination and circulating currency. Nevertheless, it is the low-denomination countries that account for all of the effect of real denominations on the demand for broad money. In fact, for these countries, a decrease of 50\% in the purchasing power of the bill is associated with a 6.9\% reduction in the ratio of broad money to GDP. 
+
+This finding suggests that there are non-negligible costs associated with eliminating large banknotes in countries with low-denomination currencies. However, it is important to note that countries that have recently begun removing large banknotes from circulation, such as Singapore and the Euro Area, are not part of this low-denomination subset. This fact somewhat favors the proposal in \cite{rogoff2016}, as the seigniorage revenue lost from eliminating large banknotes may be less relevant for the countries currently considering his recommendations.
+
+\section{Conclusions}
+
+My review of the role of the purchasing power of maximum denomination banknotes leads to two main conclusions. First, banknote denomination influences cash demand, which is consistent with existing literature that examines how denomination properties affect transaction costs. This result is compatible with increasing marginal costs per bill in the withdrawal of currency, in terms of the model in section \ref{model}.
+
+Secondly, some countries that have experienced significant reductions in the purchasing power of their most valuable banknotes have seen a decrease not only in their cash demand but also in the demand for broad money. This result provides evidence of the intrinsic value of currency as a means of exchange, as the efficiency of cash translates into a higher demand for money in a broader sense. I find that if the real purchasing power of the maximum denomination bill of a low-denomination country were halved, there would be a decrease of 6.9\% in the broad money demand.
+
+However, this phenomenon is only present in countries where the average value of the largest banknote is relatively low. In high-denomination countries, cash efficiency has zero effect on the demand for broad money. In this regard, my findings suggest that countries considering the elimination of large denomination banknotes may face negligible costs, supporting the recommendations put forth by \cite{rogoff2016}.
+
+\begin{landscape}
+    \input{regressions/regression}
+\end{landscape}
+
+\begin{landscape}
+    \input{regressions/heterogeneity}
+\end{landscape}
+
+\bibliography{bibliography}
+
+\end{document}
+
+
+
