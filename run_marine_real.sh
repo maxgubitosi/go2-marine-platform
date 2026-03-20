@@ -25,11 +25,11 @@ echo "============================================"
 
 # ===== Configuración por defecto =====
 MANUAL=false
-MAX_ROLL=15.0
-MAX_PITCH=10.0
-MAX_HEAVE=0.02
-WAVE_FREQ=0.1
-WAVE_PATTERN="sinusoidal"
+MAX_ROLL=20.0
+MAX_PITCH=15.0
+MAX_HEAVE=0.04
+WAVE_FREQ=0.15
+WAVE_PATTERN="irregular"
 RAMP_SECONDS=3.0
 NETWORK_IFACE="enp2s0"
 
@@ -202,7 +202,7 @@ WAVE_FREQ=$(ensure_float "$WAVE_FREQ")
 RAMP_SECONDS=$(ensure_float "$RAMP_SECONDS")
 
 # ===== Lanzar nodo principal =====
-echo "Iniciando marine_platform_simulator en modo REAL..."
+echo "Iniciando marine_platform_simulator v2 en modo REAL..."
 ros2 run go2_tools marine_platform_simulator --ros-args \
     -p mode:=real \
     -p enable_manual:="$MANUAL" \
@@ -212,7 +212,9 @@ ros2 run go2_tools marine_platform_simulator --ros-args \
     -p wave_frequency:="$WAVE_FREQ" \
     -p wave_pattern:="$WAVE_PATTERN" \
     -p startup_ramp_seconds:="$RAMP_SECONDS" \
-    -p network_interface:="$NETWORK_IFACE" &
+    -p network_interface:="$NETWORK_IFACE" \
+    -p sender_rate_hz:=50.0 \
+    -p smoothing_tau:=0.08 &
 
 SIMULATOR_PID=$!
 

@@ -1,0 +1,74 @@
+# ══════════════════════════════════════════════════════════════════════
+#  Stereo Camera Configuration — 3D USB Camera (32e4:0035)
+#  Solo se usa UN lente (left o right) de la cámara estéreo side-by-side
+# ══════════════════════════════════════════════════════════════════════
+
+camera:
+  device: "/dev/video2"
+  # Frame completo estéreo side-by-side
+  full_width: 3840
+  full_height: 1080
+  # Resolución de cada ojo individual
+  eye_width: 1920
+  eye_height: 1080
+  fps: 30
+  codec: "MJPG"
+  # Lente a usar: "left" o "right" — se define en paso 01_preview_stereo.py
+  selected_eye: "left"
+
+# ══════════════════════════════════════════════════════════════════════
+#  Calibración — Checkerboard
+# ══════════════════════════════════════════════════════════════════════
+calibration:
+  # Esquinas interiores del checkerboard (columnas × filas)
+  checkerboard_cols: 8
+  checkerboard_rows: 6
+  # Tamaño de cada cuadro en mm
+  square_size_mm: 80.38
+  # Carpeta de imágenes capturadas
+  images_dir: "calibration/images"
+  # Archivo de resultado
+  result_file: "calibration/calibration_result.yaml"
+  # Número mínimo recomendado de imágenes
+  min_images: 20
+
+# ══════════════════════════════════════════════════════════════════════
+#  Intrínsecos de cámara — Se llenan automáticamente tras calibración
+# ══════════════════════════════════════════════════════════════════════
+intrinsics:
+  # Matriz K (3×3) — null hasta calibrar
+  matrix: [
+    [600.973121, 0.000000, 970.699341],
+    [0.000000, 598.818867, 527.942659],
+    [0.000000, 0.000000, 1.000000]
+  ]
+  # Coeficientes de distorsión [k1, k2, p1, p2, k3] — null hasta calibrar
+  dist_coeffs: [-0.03743180, 0.08764014, -0.00654204, 0.00183566, -0.06715972]
+  # Error RMS de reproyección
+  reprojection_error_px: 0.221355
+  # Modelo de distorsión: "pinhole" o "fisheye"
+  distortion_model: "pinhole"
+
+# ══════════════════════════════════════════════════════════════════════
+#  ArUco — Mismo marcador que el resto del proyecto
+# ══════════════════════════════════════════════════════════════════════
+aruco:
+  dictionary: "DICT_6X6_250"
+  target_id: 0
+  marker_length_m: 0.20
+  yaw_offset_rad: -1.57079632679
+  marker_offset_xyz: [0.0, 0.0, 0.091]
+
+# ══════════════════════════════════════════════════════════════════════
+#  Montaje — Posición fija (trípode/techo), medir cuando se instale
+# ══════════════════════════════════════════════════════════════════════
+mounting:
+  type: "fixed"  # "fixed" o "on_robot"
+  # Pose en el mundo (llenar con mediciones reales)
+  pose_world:
+    x: 0.0
+    y: 0.0
+    z: 2.0     # altura estimada, ajustar
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0

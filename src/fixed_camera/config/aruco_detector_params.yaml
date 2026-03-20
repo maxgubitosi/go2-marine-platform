@@ -7,3 +7,14 @@ aruco_detector:
     image_topic: "/fixed_camera/camera/image_raw"
     camera_info_topic: "/fixed_camera/camera/camera_info"
     use_sim_time: true
+
+# Config for lab real mode (used by lab_real.launch.py)
+aruco_detector_lab:
+  ros__parameters:
+    dictionary: "DICT_6X6_250"
+    target_id: 0
+    marker_length_m: 0.20
+    publish_debug_image: true
+    image_topic: "/stereo_camera/image_raw"
+    camera_info_topic: "/stereo_camera/camera_info"
+    use_sim_time: false

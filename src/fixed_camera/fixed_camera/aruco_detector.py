@@ -146,12 +146,19 @@ class ArucoDetector(Node):
                 idx = ids_flat.index(self.target_id)
                 corner = corners[idx]
 
-                # Pose estimation
-                rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
-                    corner, self.marker_length, self.camera_matrix, self.dist_coeffs
+                # Pose estimation via solvePnP (estimatePoseSingleMarkers
+                # was removed in OpenCV 4.8+)
+                half = self.marker_length / 2.0
+                obj_pts = np.array([
+                    [-half,  half, 0],
+                    [ half,  half, 0],
+                    [ half, -half, 0],
+                    [-half, -half, 0],
+                ], dtype=np.float32)
+                img_pts = corner.reshape(4, 2)
+                _, rvec, tvec = cv2.solvePnP(
+                    obj_pts, img_pts, self.camera_matrix, self.dist_coeffs
                 )
-                rvec = rvecs[0].reshape(3, 1)
-                tvec = tvecs[0].reshape(3, 1)
 
                 # Build PoseStamped (marker in camera optical frame)
                 pose_msg = PoseStamped()

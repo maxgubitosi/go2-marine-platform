@@ -27,6 +27,7 @@ setup(
         'console_scripts': [
             'camera_controller = fixed_camera.camera_controller:main',
             'aruco_detector = fixed_camera.aruco_detector:main',
+            'stereo_eye_publisher = fixed_camera.stereo_eye_publisher:main',
         ],
     },
 )
