@@ -81,10 +81,7 @@ La calibración actual (checkerboard 8×6, cuadros de 80.38 mm) dio RMS = 0.22 p
 
 ## Correr el experimento
 
-> **IMPORTANTE — Separación de terminales:**
-> - La terminal del Go2 (`run_marine_real.sh`) usa **CycloneDDS** internamente para comunicarse con el robot por Ethernet.
-> - Las demás terminales (cámara, visualización, grabación) usan **FastRTPS** (default de ROS2).
-> - **Nunca mezclar**: si ves errores `enp2s0: does not match an available interface`, es porque `CYCLONEDDS_URI` está contaminando esa terminal. Solución: agregar `unset CYCLONEDDS_URI` y `export RMW_IMPLEMENTATION=rmw_fastrtps_cpp` al inicio.
+> **NOTA:** El script `run_marine_real.sh` configura CycloneDDS internamente para comunicarse con el Go2. Las demás terminales usan FastRTPS (default de ROS2). Si por alguna razón ves errores `enp2s0: does not match an available interface`, verificá que tu `.bashrc` no exporte `CYCLONEDDS_URI` ni `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`.
 
 ### Terminal 1: Movimiento marino del Go2 real
 
@@ -108,8 +105,6 @@ Parámetros por defecto: roll ±20°, pitch ±15°, heave ±0.04 m, freq 0.15 Hz
 ### Terminal 2: Cámara + detección ArUco
 
 ```bash
-unset CYCLONEDDS_URI
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 ros2 launch fixed_camera lab_real.launch.py
@@ -131,8 +126,6 @@ Esto lanza 3 nodos:
 ### Terminal 3 (opcional): Visualizar en tiempo real
 
 ```bash
-unset CYCLONEDDS_URI
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 source /opt/ros/humble/setup.bash
 ros2 run rqt_image_view rqt_image_view
 ```
@@ -144,8 +137,6 @@ Seleccionar en el dropdown:
 ### Terminal 4: Grabar rosbag
 
 ```bash
-unset CYCLONEDDS_URI
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 cd rosbags
@@ -172,14 +163,10 @@ cd rosbags
 
 ```bash
 # Terminal A: reproducir el bag
-unset CYCLONEDDS_URI
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 source /opt/ros/humble/setup.bash
 ros2 bag play rosbags/lab_real_20260310_133022/
 
 # Terminal B: visualizar
-unset CYCLONEDDS_URI
-export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 source /opt/ros/humble/setup.bash
 ros2 run rqt_image_view rqt_image_view
 # Seleccionar /aruco/debug_image para ver la detección frame a frame
@@ -235,7 +222,7 @@ ffplay rosbags/lab_real_20260310_133022/exports/debug_video.mp4
 
 | Problema | Causa | Solución |
 |---|---|---|
-| `enp2s0: does not match an available interface` | `CYCLONEDDS_URI` contaminando la terminal | `unset CYCLONEDDS_URI` + `export RMW_IMPLEMENTATION=rmw_fastrtps_cpp` |
+| `enp2s0: does not match an available interface` | `CYCLONEDDS_URI` exportado en `.bashrc` u otra terminal | Verificar que `.bashrc` no exporte `CYCLONEDDS_URI`. Si lo hace, comentar esas líneas |
 | ArUco no se detecta | Marcador no visible, mal iluminado, o muy lejos | Verificar con `rqt_image_view` en `/aruco/debug_image` |
 | `record_lab_real.sh` muestra topics ✗ | Terminal 2 no está corriendo o usa otro RMW | Verificar que `lab_real.launch.py` esté corriendo sin errores |
 | FPS bajo en la grabación | Disco lento, imágenes 1920×1080 sin comprimir | Normal (~1-2 fps con imágenes crudas en disco HDD) |
