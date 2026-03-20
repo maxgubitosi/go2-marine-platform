@@ -57,6 +57,12 @@ class MarinePlatformSimulator(Node):
         self.declare_parameter('wave_pattern', 'irregular')
         self.declare_parameter('phase_offset_pitch', 1.0)
         self.declare_parameter('phase_offset_heave', 1.5)
+        self.declare_parameter('motion_model', 'second_order')
+        self.declare_parameter('damping_ratio', 0.82)
+        self.declare_parameter('natural_frequency_hz', 0.9)
+        self.declare_parameter('max_roll_rate_deg_s', 45.0)
+        self.declare_parameter('max_pitch_rate_deg_s', 35.0)
+        self.declare_parameter('max_heave_rate_m_s', 0.18)
 
         # Smoothing temporal: tau = constante de tiempo en segundos.
         # tau=0.08s → 95% del target en ~0.24s (3*tau). Rate-independent.
@@ -90,6 +96,9 @@ class MarinePlatformSimulator(Node):
         self.smooth_roll = 0.0
         self.smooth_pitch = 0.0
         self.smooth_heave = 0.0
+        self.roll_velocity = 0.0
+        self.pitch_velocity = 0.0
+        self.heave_velocity = 0.0
         self._last_smooth_time = time.monotonic()
 
         # --- Variables compartidas con sender thread (modo real) ---
@@ -140,9 +149,14 @@ class MarinePlatformSimulator(Node):
             ramp = self.get_parameter('startup_ramp_seconds').value
             sr = self.get_parameter('sender_rate_hz').value
             tau = self.get_parameter('smoothing_tau').value
+            motion_model = self.get_parameter('motion_model').value
+            damping = self.get_parameter('damping_ratio').value
+            natural_hz = self.get_parameter('natural_frequency_hz').value
             self.get_logger().info(f"Límites REAL — Roll: ±{mr}°, Pitch: ±{mp}°, "
                                    f"Heave: ±{mh}m, Rampa: {ramp}s")
             self.get_logger().info(f"Sender: {sr} Hz target, Smoothing tau: {tau}s")
+            self.get_logger().info(
+                f"Motion model: {motion_model}, zeta={damping}, fn={natural_hz}Hz")
 
     # =================================================================
     #  SETUP: modo sim
@@ -254,10 +268,19 @@ class MarinePlatformSimulator(Node):
         sender_hz = self.get_parameter('sender_rate_hz').get_parameter_value().double_value
         interval = 1.0 / max(1.0, sender_hz)
         tau = self.get_parameter('smoothing_tau').get_parameter_value().double_value
+        motion_model = self.get_parameter('motion_model').get_parameter_value().string_value
+        damping_ratio = self.get_parameter('damping_ratio').get_parameter_value().double_value
+        natural_frequency_hz = self.get_parameter(
+            'natural_frequency_hz').get_parameter_value().double_value
+        max_roll_rate = self.get_parameter('max_roll_rate_deg_s').get_parameter_value().double_value
+        max_pitch_rate = self.get_parameter(
+            'max_pitch_rate_deg_s').get_parameter_value().double_value
 
         # Smoothing state local al sender (no compartido)
         smooth_roll = 0.0
         smooth_pitch = 0.0
+        roll_velocity = 0.0
+        pitch_velocity = 0.0
         last_time = time.monotonic()
 
         # Tracking de frame rate y latencia
@@ -292,13 +315,21 @@ class MarinePlatformSimulator(Node):
                 dt = now - last_time
                 last_time = now
 
-                if tau > 0.0 and dt > 0.0:
-                    alpha = 1.0 - math.exp(-dt / tau)
+                if motion_model == 'second_order':
+                    smooth_roll, roll_velocity = self._advance_second_order(
+                        smooth_roll, roll_velocity, target_roll_deg, dt,
+                        natural_frequency_hz, damping_ratio, max_roll_rate)
+                    smooth_pitch, pitch_velocity = self._advance_second_order(
+                        smooth_pitch, pitch_velocity, target_pitch_deg, dt,
+                        natural_frequency_hz, damping_ratio, max_pitch_rate)
                 else:
-                    alpha = 1.0
+                    if tau > 0.0 and dt > 0.0:
+                        alpha = 1.0 - math.exp(-dt / tau)
+                    else:
+                        alpha = 1.0
 
-                smooth_roll += alpha * (target_roll_deg - smooth_roll)
-                smooth_pitch += alpha * (target_pitch_deg - smooth_pitch)
+                    smooth_roll += alpha * (target_roll_deg - smooth_roll)
+                    smooth_pitch += alpha * (target_pitch_deg - smooth_pitch)
 
                 # --- 5. Convertir y clampear ---
                 roll_rad = math.radians(smooth_roll)
@@ -368,7 +399,47 @@ class MarinePlatformSimulator(Node):
         phase_heave = self.get_parameter('phase_offset_heave').get_parameter_value().double_value
         omega = 2.0 * math.pi * freq
 
-        if self.get_parameter('wave_pattern').value == 'irregular':
+        wave_pattern = self.get_parameter('wave_pattern').value
+        if wave_pattern == 'marine':
+            # Mezcla no estacionaria: swell lento + componentes cruzadas + modulación
+            # de amplitud para evitar una trayectoria periódica "de servo".
+            envelope = (
+                0.82
+                + 0.14 * math.sin(omega * current_time * 0.11 + 0.4)
+                + 0.08 * math.sin(omega * current_time * 0.037 + 1.7)
+            )
+            roll_primary = math.sin(omega * current_time + 0.35 * math.sin(omega * current_time * 0.13))
+            roll_secondary = math.sin(omega * current_time * 1.62 + 0.8)
+            roll_detail = math.sin(omega * current_time * 2.45 + 0.3 * math.sin(omega * current_time * 0.41))
+            pitch_primary = math.sin(
+                omega * current_time * 0.91 * phase_pitch
+                + math.pi / 5
+                + 0.28 * math.sin(omega * current_time * 0.09 + 0.6)
+            )
+            pitch_secondary = math.sin(omega * current_time * 1.38 + 1.4)
+            heave_primary = math.sin(
+                omega * current_time * 0.74 * phase_heave
+                + 0.22 * math.sin(omega * current_time * 0.07 + 0.9)
+            )
+            heave_secondary = math.sin(omega * current_time * 1.16 + math.pi / 7)
+
+            roll_deg = max_roll * envelope * (
+                0.62 * roll_primary +
+                0.26 * roll_secondary +
+                0.12 * roll_detail
+            )
+            pitch_deg = max_pitch * envelope * (
+                0.54 * pitch_primary +
+                0.24 * pitch_secondary +
+                0.14 * roll_primary +
+                0.08 * heave_primary
+            )
+            heave_m = max_heave * (
+                0.68 * heave_primary +
+                0.22 * heave_secondary +
+                0.10 * roll_secondary
+            )
+        elif wave_pattern == 'irregular':
             roll_deg = (max_roll * 0.6 * math.sin(omega * current_time) +
                         max_roll * 0.3 * math.sin(omega * current_time * 1.3 + math.pi / 4) +
                         max_roll * 0.1 * math.sin(omega * current_time * 2.1 + math.pi / 2))
@@ -385,21 +456,63 @@ class MarinePlatformSimulator(Node):
         return roll_deg, pitch_deg, heave_m
 
     def _apply_temporal_smoothing(self, target_roll, target_pitch, target_heave):
-        """Smoothing temporal rate-independent para modo sim."""
+        """Filtro temporal para modo sim."""
         now = time.monotonic()
         dt = now - self._last_smooth_time
         self._last_smooth_time = now
 
-        tau = self.get_parameter('smoothing_tau').get_parameter_value().double_value
-        if tau > 0.0 and dt > 0.0:
-            alpha = 1.0 - math.exp(-dt / tau)
-        else:
-            alpha = 1.0
+        motion_model = self.get_parameter('motion_model').get_parameter_value().string_value
+        if motion_model == 'second_order':
+            damping_ratio = self.get_parameter('damping_ratio').get_parameter_value().double_value
+            natural_frequency_hz = self.get_parameter(
+                'natural_frequency_hz').get_parameter_value().double_value
+            max_roll_rate = self.get_parameter('max_roll_rate_deg_s').get_parameter_value().double_value
+            max_pitch_rate = self.get_parameter(
+                'max_pitch_rate_deg_s').get_parameter_value().double_value
+            max_heave_rate = self.get_parameter(
+                'max_heave_rate_m_s').get_parameter_value().double_value
 
-        self.smooth_roll += alpha * (target_roll - self.smooth_roll)
-        self.smooth_pitch += alpha * (target_pitch - self.smooth_pitch)
-        self.smooth_heave += alpha * (target_heave - self.smooth_heave)
+            self.smooth_roll, self.roll_velocity = self._advance_second_order(
+                self.smooth_roll, self.roll_velocity, target_roll, dt,
+                natural_frequency_hz, damping_ratio, max_roll_rate)
+            self.smooth_pitch, self.pitch_velocity = self._advance_second_order(
+                self.smooth_pitch, self.pitch_velocity, target_pitch, dt,
+                natural_frequency_hz, damping_ratio, max_pitch_rate)
+            self.smooth_heave, self.heave_velocity = self._advance_second_order(
+                self.smooth_heave, self.heave_velocity, target_heave, dt,
+                natural_frequency_hz, damping_ratio, max_heave_rate)
+        else:
+            tau = self.get_parameter('smoothing_tau').get_parameter_value().double_value
+            if tau > 0.0 and dt > 0.0:
+                alpha = 1.0 - math.exp(-dt / tau)
+            else:
+                alpha = 1.0
+
+            self.smooth_roll += alpha * (target_roll - self.smooth_roll)
+            self.smooth_pitch += alpha * (target_pitch - self.smooth_pitch)
+            self.smooth_heave += alpha * (target_heave - self.smooth_heave)
         return self.smooth_roll, self.smooth_pitch, self.smooth_heave
+
+    def _advance_second_order(
+            self, current, velocity, target, dt,
+            natural_frequency_hz, damping_ratio, max_rate):
+        """Dinámica 2º orden para dar sensación de masa e inercia."""
+        if dt <= 0.0:
+            return current, velocity
+
+        omega_n = max(0.01, 2.0 * math.pi * natural_frequency_hz)
+        damping = max(0.05, damping_ratio)
+        acceleration = (
+            (omega_n * omega_n) * (target - current) -
+            (2.0 * damping * omega_n) * velocity
+        )
+        velocity += acceleration * dt
+
+        if max_rate > 0.0:
+            velocity = max(-max_rate, min(max_rate, velocity))
+
+        current += velocity * dt
+        return current, velocity
 
     def _get_startup_ramp_factor(self):
         if not self.is_real:

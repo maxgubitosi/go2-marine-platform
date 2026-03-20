@@ -15,6 +15,7 @@
 #   ./run_marine_real.sh                    # Modo automático, parámetros default
 #   ./run_marine_real.sh --manual           # Modo manual (abre ventana de control)
 #   ./run_marine_real.sh --roll 3 --pitch 3 # Custom limits (grados)
+#   ./run_marine_real.sh --profile dance    # Perfil fluido tipo "baile"
 # =============================================================================
 
 set -e
@@ -32,6 +33,41 @@ WAVE_FREQ=0.15
 WAVE_PATTERN="irregular"
 RAMP_SECONDS=3.0
 NETWORK_IFACE="enp2s0"
+SMOOTHING_TAU=0.08
+SENDER_RATE_HZ=50.0
+PROFILE="custom"
+
+apply_profile() {
+    local profile="$1"
+    case "$profile" in
+        dance)
+            MAX_ROLL=12.0
+            MAX_PITCH=13.0
+            MAX_HEAVE=0.04
+            WAVE_FREQ=0.11
+            WAVE_PATTERN="marine"
+            RAMP_SECONDS=8.0
+            SMOOTHING_TAU=0.08
+            SENDER_RATE_HZ=60.0
+            ;;
+        dance_safe)
+            MAX_ROLL=6.0
+            MAX_PITCH=9.0
+            MAX_HEAVE=0.04
+            WAVE_FREQ=0.10
+            WAVE_PATTERN="marine"
+            RAMP_SECONDS=12.0
+            SMOOTHING_TAU=0.08
+            SENDER_RATE_HZ=45.0
+            ;;
+        custom)
+            ;;
+        *)
+            echo "ERROR: Perfil desconocido '$profile'. Opciones: dance, dance_safe"
+            exit 1
+            ;;
+    esac
+}
 
 # ===== Parse argumentos =====
 while [[ $# -gt 0 ]]; do
@@ -60,11 +96,22 @@ while [[ $# -gt 0 ]]; do
         --iface)
             NETWORK_IFACE="$2"
             shift 2 ;;
+        --tau)
+            SMOOTHING_TAU="$2"
+            shift 2 ;;
+        --sender-hz)
+            SENDER_RATE_HZ="$2"
+            shift 2 ;;
+        --profile)
+            PROFILE="$2"
+            apply_profile "$PROFILE"
+            shift 2 ;;
         --help|-h)
             echo "Uso: $0 [opciones]"
             echo ""
             echo "Opciones:"
             echo "  --manual          Modo manual (abre control por teclado)"
+            echo "  --profile NAME    Perfil: dance | dance_safe"
             echo "  --roll  DEG       Máx roll en grados (default: $MAX_ROLL)"
             echo "  --pitch DEG       Máx pitch en grados (default: $MAX_PITCH)"
             echo "  --heave M         Máx heave en metros (default: $MAX_HEAVE)"
@@ -72,6 +119,8 @@ while [[ $# -gt 0 ]]; do
             echo "  --pattern TYPE    'sinusoidal' o 'irregular' (default: $WAVE_PATTERN)"
             echo "  --ramp  SEC       Rampa de arranque en seg (default: $RAMP_SECONDS)"
             echo "  --iface NAME      Interfaz de red (default: $NETWORK_IFACE)"
+            echo "  --tau SEC         Suavizado temporal (default: $SMOOTHING_TAU)"
+            echo "  --sender-hz HZ    Frecuencia sender thread (default: $SENDER_RATE_HZ)"
             exit 0 ;;
         *)
             echo "Opción desconocida: $1"
@@ -175,6 +224,7 @@ trap cleanup SIGINT SIGTERM
 echo ""
 echo "============================================"
 echo "  Configuración:"
+echo "    Perfil:   $PROFILE"
 echo "    Modo:     $([ "$MANUAL" = true ] && echo 'MANUAL' || echo 'AUTOMÁTICO')"
 echo "    Roll:     ±${MAX_ROLL}°"
 echo "    Pitch:    ±${MAX_PITCH}°"
@@ -182,6 +232,8 @@ echo "    Heave:    ±${MAX_HEAVE}m"
 echo "    Ola freq: ${WAVE_FREQ} Hz"
 echo "    Patrón:   ${WAVE_PATTERN}"
 echo "    Rampa:    ${RAMP_SECONDS}s"
+echo "    Tau:      ${SMOOTHING_TAU}s"
+echo "    Sender:   ${SENDER_RATE_HZ} Hz"
 echo "============================================"
 echo ""
 
@@ -200,6 +252,8 @@ MAX_PITCH=$(ensure_float "$MAX_PITCH")
 MAX_HEAVE=$(ensure_float "$MAX_HEAVE")
 WAVE_FREQ=$(ensure_float "$WAVE_FREQ")
 RAMP_SECONDS=$(ensure_float "$RAMP_SECONDS")
+SMOOTHING_TAU=$(ensure_float "$SMOOTHING_TAU")
+SENDER_RATE_HZ=$(ensure_float "$SENDER_RATE_HZ")
 
 # ===== Lanzar nodo principal =====
 echo "Iniciando marine_platform_simulator v2 en modo REAL..."
@@ -213,8 +267,8 @@ ros2 run go2_tools marine_platform_simulator --ros-args \
     -p wave_pattern:="$WAVE_PATTERN" \
     -p startup_ramp_seconds:="$RAMP_SECONDS" \
     -p network_interface:="$NETWORK_IFACE" \
-    -p sender_rate_hz:=50.0 \
-    -p smoothing_tau:=0.08 &
+    -p sender_rate_hz:="$SENDER_RATE_HZ" \
+    -p smoothing_tau:="$SMOOTHING_TAU" &
 
 SIMULATOR_PID=$!
 
