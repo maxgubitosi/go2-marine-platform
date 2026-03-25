@@ -452,7 +452,28 @@ ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
 bottom del \texttt{sjtu\_drone}, que despega automáticamente y entra en modo de
 hover sobre el Go2. Esta dualidad nos permitió estudiar dos escenarios
 complementarios: uno estático, donde la cámara no agrega movimiento propio, y
-otro móvil, donde la percepción depende también de la pose del dron.
+otro móvil, donde la percepción depende también de la pose del dron. La
+Figura~\ref{fig:method_visual_setup} resume visualmente el setup empleado para
+ambos casos.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.28\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/setup/unitree-aruco.png}
+\caption{Go2 con el marcador ArUco montado sobre el torso.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.62\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/setup/drone-unitree-aruco.png}
+\caption{Escenario con el \texttt{sjtu\_drone} en hover sobre la plataforma.}
+\end{subfigure}
+\caption{Vistas del entorno simulado utilizadas en el framework. A la izquierda
+se observa la plataforma instrumentada con el marcador; a la derecha, el caso
+con cámara aérea, donde la percepción depende además de la pose del dron.}
+\label{fig:method_visual_setup}
+\end{figure}
 
 En ambos casos la estimación visual se resolvió con un nodo
 \texttt{aruco\_detector} dedicado. El detector consume la imagen RGB y la
@@ -462,7 +483,17 @@ metros. Una vez detectadas las esquinas, OpenCV estima la pose relativa del
 marcador respecto del frame óptico de la cámara mediante \texttt{solvePnP}. El
 resultado se publica en \texttt{/aruco/pose} como un \texttt{PoseStamped},
 mientras que \texttt{/aruco/detection} y \texttt{/aruco/debug\_image} se utilizan
-para inspección y depuración.
+para inspección y depuración. Un ejemplo del frame anotado que produce el
+detector puede verse en la Figura~\ref{fig:method_aruco_detection_frame}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.68\textwidth]{figures/images/aruco_detection_frame.png}
+\caption{Salida visual del detector ArUco durante una corrida de simulación. Se
+observa el marcador \texttt{DICT\_6X6\_250} con identificador \(0\) sobre el
+torso del Go2, junto con los ejes de pose estimada superpuestos en tiempo real.}
+\label{fig:method_aruco_detection_frame}
+\end{figure}
 
 La cámara fija se modeló como un sensor estático en Gazebo con una altura base
 de \(2{,}0\) m y un frame rígido respecto del mundo. En cambio, el dron se
