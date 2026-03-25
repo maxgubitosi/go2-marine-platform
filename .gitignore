@@ -29,6 +29,12 @@ output.avi
 !docs/media/*.gif
 !docs/media/*.jpeg
 
+# Figuras del informe LaTeX (sí versionar)
+!informe/figures/**/*.png
+!informe/figures/**/*.jpg
+!informe/figures/**/*.jpeg
+!informe/figures/**/*.pdf
+
 # CSV generados
 *.csv
 
@@ -40,3 +46,19 @@ marine_robot_dataset/datasets/
 *.pyo
 *.pyd
 .Python
+
+# Informe LaTeX: artefactos de compilación (no versionar)
+informe/*.aux
+informe/*.bbl
+informe/*.blg
+informe/*.fdb_latexmk
+informe/*.fls
+informe/*.log
+informe/*.out
+informe/*.synctex.gz
+informe/*.toc
+informe/*.lof
+informe/*.lot
+informe/*.xdv
+# PDF generado al compilar (no subir; el informe se compila desde main.tex)
+informe/*.pdf

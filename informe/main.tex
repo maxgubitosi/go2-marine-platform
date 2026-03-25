@@ -30,7 +30,7 @@
 \usepackage{sectsty}
 \usepackage{tikz}
 \usepackage{lipsum}
-\usepackage{subfig}
+% \usepackage{subfig}
 \usepackage{pdfpages}
 \usepackage{pdflscape}
 \usepackage[nodisplayskipstretch]{setspace}
@@ -53,19 +53,52 @@
 \usepackage{fontspec}
 \usepackage[main=spanish,bidi=default]{babel}
 \usepackage{natbib}
+\newcommand{\figureplaceholder}[3]{
+\begin{figure}[H]
+\centering
+\fbox{
+\parbox{0.85\textwidth}{
+\centering
+\textbf{Figura pendiente}\\[0.4em]
+#2
+}
+}
+\caption{#3}
+\label{#1}
+\end{figure}
+}
+\newcommand{\pendingcitation}[1]{\textcolor{red}{[CITA PENDIENTE: #1]}}
+\newcommand{\pendingreal}[1]{
+\begin{quote}
+\noindent\textbf{[REAL PENDIENTE]} #1
+\end{quote}
+}
 
 \begin{document}
 
 \bibliographystyle{plainnat}
 
-\begin{titlepage}
 \title{\textbf{Framework de simulación marina para un robot cuadrúpedo Unitree Go2 }
 % \thanks{The author thanks Federico Sturzenegger for his generous guidance and mentorship.}
 }
-
 \author{Máximo Gubitosi, Jack Spolski}
 \date{Abril, 2026}
-\maketitle
+
+\begin{titlepage}
+\makeatletter
+% Tras \includegraphics hace falta \par; si no, el autor queda a la derecha de la imagen.
+\begin{center}
+\vspace*{1.5cm}
+{\LARGE\@title\par}
+\vspace{2cm}
+\includegraphics[width=0.48\textwidth]{figures/setup/logoudesa.jpg}
+\par
+\vspace{2cm}
+{\large\@author\par}
+\vspace{0.9em}
+{\large\@date\par}
+\end{center}
+\makeatother
 \begin{abstract}
 
 
@@ -90,23 +123,402 @@
 
 \section{Marco teórico} \label{mt}
 
-\subsection{⁠⁠Interpolación de olas}
+\subsection{Interpolación de olas}
 
-\subsection{⁠⁠Cinemática directa inversa de un robot cuadrúpedo}
+En dinámica marina, el movimiento rígido de una plataforma suele describirse con
+seis grados de libertad: tres traslaciones y tres rotaciones
+\pendingcitation{Referencia de cinemática marina y convención surge, sway, heave, roll, pitch, yaw}.
+Sin embargo, no todos esos movimientos afectan de la misma manera al problema de
+percepción que abordamos en este trabajo. En nuestro setup, la cámara observa un
+marcador montado sobre el torso del Go2 y la simulación mantiene anuladas las
+componentes horizontales \(x\) e \(y\), así como la rotación en yaw. Por esa
+razón, el modelo se reduce a los tres grados de libertad que dominan la
+variación visual del marcador: roll, pitch y heave.
 
-\subsection{⁠⁠detección de patrones visuales}
+Roll describe la inclinación lateral de la plataforma respecto de su eje
+longitudinal; pitch representa la inclinación hacia adelante o hacia atrás
+respecto del eje transversal; y heave corresponde al desplazamiento vertical del
+cuerpo completo. Desde el punto de vista de la visión, estas tres componentes
+son suficientes para generar los efectos principales que luego enfrenta el
+estimador: cambios de orientación del plano del marcador, variación en la
+proyección de sus esquinas y modificación de la distancia cámara--objetivo. En
+otras palabras, aunque el modelo no pretende reproducir toda la dinámica de una
+embarcación, sí conserva las perturbaciones más relevantes para validar una
+estimación de pose basada en imagen.
+
+Una manera simple y controlada de representar este movimiento consiste en
+modelar cada componente como una señal periódica y acotada en el tiempo. Si
+\(q(t)\) denota cualquiera de las variables \(r(t)\), \(p(t)\) o \(h(t)\),
+puede escribirse en forma general como
+
+\begin{equation}
+q(t) = A \sin(2 \pi f t + \phi),
+\end{equation}
+
+donde \(A\) fija la amplitud máxima, \(f\) la frecuencia de oscilación y
+\(\phi\) un desfase inicial. Esta familia de señales resulta adecuada para un
+framework de validación porque permite generar trayectorias suaves,
+reproducibles y fácilmente parametrizables. Además, facilita el análisis
+posterior, ya que las excitaciones quedan definidas por pocos parámetros y no
+por una secuencia arbitraria de poses.
+
+En el proyecto, esta idealización cumple una función metodológica antes que
+oceanográfica. El objetivo no es estimar un estado de mar realista, sino contar
+con una excitación controlada que permita comparar, cuadro a cuadro, la pose
+visual estimada con una referencia conocida. Por eso, la señal sinusoidal se usa
+como patrón principal y las variantes más irregulares se reservan para pruebas
+de estrés o de robustez. Esta misma elección aparece luego en el método, donde
+el nodo \texttt{marine\_platform\_simulator} implementa de manera explícita esa
+aproximación sobre el torso del Go2.
+
+\subsection{Control postural del Go2 en simulación}
+
+Un robot cuadrúpedo puede modificar la pose de su torso sin necesidad de
+desplazarse horizontalmente, simplemente cambiando la configuración relativa de
+sus patas. Desde el punto de vista cinemático, el cuerpo principal actúa como un
+sólido rígido conectado a cuatro cadenas articuladas, una por extremidad, y la
+postura resultante del torso depende de la posición de los pies y de los ángulos
+de cada articulación \pendingcitation{Referencia de cinemática de cuadrúpedos o control postural en robots de patas}. En el caso del Go2, este principio es el que permite usar al robot como plataforma marina simulada: no se modela una embarcación aparte, sino que se induce una inclinación y una variación de altura sobre el torso del cuadrúpedo.
+
+Para nuestro problema, la idea importante no es la locomoción completa sino el
+control postural en apoyo. Si los puntos de contacto con el suelo permanecen
+dentro de una vecindad de una postura nominal, pequeñas variaciones en la
+longitud efectiva y en la orientación de las patas producen cambios
+correspondientes en roll, pitch y altura del cuerpo. En términos intuitivos, un
+incremento diferencial entre las patas izquierdas y derechas genera roll; una
+diferencia entre patas delanteras y traseras produce pitch; y una extensión o
+retracción aproximadamente simétrica de las cuatro patas modifica la componente
+vertical asociada a heave.
+
+Esta relación se formaliza habitualmente mediante dos operaciones complementarias.
+Por un lado, la cinemática inversa calcula qué ángulos articulares son necesarios
+para alcanzar una determinada geometría de las patas o una pose deseada del
+cuerpo. Por otro, la cinemática directa permite recuperar la configuración del
+robot a partir del estado articular y, por lo tanto, reconstruir la pose del
+torso y de otros frames de interés. En el pipeline de este trabajo, estas ideas
+aparecen de forma concreta cuando una pose deseada del cuerpo se transforma en
+posiciones objetivo para los pies y luego en comandos articulares para las doce
+articulaciones del Go2.
+
+También es útil distinguir dos marcos de referencia del robot que reaparecen en
+la implementación. El frame del torso, usualmente asociado a
+\texttt{base\_link}, es el que transporta el marcador y cuya orientación resulta
+relevante para la cámara. En cambio, un frame como \texttt{base\_footprint}
+resume la referencia del robot sobre el plano de apoyo y desacopla, en parte, la
+posición horizontal de la elevación del cuerpo. Esta separación entre torso y
+footprint es especialmente conveniente en un escenario como el nuestro, donde la
+estimación visual depende de la pose tridimensional del marcador, pero la
+reconstrucción del estado del robot combina información de orientación, altura y
+odometría en distintos tópicos.
+
+En síntesis, el fundamento teórico de esta subsección es que una pose deseada del
+cuerpo puede implementarse indirectamente mediante la reconfiguración coordinada
+de las patas. Sobre esa idea se apoya luego la sección de método, donde el stack
+del Go2 interpreta \texttt{/body\_pose} como una consigna postural y la convierte
+en movimiento observable del torso dentro de Gazebo.
+
+\subsection{Detección de patrones visuales}
+
+La estimación de pose visual utilizada en este trabajo se apoya en marcadores
+fiduciales ArUco, es decir, patrones cuadrados binarios diseñados para ser
+detectados e identificados de manera robusta en una imagen
+\citep{opencv_aruco_tutorial}. Según la documentación oficial de OpenCV, la principal ventaja de este tipo de
+marcadores es que un único patrón aporta suficientes correspondencias geométricas
+--sus cuatro esquinas-- para recuperar la pose relativa entre cámara y objeto.
+Además, el borde negro exterior facilita la segmentación del cuadrado y la
+codificación binaria interna permite distinguir el identificador del marcador
+dentro de un diccionario predefinido.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.28\textwidth]{figures/images/aruco_id0_dict_6x6_250.png}
+\caption{Marcador ArUco utilizado en el proyecto, correspondiente al identificador
+\(0\) del diccionario \texttt{DICT\_6X6\_250}. Este es el patrón que se monta
+sobre el Go2 y cuya pose se estima en tiempo real desde las cámaras simuladas.}
+\label{fig:aruco_marker_id0}
+\end{figure}
+
+En términos de detección, el problema puede dividirse en dos etapas. Primero, se
+buscan candidatos cuadrados en la imagen y se validan en función de su forma y
+de su contenido binario. Luego, una vez identificado el marcador, se obtiene la
+posición de sus cuatro esquinas en coordenadas de imagen. OpenCV devuelve esas
+esquinas en un orden consistente, comenzando por la esquina superior izquierda y
+siguiendo en sentido horario. Este detalle es importante, porque la
+correspondencia entre esquinas 2D observadas y puntos 3D del marcador debe
+conservarse para que la estimación de pose sea geométricamente coherente.
+
+La relación entre los puntos tridimensionales del marcador y su proyección en la
+imagen se describe mediante el modelo pinhole de cámara. En la formulación
+habitual, si \(P_w\) es un punto del marcador en el sistema de referencia del
+objeto y \(p\) su píxel correspondiente, entonces
+
+\begin{equation}
+s\, p = A \begin{bmatrix} R \mid t \end{bmatrix} P_w,
+\end{equation}
+
+donde \(A\) es la matriz intrínseca de la cámara y \((R,t)\) representa la
+transformación rígida entre el sistema del marcador y el frame de la cámara. En
+la práctica, esto significa que la pose solo puede estimarse correctamente si se
+conocen previamente los parámetros intrínsecos y los coeficientes de distorsión
+del sensor. Por eso, en el pipeline del proyecto la información publicada en
+\texttt{CameraInfo} se utiliza como condición previa antes de procesar las
+imágenes \citep{opencv_calib3d}.
+
+Una vez conocidas las intrínsecas y la longitud del lado del marcador, la pose
+puede obtenerse resolviendo un problema de Perspective-\(n\)-Point (PnP). En el
+caso de un marcador cuadrado, los cuatro vértices del patrón definen un conjunto
+de puntos 3D coplanares con coordenadas conocidas, mientras que la detección
+aporta sus cuatro proyecciones 2D en la imagen. A partir de esas
+correspondencias, OpenCV estima una rotación y una traslación que llevan del
+sistema de referencia del marcador al sistema de referencia óptico de la cámara.
+La traslación determina la posición relativa del marcador y la rotación codifica
+su orientación, normalmente expresada en OpenCV mediante un vector de Rodrigues
+o, tras una conversión adicional, mediante un quaternion.
+
+En nuestro proyecto, esta teoría se instancia de forma directa sobre el módulo
+\texttt{cv2.aruco}. Tanto la cámara fija como la cámara bottom del dron emplean
+el diccionario \texttt{DICT\_6X6\_250}, buscan el identificador \(0\) y asumen
+un marcador cuadrado de \(0{,}50\) m de lado. A partir de la imagen en escala de
+grises, el detector obtiene esquinas e identificadores, selecciona el marcador
+objetivo y estima su pose individual con
+\texttt{cv2.aruco.estimatePoseSingleMarkers}. El resultado final es la pose del
+marcador en el frame óptico de la cámara, que luego el sistema publica en ROS2 y
+compara offline contra el ground truth reconstruido a partir de la simulación.
 
 
 
 \section{Método}
 
-\subsection{⁠⁠Interpolación de olas}
+\subsection{Interpolación de olas}
 
-\subsection{⁠⁠Cinemática directa inversa de un robot cuadrúpedo}
+El primer componente del sistema consiste en un nodo ROS2 que modela el movimiento
+de una plataforma marina mediante tres grados de libertad del cuerpo del robot:
+roll, pitch y heave. En lugar de desplazar físicamente una embarcación en el
+simulador, utilizamos el tronco del Unitree Go2 como soporte del marcador y
+publicamos una pose objetivo sobre el tópico \texttt{/body\_pose}. De este modo,
+el robot actúa como una plataforma instrumentada cuyo movimiento es totalmente
+reproducible y puede compararse con el estimador visual cuadro a cuadro.
 
-\subsection{⁠⁠detección de patrones visuales}
+La generación de movimiento se implementó en el nodo
+\texttt{marine\_platform\_simulator}, que opera a \mbox{20 Hz}. El nodo toma
+como referencia el instante de inicialización y, a partir del tiempo transcurrido
+\(t\), genera una pose objetivo del tronco del robot. En la implementación
+actual, la frecuencia base del oleaje se controla mediante el parámetro
+\texttt{wave\_frequency}, cuyo valor por defecto es \(f=0{,}1\) Hz. A partir de
+esa frecuencia se define la pulsación angular
+\(\omega = 2 \pi f\), que luego se reutiliza en los tres ejes simulados.
 
-\subsection{⁠⁠Detalles de implementación}
+El patrón principal utilizado en nuestros experimentos es el sinusoidal. En
+este caso, cada grado de libertad se describe con una oscilación periódica
+suave, limitada por una amplitud máxima configurable. Si denotamos por \(A_r\),
+\(A_p\) y \(A_h\) las amplitudes máximas de roll, pitch y heave,
+respectivamente, el nodo implementa:
+
+\begin{equation}
+r(t) = A_r \sin(\omega t),
+\end{equation}
+
+\begin{equation}
+p(t) = A_p \sin(\omega \kappa_p t + \pi/3),
+\end{equation}
+
+\begin{equation}
+h(t) = A_h \sin(\omega \kappa_h t),
+\end{equation}
+
+donde \(\kappa_p\) y \(\kappa_h\) corresponden a los parámetros
+\texttt{phase\_offset\_pitch} y \texttt{phase\_offset\_heave}. En la
+configuración por defecto, estos valores son \(\kappa_p = 1{,}0\) y
+\(\kappa_h = 1{,}5\). En términos prácticos, esto hace que roll y pitch
+evolucionen con una frecuencia angular similar, mientras que heave oscila más
+rápido. Además, pitch incorpora un desfase fijo de \(\pi/3\), lo que evita que
+los tres movimientos alcancen sus máximos y mínimos al mismo tiempo. Aun dentro
+de este caso simple, la plataforma no realiza un movimiento perfectamente
+sincronizado en todos los ejes, sino una combinación periódica más útil para el
+análisis visual.
+
+El nodo también incluye un patrón irregular, implementado como una combinación
+de varias componentes sinusoidales por eje. Este modo se utilizó principalmente
+para pruebas y depuración, ya que permite romper la periodicidad estricta del
+caso sinusoidal y exponer al detector visual a perturbaciones más variadas. Sin
+embargo, como no busca modelar un espectro marino físicamente calibrado, en este
+trabajo tomamos el patrón sinusoidal como caso de referencia y dejamos el
+irregular como una variante complementaria de ensayo.
+
+Una vez calculada la señal objetivo para cada eje, el nodo no la publica de
+forma directa. Antes se aplica un suavizado exponencial, implementado como un
+filtro pasa-bajos de primer orden. Si \(\alpha\) denota el parámetro
+\texttt{smoothing\_factor} y \(x_k\) el valor objetivo en el instante discreto
+\(k\), la señal publicada \(\tilde{x}_k\) se obtiene mediante:
+
+\begin{equation}
+\tilde{x}_k = \alpha \tilde{x}_{k-1} + (1-\alpha) x_k.
+\end{equation}
+
+El mismo esquema se usa para roll, pitch y heave. En la configuración base
+\(\alpha = 0{,}95\), por lo que el estado suavizado conserva una fuerte memoria
+del valor previo y amortigua cambios abruptos entre iteraciones consecutivas.
+Esto mejora la plausibilidad del movimiento observado en Gazebo y evita
+transiciones demasiado bruscas que podrían introducir artefactos innecesarios en
+la evaluación visual.
+
+Luego del suavizado, el nodo construye un mensaje \texttt{Pose}. La posición se
+fija como \((0, 0, \tilde{h}_k)\), de manera que el único desplazamiento lineal
+es la componente vertical. La orientación se representa con roll y pitch
+suavizados, mientras que yaw se mantiene en cero en esta versión del sistema.
+Como ROS2 publica orientación en cuaterniones, el nodo convierte primero los
+ángulos desde grados a radianes y después calcula el cuaternión asociado antes
+de emitir el mensaje en \texttt{/body\_pose}. En paralelo, publica un
+\texttt{Vector3} en \texttt{/marine\_platform/debug\_state} con los valores
+suavizados de roll, pitch y heave, lo que facilita inspección y depuración.
+
+Los parámetros utilizados en la configuración base del repositorio fijan límites
+de \(\pm 15^\circ\) para roll, \(\pm 10^\circ\) para pitch y \(\pm 0{,}10\) m
+para heave. Estos límites afectan tanto la generación automática como el modo
+manual. Cuando \texttt{enable\_manual=true}, el simulador deja de sintetizar las
+ondas y pasa a consumir comandos recibidos en
+\texttt{/marine\_platform/manual\_cmd}. Un segundo nodo,
+\texttt{marine\_manual\_control}, permite generar esos comandos desde teclado con
+incrementos discretos de \(2^\circ\) para roll y pitch, y de \(0{,}02\) m para
+heave. Además, el nodo manual aplica saturaciones de seguridad y permite volver
+a la posición neutral. Esta separación entre generación automática y control
+manual resultó útil para validar el pipeline en dos escalas: por un lado,
+secuencias continuas de oleaje y, por otro, poses aisladas que facilitan el
+diagnóstico de errores geométricos y la inspección visual de frames
+individuales.
+
+\figureplaceholder
+  {fig:method_marine_simulator}
+  {Esquema del nodo \texttt{marine\_platform\_simulator}: parámetros de oleaje,
+  publicación de \texttt{/body\_pose}, modo manual y relación con el torso del
+  Go2 en Gazebo.}
+  {Arquitectura del simulador marino utilizado para generar roll, pitch y heave
+  sobre el cuerpo del Go2.}
+
+\subsection{Control postural del Go2 en simulación}
+
+El nodo \texttt{marine\_platform\_simulator} no mueve directamente el modelo en
+Gazebo, sino que publica una \texttt{Pose} deseada en \texttt{/body\_pose}. En
+nuestro caso, esta consigna contiene \(x=y=0\), \texttt{yaw}=0, una componente
+vertical asociada a heave y una orientación definida por roll y pitch. El
+consumidor de este tópico no vive en \texttt{go2\_tools}, sino en el stack del
+Go2 incluido a través del fork \texttt{unitree-go2-ros2}. Durante el lanzamiento
+de \texttt{go2\_config/gazebo.launch.py}, el archivo
+\texttt{champ\_bringup/bringup.launch.py} instancia el nodo
+\texttt{quadruped\_controller\_node}, que suscribe \texttt{body\_pose} y lo
+interpreta como una pose deseada del torso.
+
+La traducción entre pose deseada y movimiento articular se apoya en los
+componentes de CHAMP. Primero, el controlador convierte el quaternion recibido a
+ángulos roll--pitch--yaw y suma la altura nominal del robot a la coordenada
+vertical. Luego, en cada iteración del loop de control, el módulo
+\texttt{BodyController} parte de la postura neutra de cada pata
+(\textit{zero stance}) y calcula nuevas posiciones objetivo para los cuatro
+puntos de apoyo. Conceptualmente, el torso adopta la pose pedida mediante una
+transformación inversa sobre las patas: para lograr un cuerpo inclinado o más
+alto, se reposicionan las extremidades respecto de su configuración nominal.
+Sobre esas posiciones objetivo actúan luego el \texttt{LegController} y la
+cinemática inversa del robot, que producen un vector de doce ángulos
+articulares, uno por cada \textit{joint} del Go2.
+
+La salida de ese proceso se publica como un mensaje
+\texttt{JointTrajectory} en el tópico
+\texttt{joint\_group\_effort\_controller/joint\_trajectory}. En la configuración
+del robot para Gazebo, ese controlador está definido sobre las doce
+articulaciones de las patas y utiliza una interfaz de esfuerzo. En consecuencia,
+el movimiento marino no se obtiene desplazando rígidamente el \textit{base
+link}, sino reconfigurando la postura del cuadrúpedo hasta que el torso adopta
+la orientación y la altura solicitadas. Esta decisión fue importante para el
+proyecto, porque preserva una cadena cinemática coherente y expone estados del
+robot compatibles con el resto del pipeline ROS2.
+
+Esa misma cadena de estado es la que luego se utiliza para construir el ground
+truth. El stack lanza además un \texttt{state\_estimation\_node}, que publica
+\texttt{/base\_to\_footprint\_pose} y una odometría cruda \texttt{/odom/raw}, y
+dos filtros EKF de \texttt{robot\_localization} que fusionan esas señales con
+\texttt{/imu/data} para exponer \texttt{/odom} y \texttt{/odom/local}. En la
+evaluación offline, la pose del marcador no se asume idéntica a la del torso:
+primero se reconstruye la pose del tronco a partir de \texttt{/odom},
+\texttt{/imu/data} y \texttt{/base\_to\_footprint\_pose}; luego se suma el
+offset fijo del marcador respecto del cuerpo del Go2 y se corrige el offset de
+\textit{spawn} del robot en el mundo. De este modo, la ``plataforma marina'' se
+materializa como una secuencia reproducible de configuraciones articulares cuyo
+resultado observable es una pose conocida del marcador en simulación.
+
+\subsection{Detección de patrones visuales}
+
+El sistema contempla dos fuentes de imagen. La primera es una cámara fija nadir,
+ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
+bottom del \texttt{sjtu\_drone}, que despega automáticamente y entra en modo de
+hover sobre el Go2. Esta dualidad nos permitió estudiar dos escenarios
+complementarios: uno estático, donde la cámara no agrega movimiento propio, y
+otro móvil, donde la percepción depende también de la pose del dron.
+
+En ambos casos la estimación visual se resolvió con un nodo
+\texttt{aruco\_detector} dedicado. El detector consume la imagen RGB y la
+calibración intrínseca de la cámara, busca el marcador del diccionario
+\texttt{DICT\_6X6\_250} con identificador \(0\) y asume un lado de \(0{,}50\)
+metros. Una vez detectadas las esquinas, OpenCV estima la pose relativa del
+marcador respecto del frame óptico de la cámara mediante \texttt{solvePnP}. El
+resultado se publica en \texttt{/aruco/pose} como un \texttt{PoseStamped},
+mientras que \texttt{/aruco/detection} y \texttt{/aruco/debug\_image} se utilizan
+para inspección y depuración.
+
+La cámara fija se modeló como un sensor estático en Gazebo con una altura base
+de \(2{,}0\) m y un frame rígido respecto del mundo. En cambio, el dron se
+spawnea con un offset horizontal respecto del robot, ejecuta el takeoff de forma
+automática y, tras un retardo de tres segundos, conmuta a control por posición
+para mantener un hover nominal en \((0{,}5,\ 0,\ 3{,}0)\) m. Esta configuración
+permite comparar un caso idealizado, donde toda la variabilidad proviene del
+oleaje, con un caso más realista en el que la cámara depende de la dinámica del
+vehículo aéreo.
+
+\figureplaceholder
+  {fig:method_camera_sources}
+  {Comparación entre las dos fuentes de imagen del pipeline: cámara fija nadir y
+  cámara bottom del \texttt{sjtu\_drone}, incluyendo altura nominal, tópicos de
+  imagen y frame de salida de \texttt{/aruco/pose}.}
+  {Fuentes de imagen consideradas en el sistema para estimar la pose del
+  marcador ArUco en tiempo real.}
+
+\subsection{Detalles de implementación}
+
+La implementación completa se organizó como un pipeline de ROS2 sobre un único
+workspace. El paquete \texttt{go2\_tools} se encarga de la simulación marina; el
+paquete \texttt{fixed\_camera} define la cámara fija y su detector ArUco; y
+\texttt{sjtu\_drone} aporta tanto la simulación del dron como el controlador de
+posición y la variante del detector para la cámara bottom. A esto se suman dos
+herramientas offline: \texttt{marine\_robot\_dataset}, que extrae datasets desde
+rosbags, y \texttt{aruco\_relative\_pose}, que estima o evalúa la pose del
+marcador fuera de línea.
+
+El criterio de evaluación se separó explícitamente de la percepción en tiempo
+real. Durante la simulación, el detector no utiliza información privilegiada del
+robot ni del mundo: solo procesa imagen e intrínsecos de cámara. La comparación
+con el ground truth se realiza después, a partir de un rosbag. El script
+\texttt{evaluate\_realtime\_aruco.py} reconstruye la pose del tronco del Go2 en
+el mundo usando \texttt{/odom}, \texttt{/imu/data} y
+\texttt{/base\_to\_footprint\_pose}; luego agrega el offset del marcador sobre el
+tronco y transforma esa pose al frame de la cámara mediante las extrínsecas
+definidas en el modelo de cada sensor. Para el caso del Go2, también se corrige
+el offset de spawn en el mundo, fijado en \(0{,}40\) m sobre el eje \(x\) en la
+configuración actual.
+
+Esta separación entre estimación online y análisis offline fue importante por
+dos motivos. En primer lugar, evita contaminar la medición de desempeño con
+información del simulador que no estaría disponible en un sistema real. En
+segundo lugar, permite guardar cada corrida como rosbag y volver a evaluar la
+misma secuencia con distintos scripts o métricas sin repetir la simulación.
+Sobre esa base se generan series temporales, histogramas y resúmenes numéricos
+de error, que alimentan la sección experimental del informe.
+
+\figureplaceholder
+  {fig:method_pipeline}
+  {Pipeline completo desde Gazebo hasta la evaluación offline: simulador marino,
+  fuente de imagen, detección ArUco, grabación en rosbag y comparación posterior
+  contra ground truth.}
+  {Pipeline implementado para estimar en tiempo real la pose del marcador y
+  evaluarla luego contra el estado verdadero del simulador.}
 
 
 
@@ -115,6 +527,10 @@
 \subsection{Simulación}
 
 \subsection{Real}
+
+\pendingreal{Agregar la descripción de las pruebas de laboratorio con el Unitree
+Go2 versión EDU y el criterio de comparación con la simulación una vez
+integrado el contenido de la branch \texttt{real}.}
 
 
 
@@ -137,6 +553,3 @@
 \bibliography{bibliography}
 
 \end{document}
-
-
-
