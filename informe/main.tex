@@ -287,9 +287,28 @@ compara offline contra el ground truth reconstruido a partir de la simulación.
 
 
 
-\section{Método}
+\section{Metodología}
 
-\subsection{Interpolación de olas}
+En esta tesis organizamos la metodología en dos etapas complementarias. La
+primera corresponde a la simulación, donde construimos un entorno controlado y
+reproducible para modelar el movimiento de una plataforma marina, observarla
+con distintas fuentes de imagen y evaluar la estimación visual contra un ground
+truth conocido. La segunda corresponde al laboratorio, donde trasladamos parte
+de esa lógica al robot real para analizar qué ocurre al pasar de un entorno
+idealizado a uno físico y hasta qué punto el movimiento propuesto en simulación
+guarda relación con el comportamiento observado en el Go2.
+
+\subsection{Metodología en simulación}
+
+La etapa de simulación tuvo un doble objetivo. Por un lado, nos permitió
+construir el framework base sobre ROS2 y Gazebo, incluyendo el movimiento
+marino sintetizado, el montaje del marcador y las distintas fuentes de imagen.
+Por otro, nos dio un entorno instrumentado para validar la estimación visual en
+condiciones repetibles, separando con claridad lo que ocurre en tiempo real de
+lo que luego se analiza offline. A continuación describimos los componentes
+principales de esta etapa.
+
+\subsubsection{Generación del movimiento marino}
 
 El primer componente del sistema consiste en un nodo ROS2 que modela el movimiento
 de una plataforma marina mediante tres grados de libertad del cuerpo del robot:
@@ -395,7 +414,7 @@ individuales.
   {Arquitectura del simulador marino utilizado para generar roll, pitch y heave
   sobre el cuerpo del Go2.}
 
-\subsection{Control postural del Go2 en simulación}
+\subsubsection{Control postural del Go2 en simulación}
 
 El nodo \texttt{marine\_platform\_simulator} no mueve directamente el modelo en
 Gazebo, sino que publica una \texttt{Pose} deseada en \texttt{/body\_pose}. En
@@ -445,7 +464,7 @@ offset fijo del marcador respecto del cuerpo del Go2 y se corrige el offset de
 materializa como una secuencia reproducible de configuraciones articulares cuyo
 resultado observable es una pose conocida del marcador en simulación.
 
-\subsection{Detección de patrones visuales}
+\subsubsection{Estimación visual en simulación}
 
 El sistema contempla dos fuentes de imagen. La primera es una cámara fija nadir,
 ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
@@ -512,7 +531,7 @@ vehículo aéreo.
   {Fuentes de imagen consideradas en el sistema para estimar la pose del
   marcador ArUco en tiempo real.}
 
-\subsection{Detalles de implementación}
+\subsubsection{Registro y evaluación offline}
 
 La implementación completa se organizó como un pipeline de ROS2 sobre un único
 workspace. El paquete \texttt{go2\_tools} se encarga de la simulación marina; el
@@ -551,17 +570,52 @@ de error, que alimentan la sección experimental del informe.
   {Pipeline implementado para estimar en tiempo real la pose del marcador y
   evaluarla luego contra el estado verdadero del simulador.}
 
+\subsection{Metodología en laboratorio}
+
+Una vez estabilizado el pipeline en simulación, trasladamos parte de la
+metodología al laboratorio para estudiar el pasaje desde un entorno controlado
+hacia uno físico. En esta segunda etapa el objetivo ya no fue disponer de un
+ground truth perfecto como en Gazebo, sino verificar dos cuestiones más
+concretas: primero, si el movimiento propuesto sobre el torso del Go2 puede
+reproducirse de manera razonable en el robot real; y segundo, si ese movimiento
+puede observarse visualmente mediante un marcador ArUco y una cámara sostenida
+en posición aproximadamente fija. Este pasaje implicó cambios prácticos en el
+montaje, en las condiciones de medición y en el tipo de comparación que podía
+realizarse respecto de la simulación.
+
+\subsubsection{Reproducción del movimiento en el Go2 real}
+
+\pendingreal{Describir cómo se trasladó al laboratorio la lógica de movimiento
+definida en simulación, qué señales o consignas se aplicaron sobre el Go2 real
+y qué ajustes prácticos fueron necesarios para ejecutar la prueba fuera de
+Gazebo.}
+
+\subsubsection{Estimación visual con cámara sostenida en posición fija}
+
+\pendingreal{Describir el montaje experimental del ArUco sobre el robot y de la
+cámara utilizada en laboratorio, incluyendo distancia aproximada, criterio de
+fijación, calibración disponible y forma de registrar la pose estimada durante
+la prueba.}
+
+\subsubsection{Comparación entre movimiento propuesto y odometría del robot}
+
+\pendingreal{Explicar cómo se comparó el movimiento propuesto con las señales
+publicadas por el cuadrúpedo en laboratorio, qué variables se utilizaron para
+la comparación y qué criterio se adoptó para analizar la correlación entre la
+simulación y el comportamiento real.}
+
 
 
 \section{Experimentación}
 
-\subsection{Simulación}
+\subsection{Experimentos en simulación}
 
-\subsection{Real}
+\subsection{Experimentos en laboratorio}
 
 \pendingreal{Agregar la descripción de las pruebas de laboratorio con el Unitree
-Go2 versión EDU y el criterio de comparación con la simulación una vez
-integrado el contenido de la branch \texttt{real}.}
+Go2 versión EDU, el montaje visual con ArUco y cámara fija, y el criterio de
+comparación entre el movimiento propuesto y la odometría publicada por el
+robot una vez integrado el contenido de la branch \texttt{real}.}
 
 
 

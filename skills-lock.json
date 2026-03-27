@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "arxiv-search": {
+      "source": "langchain-ai/deepagents",
+      "sourceType": "github",
+      "computedHash": "ab65a00e77d592c2647c80bcb7d9ff5a316dbaa4260a26904df0d31d68ce0f96"
+    },
+    "latex-paper-en": {
+      "source": "bahayonghang/academic-writing-skills",
+      "sourceType": "github",
+      "computedHash": "b5f02c771db97e8a96dedd05bd4a3d57c4ccd97a3d47434ef7a3cadd28097d05"
+    }
+  }
+}
