@@ -20,6 +20,13 @@ el framework se construye para habilitar pruebas de aterrizaje de drones sobre
 plataformas marinas. No hace falta repetirlo en exceso, pero si recordar en los
 lugares clave por que simulacion, percepcion y validacion real importan.
 
+Regla editorial importante:
+
+- ninguna seccion debe crecer "porque si";
+- la longitud tiene que ser proporcionada a la complejidad real del contenido;
+- si una seccion queda corta por falta de desarrollo, se expande;
+- si una seccion se alarga por repeticion o detalle innecesario, se recorta.
+
 ## Estructura recomendada por seccion
 
 ### Introduccion

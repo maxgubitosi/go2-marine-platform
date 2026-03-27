@@ -96,6 +96,26 @@ Esto define una narrativa natural en dos fases:
 - Suavizado exponencial:
   - parametro `smoothing_factor = 0.95`
 
+### Justificacion del recorte a roll, pitch y heave
+
+El framework no intenta reproducir la dinamica completa de una embarcacion en
+seis grados de libertad. En esta tesis se priorizan `roll`, `pitch` y `heave`
+por una razon metodologica y perceptiva:
+
+- son las componentes que mas afectan la orientacion aparente del marcador y la
+  distancia relativa camara-objetivo;
+- en el setup actual la observacion visual se concentra en un marcador montado
+  sobre el torso del Go2;
+- la simulacion mantiene anuladas las componentes horizontales `x` e `y` y
+  tambien `yaw`, para aislar las perturbaciones visuales mas relevantes en esta
+  primera etapa del framework.
+
+Esto no implica que surge, sway o yaw sean irrelevantes para el problema final
+de aterrizaje sobre plataformas marinas. Implica, mas bien, que en el alcance
+actual de la tesis se adopta una simplificacion deliberada para validar primero
+la cadena simulacion-percepcion-evaluacion sobre el subconjunto de movimientos
+que mas directamente alteran la pose observada del marcador.
+
 ### Marcador y deteccion visual
 
 - Diccionario: `DICT_6X6_250`

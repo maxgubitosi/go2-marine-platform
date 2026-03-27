@@ -54,13 +54,16 @@ Por que:
 - la introduccion tiene que instalar el problema, motivar el framework,
   explicitar el objetivo de aterrizaje en plataformas marinas, definir el
   alcance de la tesis y anticipar la estructura del documento;
-- si queda por debajo de `6 paginas`, hay una alta chance de que se lea como
-  una apertura apurada o demasiado resumida.
+- si queda demasiado por debajo de ese rango, hay una chance alta de que se lea
+  como una apertura apurada o demasiado resumida.
 
 Decision editorial:
 
-- cuando me pidas la introduccion, la voy a pensar deliberadamente en este
-  rango, no como una pagina de contexto rapido.
+- este rango es una guia, no una cuota que haya que llenar;
+- la introduccion debe tener una longitud razonable para presentar bien el
+  problema, el objetivo, el aporte y la estructura del trabajo;
+- no conviene ni dejarla subdesarrollada ni inflarla con relleno para que ocupe
+  mas espacio.
 
 ### Marco teorico y estado del arte
 
@@ -214,7 +217,8 @@ Si durante la escritura una seccion empieza a crecer mucho, conviene revisar:
 
 Dejo fijados estos criterios:
 
-- la `Introduccion` no se va a escribir como una apertura breve;
+- la `Introduccion` no se va a escribir como una apertura apurada, pero tampoco
+  se va a alargar artificialmente;
 - `Marco teorico` y `Metodologia` van a ser los bloques de mayor peso;
 - la parte de simulacion y la parte de laboratorio tienen que ocupar espacio
   suficiente para que el pasaje entre ambas se entienda;

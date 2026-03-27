@@ -43,6 +43,14 @@ Ahi entra la explicacion de:
 - por que en esta tesis nos concentramos en roll, pitch y heave;
 - por que esa simplificacion es razonable desde el punto de vista perceptivo.
 
+La justificacion deberia quedar muy clara:
+
+- `roll` y `pitch` modifican la orientacion observada del plano del marcador;
+- `heave` modifica la distancia camara-objetivo y, por ende, la escala aparente;
+- en el setup de esta tesis `x`, `y` y `yaw` no son el foco porque la
+  simulacion los mantiene anulados para aislar las perturbaciones visuales mas
+  relevantes en una primera validacion del framework.
+
 La teoria entra como respuesta a una necesidad concreta, no como bloque aislado.
 
 ### 3. Como sintetizar ese movimiento

@@ -49,6 +49,9 @@ No se pudo revisar en este checkout:
   primarias para sostener el marco teorico y el estado del arte.
 - `09_presupuesto_de_extension.md`: estimacion de paginas y caracteres por
   seccion para llegar a un informe final de alrededor de 80 paginas.
+- `10_brief_introduccion.md`: brief de escritura para la Introduccion.
+- `11_brief_marco_teorico_y_estado_del_arte.md`: brief de escritura para el
+  Marco teorico y el Estado del arte.
 
 ## Criterio de confianza
 
