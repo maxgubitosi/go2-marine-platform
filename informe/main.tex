@@ -486,9 +486,67 @@ armónicos queda como variante complementaria para ensayos menos regulares.
 Una vez definido el movimiento que queremos emular, aparece la pregunta central
 de la plataforma experimental: \emph{¿cómo convertir ese movimiento deseado en
 una postura físicamente consistente del robot?} La respuesta se apoya en la
-cinemática de un cuadrúpedo en apoyo. Si representamos por \(\{b\}\) el frame
-del torso, por \(\{w\}\) el frame del mundo y por \(\{f_i\}\) el punto de
-contacto del pie \(i\), la posición del pie en el mundo puede escribirse como
+cinemática y en la dinámica de un cuadrúpedo en contacto con el suelo. Intuiti-
+vamente, el Go2 puede pensarse como un torso rígido sostenido por cuatro patas
+articuladas. Si las patas cambian su configuración mientras los apoyos se
+mantienen, el torso puede inclinarse o subir y bajar sin necesidad de
+desplazarse horizontalmente. Esa es, precisamente, la propiedad que explotamos
+en la tesis: no usamos al cuadrúpedo como vehículo de locomoción, sino como una
+estructura reconfigurable capaz de materializar un movimiento postural
+controlado.
+
+Desde el punto de vista del modelado, un cuadrúpedo es un sistema multicuerpo
+con base flotante y restricciones de contacto. Si \(q\) reúne la pose del torso
+y todos los ángulos articulares, una forma compacta de sus ecuaciones de
+movimiento es
+
+\begin{equation}
+M(q)\ddot{q} + h(q,\dot{q}) = S^\top \tau + J_c(q)^\top \lambda,
+\label{eq:quadruped_dynamics}
+\end{equation}
+
+donde \(M(q)\) es la matriz de inercia, \(h(q,\dot{q})\) agrupa términos de
+gravedad, Coriolis y otros efectos no lineales, \(\tau\) es el vector de
+torques articulares, \(S\) selecciona las coordenadas actuadas, \(J_c(q)\) es
+el Jacobiano de contacto y \(\lambda\) representa las fuerzas de reacción en los
+pies \citep{Bellicoso2017,Fahmi2019}. Esta ecuación deja en evidencia una idea
+importante: la postura del torso no depende solamente de los motores, sino
+también de cómo el robot intercambia fuerzas con el suelo.
+
+Cuando un pie permanece apoyado sin deslizar, su velocidad relativa al suelo
+debe anularse. Esa condición de contacto puede expresarse como
+
+\begin{equation}
+J_c(q)\dot{q} = 0,
+\label{eq:contact_velocity_constraint}
+\end{equation}
+
+y, en aceleración, como
+
+\begin{equation}
+J_c(q)\ddot{q} + \dot{J}_c(q,\dot{q})\dot{q} = 0.
+\label{eq:contact_acceleration_constraint}
+\end{equation}
+
+En un problema de locomoción completa estas restricciones conviven con cambios
+de apoyo, despegues y redistribución dinámica de cargas. En nuestro caso, en
+cambio, la situación es bastante más simple: el framework utiliza al Go2 en un
+régimen postural, con movimiento suave y sin perseguir desplazamientos sobre el
+plano. Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
+consigna de pose del cuerpo se transforma en una nueva geometría de patas.
+
+\figureplaceholder{fig:go2_postural_control_scheme}{Figura pendiente de la
+geometría postural del Go2. Sería útil mostrar una vista frontal y otra lateral
+del robot con las cuatro patas en apoyo, el frame \texttt{base\_link}, la
+proyección \texttt{base\_footprint} sobre el suelo y ejemplos de cómo cambios
+en altura, roll y pitch alteran la longitud relativa de las patas.}{Esquema
+pendiente del principio de control postural que permite utilizar al Go2 como
+plataforma marina sintética. Una figura así ayudaría a conectar la intuición
+geométrica con las ecuaciones de cinemática del cuadrúpedo.}
+
+Si representamos por \(\{b\}\) el frame del torso, por \(\{w\}\) el frame del
+mundo y por \(\{f_i\}\) el punto de contacto del pie \(i\), la posición del pie
+en el mundo puede escribirse como
 
 \begin{equation}
 {}^{w}\!p_{f_i} =
@@ -502,7 +560,8 @@ torso, \(q_i\) es el vector articular de la pata \(i\), y
 \({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el frame del
 cuerpo. Esta relación resume una idea clave: la postura del torso no se controla
 de forma aislada, sino a través de la geometría conjunta del cuerpo y de las
-cuatro patas.
+cuatro patas. En otras palabras, ordenar un roll o un pitch del torso equivale a
+pedir una nueva organización espacial de los cuatro apoyos relativos al cuerpo.
 
 En un régimen de apoyo cuasiestático o de apoyo controlado, si asumimos que los
 puntos de contacto se mantienen aproximadamente fijos en el mundo, entonces una
@@ -519,8 +578,30 @@ adoptar los pies en el frame del cuerpo:
 Esta ecuación es la base cinemática del control postural empleado en robots
 cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
 una pose del cuerpo y se reconfiguran las patas para realizarla de manera
-coherente \citep{Fahmi2019}. En nuestro proyecto, esa misma idea es la que hace
-posible utilizar al Go2 como plataforma marina sintética.
+coherente \citep{Bellicoso2017,Fahmi2019}. En nuestro proyecto, esa misma idea
+es la que hace posible utilizar al Go2 como plataforma marina sintética. El nodo
+\texttt{marine\_platform\_simulator} publica consignas de tipo \texttt{Pose} en
+\texttt{/body\_pose}, con \(x=y=0\), yaw nulo y variaciones en altura, roll y
+pitch. Conceptualmente, ese mensaje no describe la postura articular de las
+patas, sino la pose deseada del torso que el stack del robot debe realizar.
+
+También resulta útil introducir una noción elemental de estabilidad. Si los
+cuatro pies apoyados definen en el plano una envolvente convexa
+\(\mathcal{P}_s\), la proyección horizontal del centro de masa del robot,
+\(p_{\text{CoM}}^{xy}\), debería permanecer dentro de esa región para sostener
+un equilibrio estático simple:
+
+\begin{equation}
+p_{\text{CoM}}^{xy} \in \mathcal{P}_s.
+\label{eq:support_polygon_condition}
+\end{equation}
+
+Aunque en la simulación no resolvemos explícitamente un problema de estabilidad
+con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
+de roll, pitch y heave deben permanecer acotadas. Si la consigna postural fuera
+excesiva, el robot dejaría de comportarse como una plataforma controlada y
+aparecerían limitaciones mecánicas o configuraciones poco realistas para el
+objetivo del framework.
 
 Además, alrededor de una postura nominal puede obtenerse una lectura física muy
 intuitiva mediante una linealización de primer orden. Si \(\delta p_b\) es una
@@ -542,6 +623,9 @@ simétrico de altura afecta a las cuatro patas de manera parecida y genera
 heave; una diferencia entre patas izquierdas y derechas induce roll; y una
 diferencia entre patas delanteras y traseras induce pitch. En otras palabras, la
 dinámica marina reducida se traduce en una redistribución geométrica de apoyo.
+Esta lectura es especialmente valiosa para un lector no especializado, porque
+permite asociar cada componente del oleaje sintético con una modificación física
+concreta del robot.
 
 Para llevar esa consigna al espacio articular, cada pata satisface una relación
 de cinemática diferencial del tipo
@@ -564,15 +648,22 @@ Go2, sino que explica por qué el robot puede generar inclinaciones observables
 sin necesidad de desplazarse en el plano. Para la tesis, esta propiedad es
 fundamental: buscamos una plataforma que perturbe de forma controlada la
 geometría vista por la cámara, no un sistema de navegación horizontal completo.
+En términos de interpretación, el Jacobiano de cada pata traduce una pequeña
+corrección en la ubicación deseada del pie en una pequeña corrección de hombro,
+muslo y rodilla. Ese puente entre espacio cartesiano y espacio articular es lo
+que vuelve realizable una consigna como \texttt{/body\_pose}.
 
 También conviene distinguir dos marcos de referencia que reaparecen a lo largo
 del pipeline. El frame \texttt{base\_link} está asociado al torso y es el que
 transporta efectivamente el marcador. El frame \texttt{base\_footprint}, en
-cambio, resume la referencia del robot sobre el plano de apoyo. Esta distinción
-es útil porque la percepción visual se vincula directamente con la pose del
-torso, mientras que parte de la reconstrucción del ground truth y de la
-odometría se organiza respecto de un frame desacoplado del balanceo instantáneo
-del cuerpo.
+cambio, resume la referencia del robot sobre el plano de apoyo y puede pensarse
+como la ``sombra'' del robot sobre el suelo. Esta distinción es útil porque la
+percepción visual se vincula directamente con la pose del torso, mientras que
+parte de la reconstrucción del ground truth y de la odometría se organiza
+respecto de un frame desacoplado del balanceo instantáneo del cuerpo. Para el
+lector, una forma simple de recordarlo es esta: \texttt{base\_link} inclina y
+sube con el oleaje sintético; \texttt{base\_footprint} preserva una referencia
+más ligada al apoyo plano del robot.
 
 \subsection{Geometría proyectiva y estimación de pose con ArUco}
 
