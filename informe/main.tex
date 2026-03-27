@@ -127,8 +127,7 @@ forma continua por efecto del oleaje, y las condiciones visuales para estimar
 su posición relativa cambian cuadro a cuadro. En consecuencia, un sistema que
 pretenda aproximarse y aterrizar sobre una embarcación no solo necesita control
 de vuelo, sino también una percepción robusta de la geometría relativa entre la
-plataforma y el vehículo \pendingcitation{Referencia de contexto sobre
-aterrizaje de UAVs en plataformas móviles o marítimas}.
+plataforma y el vehículo \citep{Alarcon2019,Delbene2022,Morales2023}.
 
 Esta dificultad técnica se combina, además, con un problema metodológico. Las
 pruebas directas sobre hardware real son costosas, difíciles de repetir y
@@ -270,111 +269,322 @@ marinas.
 
 \section{Marco teórico} \label{mt}
 
-\subsection{Interpolación de olas}
+\subsection{Introducción conceptual}
 
-En dinámica marina, el movimiento rígido de una plataforma suele describirse con
-seis grados de libertad: tres traslaciones y tres rotaciones
-\pendingcitation{Referencia de cinemática marina y convención surge, sway, heave, roll, pitch, yaw}.
-Sin embargo, no todos esos movimientos afectan de la misma manera al problema de
-percepción que abordamos en este trabajo. En nuestro setup, la cámara observa un
-marcador montado sobre el torso del Go2 y la simulación mantiene anuladas las
-componentes horizontales \(x\) e \(y\), así como la rotación en yaw. Por esa
-razón, el modelo se reduce a los tres grados de libertad que dominan la
-variación visual del marcador: roll, pitch y heave.
+Antes de describir la implementación concreta del sistema, conviene reconstruir
+la lógica física y geométrica del problema. La literatura sobre aterrizaje
+autónomo en plataformas móviles muestra que el desempeño final depende de una
+cadena completa: la plataforma se mueve, ese movimiento debe ser representado o
+reproducido de forma controlada, y la percepción visual tiene que recuperar la
+pose relativa necesaria para guiar la maniobra \citep{Alarcon2019,Delbene2022,Morales2023}.
+En nuestro caso, esa cadena adopta una forma particular. No trabajamos todavía
+con una embarcación real ni con un lazo completo de aterrizaje, sino con un
+framework donde un cuadrúpedo sintetiza una plataforma marina y un marcador
+fiducial vuelve observable su pose desde una cámara. Por eso, en esta sección
+seguimos el mismo orden en que el problema aparece en el sistema: primero
+describimos qué movimiento queremos emular, luego cómo el Go2 lo materializa y,
+por último, cómo la cámara lo transforma en una estimación de pose.
 
-Roll describe la inclinación lateral de la plataforma respecto de su eje
-longitudinal; pitch representa la inclinación hacia adelante o hacia atrás
-respecto del eje transversal; y heave corresponde al desplazamiento vertical del
-cuerpo completo. Desde el punto de vista de la visión, estas tres componentes
-son suficientes para generar los efectos principales que luego enfrenta el
-estimador: cambios de orientación del plano del marcador, variación en la
-proyección de sus esquinas y modificación de la distancia cámara--objetivo. En
-otras palabras, aunque el modelo no pretende reproducir toda la dinámica de una
-embarcación, sí conserva las perturbaciones más relevantes para validar una
-estimación de pose basada en imagen.
+\figureplaceholder{fig:theory_frames_overview}{Diagrama esquemático pendiente
+de los frames \texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
+marcador ArUco y cámara. La figura debería mostrar la transformación rígida
+fija entre torso y marcador, la pose del torso respecto del mundo y la pose del
+marcador estimada desde la cámara.}{Esquema conceptual pendiente de los marcos
+de referencia que conectan el movimiento del Go2 con la estimación visual del
+marcador. Una figura de este tipo facilitaría la lectura de las ecuaciones del
+marco teórico y su vínculo con el pipeline implementado.}
 
-Una manera simple y controlada de representar este movimiento consiste en
-modelar cada componente como una señal periódica y acotada en el tiempo. Si
-\(q(t)\) denota cualquiera de las variables \(r(t)\), \(p(t)\) o \(h(t)\),
-puede escribirse en forma general como
+\subsection{Movimiento marino simplificado}
+
+El punto de partida de nuestro problema es físico antes que computacional. Una
+plataforma marina no se desplaza de una única manera, sino que combina
+traslaciones y rotaciones producidas por la interacción entre su inercia, la
+gravedad, el empuje y las fuerzas inducidas por el oleaje. En la formulación
+clásica de dinámica marina, ese movimiento se describe con seis grados de
+libertad: tres traslaciones y tres rotaciones \citep{Fossen1995}. Para una
+persona no familiarizada con esta notación, conviene leerlos de la siguiente
+manera: surge y sway describen desplazamientos horizontales; heave corresponde
+al movimiento vertical; roll y pitch representan inclinaciones alrededor de los
+ejes del cuerpo; y yaw representa el giro en el plano horizontal.
+
+Formalmente, la pose de la plataforma se representa mediante el vector
+\(\eta = [x \;\; y \;\; z \;\; \phi \;\; \theta \;\; \psi]^\top\), mientras que
+las velocidades lineales y angulares expresadas en el frame del cuerpo se
+agrupan en
+\(\nu = [u \;\; v \;\; w \;\; p \;\; q \;\; r]^\top\). La relación cinemática
+entre ambas variables puede escribirse como
 
 \begin{equation}
-q(t) = A \sin(2 \pi f t + \phi),
+\dot{\eta} = J(\eta)\,\nu,
+\label{eq:marine_kinematics}
 \end{equation}
 
-donde \(A\) fija la amplitud máxima, \(f\) la frecuencia de oscilación y
-\(\phi\) un desfase inicial. Esta familia de señales resulta adecuada para un
-framework de validación porque permite generar trayectorias suaves,
-reproducibles y fácilmente parametrizables. Además, facilita el análisis
-posterior, ya que las excitaciones quedan definidas por pocos parámetros y no
-por una secuencia arbitraria de poses.
+donde \(J(\eta)\) es la matriz de transformación que vincula velocidades del
+cuerpo con derivadas de posición y ángulos de Euler. En forma bloque, dicha
+matriz se expresa como
 
-En el proyecto, esta idealización cumple una función metodológica antes que
-oceanográfica. El objetivo no es estimar un estado de mar realista, sino contar
-con una excitación controlada que permita comparar, cuadro a cuadro, la pose
-visual estimada con una referencia conocida. Por eso, la señal sinusoidal se usa
-como patrón principal y las variantes más irregulares se reservan para pruebas
-de estrés o de robustez. Esta misma elección aparece luego en el método, donde
-el nodo \texttt{marine\_platform\_simulator} implementa de manera explícita esa
-aproximación sobre el torso del Go2.
+\begin{equation}
+J(\eta) =
+\begin{bmatrix}
+R(\phi,\theta,\psi) & 0 \\
+0 & T(\phi,\theta)
+\end{bmatrix},
+\label{eq:marine_jacobian}
+\end{equation}
 
-\subsection{Control postural del Go2 en simulación}
+con \(R(\phi,\theta,\psi)\) la rotación del frame del cuerpo al frame inercial y
+\(T(\phi,\theta)\) la matriz que transforma velocidades angulares
+\((p,q,r)\) en tasas de Euler \((\dot{\phi},\dot{\theta},\dot{\psi})\).
+Usando la convención usual de ángulos de Euler, la parte rotacional puede
+descomponerse como
 
-Un robot cuadrúpedo puede modificar la pose de su torso sin necesidad de
-desplazarse horizontalmente, simplemente cambiando la configuración relativa de
-sus patas. Desde el punto de vista cinemático, el cuerpo principal actúa como un
-sólido rígido conectado a cuatro cadenas articuladas, una por extremidad, y la
-postura resultante del torso depende de la posición de los pies y de los ángulos
-de cada articulación \pendingcitation{Referencia de cinemática de cuadrúpedos o control postural en robots de patas}. En el caso del Go2, este principio es el que permite usar al robot como plataforma marina simulada: no se modela una embarcación aparte, sino que se induce una inclinación y una variación de altura sobre el torso del cuadrúpedo.
+\begin{equation}
+R(\phi,\theta,\psi) = R_z(\psi)\,R_y(\theta)\,R_x(\phi),
+\label{eq:euler_rotation_decomposition}
+\end{equation}
 
-Para nuestro problema, la idea importante no es la locomoción completa sino el
-control postural en apoyo. Si los puntos de contacto con el suelo permanecen
-dentro de una vecindad de una postura nominal, pequeñas variaciones en la
-longitud efectiva y en la orientación de las patas producen cambios
-correspondientes en roll, pitch y altura del cuerpo. En términos intuitivos, un
-incremento diferencial entre las patas izquierdas y derechas genera roll; una
-diferencia entre patas delanteras y traseras produce pitch; y una extensión o
-retracción aproximadamente simétrica de las cuatro patas modifica la componente
-vertical asociada a heave.
+y la relación entre velocidades angulares del cuerpo y derivadas de los ángulos
+puede escribirse explícitamente como
 
-Esta relación se formaliza habitualmente mediante dos operaciones complementarias.
-Por un lado, la cinemática inversa calcula qué ángulos articulares son necesarios
-para alcanzar una determinada geometría de las patas o una pose deseada del
-cuerpo. Por otro, la cinemática directa permite recuperar la configuración del
-robot a partir del estado articular y, por lo tanto, reconstruir la pose del
-torso y de otros frames de interés. En el pipeline de este trabajo, estas ideas
-aparecen de forma concreta cuando una pose deseada del cuerpo se transforma en
-posiciones objetivo para los pies y luego en comandos articulares para las doce
-articulaciones del Go2.
+\begin{equation}
+T(\phi,\theta) =
+\begin{bmatrix}
+1 & \sin\phi \tan\theta & \cos\phi \tan\theta \\
+0 & \cos\phi & -\sin\phi \\
+0 & \sin\phi / \cos\theta & \cos\phi / \cos\theta
+\end{bmatrix}.
+\label{eq:euler_rate_matrix}
+\end{equation}
 
-También es útil distinguir dos marcos de referencia del robot que reaparecen en
-la implementación. El frame del torso, usualmente asociado a
-\texttt{base\_link}, es el que transporta el marcador y cuya orientación resulta
-relevante para la cámara. En cambio, un frame como \texttt{base\_footprint}
-resume la referencia del robot sobre el plano de apoyo y desacopla, en parte, la
-posición horizontal de la elevación del cuerpo. Esta separación entre torso y
-footprint es especialmente conveniente en un escenario como el nuestro, donde la
-estimación visual depende de la pose tridimensional del marcador, pero la
-reconstrucción del estado del robot combina información de orientación, altura y
-odometría en distintos tópicos.
+Esta última ecuación es importante porque muestra que las tasas angulares del
+cuerpo no coinciden, en general, con las derivadas temporales de roll, pitch y
+yaw. Dicho de otro modo, medir \(p\), \(q\) y \(r\) no equivale directamente a
+medir \(\dot{\phi}\), \(\dot{\theta}\) y \(\dot{\psi}\); hace falta una
+transformación dependiente de la orientación actual.
 
-En síntesis, el fundamento teórico de esta subsección es que una pose deseada del
-cuerpo puede implementarse indirectamente mediante la reconfiguración coordinada
-de las patas. Sobre esa idea se apoya luego la sección de método, donde el stack
-del Go2 interpreta \texttt{/body\_pose} como una consigna postural y la convierte
-en movimiento observable del torso dentro de Gazebo.
+En un modelo dinámico completo, además, el movimiento no se prescribe de forma
+directa, sino que resulta del equilibrio entre términos inerciales, de Coriolis,
+de amortiguamiento, restauradores y de excitación externa. Una expresión
+habitual de esa dinámica es
 
-\subsection{Detección de patrones visuales}
+\begin{equation}
+M \dot{\nu} + C(\nu)\nu + D(\nu)\nu + g(\eta) = \tau + \tau_w,
+\label{eq:marine_dynamics}
+\end{equation}
 
-La estimación de pose visual utilizada en este trabajo se apoya en marcadores
-fiduciales ArUco, es decir, patrones cuadrados binarios diseñados para ser
-detectados e identificados de manera robusta en una imagen
-\citep{opencv_aruco_tutorial}. Según la documentación oficial de OpenCV, la principal ventaja de este tipo de
-marcadores es que un único patrón aporta suficientes correspondencias geométricas
---sus cuatro esquinas-- para recuperar la pose relativa entre cámara y objeto.
-Además, el borde negro exterior facilita la segmentación del cuadrado y la
-codificación binaria interna permite distinguir el identificador del marcador
-dentro de un diccionario predefinido.
+donde \(M\) representa la inercia, \(C(\nu)\nu\) los efectos centrífugos y de
+Coriolis, \(D(\nu)\nu\) el amortiguamiento hidrodinámico, \(g(\eta)\) las
+fuerzas restauradoras asociadas a gravedad y flotación, \(\tau\) las acciones de
+control y \(\tau_w\) la excitación debida al mar. Introducir este modelo aquí no
+significa que la tesis lo resuelva en toda su complejidad. Al contrario, sirve
+para dejar en claro qué estamos simplificando: no buscamos reconstruir una
+embarcación desde la hidrodinámica, sino aislar las componentes del movimiento
+que dominan el problema de percepción visual.
+
+Este modelo completo es útil para entender el problema, pero no todos los
+grados de libertad pesan igual en el setup de esta tesis. El marcador está
+rigidamente unido al torso del Go2 y la simulación mantiene anuladas las
+componentes horizontales y la rotación en yaw. En consecuencia, el estado de
+interés se reduce a
+
+\begin{equation}
+\eta_r(t) =
+\begin{bmatrix}
+z(t) \\
+\phi(t) \\
+\theta(t)
+\end{bmatrix},
+\label{eq:reduced_marine_state}
+\end{equation}
+
+porque esas tres variables son las que más directamente alteran la observación
+visual del marcador. Roll y pitch modifican la orientación aparente del plano
+del ArUco respecto de la cámara, mientras que heave cambia la distancia relativa
+y, con ello, la escala con la que el patrón se proyecta sobre la imagen. El
+recorte, entonces, no es arbitrario: responde a una decisión experimental para
+aislar primero las perturbaciones que más afectan la estimación de pose.
+
+Esta idea puede justificarse también desde la geometría de imagen. Si el
+marcador tiene lado \(L\), la cámara posee distancia focal efectiva \(f\) y el
+centro del marcador se encuentra a una profundidad \(Z_c\) respecto del frame
+óptico, el tamaño lineal proyectado del patrón satisface aproximadamente
+
+\begin{equation}
+\ell_{\text{img}} \approx \frac{fL}{Z_c}.
+\label{eq:marker_image_scale}
+\end{equation}
+
+Por lo tanto, una variación en heave modifica directamente \(Z_c\) y, con ello,
+la escala observada del marcador. Por otro lado, si \(n_0 = [0 \;\; 0 \;\; 1]^\top\)
+es el vector normal del plano del marcador en su propio frame, su orientación en
+el frame de la cámara queda dada por
+
+\begin{equation}
+n_m = {}^{c}\!R_m\, n_0.
+\label{eq:marker_normal}
+\end{equation}
+
+Las oscilaciones en roll y pitch alteran precisamente ese vector normal y, en
+consecuencia, deforman la perspectiva con la que las esquinas del marcador se
+proyectan en la imagen. Esta es la razón profunda del recorte: no elegimos esas
+tres variables porque sean las únicas importantes en el mar, sino porque son las
+que más directamente tensan el estimador visual que queremos validar.
+
+Si denotamos por \(\{b\}\) el frame del torso del robot y por \(\{m\}\) el
+frame del marcador, fijado rígidamente sobre la tabla, la pose del marcador en
+el mundo queda dada por
+
+\begin{equation}
+{}^{w}\!T_m(t) = {}^{w}\!T_b(t)\,{}^{b}\!T_m,
+\label{eq:marker_rigid_transform}
+\end{equation}
+
+donde \( {}^{b}\!T_m \) es constante. Esta relación muestra por qué resulta
+suficiente modelar la dinámica del torso: cualquier variación en la pose del
+cuerpo se transmite de manera inmediata a la pose del marcador que luego verá la
+cámara.
+
+Una vez fijado el subconjunto de movimiento, el siguiente paso consiste en
+elegir cómo excitarlos. En nuestro framework, cada componente se modela como una
+señal periódica parametrizable:
+
+\begin{equation}
+q_j(t) = A_j \sin(\omega_j t + \delta_j),
+\qquad
+q_j \in \{z,\phi,\theta\},
+\label{eq:sinusoidal_wave_model}
+\end{equation}
+
+donde \(A_j\) controla la amplitud, \(\omega_j\) la frecuencia angular y
+\(\delta_j\) el desfase de cada eje. Físicamente, la amplitud fija cuánto puede
+inclinarse o elevarse la plataforma, la frecuencia determina cuán rápido ocurre
+esa oscilación y el desfase permite que los ejes no alcancen sus extremos al
+mismo tiempo. Esta forma funcional no pretende reemplazar un modelo
+hidrodinámico completo del mar. Su papel es más acotado y, al mismo tiempo, más
+útil para la validación: producir excitaciones suaves, reproducibles y
+comparables entre corridas.
+
+Cuando se desea introducir una perturbación menos regular, la misma idea puede
+extenderse a una suma de armónicos,
+
+\begin{equation}
+q_j(t) = \sum_{k=1}^{N} A_{j,k}\sin(\omega_{j,k} t + \delta_{j,k}),
+\label{eq:harmonic_wave_model}
+\end{equation}
+
+que puede interpretarse como una aproximación simple a un movimiento más
+irregular. En oceanografía, las superficies de mar reales suelen describirse
+mediante superposiciones espectrales; aquí tomamos prestada esa intuición, pero
+con un objetivo distinto: no sintetizar un estado de mar calibrado, sino contar
+con entradas controladas para estudiar con claridad la relación entre movimiento
+impuesto, proyección visual y error de estimación. Por eso, en esta tesis el
+caso sinusoidal simple actúa como escenario de referencia y la combinación de
+armónicos queda como variante complementaria para ensayos menos regulares.
+
+\subsection{Control postural del Go2 y marcos de referencia}
+
+Una vez definido el movimiento que queremos emular, aparece la pregunta central
+de la plataforma experimental: \emph{¿cómo convertir ese movimiento deseado en
+una postura físicamente consistente del robot?} La respuesta se apoya en la
+cinemática de un cuadrúpedo en apoyo. Si representamos por \(\{b\}\) el frame
+del torso, por \(\{w\}\) el frame del mundo y por \(\{f_i\}\) el punto de
+contacto del pie \(i\), la posición del pie en el mundo puede escribirse como
+
+\begin{equation}
+{}^{w}\!p_{f_i} =
+{}^{w}\!p_b + {}^{w}\!R_b \, {}^{b}\!p_{f_i}(q_i),
+\qquad i \in \{1,2,3,4\},
+\label{eq:foot_forward_kinematics}
+\end{equation}
+
+donde \( {}^{w}\!p_b \) y \( {}^{w}\!R_b \) son la posición y orientación del
+torso, \(q_i\) es el vector articular de la pata \(i\), y
+\({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el frame del
+cuerpo. Esta relación resume una idea clave: la postura del torso no se controla
+de forma aislada, sino a través de la geometría conjunta del cuerpo y de las
+cuatro patas.
+
+En un régimen de apoyo cuasiestático o de apoyo controlado, si asumimos que los
+puntos de contacto se mantienen aproximadamente fijos en el mundo, entonces una
+pose deseada del torso determina de manera unívoca qué posiciones deberían
+adoptar los pies en el frame del cuerpo:
+
+\begin{equation}
+{}^{b}\!p_{f_i}^{\star} =
+({}^{w}\!R_b^{\star})^\top
+\left({}^{w}\!p_{f_i} - {}^{w}\!p_b^{\star}\right).
+\label{eq:desired_foot_positions}
+\end{equation}
+
+Esta ecuación es la base cinemática del control postural empleado en robots
+cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
+una pose del cuerpo y se reconfiguran las patas para realizarla de manera
+coherente \citep{Fahmi2019}. En nuestro proyecto, esa misma idea es la que hace
+posible utilizar al Go2 como plataforma marina sintética.
+
+Además, alrededor de una postura nominal puede obtenerse una lectura física muy
+intuitiva mediante una linealización de primer orden. Si \(\delta p_b\) es una
+pequeña traslación del torso y \(\delta \omega\) una pequeña rotación, la
+variación requerida en la posición del pie \(i\) expresada en el cuerpo se
+aproxima por
+
+\begin{equation}
+\delta {}^{b}\!p_{f_i}
+\approx
+-\,\delta p_b
+-\,\delta \omega \times {}^{b}\!p_{f_i,0},
+\label{eq:body_variation_to_feet}
+\end{equation}
+
+donde \( {}^{b}\!p_{f_i,0} \) es la posición nominal del pie. Esta expresión
+permite interpretar directamente el efecto de cada grado de libertad: un cambio
+simétrico de altura afecta a las cuatro patas de manera parecida y genera
+heave; una diferencia entre patas izquierdas y derechas induce roll; y una
+diferencia entre patas delanteras y traseras induce pitch. En otras palabras, la
+dinámica marina reducida se traduce en una redistribución geométrica de apoyo.
+
+Para llevar esa consigna al espacio articular, cada pata satisface una relación
+de cinemática diferencial del tipo
+
+\begin{equation}
+\delta {}^{b}\!p_{f_i} = J_i(q_i)\,\delta q_i,
+\label{eq:leg_jacobian}
+\end{equation}
+
+de modo que, cuando el Jacobiano \(J_i\) es invertible o admite una
+pseudoinversa adecuada, puede obtenerse
+
+\begin{equation}
+\delta q_i = J_i^{\dagger}(q_i)\,\delta {}^{b}\!p_{f_i}.
+\label{eq:leg_inverse_differential_kinematics}
+\end{equation}
+
+Este paso no solo conecta la pose deseada del torso con los doce actuadores del
+Go2, sino que explica por qué el robot puede generar inclinaciones observables
+sin necesidad de desplazarse en el plano. Para la tesis, esta propiedad es
+fundamental: buscamos una plataforma que perturbe de forma controlada la
+geometría vista por la cámara, no un sistema de navegación horizontal completo.
+
+También conviene distinguir dos marcos de referencia que reaparecen a lo largo
+del pipeline. El frame \texttt{base\_link} está asociado al torso y es el que
+transporta efectivamente el marcador. El frame \texttt{base\_footprint}, en
+cambio, resume la referencia del robot sobre el plano de apoyo. Esta distinción
+es útil porque la percepción visual se vincula directamente con la pose del
+torso, mientras que parte de la reconstrucción del ground truth y de la
+odometría se organiza respecto de un frame desacoplado del balanceo instantáneo
+del cuerpo.
+
+\subsection{Geometría proyectiva y estimación de pose con ArUco}
+
+Una vez que el movimiento existe y puede ser generado por el Go2, el problema se
+traslada a la cámara: hay que recuperar, a partir de una imagen, la pose
+relativa de un objeto plano cuya posición y orientación cambian continuamente.
+Los marcadores ArUco resultan apropiados para este escenario porque combinan dos
+propiedades útiles a la vez: un contorno cuadrado que permite localizar con
+precisión las esquinas del patrón y un código binario interno que permite
+identificar de forma robusta qué marcador está siendo observado
+\citep{GarridoJurado2014}. Esa combinación vuelve al marcador simultáneamente
+detectable y geométricamente utilizable.
 
 \begin{figure}[H]
 \centering
@@ -385,52 +595,111 @@ sobre el Go2 y cuya pose se estima en tiempo real desde las cámaras simuladas.}
 \label{fig:aruco_marker_id0}
 \end{figure}
 
-En términos de detección, el problema puede dividirse en dos etapas. Primero, se
-buscan candidatos cuadrados en la imagen y se validan en función de su forma y
-de su contenido binario. Luego, una vez identificado el marcador, se obtiene la
-posición de sus cuatro esquinas en coordenadas de imagen. OpenCV devuelve esas
-esquinas en un orden consistente, comenzando por la esquina superior izquierda y
-siguiendo en sentido horario. Este detalle es importante, porque la
-correspondencia entre esquinas 2D observadas y puntos 3D del marcador debe
-conservarse para que la estimación de pose sea geométricamente coherente.
-
-La relación entre los puntos tridimensionales del marcador y su proyección en la
-imagen se describe mediante el modelo pinhole de cámara. En la formulación
-habitual, si \(P_w\) es un punto del marcador en el sistema de referencia del
-objeto y \(p\) su píxel correspondiente, entonces
+Si el lado del marcador es \(L\), sus cuatro vértices pueden definirse en el
+frame del objeto como un conjunto coplanar de puntos conocidos:
 
 \begin{equation}
-s\, p = A \begin{bmatrix} R \mid t \end{bmatrix} P_w,
+P_1 = \left[-\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
+P_2 = \left[\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
+P_3 = \left[\frac{L}{2}, -\frac{L}{2}, 0\right]^\top,\;
+P_4 = \left[-\frac{L}{2}, -\frac{L}{2}, 0\right]^\top.
+\label{eq:marker_corners}
 \end{equation}
 
-donde \(A\) es la matriz intrínseca de la cámara y \((R,t)\) representa la
-transformación rígida entre el sistema del marcador y el frame de la cámara. En
-la práctica, esto significa que la pose solo puede estimarse correctamente si se
-conocen previamente los parámetros intrínsecos y los coeficientes de distorsión
-del sensor. Por eso, en el pipeline del proyecto la información publicada en
-\texttt{CameraInfo} se utiliza como condición previa antes de procesar las
-imágenes \citep{opencv_calib3d}.
+La detección visual aporta las proyecciones bidimensionales
+\(p_i = [u_i \;\; v_i \;\; 1]^\top\) de esos puntos en la imagen. La
+consistencia entre el orden de los vértices observados y el orden de los
+vértices del modelo es crucial, porque toda la estimación de pose depende de que
+las correspondencias 2D--3D sean geométricamente correctas.
 
-Una vez conocidas las intrínsecas y la longitud del lado del marcador, la pose
-puede obtenerse resolviendo un problema de Perspective-\(n\)-Point (PnP). En el
-caso de un marcador cuadrado, los cuatro vértices del patrón definen un conjunto
-de puntos 3D coplanares con coordenadas conocidas, mientras que la detección
-aporta sus cuatro proyecciones 2D en la imagen. A partir de esas
-correspondencias, OpenCV estima una rotación y una traslación que llevan del
-sistema de referencia del marcador al sistema de referencia óptico de la cámara.
-La traslación determina la posición relativa del marcador y la rotación codifica
-su orientación, normalmente expresada en OpenCV mediante un vector de Rodrigues
-o, tras una conversión adicional, mediante un quaternion.
+La relación entre los puntos tridimensionales del marcador y su proyección en la
+imagen se describe mediante el modelo pinhole de cámara. Para cada punto
+\(P_i = [X_i \;\; Y_i \;\; Z_i \;\; 1]^\top\), se cumple
 
-En nuestro proyecto, esta teoría se instancia de forma directa sobre el módulo
-\texttt{cv2.aruco}. Tanto la cámara fija como la cámara bottom del dron emplean
-el diccionario \texttt{DICT\_6X6\_250}, buscan el identificador \(0\) y asumen
-un marcador cuadrado de \(0{,}50\) m de lado. A partir de la imagen en escala de
-grises, el detector obtiene esquinas e identificadores, selecciona el marcador
-objetivo y estima su pose individual con
-\texttt{cv2.aruco.estimatePoseSingleMarkers}. El resultado final es la pose del
-marcador en el frame óptico de la cámara, que luego el sistema publica en ROS2 y
-compara offline contra el ground truth reconstruido a partir de la simulación.
+\begin{equation}
+s_i
+\begin{bmatrix}
+u_i \\
+v_i \\
+1
+\end{bmatrix}
+=
+K
+\begin{bmatrix}
+R & t
+\end{bmatrix}
+\begin{bmatrix}
+X_i \\
+Y_i \\
+Z_i \\
+1
+\end{bmatrix},
+\label{eq:pinhole_projection}
+\end{equation}
+
+donde \(K\) es la matriz de parámetros intrínsecos
+
+\begin{equation}
+K =
+\begin{bmatrix}
+f_x & 0 & c_x \\
+0 & f_y & c_y \\
+0 & 0 & 1
+\end{bmatrix},
+\label{eq:camera_intrinsics}
+\end{equation}
+
+y \((R,t)\) representa la transformación rígida entre el frame del marcador y el
+frame óptico de la cámara. Esta ecuación deja en evidencia una dependencia
+fundamental del sistema: para estimar pose no alcanza con detectar el patrón; es
+necesario conocer también la calibración intrínseca de la cámara y el tamaño
+físico del marcador.
+
+La recuperación de \((R,t)\) puede formularse entonces como un problema de
+Perspective-\(n\)-Point. En términos generales, se busca la transformación que
+minimiza el error de reproyección entre los puntos observados y los puntos
+predichos por el modelo:
+
+\begin{equation}
+(\hat{R},\hat{t}) =
+\arg\min_{R,t}
+\sum_{i=1}^{4}
+\left\|
+p_i - \pi\!\left(K(RP_i + t)\right)
+\right\|_2^2,
+\label{eq:pnp_optimization}
+\end{equation}
+
+donde \(\pi(\cdot)\) denota la proyección perspectiva en coordenadas de imagen.
+Entre las soluciones eficientes para este problema se encuentra EPnP, que
+permite estimar la pose a partir de correspondencias 2D--3D con costo lineal en
+la cantidad de puntos \citep{Lepetit2009}. En el caso de un marcador cuadrado,
+el número de puntos es pequeño, pero la formulación sigue siendo conceptualmente
+la misma: a partir de cuatro esquinas coplanares y calibración conocida, se
+recupera la pose del marcador respecto de la cámara.
+
+Esta geometría proyectiva explica, además, por qué el recorte a roll, pitch y
+heave es tan relevante para la tesis. Si el marcador está fijado al torso del
+robot, roll y pitch se reflejan principalmente en la parte rotacional de
+\((R,t)\), mientras que heave altera la distancia relativa y, por lo tanto, la
+escala aparente del patrón en la imagen. En otras palabras, el movimiento que
+escogimos modelar no es solo una abstracción mecánica; es exactamente el
+movimiento que el estimador visual tiene que reconstruir.
+
+Finalmente, toda la comparación entre estimación y ground truth puede leerse
+como una composición de transformaciones. Si \(\{c\}\) es el frame de la cámara,
+la pose observada del marcador satisface
+
+\begin{equation}
+{}^{c}\!T_m(t) =
+{}^{c}\!T_w(t)\,{}^{w}\!T_b(t)\,{}^{b}\!T_m.
+\label{eq:camera_marker_chain}
+\end{equation}
+
+Para una cámara fija, \( {}^{c}\!T_w \) permanece constante; para una cámara
+montada sobre un dron, ese término también varía en el tiempo. Esta expresión
+resume el corazón geométrico del framework: comparar lo que el simulador sabe
+del mundo con lo que la cámara es capaz de inferir a partir de imágenes.
 
 
 
