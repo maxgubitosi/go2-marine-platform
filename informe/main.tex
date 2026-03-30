@@ -271,19 +271,37 @@ marinas.
 
 \subsection{Introducción conceptual}
 
-Antes de describir la implementación concreta del sistema, conviene reconstruir
-la lógica física y geométrica del problema. La literatura sobre aterrizaje
-autónomo en plataformas móviles muestra que el desempeño final depende de una
-cadena completa: la plataforma se mueve, ese movimiento debe ser representado o
-reproducido de forma controlada, y la percepción visual tiene que recuperar la
-pose relativa necesaria para guiar la maniobra \citep{Alarcon2019,Delbene2022,Morales2023}.
-En nuestro caso, esa cadena adopta una forma particular. No trabajamos todavía
-con una embarcación real ni con un lazo completo de aterrizaje, sino con un
-framework donde un cuadrúpedo sintetiza una plataforma marina y un marcador
-fiducial vuelve observable su pose desde una cámara. Por eso, en esta sección
-seguimos el mismo orden en que el problema aparece en el sistema: primero
-describimos qué movimiento queremos emular, luego cómo el Go2 lo materializa y,
-por último, cómo la cámara lo transforma en una estimación de pose.
+Cuando se piensa en el aterrizaje de un dron sobre una superficie en
+movimiento, la dificultad más evidente parece ser visual: detectar la
+plataforma y conocer su pose relativa con suficiente precisión. Sin embargo,
+esa dificultad es apenas el último eslabón de una cadena más amplia. Antes de
+que una cámara recupere una pose, existe una superficie que se traslada y se
+inclina; y antes de que ese movimiento pueda medirse, hace falta una
+descripción física que permita distinguir qué componentes son relevantes, cómo
+evolucionan y de qué manera afectan la observación. La bibliografía sobre
+aterrizaje autónomo en plataformas móviles y marinas muestra justamente esa
+dependencia entre dinámica de la plataforma, capacidad de observación visual y
+posibilidad de control \citep{Alarcon2019,Delbene2022,Morales2023}.
+
+Esa cadena puede recorrerse en tres niveles acoplados. El primero es físico:
+caracterizar un movimiento semejante al de una plataforma marina y reducirlo a
+las componentes que más perturban la observación del marcador. El segundo es
+mecánico: traducir esa descripción a un sistema robotizado capaz de reproducir
+de manera repetible inclinaciones y desplazamientos verticales. El tercero es
+geométrico: relacionar la pose tridimensional del marcador con su proyección en
+la imagen y reconstruirla a partir de un modelo de cámara calibrada. Las tres
+piezas no son independientes. La amplitud y la frecuencia del movimiento
+condicionan la postura del robot, y esa postura determina el tamaño aparente,
+la perspectiva y la deformación proyectiva con que el marcador llega a la
+cámara.
+
+Desde esa perspectiva, el desarrollo teórico avanza en el mismo sentido que el
+problema. Primero se introduce una representación simplificada del movimiento
+marino que preserve las perturbaciones dominantes del escenario. Luego se
+discute cómo un cuadrúpedo puede materializar ese movimiento mediante control
+postural y marcos de referencia consistentes. Finalmente, se presentan las
+herramientas de geometría proyectiva y estimación de pose que permiten pasar de
+la imagen del ArUco a una descripción métrica de la pose relativa.
 
 \figureplaceholder{fig:theory_frames_overview}{Diagrama esquemático pendiente
 de los frames \texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
@@ -296,7 +314,7 @@ marco teórico y su vínculo con el pipeline implementado.}
 
 \subsection{Movimiento marino simplificado}
 
-El punto de partida de nuestro problema es físico antes que computacional. Una
+El punto de partida del problema es físico antes que computacional. Una
 plataforma marina no se desplaza de una única manera, sino que combina
 traslaciones y rotaciones producidas por la interacción entre su inercia, la
 gravedad, el empuje y las fuerzas inducidas por el oleaje. En la formulación
@@ -382,7 +400,7 @@ embarcación desde la hidrodinámica, sino aislar las componentes del movimiento
 que dominan el problema de percepción visual.
 
 Este modelo completo es útil para entender el problema, pero no todos los
-grados de libertad pesan igual en el setup de esta tesis. El marcador está
+grados de libertad pesan igual en el escenario considerado. El marcador está
 rigidamente unido al torso del Go2 y la simulación mantiene anuladas las
 componentes horizontales y la rotación en yaw. En consecuencia, el estado de
 interés se reduce a
@@ -445,7 +463,7 @@ cuerpo se transmite de manera inmediata a la pose del marcador que luego verá l
 cámara.
 
 Una vez fijado el subconjunto de movimiento, el siguiente paso consiste en
-elegir cómo excitarlos. En nuestro framework, cada componente se modela como una
+elegir cómo excitarlos. Cada componente se modela como una
 señal periódica parametrizable:
 
 \begin{equation}
@@ -477,7 +495,7 @@ irregular. En oceanografía, las superficies de mar reales suelen describirse
 mediante superposiciones espectrales; aquí tomamos prestada esa intuición, pero
 con un objetivo distinto: no sintetizar un estado de mar calibrado, sino contar
 con entradas controladas para estudiar con claridad la relación entre movimiento
-impuesto, proyección visual y error de estimación. Por eso, en esta tesis el
+impuesto, proyección visual y error de estimación. Por eso, el
 caso sinusoidal simple actúa como escenario de referencia y la combinación de
 armónicos queda como variante complementaria para ensayos menos regulares.
 
@@ -491,7 +509,7 @@ vamente, el Go2 puede pensarse como un torso rígido sostenido por cuatro patas
 articuladas. Si las patas cambian su configuración mientras los apoyos se
 mantienen, el torso puede inclinarse o subir y bajar sin necesidad de
 desplazarse horizontalmente. Esa es, precisamente, la propiedad que explotamos
-en la tesis: no usamos al cuadrúpedo como vehículo de locomoción, sino como una
+en este problema: no se usa al cuadrúpedo como vehículo de locomoción, sino como una
 estructura reconfigurable capaz de materializar un movimiento postural
 controlado.
 
@@ -578,7 +596,7 @@ adoptar los pies en el frame del cuerpo:
 Esta ecuación es la base cinemática del control postural empleado en robots
 cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
 una pose del cuerpo y se reconfiguran las patas para realizarla de manera
-coherente \citep{Bellicoso2017,Fahmi2019}. En nuestro proyecto, esa misma idea
+coherente \citep{Bellicoso2017,Fahmi2019}. Esa misma idea
 es la que hace posible utilizar al Go2 como plataforma marina sintética. El nodo
 \texttt{marine\_platform\_simulator} publica consignas de tipo \texttt{Pose} en
 \texttt{/body\_pose}, con \(x=y=0\), yaw nulo y variaciones en altura, roll y
@@ -623,9 +641,8 @@ simétrico de altura afecta a las cuatro patas de manera parecida y genera
 heave; una diferencia entre patas izquierdas y derechas induce roll; y una
 diferencia entre patas delanteras y traseras induce pitch. En otras palabras, la
 dinámica marina reducida se traduce en una redistribución geométrica de apoyo.
-Esta lectura es especialmente valiosa para un lector no especializado, porque
-permite asociar cada componente del oleaje sintético con una modificación física
-concreta del robot.
+De este modo, cada componente del oleaje sintético puede asociarse con una
+modificación física concreta del robot.
 
 Para llevar esa consigna al espacio articular, cada pata satisface una relación
 de cinemática diferencial del tipo
@@ -645,7 +662,7 @@ pseudoinversa adecuada, puede obtenerse
 
 Este paso no solo conecta la pose deseada del torso con los doce actuadores del
 Go2, sino que explica por qué el robot puede generar inclinaciones observables
-sin necesidad de desplazarse en el plano. Para la tesis, esta propiedad es
+sin necesidad de desplazarse en el plano. Esta propiedad es
 fundamental: buscamos una plataforma que perturbe de forma controlada la
 geometría vista por la cámara, no un sistema de navegación horizontal completo.
 En términos de interpretación, el Jacobiano de cada pata traduce una pequeña
@@ -660,10 +677,10 @@ cambio, resume la referencia del robot sobre el plano de apoyo y puede pensarse
 como la ``sombra'' del robot sobre el suelo. Esta distinción es útil porque la
 percepción visual se vincula directamente con la pose del torso, mientras que
 parte de la reconstrucción del ground truth y de la odometría se organiza
-respecto de un frame desacoplado del balanceo instantáneo del cuerpo. Para el
-lector, una forma simple de recordarlo es esta: \texttt{base\_link} inclina y
-sube con el oleaje sintético; \texttt{base\_footprint} preserva una referencia
-más ligada al apoyo plano del robot.
+respecto de un frame desacoplado del balanceo instantáneo del cuerpo.
+\texttt{base\_link} inclina y sube con el oleaje sintético;
+\texttt{base\_footprint} preserva una referencia más ligada al apoyo plano del
+robot.
 
 \subsection{Geometría proyectiva y estimación de pose con ArUco}
 
@@ -675,7 +692,12 @@ propiedades útiles a la vez: un contorno cuadrado que permite localizar con
 precisión las esquinas del patrón y un código binario interno que permite
 identificar de forma robusta qué marcador está siendo observado
 \citep{GarridoJurado2014}. Esa combinación vuelve al marcador simultáneamente
-detectable y geométricamente utilizable.
+detectable y geométricamente utilizable. La robustez no depende solo de la
+segmentación del borde negro exterior, sino también del diseño del diccionario:
+si los identificadores válidos están suficientemente separados en distancia de
+Hamming, errores locales de lectura producidos por ruido, desenfoque u oclusión
+parcial tienen menor probabilidad de convertir un marcador en otro marcador
+válido.
 
 \begin{figure}[H]
 \centering
@@ -702,6 +724,14 @@ La detección visual aporta las proyecciones bidimensionales
 consistencia entre el orden de los vértices observados y el orden de los
 vértices del modelo es crucial, porque toda la estimación de pose depende de que
 las correspondencias 2D--3D sean geométricamente correctas.
+
+\figureplaceholder{fig:camera_marker_geometry}{Figura pendiente del modelo
+geométrico cámara--marcador. Sería conveniente mostrar el frame óptico de la
+cámara, el plano del marcador, sus cuatro vértices, el vector normal del patrón
+y los rayos proyectivos que conectan las esquinas del objeto con el plano de la
+imagen.}{Esquema pendiente de la proyección perspectiva de un marcador plano
+observado por una cámara calibrada. Una figura de este tipo facilitaría la
+lectura del modelo pinhole, de la homografía planar y del problema PnP.}
 
 La relación entre los puntos tridimensionales del marcador y su proyección en la
 imagen se describe mediante el modelo pinhole de cámara. Para cada punto
@@ -744,7 +774,42 @@ y \((R,t)\) representa la transformación rígida entre el frame del marcador y 
 frame óptico de la cámara. Esta ecuación deja en evidencia una dependencia
 fundamental del sistema: para estimar pose no alcanza con detectar el patrón; es
 necesario conocer también la calibración intrínseca de la cámara y el tamaño
-físico del marcador.
+físico del marcador. Si la calibración es imprecisa, el error no aparece sólo en
+la distancia estimada al marcador: también sesga la orientación recuperada,
+porque ambos componentes se ajustan simultáneamente para explicar la misma
+proyección 2D.
+
+En el caso particular de un marcador plano, la geometría admite además una
+formulación equivalente mediante homografía. Si todos los puntos del objeto
+satisfacen \(Z_i = 0\), entonces la proyección se reduce a
+
+\begin{equation}
+s_i\,p_i = H
+\begin{bmatrix}
+X_i \\
+Y_i \\
+1
+\end{bmatrix},
+\label{eq:planar_homography}
+\end{equation}
+
+donde la homografía \(H\) puede descomponerse como
+
+\begin{equation}
+H = K
+\begin{bmatrix}
+r_1 & r_2 & t
+\end{bmatrix},
+\label{eq:homography_decomposition}
+\end{equation}
+
+siendo \(r_1\) y \(r_2\) las dos primeras columnas de la matriz de rotación
+\(R\). Esta expresión muestra que un marcador plano no sólo aporta cuatro
+correspondencias puntuales, sino una transformación proyectiva completa entre su
+plano y la imagen. También explica por qué la estimación de pose con blancos
+planares puede volverse ambigua o numéricamente delicada en configuraciones poco
+favorables, por ejemplo cuando el patrón se observa casi frontalmente y el ruido
+de esquina compite con una proyección muy poco deformada \citep{Schweighofer2006}.
 
 La recuperación de \((R,t)\) puede formularse entonces como un problema de
 Perspective-\(n\)-Point. En términos generales, se busca la transformación que
@@ -767,10 +832,30 @@ permite estimar la pose a partir de correspondencias 2D--3D con costo lineal en
 la cantidad de puntos \citep{Lepetit2009}. En el caso de un marcador cuadrado,
 el número de puntos es pequeño, pero la formulación sigue siendo conceptualmente
 la misma: a partir de cuatro esquinas coplanares y calibración conocida, se
-recupera la pose del marcador respecto de la cámara.
+recupera la pose del marcador respecto de la cámara. En la práctica, el objetivo
+no es únicamente hallar una solución geométricamente válida, sino encontrar la
+que minimiza de la manera más consistente el error inducido por ruido,
+cuantización de píxeles y distorsión residual. Por eso, el error de
+reproyección funciona como criterio natural para comparar hipótesis de pose.
+
+Si se linealiza la proyección alrededor de una solución nominal
+\((R_0,t_0)\), pequeñas perturbaciones en la imagen y en la pose quedan
+relacionadas aproximadamente por un Jacobiano de sensibilidad \(J_\pi\):
+
+\begin{equation}
+\delta p \approx J_\pi\,\delta \xi,
+\label{eq:projection_jacobian_linearization}
+\end{equation}
+
+donde \(\delta \xi\) representa una perturbación infinitesimal de la pose en el
+espacio tangente de \(SE(3)\). Esta linealización ayuda a interpretar un hecho
+empírico importante: cuanto más pequeñas aparecen las esquinas del marcador o
+cuanto más cercana está la observación a una configuración proyectiva degenerada,
+mayor es la sensibilidad de la pose estimada frente a pequeños errores de
+localización.
 
 Esta geometría proyectiva explica, además, por qué el recorte a roll, pitch y
-heave es tan relevante para la tesis. Si el marcador está fijado al torso del
+heave es tan relevante en este problema. Si el marcador está fijado al torso del
 robot, roll y pitch se reflejan principalmente en la parte rotacional de
 \((R,t)\), mientras que heave altera la distancia relativa y, por lo tanto, la
 escala aparente del patrón en la imagen. En otras palabras, el movimiento que
