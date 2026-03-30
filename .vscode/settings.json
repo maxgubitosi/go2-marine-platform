@@ -33,5 +33,6 @@
         "PATH": "/Library/TeX/texbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
       }
     }
-  ]
+  ],
+  "cmake.sourceDirectory": "/Users/jackspolski/Documents/etica/go2-marine-platform/src/sjtu_drone/sjtu_drone_description"
 }

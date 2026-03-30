@@ -892,38 +892,103 @@ guarda relación con el comportamiento observado en el Go2.
 
 \subsection{Metodología en simulación}
 
-La etapa de simulación tuvo un doble objetivo. Por un lado, nos permitió
-construir el framework base sobre ROS2 y Gazebo, incluyendo el movimiento
-marino sintetizado, el montaje del marcador y las distintas fuentes de imagen.
-Por otro, nos dio un entorno instrumentado para validar la estimación visual en
-condiciones repetibles, separando con claridad lo que ocurre en tiempo real de
-lo que luego se analiza offline. A continuación describimos los componentes
-principales de esta etapa.
+La simulación fue el primer entorno de validación del framework porque nos
+permitió controlar la escena, repetir corridas bajo condiciones comparables y
+registrar todas las señales relevantes del sistema. En esta etapa el problema
+se organizó como un pipeline de cuatro pasos: generación del movimiento
+marino, materialización de ese movimiento en el Go2, observación visual del
+marcador y evaluación offline contra una referencia reconstruible. Trabajar en
+Gazebo sobre ROS2 hizo posible estudiar cada una de esas etapas sin incorporar,
+todavía, las incertidumbres propias del laboratorio.
+
+Además de servir como entorno de desarrollo, la simulación funcionó como un
+banco de pruebas metodológico. Cada corrida se registró como un rosbag de un
+minuto, lo que permitió volver sobre una misma secuencia para analizarla varias
+veces sin repetir la ejecución completa. Dentro de esa estructura, la cámara
+fija se utilizó como caso base para introducir el setup visual en su versión
+más simple, mientras que el \texttt{sjtu\_drone} se trabajó como una extensión
+más exigente y más cercana al escenario futuro de aterrizaje sobre plataformas
+móviles.
 
 \subsubsection{Generación del movimiento marino}
 
-El primer componente del sistema consiste en un nodo ROS2 que modela el movimiento
-de una plataforma marina mediante tres grados de libertad del cuerpo del robot:
-roll, pitch y heave. En lugar de desplazar físicamente una embarcación en el
-simulador, utilizamos el tronco del Unitree Go2 como soporte del marcador y
-publicamos una pose objetivo sobre el tópico \texttt{/body\_pose}. De este modo,
-el robot actúa como una plataforma instrumentada cuyo movimiento es totalmente
-reproducible y puede compararse con el estimador visual cuadro a cuadro.
+En lugar de modelar en Gazebo un casco marino completo y sus interacciones
+hidrodinámicas, sintetizamos directamente sobre el Go2 aquellas componentes del
+movimiento que resultan más relevantes para el problema visual que queremos
+estudiar. Para eso utilizamos el nodo \texttt{marine\_platform\_simulator}, que
+publica una pose objetivo del torso en \texttt{/body\_pose} y trata al robot
+como una plataforma instrumentada sobre la cual se monta el marcador ArUco.
+Esta decisión simplifica el entorno sin perder el aspecto central del problema:
+cómo cambia la apariencia del marcador cuando la plataforma se inclina y se
+desplaza verticalmente.
 
-La generación de movimiento se implementó en el nodo
-\texttt{marine\_platform\_simulator}, que opera a \mbox{20 Hz}. El nodo toma
-como referencia el instante de inicialización y, a partir del tiempo transcurrido
-\(t\), genera una pose objetivo del tronco del robot. En la implementación
-actual, la frecuencia base del oleaje se controla mediante el parámetro
-\texttt{wave\_frequency}, cuyo valor por defecto es \(f=0{,}1\) Hz. A partir de
-esa frecuencia se define la pulsación angular
-\(\omega = 2 \pi f\), que luego se reutiliza en los tres ejes simulados.
+La elección de trabajar con roll, pitch y heave respondió a dos criterios. El
+primero fue visual: roll y pitch modifican de manera directa la perspectiva del
+marcador, mientras que heave altera la distancia relativa a la cámara y, por lo
+tanto, su escala aparente en la imagen. El segundo fue metodológico: mantener
+\(x\), \(y\) y yaw en cero permite aislar esas perturbaciones dominantes sin
+mezclarlas, en esta etapa, con traslaciones laterales o giros horizontales que
+harían más difícil atribuir el origen de los errores. Esta reducción no implica
+que los otros grados de libertad no sean relevantes para el problema final de
+aterrizaje, sino que el framework se construyó primero sobre el subconjunto de
+movimientos que más afecta la observación visual del marcador.
 
-El patrón principal utilizado en nuestros experimentos es el sinusoidal. En
-este caso, cada grado de libertad se describe con una oscilación periódica
-suave, limitada por una amplitud máxima configurable. Si denotamos por \(A_r\),
-\(A_p\) y \(A_h\) las amplitudes máximas de roll, pitch y heave,
-respectivamente, el nodo implementa:
+También se eligió publicar una pose objetivo del torso y no fuerzas ni pares
+equivalentes a un modelo de oleaje. La razón es que el objetivo de esta etapa
+no fue reproducir con máxima fidelidad la física de una embarcación, sino
+construir un escenario repetible, parametrizable y compatible con el pipeline de
+percepción. Una consigna de pose permite controlar con precisión qué movimiento
+se solicita, repetir corridas bajo la misma configuración y relacionar después
+la señal objetivo con la respuesta del robot y con la pose estimada por la
+cámara.
+
+El nodo opera con una frecuencia de publicación de \mbox{20 Hz} y toma como
+referencia el tiempo transcurrido desde su inicialización. La configuración de
+referencia utilizada en el repositorio, que adoptamos también como base para la
+metodología del informe, fija \texttt{wave\_frequency = 0{,}1} Hz,
+\texttt{max\_roll\_deg = 15{,}0}, \texttt{max\_pitch\_deg = 10{,}0},
+\texttt{max\_heave\_m = 0{,}10}, \texttt{phase\_offset\_pitch = 1{,}0},
+\texttt{phase\_offset\_heave = 1{,}5} y \texttt{smoothing\_factor = 0{,}95}. Se
+adoptó esta configuración como referencia porque es la que efectivamente se usa
+para correr la simulación completa del repositorio y, por lo tanto, la mejor
+documentada y más fácil de reproducir. En la práctica, estos parámetros
+controlan cuatro aspectos distintos del movimiento: su velocidad temporal, su
+amplitud máxima, el desacople relativo entre ejes y la suavidad de la señal
+publicada.
+
+\begin{table}[H]
+\centering
+\caption{Parámetros de referencia del simulador marino y función metodológica de
+cada uno.}
+\label{tab:method_marine_params}
+\begin{tabular}{lll}
+\toprule
+Parámetro & Valor base & Función en la señal \\
+\midrule
+\texttt{rate\_hz} & \(20{,}0\) & Frecuencia de publicación del nodo \\
+\texttt{wave\_frequency} & \(0{,}1\) Hz & Escala temporal del oleaje sintetizado \\
+\texttt{max\_roll\_deg} & \(15{,}0^\circ\) & Amplitud máxima de roll \\
+\texttt{max\_pitch\_deg} & \(10{,}0^\circ\) & Amplitud máxima de pitch \\
+\texttt{max\_heave\_m} & \(0{,}10\) m & Amplitud máxima de heave \\
+\texttt{phase\_offset\_pitch} & \(1{,}0\) & Desacople temporal de pitch \\
+\texttt{phase\_offset\_heave} & \(1{,}5\) & Desacople temporal de heave \\
+\texttt{smoothing\_factor} & \(0{,}95\) & Suavizado exponencial de la consigna \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La Tabla~\ref{tab:method_marine_params} cumple un rol metodológico importante:
+permite leer cada hiperparámetro no como una opción aislada del código, sino
+como una decisión que modifica la dificultad del escenario visual. Aumentar la
+frecuencia acelera la variación temporal del marcador; aumentar las amplitudes
+agranda las excursiones angulares y verticales; modificar los desfases cambia
+la relación temporal entre ejes; y variar el suavizado altera cuán brusca o
+cuán continua resulta la señal final.
+
+El patrón de referencia del trabajo es el sinusoidal. Si denotamos por \(A_r\),
+\(A_p\) y \(A_h\) las amplitudes máximas de roll, pitch y heave, y por
+\(\omega = 2 \pi f\) la pulsación angular asociada a la frecuencia base
+\(f\), el nodo implementa:
 
 \begin{equation}
 r(t) = A_r \sin(\omega t),
@@ -939,64 +1004,103 @@ h(t) = A_h \sin(\omega \kappa_h t),
 
 donde \(\kappa_p\) y \(\kappa_h\) corresponden a los parámetros
 \texttt{phase\_offset\_pitch} y \texttt{phase\_offset\_heave}. En la
-configuración por defecto, estos valores son \(\kappa_p = 1{,}0\) y
-\(\kappa_h = 1{,}5\). En términos prácticos, esto hace que roll y pitch
-evolucionen con una frecuencia angular similar, mientras que heave oscila más
-rápido. Además, pitch incorpora un desfase fijo de \(\pi/3\), lo que evita que
-los tres movimientos alcancen sus máximos y mínimos al mismo tiempo. Aun dentro
-de este caso simple, la plataforma no realiza un movimiento perfectamente
-sincronizado en todos los ejes, sino una combinación periódica más útil para el
-análisis visual.
+configuración de referencia, \(\kappa_p = 1{,}0\) y \(\kappa_h = 1{,}5\). Esto
+hace que roll y pitch evolucionen en escalas temporales similares, mientras que
+heave introduce una oscilación algo más rápida. A su vez, el desfase fijo de
+\(\pi/3\) en pitch evita que las tres componentes alcancen sus extremos al
+mismo tiempo. Incluso en esta versión simple, el movimiento resultante no es
+una oscilación rígidamente sincronizada, sino una combinación periódica más
+interesante para observar cómo responde el estimador visual.
 
-El nodo también incluye un patrón irregular, implementado como una combinación
-de varias componentes sinusoidales por eje. Este modo se utilizó principalmente
-para pruebas y depuración, ya que permite romper la periodicidad estricta del
-caso sinusoidal y exponer al detector visual a perturbaciones más variadas. Sin
-embargo, como no busca modelar un espectro marino físicamente calibrado, en este
-trabajo tomamos el patrón sinusoidal como caso de referencia y dejamos el
-irregular como una variante complementaria de ensayo.
+Desde el punto de vista metodológico, el patrón sinusoidal ofreció tres ventajas
+concretas. Primero, es fácilmente interpretable: cada hiperparámetro tiene un
+efecto claro sobre la señal. Segundo, es altamente repetible, lo que permite
+comparar rosbags distintos sin introducir ambigüedad sobre la entrada del
+sistema. Tercero, facilita el diagnóstico visual y temporal, porque los cambios
+en frecuencia, amplitud y fase se reconocen con facilidad tanto en las señales
+del robot como en la imagen del marcador. Por estas razones lo adoptamos como
+caso de referencia del informe.
+
+\figureplaceholder
+  {fig:method_motion_components}
+  {Gráfico temporal pendiente de las componentes de roll, pitch y heave en modo
+  sinusoidal usando la configuración de referencia del simulador. La figura
+  debería mostrar amplitudes, diferencias de fase y efecto cualitativo del
+  suavizado sobre la señal publicada.}
+  {Señales temporales de referencia del movimiento marino sintetizado. Una
+  visualización de este tipo ayudaría a relacionar los hiperparámetros del
+  simulador con la forma efectiva de la consigna enviada al Go2.}
+
+El nodo también ofrece un patrón \texttt{irregular}, construido como suma de
+varias componentes sinusoidales por eje. Ese modo se utilizó durante el
+desarrollo para exploración y depuración, porque rompe la periodicidad estricta
+del caso simple y expone al detector a perturbaciones menos regulares. Sin
+embargo, no lo tomamos como caso principal del informe porque no fue calibrado
+como un modelo físico de mar y resultaba menos conveniente como base
+reproducible para comparar estimación y ground truth. Por esa razón, el patrón
+sinusoidal quedó como referencia metodológica del trabajo, mientras que el
+irregular se mantuvo como variante complementaria de ensayo.
+
+En términos prácticos, la diferencia entre ambos modos puede resumirse así: el
+patrón sinusoidal concentra la variación de cada eje en una componente dominante
+y vuelve más transparente la relación entre entrada y respuesta; el patrón
+\texttt{irregular}, en cambio, superpone oscilaciones con distintas escalas
+temporales y genera trayectorias menos previsibles. Esta segunda opción es útil
+para tensionar el detector y explorar la robustez del pipeline, pero no resulta
+la mejor base cuando se quiere explicar el sistema con claridad o comparar una
+configuración con otra de manera controlada.
+
+\figureplaceholder
+  {fig:method_wave_patterns}
+  {Comparación pendiente entre los patrones \texttt{sinusoidal} e
+  \texttt{irregular} del simulador marino. La figura debería mostrar, para un
+  mismo intervalo temporal, cómo cambia la forma de las señales y por qué el
+  caso sinusoidal es más conveniente como referencia metodológica.}
+  {Comparación conceptual entre los dos patrones de oleaje implementados en el
+  simulador. Esta figura ayudaría a justificar la elección del patrón
+  sinusoidal como caso principal del trabajo.}
 
 Una vez calculada la señal objetivo para cada eje, el nodo no la publica de
-forma directa. Antes se aplica un suavizado exponencial, implementado como un
+forma directa. Antes aplica un suavizado exponencial, implementado como un
 filtro pasa-bajos de primer orden. Si \(\alpha\) denota el parámetro
 \texttt{smoothing\_factor} y \(x_k\) el valor objetivo en el instante discreto
-\(k\), la señal publicada \(\tilde{x}_k\) se obtiene mediante:
+\(k\), la señal publicada \(\tilde{x}_k\) se obtiene mediante
 
 \begin{equation}
 \tilde{x}_k = \alpha \tilde{x}_{k-1} + (1-\alpha) x_k.
 \end{equation}
 
-El mismo esquema se usa para roll, pitch y heave. En la configuración base
-\(\alpha = 0{,}95\), por lo que el estado suavizado conserva una fuerte memoria
-del valor previo y amortigua cambios abruptos entre iteraciones consecutivas.
-Esto mejora la plausibilidad del movimiento observado en Gazebo y evita
-transiciones demasiado bruscas que podrían introducir artefactos innecesarios en
-la evaluación visual.
+El mismo esquema se usa para roll, pitch y heave. En la configuración base,
+\(\alpha = 0{,}95\), de modo que la salida conserva una memoria fuerte del
+estado previo y amortigua cambios abruptos entre iteraciones consecutivas. Esto
+ayuda a evitar transiciones poco plausibles en Gazebo y reduce movimientos
+demasiado bruscos que podrían introducir artefactos innecesarios en la
+evaluación visual. Metodológicamente, este parámetro fue importante porque
+funciona como puente entre una señal objetivo ideal y una consigna más cercana
+a un movimiento físicamente ejecutable por el robot.
 
 Luego del suavizado, el nodo construye un mensaje \texttt{Pose}. La posición se
 fija como \((0, 0, \tilde{h}_k)\), de manera que el único desplazamiento lineal
 es la componente vertical. La orientación se representa con roll y pitch
-suavizados, mientras que yaw se mantiene en cero en esta versión del sistema.
-Como ROS2 publica orientación en cuaterniones, el nodo convierte primero los
-ángulos desde grados a radianes y después calcula el cuaternión asociado antes
-de emitir el mensaje en \texttt{/body\_pose}. En paralelo, publica un
-\texttt{Vector3} en \texttt{/marine\_platform/debug\_state} con los valores
-suavizados de roll, pitch y heave, lo que facilita inspección y depuración.
+suavizados, mientras que yaw se mantiene en cero. Como ROS2 publica
+orientaciones en cuaterniones, el nodo convierte primero los ángulos a radianes
+y calcula después el cuaternión correspondiente antes de emitir la consigna en
+\texttt{/body\_pose}. En paralelo, publica un \texttt{Vector3} en
+\texttt{/marine\_platform/debug\_state} con los valores suavizados de roll,
+pitch y heave, lo que resultó útil para inspección y depuración.
 
-Los parámetros utilizados en la configuración base del repositorio fijan límites
-de \(\pm 15^\circ\) para roll, \(\pm 10^\circ\) para pitch y \(\pm 0{,}10\) m
-para heave. Estos límites afectan tanto la generación automática como el modo
-manual. Cuando \texttt{enable\_manual=true}, el simulador deja de sintetizar las
-ondas y pasa a consumir comandos recibidos en
-\texttt{/marine\_platform/manual\_cmd}. Un segundo nodo,
-\texttt{marine\_manual\_control}, permite generar esos comandos desde teclado con
-incrementos discretos de \(2^\circ\) para roll y pitch, y de \(0{,}02\) m para
-heave. Además, el nodo manual aplica saturaciones de seguridad y permite volver
-a la posición neutral. Esta separación entre generación automática y control
-manual resultó útil para validar el pipeline en dos escalas: por un lado,
-secuencias continuas de oleaje y, por otro, poses aisladas que facilitan el
-diagnóstico de errores geométricos y la inspección visual de frames
-individuales.
+El simulador también incorpora un modo manual. Cuando
+\texttt{enable\_manual=true}, deja de sintetizar ondas automáticamente y pasa a
+consumir comandos recibidos en \texttt{/marine\_platform/manual\_cmd}. Un
+segundo nodo, \texttt{marine\_manual\_control}, permite generar esas consignas
+desde teclado con incrementos discretos en roll, pitch y heave, además de
+aplicar saturaciones de seguridad y recuperar una posición neutral. Este modo
+no fue la base de las corridas experimentales, pero sí resultó valioso para
+verificar poses aisladas, revisar la coherencia geométrica de la escena y
+diagnosticar problemas antes de pasar a secuencias continuas de oleaje. En ese
+sentido, cumplió un rol de apoyo en el desarrollo: permitió inspeccionar el
+pipeline en estados controlados antes de exigirle seguimiento continuo sobre
+secuencias periódicas de un minuto.
 
 \figureplaceholder
   {fig:method_marine_simulator}
@@ -1008,64 +1112,52 @@ individuales.
 
 \subsubsection{Control postural del Go2 en simulación}
 
-El nodo \texttt{marine\_platform\_simulator} no mueve directamente el modelo en
-Gazebo, sino que publica una \texttt{Pose} deseada en \texttt{/body\_pose}. En
-nuestro caso, esta consigna contiene \(x=y=0\), \texttt{yaw}=0, una componente
-vertical asociada a heave y una orientación definida por roll y pitch. El
-consumidor de este tópico no vive en \texttt{go2\_tools}, sino en el stack del
-Go2 incluido a través del fork \texttt{unitree-go2-ros2}. Durante el lanzamiento
-de \texttt{go2\_config/gazebo.launch.py}, el archivo
-\texttt{champ\_bringup/bringup.launch.py} instancia el nodo
-\texttt{quadruped\_controller\_node}, que suscribe \texttt{body\_pose} y lo
-interpreta como una pose deseada del torso.
+El nodo \texttt{marine\_platform\_simulator} no mueve directamente un objeto
+externo en Gazebo, sino que publica una pose deseada del cuerpo del Go2 en
+\texttt{/body\_pose}. Esa consigna contiene \(x=y=0\), \texttt{yaw}=0, una
+altura variable asociada a heave y una orientación dada por roll y pitch. El
+objetivo de este diseño es que la ``plataforma marina'' no sea una malla rígida
+desacoplada del robot, sino la propia postura del cuadrúpedo.
 
-La traducción entre pose deseada y movimiento articular se apoya en los
-componentes de CHAMP. Primero, el controlador convierte el quaternion recibido a
-ángulos roll--pitch--yaw y suma la altura nominal del robot a la coordenada
-vertical. Luego, en cada iteración del loop de control, el módulo
-\texttt{BodyController} parte de la postura neutra de cada pata
-(\textit{zero stance}) y calcula nuevas posiciones objetivo para los cuatro
-puntos de apoyo. Conceptualmente, el torso adopta la pose pedida mediante una
-transformación inversa sobre las patas: para lograr un cuerpo inclinado o más
-alto, se reposicionan las extremidades respecto de su configuración nominal.
-Sobre esas posiciones objetivo actúan luego el \texttt{LegController} y la
-cinemática inversa del robot, que producen un vector de doce ángulos
-articulares, uno por cada \textit{joint} del Go2.
+Durante el bringup del Go2 en simulación, el stack de control del robot consume
+esa pose deseada del torso y la traduce en una nueva configuración articular.
+Desde un punto de vista funcional, el proceso puede leerse de la siguiente
+manera: a partir de una postura nominal, el controlador reubica las patas para
+que el cuerpo adopte la altura y la inclinación solicitadas. El efecto buscado
+no se logra desplazando rígidamente el \textit{base link} del robot, sino
+reconfigurando la postura completa del cuadrúpedo de un modo consistente con su
+cadena cinemática.
 
-La salida de ese proceso se publica como un mensaje
-\texttt{JointTrajectory} en el tópico
-\texttt{joint\_group\_effort\_controller/joint\_trajectory}. En la configuración
-del robot para Gazebo, ese controlador está definido sobre las doce
-articulaciones de las patas y utiliza una interfaz de esfuerzo. En consecuencia,
-el movimiento marino no se obtiene desplazando rígidamente el \textit{base
-link}, sino reconfigurando la postura del cuadrúpedo hasta que el torso adopta
-la orientación y la altura solicitadas. Esta decisión fue importante para el
-proyecto, porque preserva una cadena cinemática coherente y expone estados del
-robot compatibles con el resto del pipeline ROS2.
+Esta decisión fue importante porque mantiene la coherencia entre la simulación
+visual y el resto de las señales del sistema. El Go2 no solo se ve inclinado
+desde la cámara, sino que además publica estados compatibles con esa postura,
+como odometría, IMU y estimaciones de pose del cuerpo. En otras palabras, el
+movimiento marino sintetizado no aparece únicamente como una animación del
+modelo, sino como una secuencia reproducible de configuraciones del robot que
+puede seguirse también desde sus variables internas.
 
-Esa misma cadena de estado es la que luego se utiliza para construir el ground
-truth. El stack lanza además un \texttt{state\_estimation\_node}, que publica
-\texttt{/base\_to\_footprint\_pose} y una odometría cruda \texttt{/odom/raw}, y
-dos filtros EKF de \texttt{robot\_localization} que fusionan esas señales con
-\texttt{/imu/data} para exponer \texttt{/odom} y \texttt{/odom/local}. En la
-evaluación offline, la pose del marcador no se asume idéntica a la del torso:
-primero se reconstruye la pose del tronco a partir de \texttt{/odom},
-\texttt{/imu/data} y \texttt{/base\_to\_footprint\_pose}; luego se suma el
-offset fijo del marcador respecto del cuerpo del Go2 y se corrige el offset de
-\textit{spawn} del robot en el mundo. De este modo, la ``plataforma marina'' se
-materializa como una secuencia reproducible de configuraciones articulares cuyo
-resultado observable es una pose conocida del marcador en simulación.
+Esa misma cadena de estado es la que luego se usa para construir el ground
+truth del marcador. En la evaluación offline se reconstruye primero la pose del
+tronco a partir de \texttt{/odom}, \texttt{/imu/data} y
+\texttt{/base\_to\_footprint\_pose}; después se suma el offset fijo del ArUco
+respecto del cuerpo del Go2 y se corrige el offset de \textit{spawn} del robot
+en el mundo, fijado en \(0{,}40\) m sobre el eje \(x\) en la configuración de
+referencia. De este modo, la pose verdadera del marcador no se toma como un
+dato trivial del simulador, sino como una cantidad reconstruida de forma
+consistente con el resto del pipeline.
 
 \subsubsection{Estimación visual en simulación}
 
-El sistema contempla dos fuentes de imagen. La primera es una cámara fija nadir,
-ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
-bottom del \texttt{sjtu\_drone}, que despega automáticamente y entra en modo de
-hover sobre el Go2. Esta dualidad nos permitió estudiar dos escenarios
-complementarios: uno estático, donde la cámara no agrega movimiento propio, y
-otro móvil, donde la percepción depende también de la pose del dron. La
-Figura~\ref{fig:method_visual_setup} resume visualmente el setup empleado para
-ambos casos.
+El framework contempla dos fuentes de imagen. La primera es una cámara fija
+nadir, ubicada sobre la plataforma y orientada hacia abajo. La segunda es la
+cámara bottom del \texttt{sjtu\_drone}, que despega automáticamente y luego
+mantiene un hover por encima del Go2. Estos dos escenarios no cumplen el mismo
+rol dentro de la metodología. La cámara fija se utilizó como caso base porque
+elimina el movimiento propio del sensor y deja más aislado el efecto del oleaje
+sobre la observación del marcador. El dron, en cambio, se trabajó como una
+extensión más fuerte del framework, ya que agrega la dinámica del vehículo
+aéreo y aproxima mejor el problema al objetivo final de aterrizaje. La
+Figura~\ref{fig:method_visual_setup} resume visualmente ambos casos.
 
 \begin{figure}[H]
 \centering
@@ -1094,8 +1186,11 @@ metros. Una vez detectadas las esquinas, OpenCV estima la pose relativa del
 marcador respecto del frame óptico de la cámara mediante \texttt{solvePnP}. El
 resultado se publica en \texttt{/aruco/pose} como un \texttt{PoseStamped},
 mientras que \texttt{/aruco/detection} y \texttt{/aruco/debug\_image} se utilizan
-para inspección y depuración. Un ejemplo del frame anotado que produce el
-detector puede verse en la Figura~\ref{fig:method_aruco_detection_frame}.
+para inspección y depuración. Lo importante aquí es que el detector trabaja solo
+con imagen e intrínsecos de cámara: durante la corrida no usa conocimiento
+privilegiado del simulador, de la pose del robot ni de la pose del dron. Un
+ejemplo del frame anotado que produce el detector puede verse en la
+Figura~\ref{fig:method_aruco_detection_frame}.
 
 \begin{figure}[H]
 \centering
@@ -1106,14 +1201,18 @@ torso del Go2, junto con los ejes de pose estimada superpuestos en tiempo real.}
 \label{fig:method_aruco_detection_frame}
 \end{figure}
 
-La cámara fija se modeló como un sensor estático en Gazebo con una altura base
-de \(2{,}0\) m y un frame rígido respecto del mundo. En cambio, el dron se
-spawnea con un offset horizontal respecto del robot, ejecuta el takeoff de forma
-automática y, tras un retardo de tres segundos, conmuta a control por posición
-para mantener un hover nominal en \((0{,}5,\ 0,\ 3{,}0)\) m. Esta configuración
-permite comparar un caso idealizado, donde toda la variabilidad proviene del
-oleaje, con un caso más realista en el que la cámara depende de la dinámica del
-vehículo aéreo.
+En el caso base, la cámara fija se modeló como un sensor estático en Gazebo con
+una altura nominal de \(2{,}0\) m y con tópicos de imagen
+\texttt{/fixed\_camera/image\_raw} y \texttt{/fixed\_camera/camera\_info}. Su
+frame permanece rígido respecto del mundo, de modo que toda la variabilidad de
+la secuencia proviene del movimiento del Go2. En el caso del dron, por el
+contrario, la cámara deja de ser un observador inmóvil. El
+\texttt{sjtu\_drone} se spawnea con un offset horizontal respecto del robot,
+ejecuta el takeoff de forma automática y, tras un retardo de tres segundos,
+conmuta a control por posición para mantener un hover nominal en
+\((0{,}5,\ 0,\ 3{,}0)\) m. Esta organización permite pasar de un escenario
+geométricamente más limpio a otro donde la percepción depende además de la
+dinámica del vehículo aéreo.
 
 \figureplaceholder
   {fig:method_camera_sources}
@@ -1125,34 +1224,31 @@ vehículo aéreo.
 
 \subsubsection{Registro y evaluación offline}
 
-La implementación completa se organizó como un pipeline de ROS2 sobre un único
-workspace. El paquete \texttt{go2\_tools} se encarga de la simulación marina; el
-paquete \texttt{fixed\_camera} define la cámara fija y su detector ArUco; y
-\texttt{sjtu\_drone} aporta tanto la simulación del dron como el controlador de
-posición y la variante del detector para la cámara bottom. A esto se suman dos
-herramientas offline: \texttt{marine\_robot\_dataset}, que extrae datasets desde
-rosbags, y \texttt{aruco\_relative\_pose}, que estima o evalúa la pose del
-marcador fuera de línea.
+La etapa de simulación se cerró siempre con el registro de la corrida en un
+rosbag de un minuto. Ese registro incluye, según el escenario, la imagen de la
+cámara, su calibración, la pose estimada del ArUco, TF, odometría, IMU y las
+señales necesarias para reconstruir después la pose verdadera del marcador. De
+esta manera, cada sesión queda preservada como una unidad de análisis que puede
+reprocesarse sin volver a ejecutar Gazebo.
 
-El criterio de evaluación se separó explícitamente de la percepción en tiempo
-real. Durante la simulación, el detector no utiliza información privilegiada del
-robot ni del mundo: solo procesa imagen e intrínsecos de cámara. La comparación
-con el ground truth se realiza después, a partir de un rosbag. El script
-\texttt{evaluate\_realtime\_aruco.py} reconstruye la pose del tronco del Go2 en
-el mundo usando \texttt{/odom}, \texttt{/imu/data} y
-\texttt{/base\_to\_footprint\_pose}; luego agrega el offset del marcador sobre el
-tronco y transforma esa pose al frame de la cámara mediante las extrínsecas
-definidas en el modelo de cada sensor. Para el caso del Go2, también se corrige
-el offset de spawn en el mundo, fijado en \(0{,}40\) m sobre el eje \(x\) en la
-configuración actual.
+La evaluación se separó deliberadamente de la percepción en tiempo real. Durante
+la corrida, el detector procesa únicamente imagen e intrínsecos de cámara. La
+comparación con el ground truth se hace después, a partir del rosbag, mediante
+el script \texttt{evaluate\_realtime\_aruco.py}. En ese análisis offline se
+reconstruye la pose del tronco del Go2 en el mundo usando \texttt{/odom},
+\texttt{/imu/data} y \texttt{/base\_to\_footprint\_pose}; luego se suma el
+offset fijo del marcador sobre el cuerpo del robot y se transforma esa pose al
+frame de la cámara mediante las extrínsecas definidas en cada setup. En el caso
+del dron, además, entra la pose del propio vehículo como parte de la cadena de
+transformaciones.
 
-Esta separación entre estimación online y análisis offline fue importante por
-dos motivos. En primer lugar, evita contaminar la medición de desempeño con
-información del simulador que no estaría disponible en un sistema real. En
-segundo lugar, permite guardar cada corrida como rosbag y volver a evaluar la
-misma secuencia con distintos scripts o métricas sin repetir la simulación.
-Sobre esa base se generan series temporales, histogramas y resúmenes numéricos
-de error, que alimentan la sección experimental del informe.
+Esta separación entre estimación online y análisis offline resultó importante
+por dos motivos. En primer lugar, evita contaminar la medición del desempeño
+con información del simulador que no estaría disponible en una aplicación real.
+En segundo lugar, permite revisar una misma secuencia con distintos criterios de
+análisis sin modificar el detector ni repetir la simulación. Sobre esa base se
+generan los CSV, las series temporales y los gráficos de error que luego
+alimentan la sección experimental del informe.
 
 \figureplaceholder
   {fig:method_pipeline}
@@ -1175,26 +1271,157 @@ en posición aproximadamente fija. Este pasaje implicó cambios prácticos en el
 montaje, en las condiciones de medición y en el tipo de comparación que podía
 realizarse respecto de la simulación.
 
+\subsubsection{Dificultades del pasaje de simulación a laboratorio}
+
+El pasaje de simulación a laboratorio no consistió en trasladar sin cambios un
+pipeline ya resuelto, sino en adaptar cada una de sus partes a un entorno donde
+desaparecen varias de las idealizaciones de Gazebo. En simulación, la escena, la
+calibración de cámara, el montaje del sensor y el estado del robot están
+definidos por el modelo. En laboratorio, en cambio, esas mismas piezas deben
+construirse y verificarse experimentalmente: la cámara requiere calibración
+real, el marcador debe montarse físicamente sobre el robot, la posición del
+sensor deja de ser perfectamente rígida y la comparación ya no puede apoyarse en
+un ground truth exacto del sistema.
+
+Desde el punto de vista metodológico, hubo tres adaptaciones importantes. La
+primera afectó a la entrada del sistema: la consigna siguió siendo una pose del
+cuerpo publicada como \texttt{/body\_pose}, pero su ejecución pasó a depender de
+las restricciones mecánicas y de estabilidad del robot real. La segunda afectó a
+la percepción: la cámara dejó de ser un sensor ideal para convertirse en un
+dispositivo físico que hubo que calibrar y fijar aproximadamente sobre la
+escena. La tercera afectó a la validación: en lugar de comparar contra un estado
+verdadero perfecto, se trabajó con las señales internas publicadas por el
+cuadrúpedo, usando la odometría como referencia principal para contrastar
+objetivo y respuesta.
+
+Estas diferencias no invalidan el vínculo entre ambos entornos, pero sí cambian
+la naturaleza de las preguntas que puede responder cada uno. La simulación
+permite aislar variables, repetir exactamente las mismas corridas y cuantificar
+error respecto de ground truth. El laboratorio, en cambio, obliga a aceptar
+incertidumbre adicional y desplaza el foco hacia la coherencia entre la consigna
+propuesta, la respuesta física del robot y la observación visual del marcador.
+Por eso, antes de describir el montaje real en detalle, conviene explicitar qué
+aspectos del sistema se conservaron y cuáles tuvieron que adaptarse.
+
+\begin{table}[H]
+\centering
+\caption{Cambios metodológicos principales al pasar de simulación a laboratorio.}
+\label{tab:method_sim_to_lab}
+\begin{tabular}{p{0.22\textwidth}p{0.33\textwidth}p{0.33\textwidth}}
+\toprule
+Aspecto & Simulación & Laboratorio \\
+\midrule
+Entrada del sistema & Consigna \texttt{/body\_pose} sobre un modelo controlado y repetible & Misma lógica de consigna, pero ejecutada por el robot físico \\
+Referencia de comparación & Ground truth reconstruible a partir del estado del simulador & Señales internas del robot, con \texttt{/odom} como referencia principal \\
+Sensor visual & Cámara ideal definida por el modelo y sus extrínsecas & Cámara estéreo usada como monocular, calibrada y sostenida sobre la escena \\
+Montaje del marcador & Relación rígida definida por el modelo del robot & ArUco adherido físicamente sobre el lomo del cuadrúpedo \\
+Repetibilidad & Alta, con corridas equivalentes y rosbags comparables & Dependiente del montaje, la calibración y la ejecución física \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsubsection{Reproducción del movimiento en el Go2 real}
 
-\pendingreal{Describir cómo se trasladó al laboratorio la lógica de movimiento
-definida en simulación, qué señales o consignas se aplicaron sobre el Go2 real
-y qué ajustes prácticos fueron necesarios para ejecutar la prueba fuera de
-Gazebo.}
+Sobre ese trasfondo, la transición al laboratorio se apoyó en la misma lógica
+conceptual usada en
+simulación: en lugar de definir trayectorias arbitrarias del robot completo, se
+trabajó con una consigna de pose del cuerpo publicada como \texttt{/body\_pose}.
+Esto permitió conservar continuidad metodológica entre ambos entornos. La idea
+no fue reproducir en laboratorio un escenario diferente, sino observar cómo la
+misma clase de objetivo utilizada en Gazebo se traducía en el comportamiento del
+Go2 real.
+
+En esta etapa, el interés principal estuvo puesto en la correspondencia entre el
+movimiento objetivo y la respuesta efectivamente observada en el robot. A
+diferencia del caso simulado, ya no se contaba con un estado verdadero perfecto
+del sistema, por lo que el análisis dejó de formularse como comparación contra
+ground truth y pasó a entenderse como contraste entre consigna y respuesta
+medida. Desde el punto de vista metodológico, esto vuelve explícito el cambio de
+pregunta: en simulación preguntábamos cuánto error cometía el estimador visual
+respecto del estado verdadero; en laboratorio, en cambio, preguntamos hasta qué
+punto el movimiento solicitado se refleja en las señales internas del
+cuadrúpedo.
+
+Esta elección también simplificó la lectura comparativa entre entornos. Como la
+variable de entrada seguía siendo una pose objetivo del cuerpo, el pasaje
+simulación--laboratorio pudo describirse como una continuidad en la señal
+propuesta y no como un cambio completo de paradigma experimental. Las
+diferencias pasaron entonces a concentrarse en la respuesta física del robot, en
+la medición disponible y en las incertidumbres propias del montaje real.
 
 \subsubsection{Estimación visual con cámara sostenida en posición fija}
 
-\pendingreal{Describir el montaje experimental del ArUco sobre el robot y de la
-cámara utilizada en laboratorio, incluyendo distancia aproximada, criterio de
-fijación, calibración disponible y forma de registrar la pose estimada durante
-la prueba.}
+Para observar visualmente el movimiento del robot en laboratorio, se montó un
+marcador ArUco adherido sobre el lomo del cuadrúpedo. Esta decisión buscó
+preservar, en la medida de lo posible, la misma lógica geométrica del entorno
+simulado: un patrón fiducial rígidamente unido al cuerpo cuya pose pudiera
+inferirse desde una cámara externa. El objetivo no fue replicar con exactitud el
+caso de Gazebo, sino mantener una relación clara entre el movimiento del torso y
+la pose del marcador observada en la imagen.
+
+La adquisición visual se realizó con una cámara estéreo, aunque para estas
+pruebas se trabajó únicamente con una de sus dos cámaras, tratándola como un
+sensor monocular. Antes de su uso fue necesario calibrarla para obtener los
+parámetros intrínsecos requeridos por el pipeline de estimación visual. Esta
+etapa fue importante porque, a diferencia de la simulación, en laboratorio la
+cámara no viene acompañada por un modelo ideal sin distorsión, sino que exige
+una preparación previa para poder interpretar métricamente la proyección del
+marcador.
+
+Durante la toma, la cámara se sostuvo de manera aproximadamente fija por encima
+del cuadrúpedo. En términos geométricos, este montaje se parece al escenario de
+cámara fija de simulación: la intención sigue siendo observar el ArUco desde una
+posición superior con el menor movimiento posible del sensor. Sin embargo, la
+situación experimental introduce inevitables incertidumbres adicionales, como
+pequeñas variaciones de alineación, fijación no perfectamente rígida y
+condiciones reales de calibración. Por eso conviene presentar esta etapa como
+una aproximación experimental controlada y no como una réplica exacta del caso
+idealizado de Gazebo.
+
+\figureplaceholder
+  {fig:method_lab_setup}
+  {Fotografía o esquema pendiente del montaje de laboratorio: Go2 real con el
+  marcador ArUco adherido al lomo y cámara estéreo sostenida en posición
+  aproximadamente fija por encima del robot. La figura debería mostrar con
+  claridad la geometría general del experimento y qué lado de la cámara estéreo
+  se utilizó en las pruebas.}
+  {Montaje experimental de laboratorio utilizado para observar visualmente el
+  movimiento del Go2 real mediante un ArUco y una cámara estéreo usada en modo
+  monocular.}
 
 \subsubsection{Comparación entre movimiento propuesto y odometría del robot}
 
-\pendingreal{Explicar cómo se comparó el movimiento propuesto con las señales
-publicadas por el cuadrúpedo en laboratorio, qué variables se utilizaron para
-la comparación y qué criterio se adoptó para analizar la correlación entre la
-simulación y el comportamiento real.}
+El contraste principal de esta etapa se planteó entre el movimiento objetivo y
+las señales internas publicadas por el cuadrúpedo, tomando como referencia la
+odometría del robot. En otras palabras, la comparación no se formuló como una
+estimación absoluta de pose respecto del mundo, sino como una verificación de si
+la dinámica solicitada mediante \texttt{/body\_pose} se reflejaba de manera
+coherente en la respuesta medida por la propia plataforma.
+
+Metodológicamente, esta decisión tiene dos ventajas. En primer lugar, permite
+comparar directamente la señal propuesta con una señal efectivamente disponible
+en el robot real, sin depender de un sistema externo de ground truth. En
+segundo lugar, preserva la continuidad con la etapa de simulación, donde la
+consigna de pose del cuerpo también es el punto de partida del movimiento. Así,
+el laboratorio pasa a funcionar como una validación de correspondencia entre
+entrada y respuesta, más que como una réplica exacta del esquema de evaluación
+usado en Gazebo.
+
+Este bloque deberá dialogar después con la sección de experimentación, donde se
+precisará cómo se visualizó esa comparación en el tiempo y qué criterio se tomó
+para interpretar la semejanza entre ambas señales. En la metodología alcanza con
+dejar claro que el objetivo fue contrastar el movimiento propuesto con la
+respuesta interna del robot y usar esa relación como primer puente entre la
+plataforma sintética de simulación y su comportamiento en entorno real.
+
+\figureplaceholder
+  {fig:method_lab_comparison}
+  {Gráfico pendiente de comparación entre la consigna de movimiento del torso y
+  la odometría publicada por el Go2 real. La figura debería mostrar una o más
+  series temporales alineadas para ilustrar el criterio de contraste entre
+  objetivo y respuesta.}
+  {Esquema de la comparación realizada en laboratorio entre la señal objetivo
+  del movimiento y la respuesta medida por el cuadrúpedo.}
 
 
 

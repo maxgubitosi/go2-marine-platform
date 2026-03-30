@@ -52,6 +52,16 @@ No se pudo revisar en este checkout:
 - `10_brief_introduccion.md`: brief de escritura para la Introduccion.
 - `11_brief_marco_teorico_y_estado_del_arte.md`: brief de escritura para el
   Marco teorico y el Estado del arte.
+- `12_brief_metodologia.md`: criterio editorial y estructura fina para
+  profundizar la seccion Metodologia.
+- `13_metodologia_simulacion_detallada.md`: desglose detallado de la
+  metodologia en simulacion, con hechos confirmados, foco narrativo y huecos.
+- `14_metodologia_laboratorio_detallada.md`: desglose detallado de la
+  metodologia en laboratorio y lista minima de informacion faltante.
+- `15_preguntas_prioritarias_metodologia.md`: preguntas concretas para cerrar
+  decisiones de redaccion y validar el pasaje de simulacion a laboratorio.
+- `16_brief_experimentacion_simulacion.md`: estructura narrativa, metricas y
+  graficos recomendados para escribir Experimentos en simulacion.
 
 ## Criterio de confianza
 
