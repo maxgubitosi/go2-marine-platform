@@ -72,8 +72,8 @@ Breve introduccion:
 Subsecciones detalladas:
 
 - reproduccion del movimiento propuesto en el Go2 real;
-- montaje del ArUco y de la camara sostenida en posicion fija;
-- comparacion entre movimiento propuesto y odometria del robot.
+- montaje del ArUco y de la camara en configuracion cuasi fija;
+- comparacion entre movimiento esperado, comando y respuesta del robot.
 
 #### 3.3 Criterio de comparacion y validacion
 
@@ -94,12 +94,9 @@ Subsecciones detalladas:
 #### 4.2 Experimentos en laboratorio
 
 - reproduccion del movimiento en el Go2 real;
-- montaje del ArUco y de la camara sostenida en posicion fija;
+- montaje del ArUco y de la camara en configuracion cuasi fija;
 - comparacion entre movimiento propuesto y señales publicadas por el robot;
 - alcance y limites de esta validacion.
-
-Nota: esta subseccion debe quedar pendiente hasta relevar la branch o material
-real correspondiente.
 
 ### 5. Conclusiones
 

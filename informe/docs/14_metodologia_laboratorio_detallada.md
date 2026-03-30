@@ -2,183 +2,190 @@
 
 ## Objetivo de este documento
 
-Este documento organiza que deberia contar la subseccion
-`Metodologia en laboratorio` y deja visible que informacion todavia falta
-relevar para escribirla con seguridad.
+Este documento consolida lo que ya quedo confirmado sobre la parte de
+laboratorio y ordena como deberia contarse en el informe. Ya no funciona como
+lista de huecos grandes, sino como apoyo para mantener consistencia entre
+setup, metodologia y experimentacion real.
 
 ## Funcion narrativa
 
-La etapa de laboratorio no deberia presentarse como una replica perfecta de la
-simulacion. Su valor metodologico es otro:
+La etapa de laboratorio no debe presentarse como una replica exacta de Gazebo.
+Su valor metodologico es otro:
 
-- mostrar que el movimiento sintetizado puede trasladarse a un robot real;
-- observar que cambia al salir de un entorno totalmente controlado;
-- contrastar si las senales reales guardan relacion con el movimiento propuesto.
+- mostrar que el movimiento sintetizado puede trasladarse a un Go2 real;
+- explicitar que adaptaciones fueron necesarias al salir de simulacion;
+- verificar si la cadena referencia -> comando -> respuesta del robot conserva
+  coherencia fisica;
+- dejar preparada la observacion visual real con ArUco y camara calibrada.
 
-Ese bloque tiene que leerse como un paso de validacion y no como una promesa de
-equivalencia total entre simulacion y mundo real.
+En este bloque se pierde ground truth perfecto, pero se gana validacion fisica
+del pipeline.
 
-## Subestructura recomendada
+## Implementacion real ya confirmada
+
+### 1. Generacion del movimiento
+
+- `marine_platform_simulator.py` incorpora `mode=real`
+- en `sim` publica `Pose` en `/body_pose`
+- en `real` envia comandos `Euler()` via `unitree_sdk2py`
+- la referencia esperada queda en `/marine_platform/debug_state`
+- el comando efectivo aparece en `/api/sport/request`, filtrando
+  `api_id = 1007`
+
+La continuidad con simulacion existe a nivel metodologico, no como identidad
+literal de topics.
+
+### 2. Setup visual
+
+- el ArUco se monta sobre el lomo del Go2
+- la vision real usa una camara estereo side-by-side en `/dev/video2`
+- frame completo: `3840x1080`
+- por ojo: `1920x1080`
+- en las pruebas versionadas se usa `selected_eye: left`
+- los topics visuales principales son:
+  - `/stereo_camera/image_raw`
+  - `/stereo_camera/camera_info`
+  - `/aruco/pose`
+  - `/aruco/detection`
+  - `/aruco/debug_image`
+
+### 3. Calibracion
+
+- hubo calibracion formal con checkerboard
+- resultado guardado en
+  `stereo_camera/calibration/calibration_result.yaml`
+- `20` imagenes usadas
+- RMS de reproyeccion: `0.221355 px`
+- intrinsecos principales:
+  - `fx = 600.9731`
+  - `fy = 598.8189`
+  - `cx = 970.6993`
+  - `cy = 527.9427`
+
+### 4. Launch y registro
+
+- el launch visual real es `src/fixed_camera/launch/lab_real.launch.py`
+- levanta:
+  - `stereo_eye_publisher`
+  - `aruco_detector`
+  - `camera_controller`
+  - un TF estatico `world -> odom`
+- existe ademas un pipeline operativo con:
+  - `run_marine_real.sh`
+  - `rosbags/record_lab_real.sh`
+
+### 5. Senales de comparacion
+
+La comparacion fuerte del laboratorio no fue solo contra odometria. Las senales
+versionadas mas importantes son:
+
+- referencia esperada: `/marine_platform/debug_state`
+- comando efectivo: `/api/sport/request`
+- estado real principal: `/sportmodestate`
+- estado real alternativo: `/lowstate`
+- odometria adicional: `/utlidar/robot_odom`
+
+## Subestructura recomendada para el informe
 
 ### 1. Introduccion del pasaje a laboratorio
 
 Esta apertura deberia explicar:
 
 - por que no alcanzaba con la simulacion;
-- que se quiso contrastar especificamente en el Go2 real;
-- que tipo de incertidumbres aparecen al pasar a laboratorio.
+- que partes del framework se quisieron contrastar en el Go2 real;
+- por que al salir de Gazebo cambia la naturaleza de la validacion.
 
-El tono aca tiene que ser honesto: se pierde ground truth perfecto, se gana
-contraste fisico.
+La idea fuerte es que el laboratorio no responde "cuanto error hay contra
+ground truth", sino "que tan bien se transmite y reproduce el movimiento
+propuesto en el sistema fisico".
 
 ### 2. Reproduccion del movimiento en el Go2 real
 
-#### Lo minimo que hace falta documentar
+#### Que conviene contar
 
-- que señal o consigna se le envio al robot;
-- que software o controlador se utilizo;
-- que grados de libertad se intentaron reproducir;
-- que limites de amplitud o seguridad se impusieron;
-- como se decidio el tiempo de prueba y la repetibilidad.
+- que la idea fisica del movimiento se conserva respecto de simulacion;
+- que la implementacion cambia de una `Pose` en Gazebo a comandos Euler via
+  SDK2;
+- que `debug_state` y `api/sport/request` separan referencia y actuacion;
+- que el robot se analiza despues a partir de sus propios estados internos.
 
-#### Decision ya confirmada
+#### Punto narrativo clave
 
-- La logica de laboratorio parte de la misma consigna conceptual usada en
-  simulacion: `body_pose`.
-- Entonces el eje narrativo del pasaje simulacion-real puede sostenerse como
-  una continuidad metodologica, aunque despues haya diferencias practicas de
-  hardware, estabilidad y medicion.
+La continuidad entre simulacion y laboratorio no pasa por reutilizar el mismo
+topic, sino por conservar la misma clase de movimiento objetivo sobre el torso
+del robot.
 
-#### Aclaracion importante para la escritura
+### 3. Estimacion visual con camara en configuracion cuasi fija
 
-- La comparacion principal en laboratorio no se apoya en un ground truth
-  externo perfecto, sino en contrastar el movimiento objetivo con lo que miden
-  los sensores internos del cuadrupedo.
-- Por eso, esta subseccion deberia escribirse como una validacion de
-  correspondencia entre consigna y respuesta observada, no como una replica del
-  esquema de evaluacion usado en Gazebo.
+#### Que conviene contar
 
-#### Lo que importa narrativamente
-
-- si el robot siguio exactamente la misma logica que en simulacion o una
-  version adaptada;
-- que ajustes fueron necesarios por estabilidad, seguridad o hardware;
-- que señales quedaron disponibles para comparar despues.
-
-### 3. Estimacion visual con camara sostenida en posicion fija
-
-#### Lo minimo que hace falta documentar
-
-- como se monto el ArUco sobre el robot real;
-- como se sostuvo o fijo la camara;
-- altura o distancia aproximada;
-- si hubo calibracion formal o una configuracion ad hoc;
-- que se registro: video, rosbag, pose estimada, imagenes, etc.
-
-#### Lo que importa narrativamente
-
-- en que se parece y en que no se parece este setup al caso de camara fija en
-  Gazebo;
-- que incertidumbres nuevas introduce una camara sostenida "fija";
-- si el objetivo fue cuantitativo, cualitativo o mixto.
-
-#### Decisiones ya confirmadas
-
-- El marcador ArUco estaba pegado sobre el lomo del cuadrupedo.
-- La camara de laboratorio era una camara estereo, pero para estas pruebas se
-  utilizo solo uno de sus lados.
-- Hubo que calibrar esa camara y resolver las condiciones necesarias para poder
-  usarla como sensor de prueba.
-- Durante la toma, la camara se sostenia de manera fija por encima del
-  cuadrupedo.
+- que el ArUco se pego sobre el lomo;
+- que se uso una camara estereo como monocular;
+- que se calibro formalmente antes de usarla;
+- que el launch real encapsulo todo el setup visual;
+- que la camara se mantuvo en una posicion aproximadamente fija sobre la escena,
+  aunque sin la idealizacion perfecta del caso simulado.
 
 #### Consecuencia editorial
 
-Conviene contar este setup como una aproximacion experimental controlada, no
-como una copia exacta del caso `fixed_camera` de Gazebo. La similitud esta en
-la intencion geometrica del montaje; la diferencia esta en que aqui aparecen
-calibracion real, fijacion manual y pequeñas incertidumbres de posicionamiento.
+Este setup debe narrarse como una aproximacion experimental controlada al caso
+`fixed_camera`, no como una copia exacta del escenario de Gazebo.
 
-### 4. Comparacion entre movimiento propuesto y odometria del robot
+### 4. Comparacion entre movimiento esperado, comando y respuesta del robot
 
-#### Lo minimo que hace falta documentar
+#### Que conviene contar
 
-- que señales se compararon exactamente;
-- si se comparo consigna vs odometria, consigna vs IMU, o una combinacion;
-- como se alinearon temporalmente las series;
-- si la comparacion fue visual, por amplitud/frecuencia, por correlacion
-  estadistica o por otra metrica;
-- que se considero una correspondencia razonable.
+- que la comparacion se arma como cadena:
+  `debug_state -> api/sport/request -> sportmodestate/lowstate/robot_odom`
+- que las frecuencias son distintas y por eso hace falta alinear temporalmente
+  las series;
+- que el analisis busca separar:
+  - fidelidad del camino de comando
+  - fidelidad de la respuesta fisica del robot
 
-#### Lo que importa narrativamente
+#### Lectura metodologica correcta
 
-- la pregunta no es si el laboratorio calca la simulacion pixel a pixel;
-- la pregunta es si el movimiento propuesto y el movimiento observado guardan
-  una relacion util para sostener el framework.
+La pregunta ya no es si el robot coincide punto a punto con un ground truth
+perfecto, sino si la dinamica solicitada reaparece de forma coherente en sus
+senales internas y puede sostener el uso del framework como banco de pruebas.
 
-#### Decision ya confirmada
+## Lo que ya puede sostenerse con evidencia versionada
 
-- La comparacion de laboratorio se planteo como `objetivo` versus mediciones de
-  los sensores internos del cuadrupedo.
-- Como hipotesis de trabajo actual, la señal principal para esa comparacion es
-  `odom`.
+- existe un bag real de referencia:
+  `lab_real_20260320_125002_movimiento_full_v3`
+- dura `59.73 s`
+- contiene suficiente informacion para reconstruir la cadena de senales
+  principal
+- el camino de comando queda validado con correlaciones `~0.9999`
+- la respuesta del robot sigue la consigna con alta correlacion al compensar
+  lag:
+  - roll: `~0.9695` con `~0.35 s`
+  - pitch: `~0.9680` con `~0.60 s`
+- en esa corrida no hubo heave dinamico efectivo
 
-#### Duda que todavia hay que precisar
+## Lo que todavia conviene confirmar
 
-- Falta identificar con nombre mas fino que señales internas entran en esa
-  comparacion si finalmente no fuera solo odometria, por ejemplo IMU,
-  estimacion de pose del cuerpo u otra combinacion.
-
-## Lo que hoy no esta en esta branch
-
-- branch `real`;
-- scripts de laboratorio;
-- rosbags de laboratorio;
-- fotos o diagramas del montaje real;
-- notas de calibracion y criterio de correlacion;
-- resultados versionados del contraste simulacion-real.
-
-Eso significa que esta subseccion todavia depende de informacion de ustedes.
-
-Al mismo tiempo, asumimos como criterio de trabajo que el material existe o
-puede generarse. Entonces esta falta de versionado no bloquea la arquitectura
-de la escritura: simplemente indica que, antes de cerrar la redaccion final,
-habra que bajar ese material al informe en forma de figuras, tablas, plots o
-descripciones precisas.
-
-## Como escribirla cuando tengamos el material
-
-El orden recomendado es:
-
-1. contar el objetivo de la prueba real;
-2. describir el montaje fisico;
-3. explicar las señales registradas;
-4. explicar el criterio de comparacion;
-5. cerrar con las limitaciones del entorno.
+1. tamano fisico final del ArUco real:
+   `0.20 m` o `0.50 m`
+2. si la camara quedo montada en soporte fijo, en soporte improvisado o en una
+   condicion intermedia que convenga describir con mas precision
+3. si se va a reportar o no una evaluacion cuantitativa final de `/aruco/pose`
+   en laboratorio
 
 ## Riesgos a evitar
 
-- escribirla como si hubiera un ground truth equivalente al de Gazebo;
-- ocultar que la camara era sostenida y no rigidamente montada;
-- mezclar observaciones cualitativas con afirmaciones cuantitativas fuertes;
-- prometer una validacion real mas completa de la que efectivamente hubo.
+- escribir esta parte como si hubiera un ground truth equivalente al de Gazebo;
+- reducir el contraste real a "consigna vs odom", porque la evidencia
+  versionada es mas rica que eso;
+- prometer una validacion visual real mas cerrada de la que hoy esta respaldada;
+- ocultar que el pasaje a laboratorio exigio una implementacion propia.
 
-## Figuras que probablemente hagan falta
+## Figuras que conviene producir
 
-1. foto del Go2 real con el marcador montado;
-2. foto o esquema del setup de camara en laboratorio;
-3. plot comparando consigna y señal real del robot;
-4. si existe, secuencia o frame del detector ArUco en laboratorio.
-
-Si esas figuras todavia no estan exportadas, conviene dejar desde ya previsto
-que se van a generar y seleccionar despues a partir del material del
-laboratorio.
-
-## Informacion minima que necesito para cerrar esta parte
-
-1. que branch o carpeta contiene el material `real`;
-2. que señales internas del robot se registraron en laboratorio, tomando `odom`
-   como referencia provisoria;
-3. como estaba montada la camara;
-4. como definieron la comparacion entre movimiento propuesto y movimiento real;
-5. que evidencia visual o numerica quieren mostrar en el informe.
+1. foto o esquema del setup real completo;
+2. frame de la deteccion ArUco en laboratorio;
+3. comparacion temporal entre `debug_state`, `api/sport/request` y
+   `sportmodestate`;
+4. curva de correlacion en funcion del lag;
+5. si se usa, grafico que explique por que el eje `z` real no equivale
+   directamente a heave dinamico en la corrida versionada.

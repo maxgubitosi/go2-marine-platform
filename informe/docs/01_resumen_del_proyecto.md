@@ -2,11 +2,12 @@
 
 ## Problema que resuelve
 
-El proyecto construye un framework de simulacion para desarrollar y validar
-estimacion de pose visual de un marcador ArUco sobre una plataforma marina en
-movimiento, sin arriesgar hardware real. La plataforma se simula usando el
-torso de un Unitree Go2, mientras una camara fija o la camara inferior de un
-dron `sjtu_drone` observan el marcador.
+El proyecto construye un framework para desarrollar y validar estimacion de
+pose visual sobre una plataforma marina en movimiento sin depender, en una
+primera etapa, de ensayos de aterrizaje con hardware costoso. La plataforma se
+sintetiza usando el torso de un Unitree Go2, mientras una camara fija o la
+camara inferior de un dron `sjtu_drone` observan un marcador ArUco montado
+sobre el robot.
 
 ## Objetivo de investigacion
 
@@ -14,24 +15,22 @@ Quedo confirmado por el usuario que el objetivo mas amplio de la investigacion
 es construir un framework completo para poder probar aterrizaje de drones sobre
 plataformas marinas.
 
-Dentro de ese objetivo general, el trabajo de esta tesis cubre al menos estas
-capacidades habilitantes:
+Dentro de ese objetivo general, la tesis cubre estas capacidades habilitantes:
 
 - sintetizar una plataforma marina en movimiento usando el Go2;
 - observar esa plataforma con una camara fija o un dron;
-- estimar visualmente la pose relativa del marcador sobre la plataforma;
+- estimar visualmente la pose relativa del marcador;
 - comparar la estimacion contra ground truth en simulacion;
-- empezar a contrastar el movimiento simulado con el comportamiento real del
-  cuadrupedo en laboratorio.
+- trasladar parte del pipeline al laboratorio para verificar si el movimiento
+  propuesto reaparece de forma coherente en el robot real.
 
-En otras palabras, el aterrizaje autonomo aparece como aplicacion final del
+En otras palabras, el aterrizaje autonomo aparece como objetivo final del
 framework, mientras que esta tesis desarrolla y valida la infraestructura
 experimental y perceptiva necesaria para llegar a ese escenario.
 
 ## Alcance global confirmado por el usuario
 
-Segun la aclaracion mas reciente del proyecto, la tesis completa no termina en
-la simulacion. La historia real del trabajo fue:
+La historia real del trabajo fue:
 
 1. levantar la simulacion del Unitree en ROS2 y Gazebo;
 2. anexar una tabla con un marcador ArUco sobre el lomo del robot;
@@ -40,18 +39,18 @@ la simulacion. La historia real del trabajo fue:
 5. repetir esa estimacion con un dron simulado;
 6. llevar el cuadrupedo al laboratorio y reproducir la logica de movimiento en
    entorno real para compararla con la simulacion;
-7. montar nuevamente un ArUco y una camara sostenida de forma aproximadamente
+7. montar nuevamente un ArUco y una camara en configuracion aproximadamente
    fija para estimar la pose;
 8. verificar si el movimiento propuesto correlaciona con el movimiento real,
-   comparando consigna vs odometria publicada por el cuadrupedo.
+   comparando la referencia esperada, el comando efectivo y las senales de
+   estado publicadas por el cuadrupedo.
 
 Esto define una narrativa natural en dos fases:
 
 - fase 1: construccion y validacion del framework en simulacion;
-- fase 2: verificacion experimental de que el movimiento sintetizado y el
-  comportamiento observado en el robot real guardan correlacion suficiente.
+- fase 2: verificacion experimental del pasaje a laboratorio.
 
-## Pipeline confirmado por el repo
+## Pipeline confirmado por el checkout principal
 
 1. `go2_tools/marine_platform_simulator.py` genera una `Pose` en
    `/body_pose` con roll, pitch y heave.
@@ -67,15 +66,37 @@ Esto define una narrativa natural en dos fases:
    ground truth del marcador en el frame de la camara y compara estimacion vs
    referencia.
 
+## Pipeline de laboratorio confirmado por la implementacion real
+
+1. `go2_tools/marine_platform_simulator.py` corre en `mode=real` y conserva la
+   misma logica fisica del movimiento objetivo, pero ya no publica una `Pose`
+   para Gazebo: envia comandos `Euler()` al Go2 mediante `unitree_sdk2py`.
+2. La referencia esperada queda registrada en `/marine_platform/debug_state`.
+3. El comando efectivamente transmitido al robot aparece en
+   `/api/sport/request`, filtrando `api_id = 1007`.
+4. La respuesta del robot se observa principalmente en:
+   - `/sportmodestate`
+   - `/lowstate`
+   - `/utlidar/robot_odom`
+5. La parte visual del laboratorio se apoya en:
+   - `src/fixed_camera/launch/lab_real.launch.py`
+   - `src/fixed_camera/fixed_camera/stereo_eye_publisher.py`
+   - `/stereo_camera/image_raw`
+   - `/stereo_camera/camera_info`
+   - `/aruco/pose`
+   - `/aruco/detection`
+   - `/aruco/debug_image`
+
 ## Componentes principales
 
 | Componente | Rol | Evidencia principal |
 |---|---|---|
 | `src/go2_tools/` | Genera oleaje sinusoidal o irregular y modo manual | `marine_platform_simulator.py`, `marine_manual_control.py` |
-| `src/fixed_camera/` | Camara estatica en Gazebo + detector ArUco | `fixed_camera.launch.py`, `camera_controller.py`, `aruco_detector.py` |
+| `src/fixed_camera/` | Camara estatica en Gazebo y pipeline visual real de laboratorio | `fixed_camera.launch.py`, `lab_real.launch.py`, `camera_controller.py`, `aruco_detector.py`, `stereo_eye_publisher.py` |
 | `src/sjtu_drone/` | Dron simulado, hover automatico y detector ArUco | `sjtu_drone_spawn.launch.py`, `drone_position_controller.py`, `aruco_detector.py` |
 | `aruco_relative_pose/` | Evaluacion offline y analisis | `evaluate_realtime_aruco.py`, `analyze_pose_results.py` |
 | `marine_robot_dataset/` | Extraccion de datasets sincronizados desde rosbag | `extract_dataset.py` |
+| `stereo_camera/` | Calibracion y configuracion del setup visual real | `config.yaml`, `calibration_result.yaml`, scripts de preview/capture/calibration |
 | `informe/` | Informe de tesis en LaTeX | `main.TeX`, `bibliography.bib`, `figures/` |
 
 ## Parametros y hechos tecnicos ya confirmados
@@ -83,7 +104,7 @@ Esto define una narrativa natural en dos fases:
 ### Simulador marino
 
 - Nodo: `marine_platform_simulator`
-- Topic principal: `/body_pose`
+- Topic principal en simulacion: `/body_pose`
 - Frecuencia base: `rate_hz = 20.0`
 - Frecuencia de onda default: `wave_frequency = 0.1 Hz`
 - Limites default:
@@ -110,31 +131,28 @@ por una razon metodologica y perceptiva:
   tambien `yaw`, para aislar las perturbaciones visuales mas relevantes en esta
   primera etapa del framework.
 
-Esto no implica que surge, sway o yaw sean irrelevantes para el problema final
-de aterrizaje sobre plataformas marinas. Implica, mas bien, que en el alcance
-actual de la tesis se adopta una simplificacion deliberada para validar primero
-la cadena simulacion-percepcion-evaluacion sobre el subconjunto de movimientos
-que mas directamente alteran la pose observada del marcador.
-
 ### Marcador y deteccion visual
 
 - Diccionario: `DICT_6X6_250`
 - ID objetivo: `0`
-- Lado del marcador: `0.50 m`
+- Lado del marcador en simulacion: `0.50 m`
+- Lado del marcador en la configuracion ejecutable del laboratorio: `0.20 m`
+  `pendiente de confirmacion final por inconsistencia entre materiales`
 - Salidas del detector:
   - `/aruco/pose`
   - `/aruco/detection`
   - `/aruco/debug_image`
 - La pose se estima en el frame optico de la camara.
 
-### Camara fija
+### Camara fija en simulacion
 
 - Launch: `src/fixed_camera/launch/fixed_camera.launch.py`
 - Resolucion del sensor en URDF: `640x480`
 - FOV horizontal: `1.396 rad`
 - Update rate del sensor: `30 Hz`
 - Altura default de spawn: `2.0 m`
-- `camera_controller.py` publica `world -> camera_base_link` y `/fixed_camera/pose`
+- `camera_controller.py` publica `world -> camera_base_link` y
+  `/fixed_camera/pose`
 - El script de evaluacion usa posicion optica fija `z = 1.955 m`, consistente
   con el offset del URDF entre `camera_base_link` y `camera_link`.
 
@@ -157,7 +175,7 @@ que mas directamente alteran la pose observada del marcador.
   - activa position control
   - republica `/drone/pose`
 
-### Evaluacion offline
+### Evaluacion offline en simulacion
 
 - Script principal: `aruco_relative_pose/scripts/evaluate_realtime_aruco.py`
 - Fuentes usadas para reconstruir GT del Go2:
@@ -170,12 +188,40 @@ que mas directamente alteran la pose observada del marcador.
   - `world_init_x = 0.40 m`
   - `world_init_y = 0.0 m`
 
+### Laboratorio real
+
+- Launch visual: `src/fixed_camera/launch/lab_real.launch.py`
+- Sensor: camara estereo side-by-side usada como monocular
+- Resolucion por ojo: `1920x1080`
+- Ojo usado en las pruebas versionadas: `left`
+- Calibracion formal guardada en:
+  `stereo_camera/calibration/calibration_result.yaml`
+- Error RMS de reproyeccion: `0.221355 px`
+- Imagenes de calibracion usadas: `20`
+- Bag de referencia relevado:
+  `lab_real_20260320_125002_movimiento_full_v3`
+- Duracion del bag de referencia: `59.73 s`
+- Cadena principal de comparacion:
+  `debug_state -> api/sport/request -> sportmodestate / lowstate / robot_odom`
+- Fidelidad del camino de comando:
+  - correlacion roll/API: `0.999887`
+  - correlacion pitch/API: `0.999909`
+  - delay medio: `4.98 ms`
+- Respuesta real del robot:
+  - correlacion a mejor lag en roll: `~0.9695` con `~0.35 s`
+  - correlacion a mejor lag en pitch: `~0.9680` con `~0.60 s`
+  - sin heave dinamico efectivo en la corrida versionada
+
 ## Cosas importantes para el informe
 
 - El sistema separa claramente percepcion online y evaluacion offline.
 - La estimacion online no usa informacion privilegiada del simulador.
-- La parte del Go2 real ya forma parte del alcance global de la tesis segun lo
-  confirmado por el usuario, pero en esta branch todavia no tenemos evidencia
-  tecnica suficiente para redactarla en detalle.
-- La reconstruccion exacta del control postural del Go2 depende de un repositorio
-  externo no incluido en este checkout.
+- La parte del Go2 real ya quedo suficientemente relevada como para escribir
+  setup, metodologia y una primera seccion experimental de laboratorio.
+- La evidencia real hoy sostiene mejor la reproduccion del movimiento y la
+  comparacion comando-respuesta que una evaluacion estadistica cerrada de la
+  pose visual real.
+- La reconstruccion exacta del control postural del Go2 depende de un
+  repositorio externo no incluido en este checkout.
+- El principal punto tecnico todavia a confirmar es el tamano fisico final del
+  ArUco usado en laboratorio: `0.20 m` o `0.50 m`.

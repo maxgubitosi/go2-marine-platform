@@ -4,14 +4,15 @@
 
 - Informe: `informe/main.TeX`
 - Bibliografia: `informe/bibliography.bib`
-- PDF ya compilado en este checkout: `informe/main.pdf`
+- PDF compilado: `informe/main.pdf`
 
 ## Que ya esta escrito
 
-### Marco teorico
+### Introduccion y marco teorico
 
 Hay texto avanzado en:
 
+- introduccion del problema y del objetivo macro del framework;
 - modelado simplificado de roll, pitch y heave;
 - control postural del Go2 en simulacion;
 - fundamentos de ArUco, camara pinhole y `solvePnP`.
@@ -20,34 +21,45 @@ Hay texto avanzado en:
 
 Hay texto avanzado en:
 
-- simulador marino;
-- control postural del Go2;
-- deteccion visual con camara fija y dron;
-- detalles generales de implementacion del pipeline.
+- metodologia en simulacion:
+  - generacion del movimiento marino;
+  - control postural del Go2;
+  - percepcion con `fixed_camera` y `sjtu_drone`;
+  - registro y evaluacion offline;
+- metodologia en laboratorio:
+  - dificultades del pasaje simulacion-laboratorio;
+  - reproduccion del movimiento con `marine_platform_simulator` en `mode=real`;
+  - setup visual con camara estereo usada como monocular;
+  - comparacion entre referencia, comando y respuesta del robot.
 
-Tambien ya hay dos figuras reales insertadas:
+Tambien ya hay figuras insertadas en el cuerpo del informe:
 
 - `figures/images/aruco_id0_dict_6x6_250.png`
 - `figures/images/aruco_detection_frame.png`
 
-### Secciones todavia muy abiertas
+### Experimentacion
 
-- `Introduccion`
-- `Experimentacion/Simulacion`
-- `Experimentacion/Real`
+La seccion `Experimentacion y resultados` ya quedo estructurada en el informe:
+
+- simulacion:
+  - diseno experimental;
+  - metricas;
+  - caso base `fixed_camera`;
+  - caso fuerte `sjtu_drone`;
+  - sintesis;
+- laboratorio:
+  - presentacion del material experimental;
+  - fidelidad del camino de comando;
+  - comparacion entre movimiento esperado y respuesta del robot.
+
+## Secciones todavia abiertas
+
+- `Experimentacion/Simulacion` en su parte analitica final
 - `Conclusiones`
 - `Trabajo futuro`
 - `Abstract`
 
 ## Placeholders detectados en `main.TeX`
-
-### Citas pendientes
-
-Solo hay dos referencias en `bibliography.bib` y ambas son de OpenCV. Faltan,
-como minimo, fuentes para:
-
-- cinematica y convenciones de movimiento marino en 6 GDL;
-- cinematica o control postural de cuadrupedos.
 
 ### Figuras pendientes
 
@@ -55,40 +67,47 @@ Hay placeholders para:
 
 - arquitectura del simulador marino;
 - comparacion entre fuentes de imagen;
-- pipeline completo desde Gazebo hasta evaluacion offline.
+- pipeline completo desde Gazebo hasta evaluacion offline;
+- setup de laboratorio;
+- comparacion objetivo-comando-respuesta en laboratorio;
+- figuras cuantitativas de simulacion y laboratorio todavia no exportadas.
 
-### Parte real pendiente
+### Analisis pendientes
 
-La subseccion `Experimentacion/Real` ya esta marcada como `REAL PENDIENTE`,
-lo cual es consistente con la branch actual. Sin embargo, por lo que aclaro el
-usuario, esa parte no es accesoria: forma parte del cierre metodologico de la
-tesis y despues habra que integrarla con cuidado.
+Persisten placeholders de analisis en la parte de simulacion, sobre todo en:
+
+- interpretacion del baseline `fixed_camera`;
+- analisis detallado de la corrida principal del `sjtu_drone`;
+- comparacion entre corridas del dron;
+- sintesis final de la evidencia en simulacion.
+
+La parte de laboratorio ya no esta pendiente a nivel estructural, pero todavia
+conviene sumar figuras reales y, si aparece el material, una evaluacion visual
+mas fuerte sobre `/aruco/pose`.
 
 ## Riesgos de consistencia
 
-- El metodo ya menciona internamente CHAMP, `quadruped_controller_node`,
-  `state_estimation_node` y EKFs de `robot_localization`, pero ese stack no esta
-  en el checkout actual.
-- Si esos detalles salieron de otra branch, de notas internas o de un repo
-  externo, conviene validarlos antes de consolidarlos en el texto final.
-- El informe todavia no explicita con suficiente claridad el objetivo macro del
-  proyecto: construir un framework para probar aterrizaje de drones en
-  plataformas marinas. Ese hilo conductor deberia aparecer desde la
-  introduccion y reaparecer en conclusiones.
+- El metodo menciona detalles del stack del Go2 que dependen de un repo externo
+  no presente en este checkout.
+- En laboratorio, la redaccion ya mejoro mucho, pero todavia hay un punto a
+  confirmar antes del cierre final: si el ArUco real medido fue de `0.20 m` o
+  de `0.50 m`.
+- La parte experimental real hoy sostiene mejor la reproduccion del movimiento
+  del Go2 que una validacion cuantitativa cerrada de la pose visual.
 
 ## Orden recomendado para seguir escribiendo
 
-1. Cerrar `Experimentacion/Simulacion` con evidencia ya disponible.
-2. Definir desde ahora la estructura final para que la lectura sea cronologica y
-   facil de seguir: simulacion primero, validacion real despues.
-3. Limpiar y reforzar `Metodo` con solo detalles que podamos sostener por codigo
-   o material complementario.
-4. Completar `Introduccion` cuando ya este claro el alcance final.
-5. Recien despues escribir `Conclusiones`, `Trabajo futuro` y `Abstract`.
+1. Generar las figuras faltantes de simulacion y reemplazar los bloques de
+   analisis placeholder por redaccion final.
+2. Exportar las figuras clave de laboratorio a partir del bag real y de los
+   scripts ya identificados.
+3. Cerrar `Conclusiones` y `Trabajo futuro` una vez consolidados los resultados.
+4. Dejar `Abstract` para el final, cuando ya este estabilizada la narrativa
+   completa del informe.
 
 ## Que conviene no inventar
 
-- resultados numericos de camara fija si no aparecen en ningun output;
+- resultados numericos de `fixed_camera` si no aparecen en ningun output;
 - detalle fino del control del Go2 si no tenemos el fork presente;
-- validacion con hardware real antes de revisar la branch `real`;
+- una precision visual real que hoy no este respaldada por bags o plots;
 - decisiones experimentales que ustedes recuerdan pero no quedaron guardadas.

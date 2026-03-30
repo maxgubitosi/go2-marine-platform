@@ -4,11 +4,11 @@ Esta carpeta resume el estado actual del proyecto y del informe a partir del
 checkout disponible hoy. La idea es usarla como base de trabajo para redactar
 sin perder de vista tres cosas:
 
-- que esta branch documenta principalmente la parte de simulacion;
+- que este checkout sigue teniendo como nucleo la parte de simulacion;
 - que hay detalles del pipeline confirmados por codigo y otros que todavia
   requieren validacion manual;
-- que varias decisiones metodologicas y experimentales seguramente viven en la
-  memoria de ustedes y no quedaron reflejadas en el repo.
+- que la parte real ya fue relevada aparte y debe leerse en conjunto con lo que
+  aparece en este checkout.
 
 ## Alcance de este relevamiento
 
@@ -28,8 +28,10 @@ Se revisaron especialmente estos insumos:
 No se pudo revisar en este checkout:
 
 - el fork `unitree-go2-ros2` mencionado en el README y en el metodo;
-- la branch `real`;
 - rosbags y datasets completos, porque no estan versionados en el repo actual.
+
+Si se necesita completar la parte de laboratorio, conviene leer ademas
+`19_relevamiento_origin_real.md`, que resume la revision de `origin/real`.
 
 ## Como usar esta carpeta
 
@@ -57,11 +59,20 @@ No se pudo revisar en este checkout:
 - `13_metodologia_simulacion_detallada.md`: desglose detallado de la
   metodologia en simulacion, con hechos confirmados, foco narrativo y huecos.
 - `14_metodologia_laboratorio_detallada.md`: desglose detallado de la
-  metodologia en laboratorio y lista minima de informacion faltante.
+  metodologia en laboratorio ya consolidada a partir del relevamiento del caso
+  real.
 - `15_preguntas_prioritarias_metodologia.md`: preguntas concretas para cerrar
   decisiones de redaccion y validar el pasaje de simulacion a laboratorio.
 - `16_brief_experimentacion_simulacion.md`: estructura narrativa, metricas y
   graficos recomendados para escribir Experimentos en simulacion.
+- `17_plan_experimentos_simulacion_elegido.md`: propuesta concreta de corridas,
+  outputs y graficos a generar para cerrar la experimentacion en simulacion.
+- `18_checklist_ultima_visita_laboratorio.md`: checklist operativo para la
+  ultima visita al laboratorio y lista minima de evidencia necesaria para
+  cerrar la parte real del informe.
+- `19_relevamiento_origin_real.md`: sintesis de los hallazgos de la branch
+  `origin/real` para completar setup, metodologia y experimentacion del caso
+  de laboratorio ya relevado.
 
 ## Criterio de confianza
 
