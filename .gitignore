@@ -39,6 +39,8 @@ output.avi
 *.csv
 
 # Python venv y datasets
+.venv_plot/
+informe/scripts/.mplconfig/
 marine_robot_dataset/venv/
 marine_robot_dataset/datasets/
 **/__pycache__/

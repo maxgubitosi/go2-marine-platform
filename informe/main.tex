@@ -53,6 +53,7 @@
 \usepackage{fontspec}
 \usepackage[main=spanish,bidi=default]{babel}
 \usepackage{natbib}
+\usepackage[colorinlistoftodos]{todonotes}
 \newcommand{\figureplaceholder}[3]{
 \begin{figure}[H]
 \centering
@@ -132,7 +133,8 @@ forma continua por efecto del oleaje, y las condiciones visuales para estimar
 su posición relativa cambian cuadro a cuadro. En consecuencia, un sistema que
 pretenda aproximarse y aterrizar sobre una embarcación no solo necesita control
 de vuelo, sino también una percepción robusta de la geometría relativa entre la
-plataforma y el vehículo \citep{Alarcon2019,Delbene2022,Morales2023}.
+plataforma y el vehículo \citep{Alarcon2019,Delbene2022,Morales2023}. \todo{Ya revise estas citas}
+\todo[inline]{Chequear números de la tabla}
 
 Esta dificultad técnica se combina, además, con un problema metodológico. Las
 pruebas directas sobre hardware real son costosas, difíciles de repetir y
@@ -195,19 +197,23 @@ movimiento de la plataforma. La segunda es la cámara bottom de un dron
 final, ya que la percepción depende tanto del movimiento del objetivo como de
 la pose del vehículo aéreo.
 
-\figureplaceholder
-  {fig:intro_framework_overview}
-  {Figura panorámica de la tesis. Debería mostrar, en una sola composición, los
-  dos entornos principales del trabajo: a la izquierda, la etapa de simulación
-  con el Go2 instrumentado con una tabla y un marcador ArUco, observado por una
-  cámara fija y por el \texttt{sjtu\_drone}; a la derecha, el traslado al
-  laboratorio con el Go2 real, el marcador sobre el lomo y una cámara mantenida
-  en posición aproximadamente fija. La figura debería ayudar a entender, de un
-  vistazo, que la tesis conecta simulación, percepción visual y validación en
-  entorno físico.}
-  {Vista general del framework desarrollado en esta tesis, desde la simulación
-  del movimiento marino y la estimación visual de pose hasta su contraste
-  preliminar en laboratorio.}
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{figures/images/fig_sim_fixed_camera_cropped.png}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{figures/images/fig_lab_real_fixed_camera_cropped.png}
+\end{minipage}
+\caption{Vista panorámica del recorrido metodológico de la tesis. A la izquierda,
+una vista representativa del entorno de simulación con el Go2 instrumentado con
+ArUco; a la derecha, el traslado al laboratorio con el Go2 real, marcador sobre
+el lomo y cámara mantenida en posición aproximadamente fija.}
+\label{fig:intro_framework_overview}
+\end{figure}
 
 En ambos casos, la estimación visual se resolvió mediante un pipeline basado en
 marcadores ArUco y \texttt{solvePnP}. El sistema detecta en tiempo real el
@@ -308,14 +314,22 @@ postural y marcos de referencia consistentes. Finalmente, se presentan las
 herramientas de geometría proyectiva y estimación de pose que permiten pasar de
 la imagen del ArUco a una descripción métrica de la pose relativa.
 
-\figureplaceholder{fig:theory_frames_overview}{Diagrama esquemático pendiente
-de los frames \texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
-marcador ArUco y cámara. La figura debería mostrar la transformación rígida
-fija entre torso y marcador, la pose del torso respecto del mundo y la pose del
-marcador estimada desde la cámara.}{Esquema conceptual pendiente de los marcos
-de referencia que conectan el movimiento del Go2 con la estimación visual del
-marcador. Una figura de este tipo facilitaría la lectura de las ecuaciones del
-marco teórico y su vínculo con el pipeline implementado.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/diagrams/translations_rotations.png}
+\caption{Diagrama conceptual de los movimientos considerados en este trabajo
+para modelar la plataforma marina: heave (traslación vertical) y las
+inclinaciones roll y pitch. Este esquema se utiliza para fijar la interpretación
+física de las roto-traslaciones que luego medimos y analizamos a lo largo del
+informe.}
+\label{fig:theory_motion_components}
+\end{figure}
+
+\figureplaceholder{fig:theory_frames_overview}{Diagrama de marcos de referencia
+pendiente (\texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
+marcador ArUco y cámara). Esta figura se incluirá por separado para mostrar
+las transformaciones entre frames sin sobrecargar el diagrama de movimientos.}
+{Esquema pendiente de marcos y transformaciones geométricas del sistema.}
 
 \subsection{Movimiento marino simplificado}
 
@@ -324,7 +338,7 @@ plataforma marina no se desplaza de una única manera, sino que combina
 traslaciones y rotaciones producidas por la interacción entre su inercia, la
 gravedad, el empuje y las fuerzas inducidas por el oleaje. En la formulación
 clásica de dinámica marina, ese movimiento se describe con seis grados de
-libertad: tres traslaciones y tres rotaciones \citep{Fossen1995}. Para una
+libertad: tres traslaciones y tres rotaciones \citep{Fossen1995}. \todo{medio viejo este paper creo} Para una
 persona no familiarizada con esta notación, conviene leerlos de la siguiente
 manera: surge y sway describen desplazamientos horizontales; heave corresponde
 al movimiento vertical; roll y pitch representan inclinaciones alrededor de los
@@ -1026,15 +1040,19 @@ en frecuencia, amplitud y fase se reconocen con facilidad tanto en las señales
 del robot como en la imagen del marcador. Por estas razones lo adoptamos como
 caso de referencia del informe.
 
-\figureplaceholder
-  {fig:method_motion_components}
-  {Gráfico temporal pendiente de las componentes de roll, pitch y heave en modo
-  sinusoidal usando la configuración de referencia del simulador. La figura
-  debería mostrar amplitudes, diferencias de fase y efecto cualitativo del
-  suavizado sobre la señal publicada.}
-  {Señales temporales de referencia del movimiento marino sintetizado. Una
-  visualización de este tipo ayudaría a relacionar los hiperparámetros del
-  simulador con la forma efectiva de la consigna enviada al Go2.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/fig_method_motion_components.png}
+\caption{Componentes temporales de roll, pitch y heave en modo
+\texttt{sinusoidal} con los valores por defecto del nodo
+\texttt{marine\_platform\_simulator} (\(f=0{,}1\) Hz,
+\(A_r=\pm 15^\circ\), \(A_p=\pm 10^\circ\), \(A_h=\pm 0{,}1\) m,
+\(\kappa_p=1\), \(\kappa_h=1{,}5\), desfase fijo \(\pi/3\) en pitch).
+La línea punteada es la consigna objetivo antes del filtro; la continua es la
+señal suavizada (\(\alpha=0{,}95\)) que se publica en \texttt{/body\_pose} y en
+\texttt{/marine\_platform/debug\_state}.}
+\label{fig:method_motion_components}
+\end{figure}
 
 El nodo también ofrece un patrón \texttt{irregular}, construido como suma de
 varias componentes sinusoidales por eje. Ese modo se utilizó durante el
@@ -1055,15 +1073,20 @@ para tensionar el detector y explorar la robustez del pipeline, pero no resulta
 la mejor base cuando se quiere explicar el sistema con claridad o comparar una
 configuración con otra de manera controlada.
 
-\figureplaceholder
-  {fig:method_wave_patterns}
-  {Comparación pendiente entre los patrones \texttt{sinusoidal} e
-  \texttt{irregular} del simulador marino. La figura debería mostrar, para un
-  mismo intervalo temporal, cómo cambia la forma de las señales y por qué el
-  caso sinusoidal es más conveniente como referencia metodológica.}
-  {Comparación conceptual entre los dos patrones de oleaje implementados en el
-  simulador. Esta figura ayudaría a justificar la elección del patrón
-  sinusoidal como caso principal del trabajo.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/fig_method_wave_patterns.png}
+\caption{Comparación entre los patrones \texttt{sinusoidal} e
+\texttt{irregular} implementados en \texttt{marine\_platform\_simulator} para
+los mismos límites de amplitud y frecuencia base. El modo sinusoidal concentra
+cada eje en una componente periódica simple; el modo irregular superpone
+varias sinusoides con distintas frecuencias relativas, generando trayectorias
+menos previsibles. La figura muestra la consigna \emph{objetivo} antes del
+filtro de suavizado. Se adoptó el patrón sinusoidal como referencia del informe
+porque resulta más interpretable y reproducible para comparar estimación y
+ground truth.}
+\label{fig:method_wave_patterns}
+\end{figure}
 
 Una vez calculada la señal objetivo para cada eje, el nodo no la publica de
 forma directa. Antes aplica un suavizado exponencial, implementado como un
@@ -1219,13 +1242,23 @@ conmuta a control por posición para mantener un hover nominal en
 geométricamente más limpio a otro donde la percepción depende además de la
 dinámica del vehículo aéreo.
 
-\figureplaceholder
-  {fig:method_camera_sources}
-  {Comparación entre las dos fuentes de imagen del pipeline: cámara fija nadir y
-  cámara bottom del \texttt{sjtu\_drone}, incluyendo altura nominal, tópicos de
-  imagen y frame de salida de \texttt{/aruco/pose}.}
-  {Fuentes de imagen consideradas en el sistema para estimar la pose del
-  marcador ArUco en tiempo real.}
+\begin{figure}[H]
+\centering
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{figures/images/fig_sim_fixed_camera_raw.png}
+\caption{Vista cruda desde la cámara fija nadir.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[t]{0.49\textwidth}
+\centering
+\includegraphics[width=\linewidth]{figures/images/fig_sim_sjtu_drone_raw.png}
+\caption{Vista cruda desde la cámara bottom del \texttt{sjtu\_drone}.}
+\end{subfigure}
+\caption{Comparación entre las dos fuentes de imagen empleadas en simulación
+para la estimación de pose del ArUco en tiempo real.}
+\label{fig:method_camera_sources}
+\end{figure}
 
 \subsubsection{Registro y evaluación offline}
 
@@ -1408,17 +1441,14 @@ la rigidez perfecta del caso modelado en Gazebo. Por eso conviene presentar
 esta etapa como una aproximación experimental controlada y no como una réplica
 exacta del caso idealizado.
 
-\figureplaceholder
-  {fig:method_lab_setup}
-  {Fotografía o esquema pendiente del montaje de laboratorio: Go2 real con el
-  marcador ArUco adherido al lomo y cámara estéreo side-by-side usada en modo
-  monocular, dispuesta en una posición aproximadamente fija por encima del
-  robot. La figura debería mostrar la geometría general del experimento, el ojo
-  seleccionado de la cámara, el tipo de soporte utilizado y la relación entre
-  el sensor y el marcador.}
-  {Montaje experimental de laboratorio utilizado para observar visualmente el
-  movimiento del Go2 real mediante un ArUco y una cámara estéreo usada en modo
-  monocular.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/images/fig_lab_real_fixed_camera.png}
+\caption{Montaje experimental de laboratorio utilizado para observar el
+movimiento del Go2 real con marcador ArUco, mediante una cámara mantenida en
+posición aproximadamente fija.}
+\label{fig:method_lab_setup}
+\end{figure}
 
 \subsubsection{Comparación entre movimiento esperado, comando y respuesta del robot}
 
@@ -1786,13 +1816,14 @@ que hoy sostiene mejor el informe se concentra en la reproducción del movimient
 y en la respuesta del robot, no todavía en un cierre estadístico completo de la
 pose visual real.
 
-\figureplaceholder
-  {fig:lab_results_setup}
-  {Figura pendiente del caso de laboratorio. Puede reutilizarse una fotografía
-  o esquema del montaje experimental, siempre que permita ver la ubicación del
-  marcador, la posición relativa de la cámara y la geometría general del ensayo.}
-  {Montaje del caso experimental de laboratorio que se retomará en la discusión
-  de resultados.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/images/fig_lab_real_fixed_camera.png}
+\caption{Montaje del caso experimental de laboratorio utilizado en la corrida de
+referencia, con ArUco montado sobre el Go2 y observación desde cámara
+aproximadamente fija.}
+\label{fig:lab_results_setup}
+\end{figure}
 
 \subsubsection{Fidelidad del camino de comando}
 
