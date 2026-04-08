@@ -79,6 +79,8 @@
 \noindent\textbf{[BLOQUE DE ANÁLISIS]} #1
 \end{quote}
 }
+\setcounter{tocdepth}{2}
+\addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
 
 \begin{document}
 
@@ -117,7 +119,11 @@
 \setcounter{page}{0}
 \thispagestyle{empty}
 \end{titlepage}
-\pagebreak \newpage
+\clearpage
+
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
 
 \doublespacing
 
