@@ -212,7 +212,7 @@ la pose del vehículo aéreo.
 \hfill
 \begin{minipage}[t]{0.49\textwidth}
 \centering
-\includegraphics[width=\linewidth]{figures/images/fig_lab_real_fixed_camera_cropped.png}
+\includegraphics[width=\linewidth]{figures/images/go2_aruco_lab.png}
 \end{minipage}
 \caption{Vista panorámica del recorrido metodológico de la tesis. A la izquierda,
 una vista representativa del entorno de simulación con el Go2 instrumentado con
@@ -1517,8 +1517,7 @@ Esta sección se escribió con una intención deliberadamente narrativa. En luga
 de acumular gráficos sin jerarquía, cada bloque experimental se introduce a
 partir de la pregunta que busca responder, luego se muestran las figuras y
 tablas necesarias para sostener esa lectura, y recién después se reserva un
-espacio explícito para el análisis interpretativo. De este modo, la sección
-puede crecer con resultados concretos sin perder legibilidad.
+espacio explícito para el análisis interpretativo. 
 
 \subsection{Experimentos en simulación}
 
@@ -1533,9 +1532,11 @@ marcador experimenta oscilaciones controladas en \texttt{roll},
 
 \subsubsection{Diseño experimental y corridas seleccionadas}
 
-Para mantener la lectura clara, se eligió una configuración de movimiento de
-referencia ya descripta en la metodología y se trabajó sobre tres corridas
-representativas. La primera usa una cámara fija y funciona como caso base: toda
+Con el fin de aislar el efecto de la fuente de imagen, todas las corridas de
+esta subsección comparten la misma consigna de movimiento marino en modo
+\texttt{sinusoidal} y con los parámetros de referencia ya presentados en la
+metodología (Tabla~\ref{tab:method_marine_params}). Sobre esa base fija se
+seleccionaron tres ejecuciones representativas. La primera usa una cámara fija y funciona como caso base: toda
 la variación visual proviene del movimiento del Go2. Las otras dos corridas
 utilizan la cámara inferior del \texttt{sjtu\_drone} y cumplen el rol de caso
 fuerte, porque acercan el escenario al objetivo de mediano plazo del framework:
