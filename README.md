@@ -86,21 +86,22 @@ La calibración actual (checkerboard 8×6, cuadros de 80.38 mm) dio RMS = 0.22 p
 ### Terminal 1: Movimiento marino del Go2 real
 
 ```bash
-./run_marine_real.sh
+./run_marine_real.sh --profile lab_ref
 ```
 
-Este script configura CycloneDDS internamente y envía comandos Euler al Go2 via `unitree_sdk2py`.
+Este script configura CycloneDDS internamente y envia comandos Euler al Go2 via `unitree_sdk2py`. El perfil `lab_ref` fija la corrida base de laboratorio (sinusoidal 0.1 Hz, roll 15 deg, pitch 10 deg).
 
 Opciones:
 ```bash
-./run_marine_real.sh --manual               # Control por teclado
-./run_marine_real.sh --roll 10 --pitch 8    # Amplitudes custom (grados)
-./run_marine_real.sh --pattern irregular     # Patrón de olas (default: irregular)
-./run_marine_real.sh --freq 0.2             # Frecuencia de olas (Hz)
-./run_marine_real.sh --heave 0.03           # Heave máximo (metros)
+./run_marine_real.sh --manual                # Control por teclado
+./run_marine_real.sh --profile lab_ref        # Referencia base del laboratorio
+./run_marine_real.sh --roll 10 --pitch 8      # Amplitudes custom (grados)
+./run_marine_real.sh --pattern irregular      # Patron de olas
+./run_marine_real.sh --freq 0.2               # Frecuencia de olas (Hz)
+./run_marine_real.sh --heave 0.03             # Heave maximo de referencia
 ```
 
-Parámetros por defecto: roll ±20°, pitch ±15°, heave ±0.04 m, freq 0.15 Hz, patrón irregular.
+Nota: el pipeline real actual envia `Euler(roll, pitch, 0.0)`, asi que no hay heave dinamico efectivo aunque el parametro siga visible en el script.
 
 ### Terminal 2: Cámara + detección ArUco
 
@@ -140,11 +141,15 @@ Seleccionar en el dropdown:
 source /opt/ros/humble/setup.bash
 source install/setup.bash
 cd rosbags
-./record_lab_real.sh 60          # Graba 60 segundos
-./record_lab_real.sh 120 olas5   # 120 seg, sufijo "olas5"
+./record_lab_real.sh 15 smoke                 # Verificacion corta robot-only
+./record_lab_real.sh 60 ref01                 # Corrida robot-only
+./record_lab_real.sh --full-topics 60 ref01   # Robot + camara + ArUco
 ```
 
-**IMPORTANTE:** Las Terminales 1 y 2 deben estar corriendo antes de empezar a grabar. El script verifica que los topics existan y avisa si falta alguno.
+**IMPORTANTE:** El flujo recomendado ahora es:
+1. validar primero un bag corto `robot-only`;
+2. revisar `ros2 bag info` y `python3 rosbags/validate_lab_bag.py --mode robot <bag>`;
+3. recien despues levantar camara y grabar con `--full-topics`.
 
 ### Qué se graba
 

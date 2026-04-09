@@ -15,6 +15,7 @@
 #   ./run_marine_real.sh                    # Modo automático, parámetros default
 #   ./run_marine_real.sh --manual           # Modo manual (abre ventana de control)
 #   ./run_marine_real.sh --roll 3 --pitch 3 # Custom limits (grados)
+#   ./run_marine_real.sh --profile lab_ref  # Perfil referencia laboratorio
 #   ./run_marine_real.sh --profile dance    # Perfil fluido tipo "baile"
 # =============================================================================
 
@@ -40,30 +41,40 @@ PROFILE="custom"
 apply_profile() {
     local profile="$1"
     case "$profile" in
+        lab_ref)
+            MAX_ROLL=15.0
+            MAX_PITCH=10.0
+            MAX_HEAVE=0.04
+            WAVE_FREQ=0.10
+            WAVE_PATTERN="sinusoidal"
+            RAMP_SECONDS=5.0
+            SMOOTHING_TAU=0.08
+            SENDER_RATE_HZ=50.0
+            ;;
         dance)
-            MAX_ROLL=12.0
-            MAX_PITCH=13.0
+            MAX_ROLL=5.0
+            MAX_PITCH=14.0
             MAX_HEAVE=0.04
             WAVE_FREQ=0.11
             WAVE_PATTERN="marine"
             RAMP_SECONDS=8.0
-            SMOOTHING_TAU=0.08
-            SENDER_RATE_HZ=60.0
+            SMOOTHING_TAU=0.07
+            SENDER_RATE_HZ=80.0
             ;;
         dance_safe)
-            MAX_ROLL=6.0
-            MAX_PITCH=9.0
+            MAX_ROLL=3.0
+            MAX_PITCH=10.0
             MAX_HEAVE=0.04
-            WAVE_FREQ=0.10
+            WAVE_FREQ=0.11
             WAVE_PATTERN="marine"
-            RAMP_SECONDS=12.0
-            SMOOTHING_TAU=0.08
-            SENDER_RATE_HZ=45.0
+            RAMP_SECONDS=10.0
+            SMOOTHING_TAU=0.07
+            SENDER_RATE_HZ=70.0
             ;;
         custom)
             ;;
         *)
-            echo "ERROR: Perfil desconocido '$profile'. Opciones: dance, dance_safe"
+            echo "ERROR: Perfil desconocido '$profile'. Opciones: lab_ref, dance, dance_safe"
             exit 1
             ;;
     esac
@@ -111,7 +122,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Opciones:"
             echo "  --manual          Modo manual (abre control por teclado)"
-            echo "  --profile NAME    Perfil: dance | dance_safe"
+            echo "  --profile NAME    Perfil: lab_ref | dance | dance_safe"
             echo "  --roll  DEG       Máx roll en grados (default: $MAX_ROLL)"
             echo "  --pitch DEG       Máx pitch en grados (default: $MAX_PITCH)"
             echo "  --heave M         Máx heave en metros (default: $MAX_HEAVE)"
@@ -121,6 +132,10 @@ while [[ $# -gt 0 ]]; do
             echo "  --iface NAME      Interfaz de red (default: $NETWORK_IFACE)"
             echo "  --tau SEC         Suavizado temporal (default: $SMOOTHING_TAU)"
             echo "  --sender-hz HZ    Frecuencia sender thread (default: $SENDER_RATE_HZ)"
+            echo ""
+            echo "Notas:"
+            echo "  lab_ref replica la referencia base del laboratorio (sinusoidal 0.1 Hz)."
+            echo "  El pipeline REAL actual envia Euler(roll, pitch, 0.0): no hay heave dinamico efectivo."
             exit 0 ;;
         *)
             echo "Opción desconocida: $1"
@@ -235,6 +250,9 @@ echo "    Rampa:    ${RAMP_SECONDS}s"
 echo "    Tau:      ${SMOOTHING_TAU}s"
 echo "    Sender:   ${SENDER_RATE_HZ} Hz"
 echo "============================================"
+echo ""
+echo "Nota: el pipeline REAL actual envia Euler(roll, pitch, 0.0)."
+echo "      El parametro heave se conserva como referencia, pero no se comanda dinamicamente."
 echo ""
 
 # ===== Asegurar que valores numéricos sean float (ROS2 requiere DOUBLE) =====

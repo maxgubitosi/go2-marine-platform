@@ -29,10 +29,15 @@ def generate_launch_description():
     pkg = get_package_share_directory("fixed_camera")
     config_file = os.path.join(pkg, "config", "fixed_camera_params.yaml")
 
-    # Try to find stereo_camera config.yaml in workspace
-    # This is the path when running from the workspace root
-    workspace_dir = str(Path(pkg).parents[2])
-    stereo_config = os.path.join(workspace_dir, "stereo_camera", "config.yaml")
+    # Resolve stereo_camera/config.yaml from the workspace root.
+    # get_package_share_directory("fixed_camera") points to:
+    #   <workspace>/install/fixed_camera/share/fixed_camera
+    # so parents[3] is the workspace root.
+    workspace_root = Path(pkg).parents[3]
+    stereo_config_path = workspace_root / "stereo_camera" / "config.yaml"
+    if not stereo_config_path.exists():
+        stereo_config_path = Path.cwd() / "stereo_camera" / "config.yaml"
+    stereo_config = str(stereo_config_path)
 
     # ── Launch arguments ──────────────────────────────────────────
     device = LaunchConfiguration("device")
