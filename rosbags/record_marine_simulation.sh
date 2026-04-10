@@ -37,17 +37,21 @@ source install/setup.bash
 TOPICS=(
     /tf
     /tf_static
+    /clock
     /joint_states
     /odom
     /cmd_vel
     /imu/data
-    /marine_motion
-    /fixed_camera/image_raw
-    /fixed_camera/camera_info
+    /body_pose
+    /marine_platform/debug_state
+    /parameter_events
+    /fixed_camera/camera/image_raw
+    /fixed_camera/camera/camera_info
     /fixed_camera/pose
     /base_to_footprint_pose
     /aruco/pose
     /aruco/detection
+    /aruco/debug_image
 )
 
 echo "Iniciando grabación..."

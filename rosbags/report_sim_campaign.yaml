@@ -1,0 +1,44 @@
+profile_name: report_sim_v2
+
+common:
+  world_init_x: 0.40
+  world_init_y: 0.0
+  measurement_duration_sec: 60.0
+  min_marine_warmup_sec: 12.0
+
+marine_motion:
+  rate_hz: 20.0
+  wave_pattern: sinusoidal
+  wave_frequency: 0.1
+  max_roll_deg: 15.0
+  max_pitch_deg: 10.0
+  max_heave_m: 0.1
+  phase_offset_pitch: 1.0
+  phase_offset_heave: 1.5
+  smoothing_factor: 0.95
+
+fixed_camera:
+  height_m: 2.0
+
+sjtu_drone:
+  spawn_x: 2.0
+  spawn_y: 0.0
+  spawn_z: 0.08
+  target_x: 0.5
+  target_y: 0.0
+  target_z: 3.0
+  target_yaw: 0.0
+  hover_delay_sec: 3.0
+  readiness_timeout_sec: 120.0
+  readiness_hold_sec: 3.0
+  readiness_horizontal_tol_m: 0.10
+  readiness_vertical_tol_m: 0.15
+  detection_freshness_sec: 1.0
+
+acceptance:
+  fixed_camera:
+    min_matched_samples: 150
+    min_detection_rate_hz: 2.5
+  sjtu_drone:
+    min_matched_samples: 150
+    min_detection_rate_hz: 2.5

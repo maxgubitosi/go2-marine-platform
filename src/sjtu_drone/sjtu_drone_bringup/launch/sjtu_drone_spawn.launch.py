@@ -37,6 +37,11 @@ def generate_launch_description():
     spawn_x = LaunchConfiguration('spawn_x')
     spawn_y = LaunchConfiguration('spawn_y')
     spawn_z = LaunchConfiguration('spawn_z')
+    target_x = LaunchConfiguration('target_x')
+    target_y = LaunchConfiguration('target_y')
+    target_z = LaunchConfiguration('target_z')
+    target_yaw = LaunchConfiguration('target_yaw')
+    hover_delay_sec = LaunchConfiguration('hover_delay_sec')
 
     declare_use_sim_time = DeclareLaunchArgument(
         'use_sim_time', default_value='true',
@@ -57,6 +62,26 @@ def generate_launch_description():
     declare_spawn_z = DeclareLaunchArgument(
         'spawn_z', default_value='0.08',
         description='Drone spawn Z position (just above ground, takeoff is automatic)'
+    )
+    declare_target_x = DeclareLaunchArgument(
+        'target_x', default_value='0.5',
+        description='Drone hover target X position in world frame'
+    )
+    declare_target_y = DeclareLaunchArgument(
+        'target_y', default_value='0.0',
+        description='Drone hover target Y position in world frame'
+    )
+    declare_target_z = DeclareLaunchArgument(
+        'target_z', default_value='3.0',
+        description='Drone hover target Z position in world frame'
+    )
+    declare_target_yaw = DeclareLaunchArgument(
+        'target_yaw', default_value='0.0',
+        description='Drone hover target yaw in radians'
+    )
+    declare_hover_delay_sec = DeclareLaunchArgument(
+        'hover_delay_sec', default_value='3.0',
+        description='Delay after takeoff before enabling position control'
     )
 
     # ── Process xacro → URDF ─────────────────────────────────────────
@@ -120,7 +145,14 @@ def generate_launch_description():
         executable='drone_position_controller',
         name='drone_position_controller',
         output='screen',
-        parameters=[position_params, {'use_sim_time': use_sim_time}],
+        parameters=[position_params, {
+            'use_sim_time': use_sim_time,
+            'target_x': target_x,
+            'target_y': target_y,
+            'target_z': target_z,
+            'target_yaw': target_yaw,
+            'hover_delay_sec': hover_delay_sec,
+        }],
     )
 
     # Detector ArUco (cámara bottom del sjtu_drone)
@@ -139,6 +171,11 @@ def generate_launch_description():
         declare_spawn_x,
         declare_spawn_y,
         declare_spawn_z,
+        declare_target_x,
+        declare_target_y,
+        declare_target_z,
+        declare_target_yaw,
+        declare_hover_delay_sec,
         static_tf_world_odom,
         robot_state_publisher,
         joint_state_publisher,

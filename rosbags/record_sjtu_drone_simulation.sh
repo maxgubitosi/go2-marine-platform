@@ -57,7 +57,9 @@ TOPICS=(
     /odom
     /cmd_vel
     /imu/data
-    /marine_motion
+    /body_pose
+    /marine_platform/debug_state
+    /parameter_events
     /base_to_footprint_pose
 
     # sjtu_drone - cámara bottom (la que mira al ArUco)
@@ -72,7 +74,9 @@ TOPICS=(
     /drone/gt_pose
     /drone/gt_vel
     /drone/state
+    /drone/cmd_mode
     /drone/pose
+    /drone/odom
 
     # sjtu_drone - control
     /drone/cmd_vel

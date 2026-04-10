@@ -97,7 +97,7 @@ gazebo-no-seas-malo/
        │
        ▼
  Fuente de imagen
-  ├─ Cámara fija nadir (z = 2 m)   →  /fixed_camera/image_raw
+  ├─ Cámara fija nadir (z = 2 m)   →  /fixed_camera/camera/image_raw
   └─ SJTU Drone (hover z = 3 m)    →  /drone/bottom/image_raw
        │
        ▼
@@ -302,15 +302,15 @@ Sistema de grabación y reproducción de simulaciones. Ver `rosbags/` para scrip
 | `marine_platform_simulator` | `go2_tools` | parámetros de onda | `/body_pose` | Genera oleaje sinusoidal/irregular (roll, pitch, heave) @ 20 Hz |
 | `marine_manual_control` | `go2_tools` | teclado | `/marine_platform/manual_cmd` | Control manual de roll/pitch/heave desde teclado |
 | `camera_controller` | `fixed_camera` | — | `/fixed_camera/pose`, TF `world→camera` | Publica pose fija y TF estático de la cámara nadir |
-| `aruco_detector` | `fixed_camera` | `/fixed_camera/image_raw` | `/aruco/pose`, `/aruco/debug_image` | Detecta ArUco DICT_6X6_250 (id=0, 0.50 m) con `solvePnP` |
+| `aruco_detector` | `fixed_camera` | `/fixed_camera/camera/image_raw` | `/aruco/pose`, `/aruco/debug_image` | Detecta ArUco DICT_6X6_250 (id=0, 0.50 m) con `solvePnP` |
 | `drone_position_controller` | `sjtu_drone_control` | `/drone/gt_pose` | `/drone/cmd_vel` | Auto-takeoff → hover a z = 3.0 m sobre la plataforma |
 | `aruco_detector` | `sjtu_drone_control` | `/drone/bottom/image_raw` | `/aruco/pose`, `/aruco/debug_image` | Mismo pipeline ArUco desde cámara bottom del dron |
 
 ## Topics principales
 
 ### Cámara fija
-- `/fixed_camera/image_raw` - Imagen de cámara fija (640x480 @ 30Hz)
-- `/fixed_camera/camera_info` - Parámetros intrínsecos de cámara
+- `/fixed_camera/camera/image_raw` - Imagen de cámara fija (640x480 @ 30Hz)
+- `/fixed_camera/camera/camera_info` - Parámetros intrínsecos de cámara
 - `/fixed_camera/pose` - Pose fija de la cámara en el mundo
 
 ### sjtu_drone
@@ -384,5 +384,4 @@ Jack Spolski - jspolski@udesa.edu.ar
 - [ ] Control de aterrizaje autónomo basado en la estimación de pose ArUco
 - [ ] Soporte para espectro de oleaje irregular (Pierson-Moskowitz)
 - [ ] Integración con modelos de visión más robustos ante condiciones adversas
-
 

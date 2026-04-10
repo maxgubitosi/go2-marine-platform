@@ -8,7 +8,7 @@ Paquete ROS2 que simula una cámara fija nadir (mirando hacia abajo) para experi
 - **Cámara RGB** mirando verticalmente hacia abajo (640x480 @ 30Hz, FOV 80°)
 - **Coherencia total** entre lo que se ve en Gazebo y los datos de TF/pose
 - **Detector ArUco** integrado (opcional)
-- Publicación de parámetros intrínsecos de cámara (`/fixed_camera/camera_info`)
+- Publicación de parámetros intrínsecos de cámara (`/fixed_camera/camera/camera_info`)
 
 ## Requisitos
 
@@ -40,8 +40,8 @@ ros2 launch fixed_camera fixed_camera.launch.py height:=3.0
 
 ## Topics principales
 
-- `/fixed_camera/image_raw` - Imagen RGB 640x480 @ 30Hz
-- `/fixed_camera/camera_info` - Parámetros intrínsecos de cámara
+- `/fixed_camera/camera/image_raw` - Imagen RGB 640x480 @ 30Hz
+- `/fixed_camera/camera/camera_info` - Parámetros intrínsecos de cámara
 - `/fixed_camera/pose` - Pose fija de la cámara en el mundo (PoseStamped)
 - `/aruco/pose` - Pose estimada del marcador ArUco (cuando aruco:=true)
 - `/aruco/detection` - Flag de detección del ArUco

@@ -58,8 +58,8 @@ class ArucoDetector(Node):
         self.declare_parameter("target_id", 0)
         self.declare_parameter("marker_length_m", 0.50)
         self.declare_parameter("publish_debug_image", True)
-        self.declare_parameter("image_topic", "/fixed_camera/image_raw")
-        self.declare_parameter("camera_info_topic", "/fixed_camera/camera_info")
+        self.declare_parameter("image_topic", "/fixed_camera/camera/image_raw")
+        self.declare_parameter("camera_info_topic", "/fixed_camera/camera/camera_info")
 
         dict_name = self.get_parameter("dictionary").value
         self.target_id = self.get_parameter("target_id").value

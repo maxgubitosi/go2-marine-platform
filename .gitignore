@@ -7,6 +7,9 @@
 !rosbags/record_marine_simulation.sh
 !rosbags/record_sjtu_drone_simulation.sh
 !rosbags/play_bag_rviz.sh
+!rosbags/report_sim_campaign.yaml
+!rosbags/run_report_simulation_campaign.py
+!rosbags/wait_for_drone_ready.py
 src/unitree-go2-ros2
 # lo ignoro porque es un repo aparte 
 
