@@ -25,6 +25,7 @@ Usar esta skill para ordenar el contenido del informe y mantener consistencia co
 
 ## Convenciones LaTeX
 
+- Referencias tecnicas (topicos ROS, paths, bags): ver `.cursor/skills/thesis-guide/technical-references.md`; tablas `tab:ros_interfaces_sim` y `tab:ros_interfaces_lab` en `informe/main.tex`.
 - Usar etiquetas con prefijos `sec:`, `fig:`, `tab:` y `eq:`.
 - No insertar `\includegraphics` a archivos inexistentes.
 - No usar claves `\cite{}` inventadas; si falta una referencia, usar el placeholder visible definido en el documento.

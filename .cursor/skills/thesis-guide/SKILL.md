@@ -32,6 +32,7 @@ description: Guía la estructura del informe de tesis y las convenciones LaTeX d
 
 - Estilo `booktabs`: `\toprule`, `\midrule`, `\bottomrule`.
 - Encabezados en negrita si hace falta; numeración con `\label{tab:nombre}`.
+- **Interfaces ROS 2 y datos:** convenciones y ejemplos en [technical-references.md](technical-references.md). En el informe, las tablas canónicas de tópicos llevan etiquetas `tab:ros_interfaces_sim` y `tab:ros_interfaces_lab`; los registros (rosbags) pueden listarse en el apéndice.
 
 ### Referencias cruzadas
 

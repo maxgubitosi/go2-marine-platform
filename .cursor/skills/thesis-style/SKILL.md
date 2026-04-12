@@ -30,8 +30,18 @@ Referencia de estilo: [informe/refs/PPO_Car_Racing.pdf](informe/refs/PPO_Car_Rac
 - **Captions descriptivos:** no solo "Curva de aprendizaje" sino qué muestra, qué se compara y qué se concluye (ej. "Evolución del retorno medio durante el entrenamiento para PPO en SB3 y nuestra implementación.").
 - Referenciar figuras/tablas en el texto de forma natural antes o después de comentar el contenido.
 
+## Referencias a código, ROS y datos
+
+Seguir [technical-references.md](../thesis-guide/technical-references.md): no saturar el cuerpo con tópicos `\texttt{/...}`, paths de archivos ni nombres largos de rosbags.
+
+- **Prosa primero:** nombre en español del rol de cada señal (“consigna postural”, “depuración del simulador marino”).
+- **Literales concentrados:** tablas `tab:ros_interfaces_sim` y `tab:ros_interfaces_lab` en `main.tex`, más apéndice de registros cuando haga falta.
+- **Parámetros:** remitir a tablas de metodología, no listar `clave = valor` en párrafos.
+- **Tipografía:** `\path{...}` para paths con barras (requiere `hyperref`); `\texttt{}` breve para modos (`sinusoidal`) y paquetes.
+
 ## Evitar
 
 - Frases genéricas o relleno.
 - Afirmaciones sin respaldo (datos, referencias o "en la Figura X se observa...").
 - Mezclar "tú" o "usted" con "nosotros"; mantener una sola convención de persona.
+- Párrafos con muchos tópicos ROS o rutas pegadas; usar la guía de referencias técnicas.

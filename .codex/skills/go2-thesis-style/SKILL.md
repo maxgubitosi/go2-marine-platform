@@ -33,6 +33,10 @@ Usar esta skill cuando la tarea sea escribir o editar el informe de tesis del pr
 - Diferenciar con claridad lo que ocurre en tiempo real de lo que se evalua offline.
 - Cuando se hable del Go2, enfocarse en el uso concreto dentro del repo actual: plataforma marina simulada, control postural y comparacion contra ground truth.
 
+## Referencias tecnicas (ROS, rutas, rosbags)
+
+- Seguir `.cursor/skills/thesis-guide/technical-references.md`: prosa primero, literales en tablas o apendice, no listas de `\texttt{/topic/...}` en cada parrafo.
+
 ## Evitar
 
 - Cambiar arbitrariamente entre "nosotros", "se" y formas impersonales en el mismo parrafo.

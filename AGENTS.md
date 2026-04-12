@@ -15,6 +15,7 @@ Proyecto de tesis de grado en Ingeniería en IA (UdeSA). Autores: Máximo Gubito
 - **Skills de Cursor (escritura del informe):**
   - **thesis-style** (`.cursor/skills/thesis-style/SKILL.md`): estilo de escritura académica en español (voz nosotros/pasiva refleja, narrativa cronológica, captions descriptivos). Referencia de estilo: `informe/refs/PPO_Car_Racing.pdf`.
   - **thesis-guide** (`.cursor/skills/thesis-guide/SKILL.md`): estructura de secciones (Introducción, Marco teórico, Método, Experimentación, Conclusiones, Trabajo futuro) y convenciones LaTeX del proyecto (figuras, tablas, referencias, citas). Desglose detallado en `.cursor/skills/thesis-guide/structure.md`.
+  - **Referencias técnicas (ROS, rutas, rosbags):** `.cursor/skills/thesis-guide/technical-references.md` — cómo nombrar tópicos y datos sin saturar el cuerpo del texto; usar junto con thesis-style al editar `informe/main.tex`.
 
 Al editar o redactar el informe, seguir las convenciones de esas skills para mantener coherencia y estilo.
 
