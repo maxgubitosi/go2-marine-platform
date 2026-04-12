@@ -1237,16 +1237,16 @@ torso del Go2, junto con los ejes de pose estimada superpuestos en tiempo real.}
 
 En el caso base, la cámara fija se modeló como un sensor estático en Gazebo con
 una altura nominal de \(2{,}0\) m y con tópicos de imagen
-\texttt{/fixed\_camera/image\_raw} y \texttt{/fixed\_camera/camera\_info}. Su
-frame permanece rígido respecto del mundo, de modo que toda la variabilidad de
-la secuencia proviene del movimiento del Go2. En el caso del dron, por el
-contrario, la cámara deja de ser un observador inmóvil. El
-\texttt{sjtu\_drone} se spawnea con un offset horizontal respecto del robot,
-ejecuta el takeoff de forma automática y, tras un retardo de tres segundos,
-conmuta a control por posición para mantener un hover nominal en
-\((0{,}5,\ 0,\ 3{,}0)\) m. Esta organización permite pasar de un escenario
-geométricamente más limpio a otro donde la percepción depende además de la
-dinámica del vehículo aéreo.
+\texttt{/fixed\_camera/camera/image\_raw} y
+\texttt{/fixed\_camera/camera/camera\_info}. Su frame permanece rígido respecto
+del mundo, de modo que toda la variabilidad de la secuencia proviene del
+movimiento del Go2. En el caso del dron, por el contrario, la cámara deja de
+ser un observador inmóvil. El \texttt{sjtu\_drone} se spawnea con un offset
+horizontal respecto del robot, ejecuta el takeoff de forma automática y, tras
+un retardo de tres segundos, conmuta a control por posición para mantener un
+hover nominal en \((0{,}5,\ 0,\ 3{,}0)\) m. Esta organización permite pasar de
+un escenario geométricamente más limpio a otro donde la percepción depende
+además de la dinámica del vehículo aéreo.
 
 \begin{figure}[H]
 \centering
@@ -1269,11 +1269,11 @@ para la estimación de pose del ArUco en tiempo real.}
 \subsubsection{Registro y evaluación offline}
 
 La etapa de simulación se cerró siempre con el registro de la corrida en un
-rosbag de un minuto. Ese registro incluye, según el escenario, la imagen de la
-cámara, su calibración, la pose estimada del ArUco, TF, odometría, IMU y las
-señales necesarias para reconstruir después la pose verdadera del marcador. De
-esta manera, cada sesión queda preservada como una unidad de análisis que puede
-reprocesarse sin volver a ejecutar Gazebo.
+rosbag de aproximadamente un minuto. Ese registro incluye, según el escenario,
+la imagen de la cámara, su calibración, la pose estimada del ArUco, TF,
+odometría, IMU y las señales necesarias para reconstruir después la pose
+verdadera del marcador. De esta manera, cada sesión queda preservada como una
+unidad de análisis que puede reprocesarse sin volver a ejecutar Gazebo.
 
 La evaluación se separó deliberadamente de la percepción en tiempo real. Durante
 la corrida, el detector procesa únicamente imagen e intrínsecos de cámara. La
@@ -1291,8 +1291,24 @@ por dos motivos. En primer lugar, evita contaminar la medición del desempeño
 con información del simulador que no estaría disponible en una aplicación real.
 En segundo lugar, permite revisar una misma secuencia con distintos criterios de
 análisis sin modificar el detector ni repetir la simulación. Sobre esa base se
-generan los CSV, las series temporales y los gráficos de error que luego
-alimentan la sección experimental del informe.
+generan los CSV y los gráficos de error que luego alimentan la sección
+experimental del informe.
+
+Con este pipeline ya estabilizado, la campaña final de simulación del capítulo
+se organizó como un conjunto de corridas comparables bajo un único perfil
+experimental, al que nos referiremos como configuración de referencia. Esa
+campaña fijó una excitación sinusoidal común, mantuvo constante el offset de
+spawn del Go2 \((world\_init\_x = 0{,}40,\ world\_init\_y = 0)\) y repitió el
+mismo montaje visual en cuatro rosbags: un baseline con \texttt{fixed\_camera}
+y tres repeticiones del escenario \texttt{sjtu\_drone}. La motivación de este
+diseño fue separar con claridad dos preguntas. La primera, de carácter
+metodológico, fue qué tan bien sigue el pipeline visual el movimiento sintético
+cuando el sensor permanece fijo. La segunda, ya más cercana al objetivo final
+del framework, fue cuánto se degrada esa estimación cuando la observación pasa a
+depender también de una cámara aérea embarcada en el dron. Esta estructura de
+campaña se retoma en la sección experimental y explica por qué la comparación
+principal del capítulo no se plantea como una única corrida ejemplar, sino como
+un baseline más tres repeticiones comparables del caso fuerte.
 
 \figureplaceholder
   {fig:method_pipeline}
@@ -1523,168 +1539,183 @@ espacio explícito para el análisis interpretativo.
 
 Las pruebas en simulación constituyen el núcleo cuantitativo más sólido del
 trabajo, porque permiten contrastar la pose estimada visualmente con la pose de
-referencia obtenida a partir del simulador. Cada corrida se registra en un
-\textit{rosbag} de un minuto y se evalúa \textit{offline} a partir del pipeline
-de detección ArUco y estimación con \texttt{solvePnP}. El objetivo no es sólo
-obtener números de error, sino entender cómo se comporta el sistema cuando el
-marcador experimenta oscilaciones controladas en \texttt{roll},
-\texttt{pitch} y \texttt{heave}.
+referencia obtenida a partir del simulador. La campaña final se organizó como
+una progresión deliberada: primero, un baseline con \texttt{fixed\_camera} para
+instalar el caso más limpio del framework; después, tres repeticiones
+comparables con \texttt{sjtu\_drone} para estudiar el mismo movimiento bajo una
+geometría de observación más exigente. Todas las corridas se registraron en
+rosbags de aproximadamente un minuto y se reevaluaron \textit{offline} con el
+mismo pipeline.
 
 \subsubsection{Diseño experimental y corridas seleccionadas}
 
 Con el fin de aislar el efecto de la fuente de imagen, todas las corridas de
 esta subsección comparten la misma consigna de movimiento marino en modo
-\texttt{sinusoidal} y con los parámetros de referencia ya presentados en la
+\texttt{sinusoidal} y los mismos parámetros de referencia ya presentados en la
 metodología (Tabla~\ref{tab:method_marine_params}). Sobre esa base fija se
-seleccionaron tres ejecuciones representativas. La primera usa una cámara fija y funciona como caso base: toda
-la variación visual proviene del movimiento del Go2. Las otras dos corridas
-utilizan la cámara inferior del \texttt{sjtu\_drone} y cumplen el rol de caso
-fuerte, porque acercan el escenario al objetivo de mediano plazo del framework:
-estudiar aterrizaje de drones sobre plataformas marinas móviles.
+construyó la campaña \texttt{report\_v2}: un baseline con cámara fija y tres
+repeticiones comparables del escenario con dron. Esta estructura no se eligió
+sólo para acumular más bags, sino para separar con claridad dos preguntas.
+Primero, qué tan bien sigue el pipeline visual el movimiento del marcador cuando
+el sensor permanece fijo. Segundo, cuánto se degrada esa estimación cuando la
+observación pasa a depender también de la pose de un vehículo aéreo.
 
 \begin{table}[H]
 \centering
-\caption{Corridas seleccionadas para estructurar la sección de experimentación
-en simulación. La idea es instalar primero un baseline visual con cámara fija y
-luego profundizar el escenario de dron con una corrida principal y una
-repetición.}
+\caption{Corridas seleccionadas para estructurar la sección experimental en
+simulación. La campaña final instala un baseline con cámara fija y luego
+profundiza el escenario con dron mediante tres repeticiones comparables.}
 \label{tab:sim_selected_runs}
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{p{0.16\textwidth}p{0.18\textwidth}p{0.12\textwidth}p{0.17\textwidth}p{0.26\textwidth}}
+\begin{tabular}{p{0.14\textwidth}p{0.18\textwidth}p{0.12\textwidth}p{0.17\textwidth}p{0.29\textwidth}}
 \toprule
 Corrida & Fuente de imagen & Duración & Movimiento & Propósito en el relato experimental \\
 \midrule
-Caso base & \texttt{fixed\_camera} & 58,5 s & Configuración sinusoidal de referencia & Instalar el escenario más limpio y mostrar el comportamiento base del pipeline. \\
-Caso fuerte A & \texttt{sjtu\_drone} & 58,7 s & Configuración sinusoidal de referencia & Presentar la corrida principal del escenario más cercano al objetivo final. \\
-Caso fuerte B & \texttt{sjtu\_drone} & 58,5 s & Configuración sinusoidal de referencia & Discutir repetibilidad y variabilidad entre ejecuciones del mismo montaje. \\
+Baseline fijo & \texttt{fixed\_camera} & 57,5 s & Configuración sinusoidal de referencia & Instalar el caso metodológicamente más limpio y fijar una referencia visual del pipeline. \\
+R1 & \texttt{sjtu\_drone} & 57,7 s & Configuración sinusoidal de referencia & Primera repetición comparable del escenario fuerte, con alta disponibilidad de muestras. \\
+R2 & \texttt{sjtu\_drone} & 57,4 s & Configuración sinusoidal de referencia & Corrida principal del dron; se usa para las series temporales y los histogramas detallados. \\
+R3 & \texttt{sjtu\_drone} & 57,7 s & Configuración sinusoidal de referencia & Tercera repetición comparable del dron; se usa para discutir variabilidad entre ejecuciones equivalentes. \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-En términos concretos, el caso base corresponde al rosbag
-\texttt{marine\_sim\_20260216\_175945}, mientras que las corridas del dron
-corresponden a \texttt{sjtu\_drone\_sim\_20260216\_164654} y
-\texttt{sjtu\_drone\_sim\_20260216\_180434}. Las tres bolsas se reevaluaron con
-el mismo pipeline \textit{offline} y con el mismo offset de spawn del Go2
-(\texttt{world\_init\_x = 0{,}40}), de modo que las diferencias reportadas más
-adelante no provienen de cambios en el postproceso sino del escenario visual y
-de la calidad efectiva de las detecciones.
-
-Además de la duración y la fuente de imagen, en cada corrida se conservarán
-como descriptores mínimos la cantidad de muestras útiles y la tasa de
-detección. Estos dos datos cumplen una doble función: por un lado, permiten
-dimensionar cuánta evidencia sostiene cada gráfico; por otro, ayudan a
-distinguir si una diferencia entre corridas proviene de la geometría del
-escenario o de una menor disponibilidad efectiva de observaciones válidas.
+En términos concretos, el baseline corresponde al rosbag
+\texttt{marine\_sim\_20260410\_155332\_report\_v2\_ref}, mientras que las tres
+repeticiones del dron corresponden a
+\texttt{sjtu\_drone\_sim\_20260410\_155834\_report\_v2\_r1},
+\texttt{sjtu\_drone\_sim\_20260410\_160419\_report\_v2\_r2} y
+\texttt{sjtu\_drone\_sim\_20260410\_160814\_report\_v2\_r3}. Las cuatro bolsas
+se reevaluaron con el mismo pipeline \textit{offline} y con el mismo offset de
+spawn del Go2 \((world\_init\_x = 0{,}40)\), de modo que las diferencias
+reportadas más adelante no provienen de cambios en el postproceso ni de una
+mezcla de implementaciones distintas del escenario.
 
 \subsubsection{Métricas y criterio de lectura}
 
-La evaluación se apoya en un conjunto acotado de métricas que resultan fáciles
-de interpretar y que dialogan directamente con el problema. La primera es la
-tasa de detección, que da una idea de cuántos cuadros aportan estimaciones
-útiles. La segunda es el error absoluto de posición, tanto por eje como en su
-forma euclidiana \(\|\Delta pos\|\), porque resume de manera compacta la
-diferencia entre pose estimada y ground truth. La tercera es el error angular
-en \texttt{roll}, \texttt{pitch} y \texttt{yaw}, ya que permite distinguir qué
-componentes de la orientación se recuperan con mayor estabilidad. Finalmente,
-se considera la evolución temporal del error para discutir si el sistema
-mantiene un comportamiento estable a lo largo de la corrida o si aparecen
-tramos más exigentes asociados al movimiento.
+La evaluación se apoya en un conjunto acotado de métricas que dialogan de forma
+directa con el movimiento marino que se quiso sintetizar. En esta campaña se
+privilegian tres variables: el error angular en \texttt{roll}, el error angular
+en \texttt{pitch} y el error en \texttt{heave}, medido como \(\Delta Z\) en el
+frame de la cámara. Estas magnitudes son las que mejor capturan la parte del
+problema vinculada con el balanceo, el cabeceo y la variación vertical de la
+plataforma. Como descriptores complementarios se conservan la cantidad de
+muestras útiles, la tasa de detección y, de forma secundaria, el error
+euclidiano de posición \(\|\Delta pos\|\) y la lectura por ejes \(X/Y/Z\).
 
 \begin{table}[H]
 \centering
-\caption{Resumen cuantitativo de las dos corridas del escenario
+\caption{Resumen cuantitativo de las tres corridas del escenario
 \texttt{sjtu\_drone}, calculado a partir de la evaluación \textit{offline}
-contra ground truth reconstruido en frame cámara.}
+contra ground truth reconstruido en frame cámara. La tabla prioriza el error
+absoluto medio en \texttt{roll}, \texttt{pitch} y \texttt{heave}.}
 \label{tab:sim_drone_quant_structure}
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{lcccccccc}
+\begin{tabular}{p{0.10\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.14\textwidth}p{0.22\textwidth}}
 \toprule
-Corrida & Muestras & Detección & \(\mu\|\Delta pos\|\) & \(\sigma\|\Delta pos\|\) & \(P95\|\Delta pos\|\) & \(\sigma(\Delta roll)\) & \(\sigma(\Delta pitch)\) & \(\sigma(\Delta yaw)\) \\
+Corrida & Muestras & Detección & \(\overline{|\Delta roll|}\) & \(\overline{|\Delta pitch|}\) & \(\overline{|\Delta Z|}\) & Observación sintética \\
 \midrule
-Dron A & 197 & 3,36 Hz & 0,068 m & 0,023 m & 0,118 m & 5,99$^\circ$ & 4,04$^\circ$ & 0,19$^\circ$ \\
-Dron B & 135 & 2,31 Hz & 0,078 m & 0,044 m & 0,154 m & 11,14$^\circ$ & 6,76$^\circ$ & 0,21$^\circ$ \\
+R1 & 306 & 5,30 Hz & 2,69$^\circ$ & 1,98$^\circ$ & 0,020 m & Mayor disponibilidad de muestras; el error de heave queda levemente más acotado que en las otras repeticiones. \\
+R2 & 264 & 4,60 Hz & 3,02$^\circ$ & 2,21$^\circ$ & 0,023 m & Corrida principal; concentra la mayor dispersión angular del grupo y por eso resulta una referencia exigente. \\
+R3 & 270 & 4,68 Hz & 2,75$^\circ$ & 2,06$^\circ$ & 0,024 m & Menor error posicional global del grupo, con desempeño angular intermedio y heave comparable a R2. \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
-Narrativamente, conviene leer estas métricas en dos niveles. Primero, como una
-descripción local de cada corrida: cuántas detecciones útiles hubo, qué ejes
-presentaron menor o mayor dispersión, y qué tan cerca quedó la estimación de la
-señal de referencia. Segundo, como una comparación entre escenarios: el caso de
-cámara fija no busca competir en peso con el del dron, sino ofrecer una base de
-lectura sobre la cual interpretar por qué el escenario móvil resulta más
-exigente.
+Conviene leer estas métricas en dos niveles. Primero, como una descripción
+local de cada corrida: cuántas detecciones útiles hubo y qué orden de magnitud
+alcanzan \texttt{roll}, \texttt{pitch} y \texttt{heave}. Segundo, como una
+comparación entre escenarios: el baseline con cámara fija no compite en peso
+con el dron, sino que ofrece una base de lectura sobre la cual interpretar por
+qué el escenario con sensor móvil resulta más exigente.
 
 \subsubsection{Caso base: cámara fija}
 
-El caso \texttt{fixed\_camera} funciona como baseline visual del framework. Al
-mantener el sensor en una posición fija respecto del mundo, la única fuente
-intencional de variación en la imagen es el movimiento del marcador adherido al
-Go2. Este escenario resulta especialmente útil para introducir los resultados,
-porque permite observar con menos ambigüedad cómo las oscilaciones en
-\texttt{roll}, \texttt{pitch} y \texttt{heave} se traducen en trayectorias
-estimadas por el pipeline de percepción.
+El caso \texttt{fixed\_camera} funciona como baseline metodológico del
+framework. Al mantener el sensor en una posición fija respecto del mundo, la
+variación visual proviene esencialmente del movimiento del marcador adherido al
+Go2. Esto vuelve más legible la relación entre la consigna sinusoidal del torso
+y la pose observada del marcador, y por eso conviene usar este escenario para
+introducir los resultados antes de pasar al caso con dron.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_fixed_position_vs_gt.png}
 \caption{Comparación temporal entre posición estimada y ground truth en el
-escenario base con cámara fija. Como la cámara permanece inmóvil respecto del
-mundo, la figura permite leer con poca ambigüedad cómo el movimiento sintético
-del Go2 se traduce en la pose observada del marcador.}
+escenario base con cámara fija. La señal estimada se muestra sin bias medio por
+eje solo para visualización, con el objetivo de facilitar la comparación de
+forma y fase entre ambas curvas.}
 \label{fig:sim_fixed_position_vs_gt}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.92\textwidth]{figures/results/sim_fixed_error_hist.png}
-\caption{Distribución de errores del caso base con cámara fija. Se muestran
-\(\Delta X\), \(\Delta Y\), \(\Delta Z\) y el error euclidiano
-\(\|\Delta pos\|\), que resumen sesgo y dispersión del baseline visual del
-framework.}
+\caption{Distribución de errores de posición en el caso base con cámara fija.
+Se muestran \(\Delta X\), \(\Delta Y\), \(\Delta Z\) y el error euclidiano
+\(\|\Delta pos\|\), todos calculados sobre la evaluación cruda en frame
+cámara.}
 \label{fig:sim_fixed_error_hist}
 \end{figure}
 
-La Figura~\ref{fig:sim_fixed_position_vs_gt} muestra que, aun en el caso más
-simple del capítulo, la señal estimada reproduce la dinámica global del
-marcador. Las oscilaciones periódicas en \(X\), \(Y\) y \(Z\) se siguen de
-forma consistente durante toda la secuencia, sin tramos de pérdida sostenida ni
-cambios abruptos de régimen. Este caso concentra 166 muestras útiles sobre una
-corrida de 58,5 s, con una tasa de detección de 2,84 Hz, y por eso funciona
-como referencia visual limpia: la cámara permanece fija respecto del mundo y
-toda la variación relevante proviene del movimiento sintetizado del Go2.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/results/sim_fixed_angle_error_hist_raw.png}
+\caption{Distribución raw del error angular en el baseline con cámara fija.
+Aquí se muestran \(\Delta pitch\) y \(\Delta yaw\) sin recentrado adicional,
+como apoyo para la lectura angular del caso base.}
+\label{fig:sim_fixed_angle_error_hist_raw}
+\end{figure}
+
+La Figura~\ref{fig:sim_fixed_position_vs_gt} muestra que, en el caso más limpio
+del capítulo, la señal estimada reproduce la dinámica global del marcador en
+los tres ejes y sigue de forma particularmente clara la componente de heave. El
+baseline concentra 275 muestras útiles sobre una corrida de 57,5 s, con una
+tasa de detección de 4,78 Hz, de modo que la evidencia visual queda sostenida
+por una cantidad de observaciones claramente mayor que en las campañas usadas
+en versiones anteriores del informe.
 
 Desde el punto de vista del error, el baseline queda acotado en torno a
-\(\mu\|\Delta pos\| = 0{,}057\) m y \(P95 = 0{,}085\) m. Los sesgos laterales en
-\(X\) e \(Y\) se mantienen pequeños y estables, mientras que la mayor
-dispersión aparece en \(Z\), donde la profundidad depende de la escala aparente
-del marcador. En orientación vuelve a aparecer una regularidad importante del
-sistema: \texttt{yaw} es el eje más estable (\(\sigma = 0{,}21^\circ\)),
-mientras que \texttt{roll} y \texttt{pitch} absorben la parte más sensible de
-la perspectiva. Por eso este escenario sirve como punto de comparación para
-entender luego por qué el caso del dron resulta más exigente.
+\(\mu\|\Delta pos\| = 0{,}0578\) m y \(P95 = 0{,}0853\) m. La componente de
+heave concentra la mayor dispersión posicional, con un error absoluto medio de
+\(0{,}034\) m, mientras que el error angular se mantiene en torno a
+\(2{,}44^\circ\) en \texttt{roll} y \(2{,}00^\circ\) en \texttt{pitch}. El
+histograma raw de la Figura~\ref{fig:sim_fixed_angle_error_hist_raw} muestra,
+además, que \texttt{yaw} permanece mucho más acotado
+\((\overline{|\Delta yaw|} \approx 0{,}17^\circ)\), lo que coincide con la
+intuición geométrica de que la rotación planar del marcador es la componente
+más estable del problema.
+
+También aparece aquí una limitación que conviene dejar explícita porque luego se
+repite en el caso fuerte. En \(Y\), la señal estimada acompaña la fase global
+del movimiento, pero el error lateral deriva lentamente a lo largo de la
+corrida: su media pasa de aproximadamente \(-0{,}0247\) m en los primeros
+10 s a \(-0{,}0571\) m al final, con una pendiente de
+\(-0{,}71\) mm/s. Esta caída no refleja un drift equivalente del ground truth,
+sino una deriva del error de estimación. Precisamente por eso el baseline
+resulta útil: instala una referencia visual limpia y, al mismo tiempo, permite
+identificar limitaciones del pipeline antes de agregar la dinámica del dron.
 
 \subsubsection{Caso fuerte: cámara embarcada en el dron}
 
 El escenario con \texttt{sjtu\_drone} concentra el principal interés de la
 sección, porque introduce una geometría de observación más cercana al problema
 que motiva el framework. Aunque en estas corridas el dron no ejecuta todavía un
-aterrizaje, su cámara inferior observa una plataforma que oscila, y por lo
-tanto obliga a analizar la estimación visual en una condición menos ideal que la
-del caso fijo. En términos narrativos, esta subsección debería cargar el mayor
-peso experimental del capítulo.
+aterrizaje, su cámara inferior observa una plataforma que oscila y obliga a
+analizar la estimación visual en una condición menos ideal que la del caso
+fijo. La campaña final se apoyó en tres repeticiones comparables \((R1,\ R2,\
+R3)\), de las cuales \(R2\) se usa como corrida principal porque queda en una
+posición intermedia dentro del conjunto y, al mismo tiempo, ofrece suficiente
+cantidad de muestras para describir el comportamiento del escenario fuerte.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_position_vs_gt.png}
 \caption{Comparación entre posición estimada y ground truth en la corrida
-principal del escenario con dron
-(\texttt{sjtu\_drone\_sim\_20260216\_164654}). La figura permite evaluar si la
-estimación visual sigue la dinámica global del marcador a lo largo de toda la
-secuencia.}
+principal del escenario con dron \((R2)\). La señal estimada se muestra sin
+bias medio por eje solo para visualización, de modo de facilitar la lectura de
+fase y forma temporal.}
 \label{fig:sim_drone_position_vs_gt}
 \end{figure}
 
@@ -1692,139 +1723,107 @@ secuencia.}
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_orientation_vs_gt.png}
 \caption{Comparación entre orientación estimada y ground truth en la corrida
-principal con cámara embarcada en el dron. La lectura por eje permite discutir
-qué componentes angulares se recuperan con mayor estabilidad en una geometría de
-observación aérea.}
+principal con cámara embarcada en el dron. En \texttt{roll} se aplica
+\textit{unwrap} angular solo para visualización, con el fin de evitar los
+saltos artificiales asociados a la discontinuidad en \(\pm 180^\circ\).}
 \label{fig:sim_drone_orientation_vs_gt}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_error_hist.png}
-\caption{Distribución de errores de la corrida principal del escenario con
-dron. La figura condensa sesgo y dispersión para las componentes de posición y
-orientación estimadas en frame cámara.}
+\caption{Distribución de errores crudos de la corrida principal del escenario
+con dron. La figura resume sesgo y dispersión para las componentes de posición
+y orientación estimadas en frame cámara.}
 \label{fig:sim_drone_error_hist}
 \end{figure}
-
-\begin{table}[H]
-\centering
-\caption{Resumen sintético de las dos corridas del \texttt{sjtu\_drone}. La
-tabla combina un descriptor cuantitativo mínimo con una lectura breve del
-comportamiento de cada ejecución.}
-\label{tab:sim_drone_runs_summary}
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{p{0.16\textwidth}p{0.14\textwidth}p{0.14\textwidth}p{0.16\textwidth}p{0.16\textwidth}p{0.16\textwidth}}
-\toprule
-Corrida & Detección & \(\mu\|\Delta pos\|\) & \(P95\|\Delta pos\|\) & Componente angular más estable & Observación sintética \\
-\midrule
-Dron A & 3,36 Hz & 0,068 m & 0,118 m & \texttt{yaw} & Seguimiento estable; la mayor dispersión vuelve a concentrarse en profundidad. \\
-Dron B & 2,31 Hz & 0,078 m & 0,154 m & \texttt{yaw} & Menor detección y mayor dispersión angular, aunque mantiene el mismo orden de magnitud en posición. \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_runs_comparison.png}
-\caption{Comparación entre las dos corridas del escenario con dron. El panel de
-la izquierda resume métricas de error de posición y el de la derecha compara la
-dispersión angular por eje.}
+\caption{Comparación entre las tres corridas del escenario con dron. Se
+muestran boxplots de error absoluto en las variables que más interesan para la
+lectura marina del problema: \(|\Delta roll|\), \(|\Delta pitch|\) y
+\(|\Delta heave| = |\Delta Z|\).}
 \label{fig:sim_drone_runs_comparison}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{figures/results/sim_drone_error_time.png}
-\caption{Evolución temporal del error en la corrida principal del escenario con
-dron. Arriba se muestra \(\|\Delta pos\|\) junto con una media móvil; abajo, el
-error medio por cinco ventanas temporales con su dispersión.}
-\label{fig:sim_drone_error_time}
 \end{figure}
 
 La corrida principal del dron, mostrada en las
 Figuras~\ref{fig:sim_drone_position_vs_gt} y
 \ref{fig:sim_drone_orientation_vs_gt}, conserva la capacidad de seguir la
 dinámica global del marcador, pero lo hace bajo una geometría de observación
-menos favorable que la del caso fijo. En posición, la señal estimada acompaña
-la tendencia periódica de los tres ejes a lo largo de toda la corrida y no
-pierde la estructura global del movimiento. Sin embargo, la nube de
-observaciones es visiblemente más dispersa, en especial cuando la plataforma
-combina inclinación con variación de altura, lo que vuelve menos nítida la
-correspondencia cuadro a cuadro que en el baseline.
+menos favorable que la del caso fijo. En particular, la figura de posición
+permite ver que la señal estimada acompaña la periodicidad dominante en
+\texttt{heave} y conserva la estructura temporal en \(X\) y \(Z\), aun cuando
+la nube de observaciones aparece más abierta que en el baseline. La figura de
+orientación refuerza esa lectura: \texttt{roll} y \texttt{pitch} siguen la
+oscilación principal del movimiento, mientras que \texttt{yaw} permanece
+acotado y estable, aunque ya no cumple un rol central en la narrativa del
+capítulo.
 
-La lectura angular refuerza esa interpretación. \texttt{yaw} se estima con
-mucha estabilidad (\(\sigma = 0{,}19^\circ\)), mientras que \texttt{roll} y
-\texttt{pitch} muestran dispersiones de \(5{,}99^\circ\) y \(4{,}04^\circ\),
-respectivamente. Esto es coherente con la geometría del problema: desde una
-cámara aérea, la rotación planar del marcador se conserva de manera más directa
-en la imagen, mientras que las inclinaciones tridimensionales dependen con
-mayor sensibilidad de la proyección perspectiva y del ruido en las esquinas
-detectadas.
+Cuantitativamente, la corrida \(R2\) queda en
+\(\overline{|\Delta roll|} = 3{,}02^\circ\),
+\(\overline{|\Delta pitch|} = 2{,}21^\circ\) y
+\(\overline{|\Delta Z|} = 0{,}023\) m. Estas tres magnitudes son las que mejor
+describen cuánto se degrada la observación cuando el sensor pasa de estar fijo
+a estar embarcado en un vehículo aéreo. En ese sentido, el escenario con dron
+sigue siendo utilizable como banco de pruebas controlado: no pierde la dinámica
+global del marcador, pero sí vuelve visibles las componentes más sensibles del
+problema visual.
 
-En términos de posición, la corrida principal queda en
-\(\mu\|\Delta pos\| = 0{,}068\) m, \(\sigma = 0{,}023\) m y
-\(P95 = 0{,}118\) m. El sesgo dominante aparece en \(X\)
-(\(+0{,}044\) m), mientras que la mayor dispersión vuelve a concentrarse en
-\(Z\) (\(\sigma = 0{,}048\) m). No se trata de un error isotrópico:
-lateralmente el sistema permanece relativamente acotado, pero la profundidad
-absorbe la mayor parte de la incertidumbre. Aun así, el orden de magnitud del
-error sigue siendo suficientemente bajo como para usar el framework como
-entorno de prueba controlado para percepción sobre plataformas oscilantes.
+La principal limitación aparece en la posición absoluta y no en la forma
+temporal de las oscilaciones. En las tres corridas del dron persiste un sesgo
+sistemático en \(Y\), de signo negativo, que alcanza
+\(-0{,}322\) m en \(R1\), \(-0{,}297\) m en \(R2\) y \(-0{,}151\) m en \(R3\).
+Por eso la lectura principal del capítulo no se apoya en la posición cruda,
+sino en la comparación de \texttt{roll}, \texttt{pitch} y \texttt{heave}. Las
+figuras de posición, además, se muestran sin bias medio por eje solo para
+visualización; los histogramas y tablas conservan siempre los errores crudos.
 
-La comparación entre Dron A y Dron B, resumida en la
-Tabla~\ref{tab:sim_drone_runs_summary} y en la
-Figura~\ref{fig:sim_drone_runs_comparison}, muestra una repetibilidad razonable,
-aunque no idéntica. Ambas corridas conservan el mismo patrón cualitativo:
-\texttt{yaw} es el eje angular más estable, la profundidad concentra la mayor
-dispersión y el error medio de posición se mantiene en el orden de los
-7--8 cm. La diferencia principal aparece en la segunda ejecución, que ofrece
-menos muestras útiles (135 frente a 197), una tasa de detección menor
-(2,31 Hz frente a 3,36 Hz) y una dispersión angular claramente más alta, en
-especial en \texttt{roll} (\(11{,}14^\circ\) frente a \(5{,}99^\circ\)). Esta
-variabilidad no invalida el escenario, pero sí muestra que el caso con dron es
-más sensible a cambios de geometría u oleaje que el baseline fijo.
-
-La evolución temporal del error en la corrida principal, mostrada en la
-Figura~\ref{fig:sim_drone_error_time}, no exhibe evidencia de drift acumulativo.
-La pendiente lineal de \(\|\Delta pos\|\) respecto del tiempo es de
-\(-0{,}25\) mm/s y las cinco ventanas temporales mantienen medias acotadas
-entre 0,053 m y 0,087 m. Los intervalos más exigentes aparecen al comienzo y al
-final de la corrida, mientras que el tramo central concentra los valores más
-bajos y estables. Esto sugiere que las oscilaciones del error responden más a
-ventanas geométricamente más difíciles que a una degradación progresiva del
-estimador.
+La comparación entre \(R1\), \(R2\) y \(R3\), resumida en la
+Tabla~\ref{tab:sim_drone_quant_structure} y en la
+Figura~\ref{fig:sim_drone_runs_comparison}, muestra que el escenario con dron
+es comparable entre repeticiones, aunque no idéntico. Las tres corridas se
+mantienen en el mismo orden de magnitud, con medianas de
+\(|\Delta roll|\) entre \(1{,}63^\circ\) y \(1{,}70^\circ\), medianas de
+\(|\Delta pitch|\) entre \(1{,}19^\circ\) y \(1{,}44^\circ\), y medianas de
+\(|\Delta Z|\) entre \(0{,}0106\) m y \(0{,}0133\) m. La diferencia principal
+aparece en \(R2\), que concentra la mayor dispersión angular del grupo, mientras
+que \(R1\) ofrece la mayor tasa de detección y el heave más acotado. \(R3\), en
+cambio, mantiene una dispersión angular intermedia y a la vez reduce de forma
+marcada el error posicional global, lo que muestra que la repetibilidad del
+escenario es razonable pero sensible a la geometría efectiva de cada corrida.
 
 \subsubsection{Síntesis de la evidencia en simulación}
 
-Conviene cerrar la subsección con una síntesis breve y no con una repetición de
-tablas. Después de recorrer el baseline y el caso fuerte, lo importante es
-recuperar qué aporta la evidencia en simulación al argumento general del
-trabajo: por un lado, que el pipeline visual puede seguir la dinámica global de
-una plataforma oscilante; por otro, que el escenario con dron introduce
-dificultades adicionales pero sigue siendo cuantificable dentro de un marco
-experimental controlado.
+Después de recorrer el baseline y el caso fuerte, lo importante no es repetir
+tablas sino recuperar qué aporta la evidencia de simulación al argumento
+general del trabajo. En primer lugar, la campaña \texttt{report\_v2} confirma
+que el pipeline visual sigue la dinámica global de una plataforma oscilante y
+que esa capacidad puede medirse con referencia reconstruible. En segundo lugar,
+la repetición del escenario con dron muestra que esa lectura no depende de una
+única corrida aislada, sino de tres ejecuciones comparables que conservan el
+mismo orden de magnitud en \texttt{roll}, \texttt{pitch} y \texttt{heave}.
 
-En conjunto, la evidencia de simulación permite afirmar que el pipeline visual
-sigue la dinámica global de una plataforma marina sintética y que esa capacidad
-puede cuantificarse con referencia reconstruible. El caso fijo instala un
-baseline limpio en torno a 5,7 cm de error medio, mientras que el escenario con
-dron conserva el seguimiento global en un régimen más exigente, con errores
-medios del orden de 6,8--7,8 cm y con \texttt{yaw} consistentemente estable.
-Desde el punto de vista metodológico, esto alcanza para sostener que el
-framework sirve como banco de pruebas controlado para percepción visual sobre
-plataformas oscilantes.
+En conjunto, la evidencia de simulación permite afirmar que el framework sirve
+como banco de pruebas controlado para percepción visual sobre plataformas
+oscilantes. El baseline fijo instala una referencia limpia, con un error medio
+de posición de 5,8 cm y una recuperación clara de la componente de heave;
+mientras que el escenario con dron conserva la dinámica global del problema en
+una condición más exigente, con errores absolutos medios de alrededor de
+\(2^\circ\) a \(3^\circ\) en \texttt{roll}/\texttt{pitch} y de 2 a 2,4 cm en
+\texttt{heave}. Esta evidencia alcanza para justificar el valor metodológico de
+la simulación como paso previo a la discusión experimental del entorno físico.
 
-Las limitaciones también quedan claras. La principal fuente de incertidumbre
-sigue siendo la componente de profundidad, y la orientación fuera del plano de
-la imagen (\texttt{roll} y, en menor medida, \texttt{pitch}) se degrada de
-manera visible cuando la geometría de observación se vuelve menos favorable.
-Además, la caída de detección y el aumento de dispersión entre las dos corridas
-del dron muestran que el rendimiento depende de manera sensible de la escena y
-no sólo del algoritmo. Precisamente por eso la simulación cumple su función
-metodológica: permite aislar estas limitaciones con ground truth antes de
-trasladar la discusión a un entorno físico.
+Las limitaciones también quedan claras. La componente de heave sigue siendo la
+parte posicional más sensible del problema, \texttt{roll} y \texttt{pitch} se
+degradan de forma visible cuando la geometría de observación se vuelve menos
+favorable, y en el escenario con dron persiste un sesgo sistemático en
+\(Y\) que no debe interpretarse como movimiento real de la plataforma, sino
+como una limitación actual de la cadena geométrica de estimación y evaluación.
+Precisamente por eso la simulación cumple su función metodológica: permite
+aislar estas limitaciones con ground truth antes de trasladar la discusión a un
+entorno físico.
 
 \subsection{Experimentos en laboratorio}
 

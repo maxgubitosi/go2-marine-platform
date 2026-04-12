@@ -73,6 +73,9 @@ Si se necesita completar la parte de laboratorio, conviene leer ademas
 - `19_relevamiento_origin_real.md`: sintesis de los hallazgos de la branch
   `origin/real` para completar setup, metodologia y experimentacion del caso
   de laboratorio ya relevado.
+- `20_campana_simulacion_report_v2.md`: nota tecnica de la campaña comparable
+  `report_v2`, con bags oficiales, cambios en el generador de figuras, sesgos
+  observados y analisis del drift en `Y`.
 
 ## Criterio de confianza
 

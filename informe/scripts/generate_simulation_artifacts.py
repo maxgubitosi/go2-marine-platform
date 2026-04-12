@@ -333,6 +333,7 @@ def synthetic_observation(df: pd.DataFrame) -> str:
 
 def build_metrics_row(run: RunSpec, df: pd.DataFrame, duration_s: float, world_init_x: float, world_init_y: float) -> dict[str, object]:
     slope_mm_s = float(np.polyfit(df["t_rel"], df["err_pos"], 1)[0] * 1000.0)
+    slope_err_y_mm_s = float(np.polyfit(df["t_rel"], df["err_y"], 1)[0] * 1000.0)
     return {
         "role": run.role,
         "display_label": run.display_label,
@@ -352,6 +353,7 @@ def build_metrics_row(run: RunSpec, df: pd.DataFrame, duration_s: float, world_i
         "std_err_yaw_deg": float(df["err_yaw_deg"].std()),
         "stable_axis": stable_axis(df),
         "slope_err_pos_mm_s": slope_mm_s,
+        "slope_err_y_mm_s": slope_err_y_mm_s,
         "world_init_x": world_init_x,
         "world_init_y": world_init_y,
         "observation": synthetic_observation(df),
@@ -368,17 +370,21 @@ def save_metrics_summary(rows: list[dict[str, object]], out_dir: Path) -> pd.Dat
     return df
 
 
-def plot_position_vs_gt(df: pd.DataFrame, title: str, out_path: Path) -> None:
+def plot_position_vs_gt(df: pd.DataFrame, title: str, out_path: Path, debias: bool = True) -> None:
     fig, axes = plt.subplots(3, 1, figsize=(10.2, 7.4), sharex=True)
     t = df["t_rel"].to_numpy()
+    bias = {axis: float(df[f"err_{axis}"].mean()) for axis in ["x", "y", "z"]}
     for ax, axis in zip(axes, ["x", "y", "z"]):
-        ax.plot(t, df[f"est_{axis}"], color="#1f77b4", linewidth=1.2, label="Estimado")
+        est = df[f"est_{axis}"].to_numpy()
+        if debias:
+            est = est - bias[axis]
+        est_label = "Estimado sin bias medio" if debias else "Estimado"
+        ax.plot(t, est, color="#1f77b4", linewidth=1.2, label=est_label)
         ax.plot(t, df[f"gt_{axis}"], color="#d62728", linestyle="--", linewidth=1.1, label="Ground truth")
         ax.set_ylabel(f"{axis.upper()} (m)")
         ax.grid(True, alpha=0.25)
         ax.legend(loc="upper right", fontsize=8)
     axes[-1].set_xlabel("Tiempo (s)")
-    fig.suptitle(title, fontsize=13)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -388,13 +394,27 @@ def plot_orientation_vs_gt(df: pd.DataFrame, title: str, out_path: Path) -> None
     fig, axes = plt.subplots(3, 1, figsize=(10.2, 7.4), sharex=True)
     t = df["t_rel"].to_numpy()
     for ax, axis in zip(axes, ["roll", "pitch", "yaw"]):
-        ax.plot(t, np.degrees(df[f"est_{axis}"]), color="#1f77b4", linewidth=1.2, label="Estimado")
-        ax.plot(t, np.degrees(df[f"gt_{axis}"]), color="#d62728", linestyle="--", linewidth=1.1, label="Ground truth")
-        ax.set_ylabel(f"{axis.capitalize()} (°)")
+        est = df[f"est_{axis}"].to_numpy()
+        gt = df[f"gt_{axis}"].to_numpy()
+
+        # The relative marker/camera orientation can sit near the +/-180 deg
+        # branch cut, especially in roll for the drone setup. Unwrapping keeps
+        # the trajectory continuous for visualization without changing metrics.
+        if axis == "roll":
+            est_deg = np.degrees(np.unwrap(est))
+            gt_deg = np.degrees(np.unwrap(gt))
+            ylabel = "Roll (°) sin saltos"
+        else:
+            est_deg = np.degrees(est)
+            gt_deg = np.degrees(gt)
+            ylabel = f"{axis.capitalize()} (°)"
+
+        ax.plot(t, est_deg, color="#1f77b4", linewidth=1.2, label="Estimado")
+        ax.plot(t, gt_deg, color="#d62728", linestyle="--", linewidth=1.1, label="Ground truth")
+        ax.set_ylabel(ylabel)
         ax.grid(True, alpha=0.25)
         ax.legend(loc="upper right", fontsize=8)
     axes[-1].set_xlabel("Tiempo (s)")
-    fig.suptitle(title, fontsize=13)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -415,7 +435,23 @@ def plot_fixed_error_hist(df: pd.DataFrame, out_path: Path) -> None:
         ax.axvline(float(df[col].mean()), color="#d62728", linestyle="--", linewidth=1.2)
         ax.set_title(label)
         ax.grid(True, alpha=0.18)
-    fig.suptitle("Distribucion de errores del caso base con camara fija", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(out_path, dpi=180, bbox_inches="tight")
+    plt.close(fig)
+
+
+def plot_fixed_raw_angle_error_hist(df: pd.DataFrame, out_path: Path) -> None:
+    fig, axes = plt.subplots(1, 2, figsize=(9.4, 3.8))
+    series = [
+        ("err_pitch_deg", "ΔPitch raw (°)", "#8c564b"),
+        ("err_yaw_deg", "ΔYaw raw (°)", "#17becf"),
+    ]
+    for ax, (col, label, color) in zip(axes.flat, series):
+        ax.hist(df[col], bins=35, color=color, alpha=0.82, edgecolor="white")
+        ax.axvline(0.0, color="black", linewidth=0.9)
+        ax.axvline(float(df[col].mean()), color="#d62728", linestyle="--", linewidth=1.2)
+        ax.set_title(label)
+        ax.grid(True, alpha=0.18)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -437,41 +473,47 @@ def plot_drone_error_hist(df: pd.DataFrame, out_path: Path) -> None:
         ax.axvline(float(df[col].mean()), color="#d62728", linestyle="--", linewidth=1.2)
         ax.set_title(label)
         ax.grid(True, alpha=0.18)
-    fig.suptitle("Distribucion de errores de la corrida principal con dron", fontsize=13)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
 
 
-def plot_run_comparison(metrics_df: pd.DataFrame, out_path: Path) -> None:
-    drone_df = metrics_df[metrics_df["source"] == "sjtu_drone"].copy().sort_values("role")
-    labels = drone_df["display_label"].tolist()
-    x = np.arange(len(labels))
+def plot_run_comparison(
+    drone_runs: list[tuple[RunSpec, pd.DataFrame]],
+    out_path: Path,
+) -> None:
+    fig, axes = plt.subplots(1, 3, figsize=(11.6, 4.2))
 
-    fig, axes = plt.subplots(1, 2, figsize=(11.8, 4.8))
+    labels = [run.display_label for run, _ in drone_runs]
+    colors = ["#4e79a7", "#f28e2b", "#59a14f"]
+    series = [
+        ("err_roll_deg", "|Δroll| (°)"),
+        ("err_pitch_deg", "|Δpitch| (°)"),
+        ("err_z", "|Δheave| = |ΔZ| (m)"),
+    ]
 
-    pos_metrics = ["mean_err_pos_m", "p95_err_pos_m", "std_err_pos_m"]
-    pos_titles = ["Media", "P95", "Std"]
-    width = 0.22
-    for idx, (col, title) in enumerate(zip(pos_metrics, pos_titles)):
-        axes[0].bar(x + (idx - 1) * width, drone_df[col], width=width, label=title)
-    axes[0].set_xticks(x, labels)
-    axes[0].set_ylabel("Metros")
-    axes[0].set_title("Metricas de error de posicion")
-    axes[0].legend(fontsize=8)
-    axes[0].grid(True, axis="y", alpha=0.2)
+    for ax, (column, ylabel) in zip(axes, series):
+        data = [np.abs(df[column].dropna().to_numpy()) for _, df in drone_runs]
+        box = ax.boxplot(
+            data,
+            patch_artist=True,
+            tick_labels=labels,
+            showfliers=False,
+            widths=0.55,
+            medianprops={"color": "black", "linewidth": 1.2},
+        )
+        for patch, color in zip(box["boxes"], colors):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.65)
+            patch.set_edgecolor("#444444")
+        for whisker in box["whiskers"]:
+            whisker.set_color("#666666")
+        for cap in box["caps"]:
+            cap.set_color("#666666")
 
-    ang_metrics = ["std_err_roll_deg", "std_err_pitch_deg", "std_err_yaw_deg"]
-    ang_titles = ["σ roll", "σ pitch", "σ yaw"]
-    for idx, (col, title) in enumerate(zip(ang_metrics, ang_titles)):
-        axes[1].bar(x + (idx - 1) * width, drone_df[col], width=width, label=title)
-    axes[1].set_xticks(x, labels)
-    axes[1].set_ylabel("Grados")
-    axes[1].set_title("Dispersion angular")
-    axes[1].legend(fontsize=8)
-    axes[1].grid(True, axis="y", alpha=0.2)
+        ax.set_ylabel(ylabel)
+        ax.grid(True, axis="y", alpha=0.22)
 
-    fig.suptitle("Comparacion entre las corridas del escenario con dron", fontsize=13)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -504,7 +546,6 @@ def plot_error_time(df: pd.DataFrame, window_df: pd.DataFrame, out_path: Path) -
     axes[1].set_title("Promedio de ||Δpos|| por cinco ventanas temporales")
     axes[1].grid(True, axis="y", alpha=0.22)
 
-    fig.suptitle("Estabilidad temporal del error en la corrida principal", fontsize=13)
     fig.tight_layout()
     fig.savefig(out_path, dpi=180, bbox_inches="tight")
     plt.close(fig)
@@ -571,14 +612,15 @@ def main() -> None:
     fixed_run = next(run for run in runs if run.source == "fixed_camera")
     plot_position_vs_gt(
         dataframes[fixed_run.role],
-        "Posicion estimada vs ground truth en el caso base con camara fija",
+        "Posicion estimada vs ground truth en el caso base con camara fija (sin bias medio)",
         out_dir / "sim_fixed_position_vs_gt.png",
     )
     plot_fixed_error_hist(dataframes[fixed_run.role], out_dir / "sim_fixed_error_hist.png")
+    plot_fixed_raw_angle_error_hist(dataframes[fixed_run.role], out_dir / "sim_fixed_angle_error_hist_raw.png")
 
     plot_position_vs_gt(
         primary_df,
-        f"Posicion estimada vs ground truth en la corrida principal del dron ({primary_run.display_label})",
+        f"Posicion estimada vs ground truth en la corrida principal del dron ({primary_run.display_label}) sin bias medio",
         out_dir / "sim_drone_position_vs_gt.png",
     )
     plot_orientation_vs_gt(
@@ -586,8 +628,9 @@ def main() -> None:
         f"Orientacion estimada vs ground truth en la corrida principal del dron ({primary_run.display_label})",
         out_dir / "sim_drone_orientation_vs_gt.png",
     )
+    drone_runs = [(role_to_run[role], dataframes[role]) for role in drone_metrics.sort_values("role")["role"].tolist()]
     plot_drone_error_hist(primary_df, out_dir / "sim_drone_error_hist.png")
-    plot_run_comparison(metrics_df, out_dir / "sim_drone_runs_comparison.png")
+    plot_run_comparison(drone_runs, out_dir / "sim_drone_runs_comparison.png")
     plot_error_time(primary_df, temporal_df, out_dir / "sim_drone_error_time.png")
 
     print(f"Generated simulation artifacts in: {out_dir}")

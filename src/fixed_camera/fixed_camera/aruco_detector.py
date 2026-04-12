@@ -99,6 +99,37 @@ class ArucoDetector(Node):
             f"side={self.marker_length}m  debug_img={self.publish_debug}"
         )
 
+    def _estimate_pose(self, corner: np.ndarray):
+        half = self.marker_length / 2.0
+        obj_points = np.array(
+            [
+                [-half, half, 0.0],
+                [half, half, 0.0],
+                [half, -half, 0.0],
+                [-half, -half, 0.0],
+            ],
+            dtype=np.float32,
+        )
+        img_points = corner.reshape(4, 2).astype(np.float32)
+
+        if hasattr(cv2.aruco, "estimatePoseSingleMarkers"):
+            rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
+                corner, self.marker_length, self.camera_matrix, self.dist_coeffs
+            )
+            return rvecs[0].reshape(3, 1), tvecs[0].reshape(3, 1)
+
+        pnp_flag = getattr(cv2, "SOLVEPNP_IPPE_SQUARE", cv2.SOLVEPNP_ITERATIVE)
+        success, rvec, tvec = cv2.solvePnP(
+            obj_points,
+            img_points,
+            self.camera_matrix,
+            self.dist_coeffs,
+            flags=pnp_flag,
+        )
+        if not success:
+            raise RuntimeError("solvePnP failed for ArUco detection")
+        return rvec.reshape(3, 1), tvec.reshape(3, 1)
+
     # ── CameraInfo callback ──────────────────────────────────────────
     def caminfo_callback(self, msg: CameraInfo) -> None:
         if self.camera_matrix is not None:
@@ -147,11 +178,11 @@ class ArucoDetector(Node):
                 corner = corners[idx]
 
                 # Pose estimation
-                rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
-                    corner, self.marker_length, self.camera_matrix, self.dist_coeffs
-                )
-                rvec = rvecs[0].reshape(3, 1)
-                tvec = tvecs[0].reshape(3, 1)
+                try:
+                    rvec, tvec = self._estimate_pose(corner)
+                except Exception as e:
+                    self.get_logger().warn(f"Pose estimation error: {e}")
+                    return
 
                 # Build PoseStamped (marker in camera optical frame)
                 pose_msg = PoseStamped()
