@@ -11,7 +11,7 @@ Proyecto de tesis de grado en Ingeniería en IA (UdeSA). Autores: Máximo Gubito
 ## Informe de tesis
 
 - **Ubicación:** Todo el contenido en un único archivo: `informe/main.tex`.
-- **Referencias:** `informe/bibliography.bib`. Figuras en `informe/figures/` (subcarpetas: `setup/`, `results/`, `diagrams/`). Documentos de referencia en `informe/refs/`.
+- **Referencias:** `informe/bibliography.bib`. Los PDFs asociados a la bibliografia viven en `informe/bibliografia/` y se sincronizan con `informe/scripts/sync_bibliography_pdfs.py`. Figuras en `informe/figures/` (subcarpetas: `setup/`, `results/`, `diagrams/`). Material auxiliar no bibliografico en `informe/refs/`.
 - **Skills de Cursor (escritura del informe):**
   - **thesis-style** (`.cursor/skills/thesis-style/SKILL.md`): estilo de escritura académica en español (voz nosotros/pasiva refleja, narrativa cronológica, captions descriptivos). Referencia de estilo: `informe/refs/PPO_Car_Racing.pdf`.
   - **thesis-guide** (`.cursor/skills/thesis-guide/SKILL.md`): estructura de secciones (Introducción, Marco teórico, Método, Experimentación, Conclusiones, Trabajo futuro) y convenciones LaTeX del proyecto (figuras, tablas, referencias, citas). Desglose detallado en `.cursor/skills/thesis-guide/structure.md`.
