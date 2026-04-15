@@ -433,198 +433,263 @@ informe.}
 \label{fig:theory_motion_components}
 \end{figure}
 
-\figureplaceholder{fig:theory_frames_overview}{Diagrama de marcos de referencia
-pendiente (\texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
-marcador ArUco y cámara). Esta figura se incluirá por separado para mostrar
-las transformaciones entre frames sin sobrecargar el diagrama de movimientos.}
-{Esquema pendiente de marcos y transformaciones geométricas del sistema.}
-
 \subsection{Movimiento marino simplificado}
 
 El punto de partida del problema es físico antes que computacional. Una
-plataforma marina no se desplaza de una única manera, sino que combina
-traslaciones y rotaciones producidas por la interacción entre su inercia, la
-gravedad, el empuje y las fuerzas inducidas por el oleaje. En la formulación
-clásica de dinámica marina, ese movimiento se describe con seis grados de
-libertad: tres traslaciones y tres rotaciones \citep{Fossen1995}. \todo{medio viejo este paper creo} Para una
-persona no familiarizada con esta notación, conviene leerlos de la siguiente
-manera: surge y sway describen desplazamientos horizontales; heave corresponde
-al movimiento vertical; roll y pitch representan inclinaciones alrededor de los
-ejes del cuerpo; y yaw representa el giro en el plano horizontal.
+plataforma apoyada sobre el mar no responde al paso de una ola únicamente
+subiendo y bajando. A medida que la superficie libre se eleva y cambia su
+pendiente, la cubierta también puede inclinarse. Si toda la plataforma asciende
+o desciende de forma aproximadamente uniforme, domina el movimiento vertical
+\emph{heave}. Si proa y popa quedan apoyadas sobre alturas distintas, aparece
+\emph{pitch}. Si la diferencia de altura se produce entre babor y estribor,
+aparece \emph{roll}. En una embarcación real estos efectos coexisten y se
+combinan con otras componentes horizontales, pero esta lectura inicial permite
+entender por qué el oleaje no se traduce en una sola perturbación sino en una
+roto-traslación completa de la plataforma.
 
-Formalmente, la pose de la plataforma se representa mediante el vector
-\(\eta = [x \;\; y \;\; z \;\; \phi \;\; \theta \;\; \psi]^\top\), mientras que
-las velocidades lineales y angulares expresadas en el frame del cuerpo se
-agrupan en
-\(\nu = [u \;\; v \;\; w \;\; p \;\; q \;\; r]^\top\). La relación cinemática
-entre ambas variables puede escribirse como
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.31\textwidth}
+\centering
+\begin{tikzpicture}[x=0.7cm,y=0.7cm]
+\draw[dashed,gray] (-0.2,0.55) -- (5.4,0.55);
+\draw[blue!70!black,thick,smooth] plot coordinates {(0,0.15) (1,0.65) (2,1.15) (3,0.95) (4,0.35) (5,0.2)};
+\draw[fill=black!15,thick] (1.6,1.35) -- (3.6,1.35) -- (3.2,0.9) -- (2.0,0.9) -- cycle;
+\draw[fill=gray!35,thick] (2.45,1.35) rectangle (2.8,1.75);
+\draw[latex-latex,red!75!black,thick] (4.55,0.55) -- (4.55,1.35);
+\node[red!75!black,right] at (4.65,0.95) {\scriptsize heave};
+\end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.31\textwidth}
+\centering
+\begin{tikzpicture}[x=0.7cm,y=0.7cm]
+\draw[dashed,gray] (-0.2,0.55) -- (5.4,0.55);
+\draw[blue!70!black,thick,smooth] plot coordinates {(0,0.0) (1,0.35) (2,0.85) (3,1.25) (4,1.1) (5,0.7)};
+\begin{scope}[rotate around={12:(2.6,1.4)}]
+\draw[fill=black!15,thick] (1.4,1.4) -- (3.8,1.4) -- (3.35,0.95) -- (1.95,0.95) -- cycle;
+\draw[fill=gray!35,thick] (2.45,1.4) rectangle (2.8,1.8);
+\end{scope}
+\draw[latex-,orange!85!black,thick] (4.45,1.0) arc[start angle=-35,end angle=18,radius=0.45];
+\node[orange!85!black,right] at (4.95,1.28) {\scriptsize pitch};
+\end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.31\textwidth}
+\centering
+\begin{tikzpicture}[x=0.7cm,y=0.7cm]
+\draw[dashed,gray] (-0.2,0.55) -- (5.4,0.55);
+\draw[blue!70!black,thick,smooth] plot coordinates {(0,0.05) (1,0.3) (2,0.8) (3,1.15) (4,1.45) (5,1.6)};
+\begin{scope}[rotate around={-11:(2.7,1.4)}]
+\draw[fill=black!15,thick] (1.45,1.4) -- (3.95,1.4) -- (3.45,0.95) -- (1.95,0.95) -- cycle;
+\draw[fill=gray!35,thick] (2.5,1.4) rectangle (2.85,1.8);
+\end{scope}
+\draw[latex-,teal!70!black,thick] (4.45,1.55) arc[start angle=155,end angle=95,radius=0.45];
+\node[teal!70!black,right] at (4.95,1.78) {\scriptsize roll};
+\end{tikzpicture}
+\end{minipage}
+\caption{Interpretación física simplificada del movimiento de una plataforma
+sobre las olas. De izquierda a derecha: elevación local de la superficie
+libre, que induce \emph{heave}; diferencia de altura entre proa y popa, que
+induce \emph{pitch}; y diferencia de altura entre babor y estribor, que induce
+\emph{roll}.}
+\label{fig:wave_platform_response}
+\end{figure}
+
+La formulación clásica de dinámica marina describe el movimiento de una
+embarcación mediante seis grados de libertad \citep{Fossen1995}. Tres de ellos
+son traslacionales: \emph{surge}, \emph{sway} y \emph{heave}. Los otros tres
+son rotacionales: \emph{roll}, \emph{pitch} y \emph{yaw}. Si reunimos posición
+y orientación en el vector
+\(\eta = [x \;\; y \;\; z \;\; \phi \;\; \theta \;\; \psi]^\top\), y las
+velocidades lineales y angulares en el frame del cuerpo en
+\(\nu = [u \;\; v \;\; w \;\; p \;\; q \;\; r]^\top\), una forma compacta de la
+cinemática es
 
 \begin{equation}
 \dot{\eta} = J(\eta)\,\nu,
 \label{eq:marine_kinematics}
 \end{equation}
 
-donde \(J(\eta)\) es la matriz de transformación que vincula velocidades del
-cuerpo con derivadas de posición y ángulos de Euler. En forma bloque, dicha
-matriz se expresa como
+donde \(J(\eta)\) transforma velocidades expresadas en el cuerpo en derivadas
+de posición y orientación respecto del frame inercial. Esta ecuación resume una
+idea importante: la pose de la plataforma no cambia de manera arbitraria, sino
+como resultado de un acoplamiento entre traslaciones, rotaciones y la
+orientación instantánea del casco.
 
-\begin{equation}
-J(\eta) =
-\begin{bmatrix}
-R(\phi,\theta,\psi) & 0 \\
-0 & T(\phi,\theta)
-\end{bmatrix},
-\label{eq:marine_jacobian}
-\end{equation}
-
-con \(R(\phi,\theta,\psi)\) la rotación del frame del cuerpo al frame inercial y
-\(T(\phi,\theta)\) la matriz que transforma velocidades angulares
-\((p,q,r)\) en tasas de Euler \((\dot{\phi},\dot{\theta},\dot{\psi})\).
-Usando la convención usual de ángulos de Euler, la parte rotacional puede
-descomponerse como
-
-\begin{equation}
-R(\phi,\theta,\psi) = R_z(\psi)\,R_y(\theta)\,R_x(\phi),
-\label{eq:euler_rotation_decomposition}
-\end{equation}
-
-y la relación entre velocidades angulares del cuerpo y derivadas de los ángulos
-puede escribirse explícitamente como
-
-\begin{equation}
-T(\phi,\theta) =
-\begin{bmatrix}
-1 & \sin\phi \tan\theta & \cos\phi \tan\theta \\
-0 & \cos\phi & -\sin\phi \\
-0 & \sin\phi / \cos\theta & \cos\phi / \cos\theta
-\end{bmatrix}.
-\label{eq:euler_rate_matrix}
-\end{equation}
-
-Esta última ecuación es importante porque muestra que las tasas angulares del
-cuerpo no coinciden, en general, con las derivadas temporales de roll, pitch y
-yaw. Dicho de otro modo, medir \(p\), \(q\) y \(r\) no equivale directamente a
-medir \(\dot{\phi}\), \(\dot{\theta}\) y \(\dot{\psi}\); hace falta una
-transformación dependiente de la orientación actual.
-
-En un modelo dinámico completo, además, el movimiento no se prescribe de forma
-directa, sino que resulta del equilibrio entre términos inerciales, de Coriolis,
-de amortiguamiento, restauradores y de excitación externa. Una expresión
-habitual de esa dinámica es
+En un modelo dinámico completo, además, ese movimiento surge del equilibrio
+entre inercia, amortiguamiento, gravedad, flotación y excitación externa. Una
+escritura habitual es
 
 \begin{equation}
 M \dot{\nu} + C(\nu)\nu + D(\nu)\nu + g(\eta) = \tau + \tau_w,
 \label{eq:marine_dynamics}
 \end{equation}
 
-donde \(M\) representa la inercia, \(C(\nu)\nu\) los efectos centrífugos y de
-Coriolis, \(D(\nu)\nu\) el amortiguamiento hidrodinámico, \(g(\eta)\) las
-fuerzas restauradoras asociadas a gravedad y flotación, \(\tau\) las acciones de
-control y \(\tau_w\) la excitación debida al mar. Introducir este modelo aquí no
-significa que la tesis lo resuelva en toda su complejidad. Al contrario, sirve
-para dejar en claro qué estamos simplificando: no buscamos reconstruir una
-embarcación desde la hidrodinámica, sino aislar las componentes del movimiento
-que dominan el problema de percepción visual.
+donde \(M\) representa la inercia, \(C(\nu)\nu\) los términos de Coriolis,
+\(D(\nu)\nu\) el amortiguamiento hidrodinámico, \(g(\eta)\) las fuerzas
+restauradoras asociadas a gravedad y flotación, \(\tau\) posibles acciones de
+control y \(\tau_w\) la excitación inducida por el mar. El objetivo de la
+tesis no es resolver este modelo con fidelidad hidrodinámica completa, sino
+usar esta formulación para entender qué parte del movimiento conviene retener
+cuando el interés principal es describir la oscilación local de una plataforma.
 
-Este modelo completo es útil para entender el problema, pero no todos los
-grados de libertad pesan igual en el escenario considerado. El marcador está
-rigidamente unido al torso del Go2 y la simulación mantiene anuladas las
-componentes horizontales y la rotación en yaw. En consecuencia, el estado de
-interés se reduce a
+Para conectar el oleaje con la postura de la cubierta, resulta útil introducir
+la elevación de la superficie libre \(\zeta(x,y,t)\), medida respecto del nivel
+medio del mar. Si \((x_p,y_p)\) denota la posición horizontal de referencia de
+la plataforma y se adopta una aproximación local de primer orden, entonces una
+lectura simplificada del movimiento retenido puede escribirse como
 
 \begin{equation}
-\eta_r(t) =
+\eta_r(t) \approx
 \begin{bmatrix}
 z(t) \\
 \phi(t) \\
 \theta(t)
+\end{bmatrix}
+=
+\begin{bmatrix}
+\zeta(x_p,y_p,t) \\
+\kappa_{\phi}\,\dfrac{\partial \zeta}{\partial y}(x_p,y_p,t) \\
+-\kappa_{\theta}\,\dfrac{\partial \zeta}{\partial x}(x_p,y_p,t)
 \end{bmatrix},
 \label{eq:reduced_marine_state}
 \end{equation}
 
-porque esas tres variables son las que más directamente alteran la observación
-visual del marcador. Roll y pitch modifican la orientación aparente del plano
-del ArUco respecto de la cámara, mientras que heave cambia la distancia relativa
-y, con ello, la escala con la que el patrón se proyecta sobre la imagen. El
-recorte, entonces, no es arbitrario: responde a una decisión experimental para
-aislar primero las perturbaciones que más afectan la estimación de pose.
+donde \(z\) representa el movimiento vertical, \(\phi\) el \emph{roll},
+\(\theta\) el \emph{pitch}, y \(\kappa_{\phi}\), \(\kappa_{\theta}\) resumen de
+forma agregada cuánto acompaña la plataforma la pendiente local de la
+superficie. Esta ecuación no pretende ser un modelo naval exhaustivo. Su valor
+teórico está en capturar la intuición correcta: la elevación local del agua
+explica el ascenso y descenso de la plataforma, mientras que la pendiente de la
+ola explica su inclinación.
 
-Esta idea puede justificarse también desde la geometría de imagen. Si el
-marcador tiene lado \(L\), la cámara posee distancia focal efectiva \(f\) y el
-centro del marcador se encuentra a una profundidad \(Z_c\) respecto del frame
-óptico, el tamaño lineal proyectado del patrón satisface aproximadamente
+Esta lectura también permite entender por qué la posición de la plataforma
+sobre la ola modifica cualitativamente su movimiento. Como la superficie libre
+se comporta como una onda, no todas sus regiones tienen la misma altura ni la
+misma pendiente al mismo tiempo. Si el centro de la plataforma coincide con una
+cresta o con un valle, la elevación local puede ser extrema, pero la pendiente
+alrededor de ese punto tiende a ser menor; en ese caso domina el movimiento
+vertical. En cambio, cuando la plataforma se ubica sobre el flanco de la onda,
+la elevación puede ser intermedia, pero la pendiente es mayor y, por lo tanto,
+crecen las inclinaciones. En otras palabras, no alcanza con saber que ``hay una
+ola'': también importa en qué fase espacial de esa ola se encuentra la
+plataforma y cómo esa fase cambia a medida que la onda se propaga.
+
+Una forma todavía más concreta de verlo es comparar la altura del agua en
+distintos puntos de la plataforma. Si \(\zeta_{\text{proa}}\),
+\(\zeta_{\text{popa}}\), \(\zeta_{\text{babor}}\) y
+\(\zeta_{\text{estribor}}\) representan la elevación local del agua bajo esas
+cuatro zonas características, entonces una aproximación elemental es
 
 \begin{equation}
-\ell_{\text{img}} \approx \frac{fL}{Z_c}.
-\label{eq:marker_image_scale}
+\begin{aligned}
+z(t) &\approx \frac{\zeta_{\text{proa}} + \zeta_{\text{popa}} +
+\zeta_{\text{babor}} + \zeta_{\text{estribor}}}{4}, \\
+\theta(t) &\propto \frac{\zeta_{\text{proa}} - \zeta_{\text{popa}}}{L_p}, \\
+\phi(t) &\propto \frac{\zeta_{\text{estribor}} - \zeta_{\text{babor}}}{B_p},
+\end{aligned}
+\label{eq:platform_finite_difference_response}
 \end{equation}
 
-Por lo tanto, una variación en heave modifica directamente \(Z_c\) y, con ello,
-la escala observada del marcador. Por otro lado, si \(n_0 = [0 \;\; 0 \;\; 1]^\top\)
-es el vector normal del plano del marcador en su propio frame, su orientación en
-el frame de la cámara queda dada por
+La Figura~\ref{fig:platform_corner_heights} resume gráficamente esta
+aproximación discreta del movimiento de la plataforma a partir de alturas
+locales del agua medidas en zonas representativas de la cubierta.
+
+\figureplaceholder{fig:platform_corner_heights}{Figura pendiente del efecto del
+oleaje sobre una embarcación vista en perspectiva oblicua. La imagen final
+debería mostrar una lancha o pequeño barco sobre una superficie ondulada, con
+una geometría clara y simple, sin exceso de texto dentro del dibujo. Deben
+identificarse cuatro zonas representativas de la cubierta ---proa, popa,
+babor y estribor--- y sugerirse visualmente cómo las diferencias de altura del
+agua bajo esos puntos se traducen en \emph{heave}, \emph{pitch} y
+\emph{roll}. Idealmente, la figura debería privilegiar la intuición física:
+barco más olas, pocos rótulos y composición limpia.}{Esquema pendiente del
+efecto del oleaje sobre una embarcación y su relación con la aproximación
+discreta de \emph{heave}, \emph{pitch} y \emph{roll}.}
+
+La aproximación discreta puede escribirse como
+
+\[
+\begin{aligned}
+z(t) &\approx \frac{\zeta_{\text{proa}}+\zeta_{\text{popa}}+\zeta_{\text{babor}}+\zeta_{\text{estribor}}}{4},\\
+\theta(t) &\propto \frac{\zeta_{\text{proa}}-\zeta_{\text{popa}}}{L_p},\\
+\phi(t) &\propto \frac{\zeta_{\text{estribor}}-\zeta_{\text{babor}}}{B_p}.
+\end{aligned}
+\]
+
+donde \(L_p\) y \(B_p\) representan, respectivamente, una longitud
+característica en la dirección proa--popa y una manga efectiva en la dirección
+babor--estribor. Estas relaciones no reemplazan al modelo dinámico completo,
+pero hacen explícita una idea central para esta tesis: el movimiento de la
+plataforma no depende solamente de la amplitud de la ola, sino también de la
+posición y de la extensión espacial de la superficie que esa ola está
+excitando.
+
+Esa relación también justifica el recorte adoptado en esta tesis. En un
+escenario real, \emph{surge}, \emph{sway} y \emph{yaw} pueden ser relevantes;
+sin embargo, cuando el interés se centra en una plataforma que mantiene su
+posición horizontal de manera aproximada y lo que se busca es sintetizar la
+oscilación local de la cubierta, las componentes más representativas pasan a
+ser justamente \emph{heave}, \emph{roll} y \emph{pitch}. Esas tres variables
+resumen la parte del movimiento que una ola transmite de forma más directa a la
+superficie sobre la que, en una etapa posterior del proyecto, debería
+posicionarse un vehículo aéreo.
+
+Una forma elemental de representar un oleaje regular es mediante una onda
+sinusoidal:
 
 \begin{equation}
-n_m = {}^{c}\!R_m\, n_0.
-\label{eq:marker_normal}
-\end{equation}
-
-Las oscilaciones en roll y pitch alteran precisamente ese vector normal y, en
-consecuencia, deforman la perspectiva con la que las esquinas del marcador se
-proyectan en la imagen. Esta es la razón profunda del recorte: no elegimos esas
-tres variables porque sean las únicas importantes en el mar, sino porque son las
-que más directamente tensan el estimador visual que queremos validar.
-
-Si denotamos por \(\{b\}\) el frame del torso del robot y por \(\{m\}\) el
-frame del marcador, fijado rígidamente sobre la tabla, la pose del marcador en
-el mundo queda dada por
-
-\begin{equation}
-{}^{w}\!T_m(t) = {}^{w}\!T_b(t)\,{}^{b}\!T_m,
-\label{eq:marker_rigid_transform}
-\end{equation}
-
-donde \( {}^{b}\!T_m \) es constante. Esta relación muestra por qué resulta
-suficiente modelar la dinámica del torso: cualquier variación en la pose del
-cuerpo se transmite de manera inmediata a la pose del marcador que luego verá la
-cámara.
-
-Una vez fijado el subconjunto de movimiento, el siguiente paso consiste en
-elegir cómo excitarlos. Cada componente se modela como una
-señal periódica parametrizable:
-
-\begin{equation}
-q_j(t) = A_j \sin(\omega_j t + \delta_j),
-\qquad
-q_j \in \{z,\phi,\theta\},
+\zeta(x,y,t) = A \sin(k_x x + k_y y - \omega t + \delta),
 \label{eq:sinusoidal_wave_model}
 \end{equation}
 
-donde \(A_j\) controla la amplitud, \(\omega_j\) la frecuencia angular y
-\(\delta_j\) el desfase de cada eje. Físicamente, la amplitud fija cuánto puede
-inclinarse o elevarse la plataforma, la frecuencia determina cuán rápido ocurre
-esa oscilación y el desfase permite que los ejes no alcancen sus extremos al
-mismo tiempo. Esta forma funcional no pretende reemplazar un modelo
-hidrodinámico completo del mar. Su papel es más acotado y, al mismo tiempo, más
-útil para la validación: producir excitaciones suaves, reproducibles y
-comparables entre corridas.
+donde \(A\) es la amplitud, \((k_x,k_y)\) fija la dirección espacial de
+propagación, \(\omega\) es la frecuencia angular y \(\delta\) el desfase
+inicial. Esta expresión es útil porque permite describir de manera simple una
+ola periódica y, al mismo tiempo, deja claro de qué parámetros depende la
+respuesta de la plataforma: cuánto sube y baja, con qué rapidez oscila y cómo
+se distribuye la pendiente de la superficie.
 
-Cuando se desea introducir una perturbación menos regular, la misma idea puede
-extenderse a una suma de armónicos,
+Cuando se desea representar un mar menos regular, la misma idea puede
+extenderse a una superposición de armónicos:
 
 \begin{equation}
-q_j(t) = \sum_{k=1}^{N} A_{j,k}\sin(\omega_{j,k} t + \delta_{j,k}),
+\zeta(x,y,t) = \sum_{n=1}^{N} A_n \sin(k_{x,n} x + k_{y,n} y - \omega_n t + \delta_n),
 \label{eq:harmonic_wave_model}
 \end{equation}
 
-que puede interpretarse como una aproximación simple a un movimiento más
-irregular. En oceanografía, las superficies de mar reales suelen describirse
-mediante superposiciones espectrales; aquí tomamos prestada esa intuición, pero
-con un objetivo distinto: no sintetizar un estado de mar calibrado, sino contar
-con entradas controladas para estudiar con claridad la relación entre movimiento
-impuesto, proyección visual y error de estimación. Por eso, el
-caso sinusoidal simple actúa como escenario de referencia y la combinación de
-armónicos queda como variante complementaria para ensayos menos regulares.
+que puede interpretarse como una aproximación simple a un estado de mar más
+irregular. Desde el punto de vista conceptual, la diferencia entre ambos casos
+no es menor: el oleaje sinusoidal facilita el análisis porque concentra la
+respuesta en una única escala temporal dominante, mientras que la suma de
+armónicos introduce una superficie más cambiante y menos predecible, parecida a
+la que encontraría una plataforma fuera de condiciones idealizadas.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.47\textwidth}
+\centering
+\begin{tikzpicture}[x=0.8cm,y=0.8cm]
+\draw[dashed,gray] (-0.2,0.5) -- (7.2,0.5) node[right,black] {\scriptsize nivel medio};
+\draw[blue!70!black,thick,smooth] plot coordinates {(0,0.5) (1,1.1) (2,1.45) (3,1.1) (4,0.5) (5,-0.1) (6,-0.45) (7,-0.1)};
+\node[black] at (3.5,2.0) {\scriptsize ola regular};
+\end{tikzpicture}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.47\textwidth}
+\centering
+\begin{tikzpicture}[x=0.8cm,y=0.8cm]
+\draw[dashed,gray] (-0.2,0.5) -- (7.2,0.5) node[right,black] {\scriptsize nivel medio};
+\draw[blue!70!black,thick,smooth] plot coordinates {(0,0.35) (0.6,0.95) (1.2,0.8) (2.0,1.4) (2.8,0.6) (3.5,1.0) (4.2,0.1) (5.0,-0.35) (5.8,0.2) (6.5,-0.15) (7.0,0.25)};
+\node[black] at (3.5,2.0) {\scriptsize oleaje irregular};
+\end{tikzpicture}
+\end{minipage}
+\caption{Perfiles conceptuales de la superficie libre. A la izquierda, una ola
+regular con una escala temporal dominante; a la derecha, una superficie más
+irregular representada como combinación de varias componentes.}
+\label{fig:wave_regular_irregular}
+\end{figure}
 
 \subsection{Control postural del Go2 y marcos de referencia}
 
@@ -810,6 +875,12 @@ respecto de un frame desacoplado del balanceo instantáneo del cuerpo.
 \texttt{base\_link} inclina y sube con el oleaje sintético;
 \texttt{base\_footprint} preserva una referencia más ligada al apoyo plano del
 robot.
+
+\figureplaceholder{fig:theory_frames_overview}{Diagrama de marcos de referencia
+pendiente (\texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
+marcador ArUco y cámara). Esta figura se incluirá por separado para mostrar
+las transformaciones entre frames sin sobrecargar el diagrama de movimientos.}
+{Esquema pendiente de marcos y transformaciones geométricas del sistema.}
 
 \subsection{Geometría proyectiva y estimación de pose con ArUco}
 
