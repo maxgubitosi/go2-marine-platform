@@ -278,16 +278,21 @@ simulación constituye la primera etapa de validación y el laboratorio funciona
 como su prolongación natural en un entorno físico controlado.
 
 Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a funcionar
-como referencia visual de la plataforma. Esta decisión metodológica nos permite
-trabajar con un sistema cinemáticamente consistente, instrumentado dentro de un
-workspace ROS2 y observable desde cámaras simuladas o, más adelante, desde un
-setup físico en laboratorio. Además, deja planteado un camino claro para etapas
-posteriores del proyecto: una vez validada la cadena simulación--laboratorio,
-el siguiente paso natural sería estudiar el aterrizaje del dron sobre el lomo
-del cuadrúpedo, es decir, sobre la misma plataforma cuyo movimiento primero se
-sintetiza y luego se reproduce físicamente. Ese objetivo final no forma parte
-del alcance efectivo de esta tesis, pero sí orienta la elección de la
-plataforma experimental desde el comienzo.
+como referencia visual de la plataforma. Un ArUco es un marcador fiducial
+cuadrado diseñado para ser detectado e identificado desde la imagen, de modo
+que su pose relativa pueda recuperarse con una cámara calibrada. Para articular
+esa plataforma, los sensores y el registro de datos utilizamos ROS2 Humble como
+\emph{middleware} de comunicación entre procesos robóticos y Gazebo Classic como
+simulador físico y sensorial. Esta combinación nos permite trabajar con un
+sistema cinemáticamente consistente, observable desde cámaras simuladas o, más
+adelante, desde un setup físico en laboratorio. Además, deja planteado un
+camino claro para etapas posteriores del proyecto: una vez validada la cadena
+simulación--laboratorio, el siguiente paso natural sería estudiar el
+aterrizaje del dron sobre el lomo del cuadrúpedo, es decir, sobre la misma
+plataforma cuyo movimiento primero se sintetiza y luego se reproduce
+físicamente. Ese objetivo final no forma parte del alcance efectivo de esta
+tesis, pero sí orienta la elección de la plataforma experimental desde el
+comienzo.
 
 \begin{figure}[H]
 \centering
@@ -344,8 +349,10 @@ el lomo y cámara mantenida en posición aproximadamente fija.}
 \subsection{Pipeline de percepción y evaluación}
 
 En ambos casos, la estimación visual se resolvió mediante un pipeline basado en
-marcadores ArUco y \texttt{solvePnP}. El sistema detecta en tiempo real el
-marcador montado sobre el robot y estima su pose relativa respecto del frame
+marcadores ArUco y \texttt{solvePnP}. Este último es el procedimiento geométrico
+que permite recuperar la pose relativa del marcador a partir de sus esquinas
+detectadas y de la calibración de la cámara. El sistema detecta en tiempo real
+el marcador montado sobre el robot y estima su pose relativa respecto del frame
 óptico de la cámara. Sin embargo, esa estimación online no agota el valor del
 framework. Una parte central del trabajo consiste en registrar cada corrida y
 comparar después la pose estimada con una referencia obtenida a partir del
@@ -384,12 +391,13 @@ para estudiar ese problema con menor riesgo y mayor trazabilidad.
 
 El resto del informe se organiza de la siguiente manera. En la
 Sección~\ref{mt} presentamos el marco teórico y los conceptos necesarios para
-entender el modelado del movimiento marino, el uso postural del cuadrúpedo y la
-estimación visual con marcadores fiduciales. Luego describimos la metodología
-adoptada, distinguiendo la etapa de simulación de la etapa de laboratorio.
-Sobre esa base, presentamos la experimentación realizada y discutimos los
-hallazgos obtenidos en cada entorno. Finalmente, cerramos con las conclusiones
-del trabajo y con las líneas de trabajo futuro que permitirían extender este
+entender el ecosistema experimental basado en ROS2 y Gazebo, el modelado del
+movimiento marino, el uso postural del cuadrúpedo y la estimación visual con
+marcadores fiduciales. Luego describimos la metodología adoptada,
+distinguiendo la etapa de simulación de la etapa de laboratorio. Sobre esa
+base, presentamos la experimentación realizada y discutimos los hallazgos
+obtenidos en cada entorno. Finalmente, cerramos con las conclusiones del
+trabajo y con las líneas de trabajo futuro que permitirían extender este
 framework hacia ensayos más cercanos al aterrizaje autónomo sobre plataformas
 marinas.
 
@@ -411,29 +419,37 @@ perspectiva, trabajos recientes sobre aterrizaje autónomo en plataformas
 móviles y marinas abordan de forma articulada la dinámica de la plataforma, la
 estimación visual de su estado y las decisiones de control del vehículo
 \citep{Alarcon2019,Delbene2022,Morales2023}. Retomamos esa misma lógica para
-organizar este marco teórico: partir de la descripción del movimiento,
-vincularla con su efecto en la observación y, desde allí, establecer su impacto
-sobre el problema de control.
+organizar este marco teórico: partir del ecosistema experimental que vuelve
+observable y registrable el problema, describir luego el movimiento que
+queremos sintetizar, y recién entonces vincularlo con la plataforma robótica y
+con la percepción visual.
 
-Esa cadena puede recorrerse en tres niveles acoplados. El primero es físico:
-caracterizar un movimiento semejante al de una plataforma marina y reducirlo a
-las componentes que más perturban la observación del marcador. El segundo es
-mecánico: traducir esa descripción a un sistema robotizado capaz de reproducir
-de manera repetible inclinaciones y desplazamientos verticales. El tercero es
-geométrico: relacionar la pose tridimensional del marcador con su proyección en
-la imagen y reconstruirla a partir de un modelo de cámara calibrada. Las tres
-piezas no son independientes. La amplitud y la frecuencia del movimiento
-condicionan la postura del robot, y esa postura determina el tamaño aparente,
-la perspectiva y la deformación proyectiva con que el marcador llega a la
-cámara.
+En nuestro caso, esa cadena recorre cinco niveles acoplados. El primero es de
+infraestructura: hace falta un entorno de simulación y comunicación que permita
+coordinar sensores, marcos de referencia y registros reproducibles. El
+segundo es físico: caracterizar un movimiento semejante al de una plataforma
+marina y reducirlo a las componentes que más perturban la observación del
+marcador. El tercero es mecánico: traducir esa descripción a un sistema
+robotizado capaz de reproducir de manera repetible inclinaciones y
+desplazamientos verticales. El cuarto es geométrico: organizar marcos y
+transformaciones para relacionar el torso del robot, el marcador y la cámara.
+El quinto es visual: relacionar la pose tridimensional del marcador con su
+proyección en la imagen y reconstruirla a partir de un modelo de cámara
+calibrada. Ninguna de estas piezas es independiente de las otras.
 
 Desde esa perspectiva, el desarrollo teórico avanza en el mismo sentido que el
-problema. Primero se introduce una representación simplificada del movimiento
-marino que preserve las perturbaciones dominantes del escenario. Luego se
-discute cómo un cuadrúpedo puede materializar ese movimiento mediante control
-postural y marcos de referencia consistentes. Finalmente, se presentan las
-herramientas de geometría proyectiva y estimación de pose que permiten pasar de
-la imagen del ArUco a una descripción métrica de la pose relativa.
+problema. Primero se introduce el ecosistema experimental basado en ROS2,
+Gazebo, transformaciones entre marcos y registros reproducibles, porque es allí
+donde el sistema adquiere trazabilidad. Luego se presenta una representación
+simplificada del movimiento marino que
+preserve las perturbaciones dominantes del escenario. Sobre esa base se
+describe la elección del Unitree Go2 como plataforma marina sintética y la
+instrumentación visual con cámara fija, dron y marcador fiducial. Después se
+discute cómo el cuadrúpedo materializa una consigna postural y cómo se ordenan
+los marcos de referencia necesarios para comparar estimación y ground truth.
+Finalmente, se presentan las herramientas de marcadores ArUco, geometría
+proyectiva y \texttt{solvePnP} que permiten pasar de la imagen a una
+descripción métrica de la pose relativa.
 
 \begin{figure}[H]
 \centering
@@ -445,6 +461,70 @@ física de las roto-traslaciones que luego medimos y analizamos a lo largo del
 informe.}
 \label{fig:theory_motion_components}
 \end{figure}
+
+\subsection{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
+
+El framework no se apoya solamente en un modelo físico o en un detector visual,
+también necesita una infraestructura de software capaz de coordinar control,
+sensado, estimación y evaluación. En este trabajo esa infraestructura está dada
+por ROS2 y Gazebo Classic. ROS2 funciona como \emph{middleware} del sistema: en
+lugar de concebir el experimento como un programa monolítico, lo organizamos
+como un grafo de procesos especializados que intercambian información mediante
+publicación y suscripción tipada \citep{ros2_basic_concepts}. Esta decisión no
+es un detalle de implementación. Es la que permite desacoplar la generación del
+movimiento, la fuente de imagen, la estimación visual y el análisis posterior,
+sin perder coherencia entre ellas.
+
+En este contexto, el \emph{grafo} de ROS2 puede pensarse como un mapa de qué
+componentes están activos y cómo se conectan entre sí. Cada \emph{nodo} es uno
+de esos componentes y encapsula una responsabilidad concreta del pipeline: por
+ejemplo, generar el movimiento, publicar una imagen, detectar el marcador o
+registrar una corrida. Los \emph{tópicos}, en cambio, son canales nombrados por
+los que esos nodos intercambian mensajes de un tipo bien definido. Un nodo
+puede publicar en un tópico si produce una señal, o suscribirse a él si la
+necesita para seguir procesando. Así, la imagen de la cámara, la consigna
+postural del robot, la pose estimada del marcador o las señales de depuración
+circulan como piezas distintas pero compatibles dentro de una misma red.
+
+La utilidad de esta organización es doble. Por un lado, permite construir el
+experimento como una cadena modular en la que cada parte puede inspeccionarse o
+reemplazarse sin reescribir todo el sistema. Por otro, vuelve explícito quién
+produce cada dato, quién lo consume y en qué punto del pipeline se genera una
+corrida determinada. Esa trazabilidad es especialmente importante en esta tesis,
+porque más adelante necesitamos comparar lo que publica el detector visual con
+lo que registra el simulador y con lo que queda almacenado para la evaluación
+\textit{offline}.
+
+Además de intercambiar mensajes, el sistema debe mantener consistencia
+geométrica entre referencias que no coinciden entre sí. La cámara, el torso del
+robot, el marcador y el mundo no comparten el mismo origen ni la misma
+orientación. En ROS2, esa relación se organiza mediante \emph{TF}/\emph{tf2},
+una biblioteca que mantiene a lo largo del tiempo una estructura de
+transformaciones entre marcos de referencia y permite convertir poses, puntos y
+vectores entre ellos \citep{tf2_humble}. Esta capa es crucial porque hace
+posible hablar de la misma escena desde el frame del robot, desde el de la
+cámara o desde un frame global sin mezclar descripciones incompatibles.
+
+Gazebo Classic aporta la otra mitad del ecosistema: el entorno de simulación
+física y sensorial. Conceptualmente, Gazebo integra la evolución dinámica del
+mundo con la generación de sensores, el renderizado y la interfaz de
+visualización \citep{gazebo_classic_architecture}. Para esta tesis eso resulta
+especialmente valioso porque la postura del Go2, la imagen observada por la
+cámara y gran parte del ground truth provienen de un mismo estado subyacente
+del simulador. No trabajamos, entonces, con una animación separada de los
+datos, sino con un entorno donde la escena visual y las señales del sistema
+quedan ligadas a la misma evolución temporal.
+
+Finalmente, la reproducibilidad del framework depende del registro. Un
+\emph{rosbag} es un registro persistente de los datos intercambiados por el
+sistema, que puede reproducirse e inspeccionarse después sin volver a ejecutar
+la simulación \citep{ros2_rosbag2_tutorial}. En nuestro caso, esto permite
+separar la estimación en tiempo real del análisis offline, revisar una misma
+secuencia con distintos criterios y comparar la pose estimada del marcador con
+una referencia reconstruida a partir del estado del simulador. En otras
+palabras, ROS2, Gazebo, TF y los rosbags no son accesorios del experimento:
+constituyen la base que vuelve trazable y repetible el problema que queremos
+estudiar.
 
 \subsection{Movimiento marino simplificado}
 
@@ -704,6 +784,59 @@ irregular representada como combinación de varias componentes.}
 \label{fig:wave_regular_irregular}
 \end{figure}
 
+El recorte a \emph{heave}, \emph{roll} y \emph{pitch} fija, entonces, qué parte
+del movimiento queremos sintetizar y por qué esa parte es suficiente para una
+primera validación de percepción visual. Sin embargo, todavía queda abierta una
+pregunta clave: qué dispositivo experimental puede materializar ese movimiento
+de manera repetible y, al mismo tiempo, ser observado por una cámara con una
+geometría controlada. Esa es la función que en nuestro framework cumple el
+cuadrúpedo instrumentado.
+
+\subsection{Plataforma robótica e instrumentación visual}
+
+La plataforma elegida para materializar ese movimiento es un robot cuadrúpedo
+Unitree Go2. La decisión no se tomó para reutilizar un robot de locomoción en
+su uso más habitual, sino para explotarlo de otro modo: como una estructura
+articulada capaz de modificar la postura de su torso mientras mantiene los
+apoyos en el suelo. En lugar de modelar una embarcación completa, aprovechamos
+esa capacidad para pedir inclinaciones y desplazamientos verticales del cuerpo y
+usar el torso como plataforma marina sintética. La ventaja adicional es
+experimental: el mismo robot existe en simulación y en laboratorio, de modo que
+la transición entre ambos entornos conserva la lógica general del sistema.
+
+Sobre el torso montamos una tabla rígida con un marcador fiducial. En términos
+generales, un marcador fiducial es un patrón visual diseñado para introducir en
+la escena una referencia cuya identidad y geometría puedan recuperarse de forma
+confiable desde la imagen. En este trabajo ese patrón cumple una función
+precisa: convertir la postura del robot en una pose observable por cámara. Así,
+el problema visual ya no consiste en inferir la geometría de una embarcación
+compleja, sino en estimar la pose de un objeto plano y bien definido unido
+rígidamente al cuerpo del Go2.
+
+La observación del marcador se organiza en dos configuraciones complementarias.
+La primera utiliza una cámara fija nadir, que funciona como caso base porque el
+sensor permanece inmóvil y toda la variabilidad de la secuencia proviene del
+movimiento de la plataforma. En el repositorio, esta configuración aparece en
+el paquete \texttt{fixed\_camera}. La segunda utiliza la cámara inferior del
+\texttt{sjtu\_drone}, un cuadricóptero simulado que introduce una cámara
+embarcada y, por lo tanto, un escenario donde la geometría observada depende
+tanto del movimiento del marcador como de la pose del vehículo aéreo. Esta
+diferencia es conceptualmente importante: el caso de cámara fija aísla el
+efecto del oleaje sintético sobre la observación, mientras que el caso con dron
+aproxima el problema al escenario futuro de aterrizaje sobre una plataforma
+móvil.
+
+En ambas configuraciones, la percepción se resuelve con un detector visual que
+consume imagen e intrínsecos de cámara y produce una pose estimada del marcador
+respecto del frame óptico. Desde el punto de vista conceptual, este detector
+opera como puente entre dos descripciones distintas de la misma escena: la
+física, representada por la postura real o simulada del robot, y la proyectiva,
+representada por la imagen que observa la cámara. La metodología detallará qué
+nodos implementan cada una de estas funciones, pero el punto teórico es más
+simple: el sistema queda organizado como una cadena en la que una plataforma
+postural genera un patrón observable y una cámara recupera una pose relativa a
+partir de ese patrón.
+
 \subsection{Control postural del Go2 y marcos de referencia}
 
 Una vez definido el movimiento que queremos emular, aparece la pregunta central
@@ -801,13 +934,13 @@ adoptar los pies en el frame del cuerpo:
 Esta ecuación es la base cinemática del control postural empleado en robots
 cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
 una pose del cuerpo y se reconfiguran las patas para realizarla de manera
-coherente \citep{Bellicoso2017,Fahmi2019}. Esa misma idea
-es la que hace posible utilizar al Go2 como plataforma marina sintética. El nodo
-\texttt{marine\_platform\_simulator} publica consignas de tipo \texttt{Pose} en
-el tópico de consigna postural del torso (Tabla~\ref{tab:ros_interfaces_sim}),
-con \(x=y=0\), yaw nulo y variaciones en altura, roll y
-pitch. Conceptualmente, ese mensaje no describe la postura articular de las
-patas, sino la pose deseada del torso que el stack del robot debe realizar.
+coherente \citep{Bellicoso2017,Fahmi2019}. Esa misma idea es la que hace
+posible utilizar al Go2 como plataforma marina sintética. En nuestro framework
+la entrada física relevante no es una secuencia de torques individuales, sino
+una consigna postural del torso con \(x=y=0\), yaw nulo y variaciones en
+altura, roll y pitch. Conceptualmente, esa consigna no describe directamente la
+postura articular de las patas, sino la pose deseada del cuerpo que el stack de
+control debe realizar.
 
 También resulta útil introducir una noción elemental de estabilidad. Si los
 cuatro pies apoyados definen en el plano una envolvente convexa
@@ -874,8 +1007,8 @@ geometría vista por la cámara, no un sistema de navegación horizontal complet
 En términos de interpretación, el Jacobiano de cada pata traduce una pequeña
 corrección en la ubicación deseada del pie en una pequeña corrección de hombro,
 muslo y rodilla. Ese puente entre espacio cartesiano y espacio articular es lo
-que vuelve realizable una consigna postural del torso como la del simulador
-marino (Tabla~\ref{tab:ros_interfaces_sim}).
+que vuelve realizable una consigna postural del torso como la que adopta el
+framework.
 
 También conviene distinguir dos marcos de referencia que reaparecen a lo largo
 del pipeline. El frame \texttt{base\_link} está asociado al torso y es el que
@@ -895,22 +1028,53 @@ marcador ArUco y cámara). Esta figura se incluirá por separado para mostrar
 las transformaciones entre frames sin sobrecargar el diagrama de movimientos.}
 {Esquema pendiente de marcos y transformaciones geométricas del sistema.}
 
-\subsection{Geometría proyectiva y estimación de pose con ArUco}
+La misma lógica de marcos organiza la comparación entre estimación y ground
+truth. Si \(\{c\}\) es el frame de la cámara, \(\{w\}\) el frame del mundo,
+\(\{b\}\) el frame del torso y \(\{m\}\) el frame del marcador, la pose
+observada del patrón puede escribirse como
+
+\begin{equation}
+{}^{c}\!T_m(t) =
+{}^{c}\!T_w(t)\,{}^{w}\!T_b(t)\,{}^{b}\!T_m.
+\label{eq:camera_marker_chain}
+\end{equation}
+
+Esta expresión resume dos ideas que reaparecen a lo largo de todo el trabajo.
+Por un lado, la pose del marcador en cámara no depende sólo de la imagen, sino
+de una cadena de transformaciones físicas entre plataforma, marcador y sensor.
+Por otro lado, esa misma cadena permite reconstruir una referencia comparable
+contra la cual medir el estimador visual. Para una cámara fija,
+\({}^{c}\!T_w\) permanece constante; para una cámara montada sobre el dron, ese
+término también varía en el tiempo. En ambos casos, el problema de percepción
+se apoya en la misma organización geométrica.
+
+\subsection{Marcadores fiduciales y estimación de pose}
 
 Una vez que el movimiento existe y puede ser generado por el Go2, el problema se
 traslada a la cámara: hay que recuperar, a partir de una imagen, la pose
 relativa de un objeto plano cuya posición y orientación cambian continuamente.
-Los marcadores ArUco resultan apropiados para este escenario porque combinan dos
-propiedades útiles a la vez: un contorno cuadrado que permite localizar con
-precisión las esquinas del patrón y un código binario interno que permite
-identificar de forma robusta qué marcador está siendo observado
-\citep{GarridoJurado2014}. Esa combinación vuelve al marcador simultáneamente
-detectable y geométricamente utilizable. La robustez no depende solo de la
-segmentación del borde negro exterior, sino también del diseño del diccionario:
-si los identificadores válidos están suficientemente separados en distancia de
-Hamming, errores locales de lectura producidos por ruido, desenfoque u oclusión
-parcial tienen menor probabilidad de convertir un marcador en otro marcador
-válido.
+Los marcadores fiduciales resultan apropiados para este escenario porque
+introducen una geometría conocida y una identidad visual controlada dentro de
+la escena. En particular, los marcadores ArUco combinan dos propiedades útiles
+a la vez: un contorno cuadrado que permite localizar con precisión las esquinas
+del patrón y un código binario interno que permite identificar de forma robusta
+qué marcador está siendo observado \citep{GarridoJurado2014}. Esa combinación
+vuelve al marcador simultáneamente detectable y geométricamente utilizable. La
+robustez no depende solo de la segmentación del borde negro exterior, sino
+también del diseño del diccionario: si los identificadores válidos están
+suficientemente separados en distancia de Hamming, errores locales de lectura
+producidos por ruido, desenfoque u oclusión parcial tienen menor probabilidad
+de convertir un marcador en otro marcador válido.
+
+Desde el punto de vista del pipeline, la detección del marcador es solo la
+primera mitad del problema. La segunda consiste en estimar la transformación
+rígida entre el patrón y la cámara a partir de correspondencias entre puntos
+conocidos del marcador y sus proyecciones en la imagen. Ese es, precisamente,
+el rol de \texttt{solvePnP}: resolver una instancia del problema
+Perspective-\(n\)-Point usando la calibración intrínseca de la cámara y las
+esquinas detectadas del marcador \citep{opencv_calib3d}. En otras palabras, el
+detector no se limita a responder ``hay un ArUco''; produce una hipótesis
+métrica sobre dónde está y cómo está orientado ese patrón respecto del sensor.
 
 \begin{figure}[H]
 \centering
@@ -1075,21 +1239,6 @@ escala aparente del patrón en la imagen. En otras palabras, el movimiento que
 escogimos modelar no es solo una abstracción mecánica; es exactamente el
 movimiento que el estimador visual tiene que reconstruir.
 
-Finalmente, toda la comparación entre estimación y ground truth puede leerse
-como una composición de transformaciones. Si \(\{c\}\) es el frame de la cámara,
-la pose observada del marcador satisface
-
-\begin{equation}
-{}^{c}\!T_m(t) =
-{}^{c}\!T_w(t)\,{}^{w}\!T_b(t)\,{}^{b}\!T_m.
-\label{eq:camera_marker_chain}
-\end{equation}
-
-Para una cámara fija, \( {}^{c}\!T_w \) permanece constante; para una cámara
-montada sobre un dron, ese término también varía en el tiempo. Esta expresión
-resume el corazón geométrico del framework: comparar lo que el simulador sabe
-del mundo con lo que la cámara es capaz de inferir a partir de imágenes.
-
 
 
 \section{Metodología}
@@ -1110,18 +1259,17 @@ permitió controlar la escena, repetir corridas bajo condiciones comparables y
 registrar todas las señales relevantes del sistema. En esta etapa el problema
 se organizó como un pipeline de cuatro pasos: generación del movimiento
 marino, materialización de ese movimiento en el Go2, observación visual del
-marcador y evaluación offline contra una referencia reconstruible. Trabajar en
-Gazebo sobre ROS2 hizo posible estudiar cada una de esas etapas sin incorporar,
-todavía, las incertidumbres propias del laboratorio.
+marcador y evaluación offline contra una referencia reconstruible. Sobre la
+base conceptual introducida en la Sección~\ref{mt}, aquí nos concentramos en
+cómo se implementó cada una de esas etapas y con qué configuración se ejecutó
+la campaña experimental.
 
 Además de servir como entorno de desarrollo, la simulación funcionó como un
 banco de pruebas metodológico. Cada corrida se registró como un rosbag de un
 minuto, lo que permitió volver sobre una misma secuencia para analizarla varias
 veces sin repetir la ejecución completa. Dentro de esa estructura, la cámara
-fija se utilizó como caso base para introducir el setup visual en su versión
-más simple, mientras que el \texttt{sjtu\_drone} se trabajó como una extensión
-más exigente y más cercana al escenario futuro de aterrizaje sobre plataformas
-móviles.
+fija se utilizó como caso base y el \texttt{sjtu\_drone} como extensión más
+exigente del mismo pipeline.
 
 \subsubsection{Generación del movimiento marino}
 
@@ -1136,25 +1284,11 @@ Esta decisión simplifica el entorno sin perder el aspecto central del problema:
 cómo cambia la apariencia del marcador cuando la plataforma se inclina y se
 desplaza verticalmente.
 
-La elección de trabajar con roll, pitch y heave respondió a dos criterios. El
-primero fue visual: roll y pitch modifican de manera directa la perspectiva del
-marcador, mientras que heave altera la distancia relativa a la cámara y, por lo
-tanto, su escala aparente en la imagen. El segundo fue metodológico: mantener
-\(x\), \(y\) y yaw en cero permite aislar esas perturbaciones dominantes sin
-mezclarlas, en esta etapa, con traslaciones laterales o giros horizontales que
-harían más difícil atribuir el origen de los errores. Esta reducción no implica
-que los otros grados de libertad no sean relevantes para el problema final de
-aterrizaje, sino que el framework se construyó primero sobre el subconjunto de
-movimientos que más afecta la observación visual del marcador.
-
-También se eligió publicar una pose objetivo del torso y no fuerzas ni pares
-equivalentes a un modelo de oleaje. La razón es que el objetivo de esta etapa
-no fue reproducir con máxima fidelidad la física de una embarcación, sino
-construir un escenario repetible, parametrizable y compatible con el pipeline de
-percepción. Una consigna de pose permite controlar con precisión qué movimiento
-se solicita, repetir corridas bajo la misma configuración y relacionar después
-la señal objetivo con la respuesta del robot y con la pose estimada por la
-cámara.
+La elección de retener roll, pitch y heave, y de expresarlos como una consigna
+postural del torso en lugar de fuerzas equivalentes a un oleaje, sigue la
+lógica conceptual ya discutida en el marco teórico: preservar las perturbaciones
+que dominan la observación visual y hacerlo mediante una entrada repetible,
+parametrizable y fácil de comparar entre corridas.
 
 El nodo opera con una frecuencia de publicación de \mbox{20 Hz} y toma como
 referencia el tiempo transcurrido desde su inicialización. La configuración de
@@ -1424,16 +1558,12 @@ consistente con el resto del pipeline.
 
 \subsubsection{Estimación visual en simulación}
 
-El framework contempla dos fuentes de imagen. La primera es una cámara fija
-nadir, ubicada sobre la plataforma y orientada hacia abajo. La segunda es la
-cámara bottom del \texttt{sjtu\_drone}, que despega automáticamente y luego
-mantiene un hover por encima del Go2. Estos dos escenarios no cumplen el mismo
-rol dentro de la metodología. La cámara fija se utilizó como caso base porque
-elimina el movimiento propio del sensor y deja más aislado el efecto del oleaje
-sobre la observación del marcador. El dron, en cambio, se trabajó como una
-extensión más fuerte del framework, ya que agrega la dinámica del vehículo
-aéreo y aproxima mejor el problema al objetivo final de aterrizaje. La
-Figura~\ref{fig:method_visual_setup} resume visualmente ambos casos.
+Como se discutió en la Sección~\ref{mt}, el framework contempla dos fuentes de
+imagen complementarias. Operativamente, la primera es una cámara fija nadir,
+ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
+bottom del \texttt{sjtu\_drone}, que despega automáticamente y luego mantiene un
+hover por encima del Go2. La Figura~\ref{fig:method_visual_setup} resume
+visualmente ambos casos.
 
 \begin{figure}[H]
 \centering
