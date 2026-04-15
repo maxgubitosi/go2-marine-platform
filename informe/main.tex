@@ -133,7 +133,9 @@
 
 
 
-\section{Introducción } \label{intro}
+\section{Motivación} \label{sec:motivacion}
+
+\subsection{Aterrizaje sobre plataformas marinas en movimiento}
 
 El aterrizaje de vehículos aéreos no tripulados sobre plataformas en movimiento
 es un problema exigente incluso en escenarios terrestres controlados. Cuando el
@@ -146,15 +148,76 @@ de vuelo, sino también una percepción robusta de la geometría relativa entre 
 plataforma y el vehículo \citep{Alarcon2019,Delbene2022,Morales2023}. \todo{Ya revise estas citas}
 \todo[inline]{Chequear números de la tabla}
 
+Más allá del desafío técnico, resolver este problema tendría valor operativo en
+distintos escenarios reales. La posibilidad de despegar, recuperar y relanzar
+un dron desde una plataforma marina convierte a la embarcación en una base
+móvil, lo que puede ampliar el tiempo efectivo de misión, reducir la
+dependencia de infraestructura costera y acercar el vehículo al área de
+interés. En operaciones de búsqueda y rescate cerca de la costa, esta capacidad
+podría contribuir a acortar tiempos de respuesta y sostener observación aérea
+sobre una zona crítica. En contextos de defensa, también resultaría relevante
+para tareas de reconocimiento, vigilancia y apoyo táctico desde unidades
+navales. De manera análoga, organismos como prefectura o guardias costeras
+podrían emplearla para monitoreo marítimo, seguimiento de embarcaciones,
+observación de incidentes y control de áreas sensibles. En el sector pesquero,
+la operación de drones desde barcos podría aportar inspección visual del entorno
+inmediato, apoyo a maniobras y monitoreo de la actividad en superficie. A estos
+casos se suman aplicaciones potenciales en inspección de infraestructura
+offshore, monitoreo ambiental y oceanográfico, y transporte liviano de insumos
+entre embarcaciones o plataformas. \pendingcitation{Fuentes sobre aplicaciones
+marítimas de UAVs en rescate, vigilancia, pesca, inspección offshore y
+monitoreo ambiental}
+
+\subsection{Necesidad de validación segura y reproducible}
+
 Esta dificultad técnica se combina, además, con un problema metodológico. Las
 pruebas directas sobre hardware real son costosas, difíciles de repetir y
 arriesgadas para los equipos involucrados. En un escenario de aterrizaje sobre
 una plataforma marina, un error de estimación de pose puede traducirse en una
-maniobra fallida, una colisión o la pérdida del vehículo. Por ese motivo, antes
-de pensar en un sistema completo de aterrizaje autónomo, resulta necesario
-contar con un entorno de validación que permita desacoplar subproblemas,
-reproducir condiciones de movimiento y medir desempeño con criterios objetivos.
-Ese es el punto de partida de esta tesis.
+maniobra fallida, una colisión o la pérdida del vehículo. Por ese motivo,
+resulta necesario contar con un entorno de validación que permita desacoplar
+subproblemas, reproducir condiciones de movimiento y medir desempeño con
+criterios objetivos antes de avanzar hacia ensayos de mayor riesgo.
+
+Sin un framework de estas características, la validación del problema debería
+recorrer caminos considerablemente más costosos. Una primera alternativa sería
+desarrollar hardware experimental a medida para reproducir el movimiento de una
+cubierta, montar sensores, instrumentar cámaras y establecer mecanismos de
+seguridad que permitan recuperar el vehículo frente a fallas. Aunque este
+enfoque ofrecería un mayor realismo físico en etapas tempranas, también
+trasladaría buena parte del esfuerzo al diseño mecánico, la integración
+electrónica, la calibración del sistema y el mantenimiento de una plataforma
+específica de ensayo. Como resultado, una porción significativa del trabajo se
+desplazaría desde el problema de percepción y validación hacia la construcción
+misma del banco experimental.
+
+Una segunda alternativa consistiría en avanzar directamente hacia ensayos en un
+entorno real o cuasi real, por ejemplo sobre una embarcación instrumentada y
+bajo protocolos estrictos de seguridad. Este camino es factible, pero demanda
+una preparación considerable para alcanzar condiciones razonablemente seguras:
+coordinación entre operadores, zonas controladas de prueba, criterios de
+aborto, procedimientos de recuperación y condiciones ambientales favorables. A
+ello se suma que, aun con una preparación cuidadosa, el entorno marítimo
+introduce variabilidad difícil de controlar, lo que complica la repetibilidad
+de los experimentos y vuelve más costoso aislar errores de percepción, control
+o instrumentación. En comparación con estas alternativas, un framework de
+simulación permite iterar con mayor rapidez, explorar fallas de manera segura y
+llegar a las pruebas físicas con hipótesis y métricas mejor definidas.
+
+\subsection{Conveniencia de un enfoque progresivo}
+
+Ese es el punto de partida de esta tesis. En lugar de abordar de manera
+inmediata el problema completo del aterrizaje, adoptamos una estrategia
+incremental: primero modelar y reproducir el movimiento de la plataforma, luego
+estimar su pose relativa desde distintas fuentes de imagen y, finalmente,
+estudiar hasta qué punto esa lógica de movimiento conserva sentido al
+trasladarse al robot real. Esta decisión responde a un criterio metodológico:
+entendemos que una validación seria del problema final requiere primero una
+base experimental controlada, trazable y repetible.
+
+\section{Introducción} \label{intro}
+
+\subsection{Objetivo y alcance del trabajo}
 
 Nuestro trabajo se inscribe precisamente en esa necesidad. El objetivo general
 de la investigación es construir un framework que permita estudiar y, en etapas
@@ -162,23 +225,30 @@ posteriores, probar aterrizaje de drones sobre plataformas marinas. Dentro de
 ese objetivo más amplio, en esta tesis nos concentramos en una capa previa pero
 indispensable: la construcción de una plataforma experimental para sintetizar
 movimiento marino, observarlo visualmente y contrastar el comportamiento
-obtenido en simulación con ensayos preliminares en laboratorio. En lugar de
-abordar de manera inmediata el problema completo del aterrizaje, adoptamos una
-estrategia incremental: primero modelar y reproducir el movimiento de la
-plataforma, luego estimar su pose relativa desde distintas fuentes de imagen y,
-finalmente, estudiar hasta qué punto esa lógica de movimiento conserva sentido
-al trasladarse al robot real.
+obtenido en simulación con ensayos preliminares en laboratorio.
+
+También es importante explicitar el alcance del trabajo. La tesis no pretende
+resolver de extremo a extremo el aterrizaje automático de un dron sobre una
+plataforma marítima real. Tampoco busca modelar toda la dinámica de una
+embarcación ni agotar las alternativas de percepción visual disponibles. En
+cambio, se concentra en un conjunto acotado de decisiones que consideramos
+habilitantes para ese objetivo final: una representación simplificada pero útil
+del movimiento marino, una implementación reproducible sobre el Go2, un
+mecanismo de estimación visual de pose y un primer contraste entre la
+simulación y el laboratorio.
+
+\subsection{Plataforma experimental propuesta}
 
 La idea central del enfoque consiste en utilizar un robot cuadrúpedo Unitree
-Go2 como plataforma marina sintética. En vez de modelar una embarcación completa
-en el simulador, aprovechamos la capacidad del robot para modificar la postura
-de su torso y reproducir sobre él tres componentes del movimiento que resultan
-especialmente relevantes para el problema de percepción: roll, pitch y heave.
-Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a funcionar
-como referencia visual de la plataforma. Esta decisión metodológica nos permite
-trabajar con un sistema cinemáticamente consistente, instrumentado dentro de un
-workspace ROS2 y observable desde cámaras simuladas o, más adelante, desde un
-setup físico en laboratorio.
+Go2 como plataforma marina sintética. En vez de modelar una embarcación
+completa en el simulador, aprovechamos la capacidad del robot para modificar la
+postura de su torso y reproducir sobre él tres componentes del movimiento que
+resultan especialmente relevantes para el problema de percepción: roll, pitch y
+heave. Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a
+funcionar como referencia visual de la plataforma. Esta decisión metodológica
+nos permite trabajar con un sistema cinemáticamente consistente, instrumentado
+dentro de un workspace ROS2 y observable desde cámaras simuladas o, más
+adelante, desde un setup físico en laboratorio.
 
 La elección de estas tres componentes requiere una aclaración. El movimiento de
 una plataforma marina puede describirse, en general, mediante seis grados de
@@ -190,9 +260,7 @@ heave modifica la distancia relativa y, con ello, su escala proyectada en la
 imagen. En cambio, las componentes horizontales y la rotación en yaw no se
 priorizan en esta etapa porque la simulación las mantiene anuladas para validar
 primero la cadena movimiento--percepción--evaluación sobre el subconjunto de
-variaciones visuales más influyentes. Esta simplificación no niega la
-importancia de los otros grados de libertad en el problema final de aterrizaje;
-solo responde a un criterio progresivo de modelado y validación.
+variaciones visuales más influyentes.
 
 La primera parte del framework se desarrolló íntegramente en simulación sobre
 ROS2 Humble y Gazebo Classic. Allí construimos un pipeline que integra la
@@ -225,6 +293,8 @@ el lomo y cámara mantenida en posición aproximadamente fija.}
 \label{fig:intro_framework_overview}
 \end{figure}
 
+\subsection{Pipeline de percepción y evaluación}
+
 En ambos casos, la estimación visual se resolvió mediante un pipeline basado en
 marcadores ArUco y \texttt{solvePnP}. El sistema detecta en tiempo real el
 marcador montado sobre el robot y estima su pose relativa respecto del frame
@@ -245,9 +315,11 @@ referencia perfecta que ofrece la simulación, sino estudiar la relación entre
 el movimiento deseado y las señales efectivamente publicadas por el cuadrúpedo,
 con el fin de evaluar si la síntesis de oleaje planteada en el entorno virtual
 mantiene correlación con el comportamiento físico del sistema. Esta transición
-entre simulación y laboratorio es importante porque convierte al framework en
-algo más que una herramienta de software: lo acerca a una metodología de
-validación para futuros ensayos sobre hardware.
+entre simulación y laboratorio convierte al framework en algo más que una
+herramienta de software: lo acerca a una metodología de validación para futuros
+ensayos sobre hardware.
+
+\subsection{Aportes y organización del informe}
 
 En este marco, el aporte de la tesis puede entenderse en cuatro planos. En
 primer lugar, desarrollamos un entorno de simulación que reutiliza un
@@ -261,19 +333,6 @@ analizar el vínculo entre la plataforma marina sintetizada y el comportamiento
 real del robot. Estos aportes no constituyen todavía un sistema completo de
 aterrizaje autónomo, pero sí construyen una base experimental y metodológica
 para estudiar ese problema con menor riesgo y mayor trazabilidad.
-
-También es importante explicitar el alcance del trabajo. La tesis no pretende
-resolver de extremo a extremo el aterrizaje automático de un dron sobre una
-plataforma marítima real. Tampoco busca modelar toda la dinámica de una
-embarcación ni agotar las alternativas de percepción visual disponibles. En
-cambio, se concentra en un conjunto acotado de decisiones que consideramos
-habilitantes para ese objetivo final: una representación simplificada pero
-útil del movimiento marino, una implementación reproducible sobre el Go2, un
-mecanismo de estimación visual de pose y un primer contraste entre la
-simulación y el laboratorio. Esa delimitación del problema responde a un
-criterio metodológico antes que a una simplificación arbitraria: entendemos que
-probar un sistema de aterrizaje de manera seria requiere primero una base de
-validación controlada.
 
 El resto del informe se organiza de la siguiente manera. En la
 Sección~\ref{mt} presentamos el marco teórico y los conceptos necesarios para
