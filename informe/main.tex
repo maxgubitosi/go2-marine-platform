@@ -267,15 +267,25 @@ Go2 como plataforma marina sintética. En vez de modelar una embarcación
 completa en el simulador, aprovechamos la capacidad del robot para modificar la
 postura de su torso y reproducir sobre él tres componentes del movimiento que
 resultan especialmente relevantes para el problema de percepción: roll, pitch y
-heave. Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a
-funcionar como referencia visual de la plataforma. Esta decisión metodológica
-nos permite trabajar con un sistema cinemáticamente consistente, instrumentado
-dentro de un workspace ROS2 y observable desde cámaras simuladas o, más
-adelante, desde un setup físico en laboratorio.
+heave (Figura~\ref{fig:roll_pitch_heave}). Sobre ese torso montamos una tabla
+con un marcador ArUco, que pasa a funcionar como referencia visual de la
+plataforma. Esta decisión metodológica nos permite trabajar con un sistema
+cinemáticamente consistente, instrumentado dentro de un workspace ROS2 y
+observable desde cámaras simuladas o, más adelante, desde un setup físico en
+laboratorio.
 
-La elección de estas tres componentes requiere una aclaración. El movimiento de
-una plataforma marina puede describirse, en general, mediante seis grados de
-libertad. Sin embargo, en el alcance actual del trabajo no buscamos reproducir
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.45\linewidth]{figures/images/rollpitchheave.png}
+\caption{Convención de movimientos marinos usada en el trabajo. Se resaltan las
+componentes priorizadas en esta etapa (\textit{roll}, \textit{pitch} y
+\textit{heave}), junto con el resto de los grados de libertad para contexto.}
+\label{fig:roll_pitch_heave}
+\end{figure}
+
+Como se observa en la Figura~\ref{fig:roll_pitch_heave}, el movimiento de una
+plataforma marina puede describirse, en general, mediante seis grados de
+libertad. En el alcance actual del trabajo no buscamos reproducir
 esa dinámica completa, sino aislar las perturbaciones que más directamente
 afectan la pose observada del marcador. En nuestro setup, roll y pitch cambian
 la orientación aparente del plano del ArUco respecto de la cámara, mientras que
@@ -381,10 +391,14 @@ esa dificultad es apenas el último eslabón de una cadena más amplia. Antes de
 que una cámara recupere una pose, existe una superficie que se traslada y se
 inclina; y antes de que ese movimiento pueda medirse, hace falta una
 descripción física que permita distinguir qué componentes son relevantes, cómo
-evolucionan y de qué manera afectan la observación. La bibliografía sobre
-aterrizaje autónomo en plataformas móviles y marinas muestra justamente esa
-dependencia entre dinámica de la plataforma, capacidad de observación visual y
-posibilidad de control \citep{Alarcon2019,Delbene2022,Morales2023}.
+evolucionan y de qué manera afectan la observación. En línea con esa
+perspectiva, trabajos recientes sobre aterrizaje autónomo en plataformas
+móviles y marinas abordan de forma articulada la dinámica de la plataforma, la
+estimación visual de su estado y las decisiones de control del vehículo
+\citep{Alarcon2019,Delbene2022,Morales2023}. Retomamos esa misma lógica para
+organizar este marco teórico: partir de la descripción del movimiento,
+vincularla con su efecto en la observación y, desde allí, establecer su impacto
+sobre el problema de control.
 
 Esa cadena puede recorrerse en tres niveles acoplados. El primero es físico:
 caracterizar un movimiento semejante al de una plataforma marina y reducirlo a
