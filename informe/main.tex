@@ -153,18 +153,12 @@ distintos escenarios reales. La posibilidad de despegar, recuperar y relanzar
 un dron desde una plataforma marina convierte a la embarcación en una base
 móvil, lo que puede ampliar el tiempo efectivo de misión, reducir la
 dependencia de infraestructura costera y acercar el vehículo al área de
-interés. En operaciones de búsqueda y rescate cerca de la costa, esta capacidad
-podría contribuir a acortar tiempos de respuesta y sostener observación aérea
-sobre una zona crítica. En contextos de defensa, también resultaría relevante
-para tareas de reconocimiento, vigilancia y apoyo táctico desde unidades
-navales. De manera análoga, organismos como prefectura o guardias costeras
-podrían emplearla para monitoreo marítimo, seguimiento de embarcaciones,
-observación de incidentes y control de áreas sensibles. En el sector pesquero,
-la operación de drones desde barcos podría aportar inspección visual del entorno
-inmediato, apoyo a maniobras y monitoreo de la actividad en superficie. A estos
-casos se suman aplicaciones potenciales en inspección de infraestructura
-offshore, monitoreo ambiental y oceanográfico, y transporte liviano de insumos
-entre embarcaciones o plataformas. \pendingcitation{Fuentes sobre aplicaciones
+interés. Esta capacidad resultaría especialmente valiosa en operaciones de
+búsqueda y rescate, vigilancia y monitoreo marítimo, inspección de
+infraestructura offshore y observación ambiental. También abriría una vía para
+tareas logísticas livianas entre embarcaciones o plataformas, siempre que la
+relación geométrica entre el vehículo y la superficie objetivo pudiera medirse
+de forma confiable. \pendingcitation{Fuentes sobre aplicaciones
 marítimas de UAVs en rescate, vigilancia, pesca, inspección offshore y
 monitoreo ambiental}
 
@@ -203,6 +197,8 @@ de los experimentos y vuelve más costoso aislar errores de percepción, control
 o instrumentación. En comparación con estas alternativas, un framework de
 simulación permite iterar con mayor rapidez, explorar fallas de manera segura y
 llegar a las pruebas físicas con hipótesis y métricas mejor definidas.
+En este sentido, el problema no es sólo de control o de visión, sino también de
+validación experimental.
 
 \subsection{Conveniencia de un enfoque progresivo}
 
@@ -211,11 +207,10 @@ inmediata el problema completo del aterrizaje, adoptamos una estrategia
 incremental: primero modelar y reproducir el movimiento de la plataforma, luego
 estimar su pose relativa desde distintas fuentes de imagen y, finalmente,
 estudiar hasta qué punto esa lógica de movimiento conserva sentido al
-trasladarse al robot real. Esta decisión responde a un criterio metodológico,
-pero también a una convicción sobre cómo conviene construir conocimiento útil
-en un problema de este tipo: antes de exigir autonomía completa, resulta más
-valioso aislar los componentes críticos, entender sus límites y disponer de
-herramientas para evaluarlos con precisión.
+trasladarse al robot real. Esta decisión responde a un criterio metodológico:
+antes de exigir autonomía completa, resulta más valioso aislar los componentes
+críticos, entender sus límites y disponer de herramientas para evaluarlos con
+precisión.
 
 Desde esta perspectiva, el aporte de la tesis no radica solamente en proponer
 una simplificación conveniente del escenario marítimo, sino en establecer una
@@ -259,6 +254,14 @@ habilitantes para ese objetivo final: una representación simplificada pero úti
 del movimiento marino, una implementación reproducible sobre el Go2, un
 mecanismo de estimación visual de pose y un primer contraste entre la
 simulación y el laboratorio.
+
+Estas decisiones quedan organizadas alrededor de dos preguntas de validación. En
+simulación, nos preguntamos si el framework puede sintetizar movimiento marino,
+observarlo visualmente y medir la calidad de la estimación de pose contra una
+referencia reconstruible. En laboratorio, nos preguntamos si esa misma lógica
+de movimiento conserva sentido físico en el Go2 real y si puede observarse con
+un montaje visual controlado, aun sin disponer del tipo de ground truth que
+ofrece Gazebo.
 
 \subsection{Plataforma experimental propuesta}
 
@@ -389,7 +392,8 @@ real del robot. Estos aportes no constituyen todavía un sistema completo de
 aterrizaje autónomo, pero sí construyen una base experimental y metodológica
 para estudiar ese problema con menor riesgo y mayor trazabilidad.
 
-El resto del informe se organiza de la siguiente manera. En la
+Las dos preguntas de validación recién formuladas también organizan el recorrido
+del informe. En la
 Sección~\ref{mt} presentamos el marco teórico y los conceptos necesarios para
 entender el ecosistema experimental basado en ROS2 y Gazebo, el modelado del
 movimiento marino, el uso postural del cuadrúpedo y la estimación visual con
@@ -701,17 +705,7 @@ barco más olas, pocos rótulos y composición limpia.}{Esquema pendiente del
 efecto del oleaje sobre una embarcación y su relación con la aproximación
 discreta de \emph{heave}, \emph{pitch} y \emph{roll}.}
 
-La aproximación discreta puede escribirse como
-
-\[
-\begin{aligned}
-z(t) &\approx \frac{\zeta_{\text{proa}}+\zeta_{\text{popa}}+\zeta_{\text{babor}}+\zeta_{\text{estribor}}}{4},\\
-\theta(t) &\propto \frac{\zeta_{\text{proa}}-\zeta_{\text{popa}}}{L_p},\\
-\phi(t) &\propto \frac{\zeta_{\text{estribor}}-\zeta_{\text{babor}}}{B_p}.
-\end{aligned}
-\]
-
-donde \(L_p\) y \(B_p\) representan, respectivamente, una longitud
+En esta lectura, \(L_p\) y \(B_p\) representan, respectivamente, una longitud
 característica en la dirección proa--popa y una manga efectiva en la dirección
 babor--estribor. Estas relaciones no reemplazan al modelo dinámico completo,
 pero hacen explícita una idea central para esta tesis: el movimiento de la
@@ -1273,22 +1267,15 @@ exigente del mismo pipeline.
 
 \subsubsection{Generación del movimiento marino}
 
-En lugar de modelar en Gazebo un casco marino completo y sus interacciones
-hidrodinámicas, sintetizamos directamente sobre el Go2 aquellas componentes del
-movimiento que resultan más relevantes para el problema visual que queremos
-estudiar. Para eso utilizamos el nodo \texttt{marine\_platform\_simulator}, que
-publica una pose objetivo del torso en el tópico de consigna postural
-(Tabla~\ref{tab:ros_interfaces_sim}) y trata al robot
-como una plataforma instrumentada sobre la cual se monta el marcador ArUco.
-Esta decisión simplifica el entorno sin perder el aspecto central del problema:
-cómo cambia la apariencia del marcador cuando la plataforma se inclina y se
-desplaza verticalmente.
-
-La elección de retener roll, pitch y heave, y de expresarlos como una consigna
-postural del torso en lugar de fuerzas equivalentes a un oleaje, sigue la
-lógica conceptual ya discutida en el marco teórico: preservar las perturbaciones
-que dominan la observación visual y hacerlo mediante una entrada repetible,
-parametrizable y fácil de comparar entre corridas.
+En simulación no modelamos un casco marino completo ni resolvemos su dinámica
+hidrodinámica detallada. Operativamente, el nodo
+\texttt{marine\_platform\_simulator} sintetiza directamente sobre el Go2 una
+consigna postural del torso en el tópico correspondiente
+(Tabla~\ref{tab:ros_interfaces_sim}) y trata al robot como plataforma
+instrumentada para el marcador ArUco. La implementación se concentra, entonces,
+en la parte del problema que realmente interesa medir en esta tesis: cómo cambia
+la apariencia del marcador cuando la plataforma se inclina y se desplaza
+verticalmente.
 
 El nodo opera con una frecuencia de publicación de \mbox{20 Hz} y toma como
 referencia el tiempo transcurrido desde su inicialización. La configuración de
@@ -1413,14 +1400,12 @@ mismo tiempo. Incluso en esta versión simple, el movimiento resultante no es
 una oscilación rígidamente sincronizada, sino una combinación periódica más
 interesante para observar cómo responde el estimador visual.
 
-Desde el punto de vista metodológico, el patrón sinusoidal ofreció tres ventajas
-concretas. Primero, es fácilmente interpretable: cada hiperparámetro tiene un
-efecto claro sobre la señal. Segundo, es altamente repetible, lo que permite
-comparar rosbags distintos sin introducir ambigüedad sobre la entrada del
-sistema. Tercero, facilita el diagnóstico visual y temporal, porque los cambios
-en frecuencia, amplitud y fase se reconocen con facilidad tanto en las señales
-del robot como en la imagen del marcador. Por estas razones lo adoptamos como
-caso de referencia del informe.
+Adoptamos el patrón sinusoidal como referencia del informe por tres razones.
+Primero, cada hiperparámetro tiene un efecto fácilmente interpretable sobre la
+señal. Segundo, la excitación es altamente repetible, lo que permite comparar
+rosbags distintos sin introducir ambigüedad sobre la entrada del sistema.
+Tercero, la relación entre frecuencia, amplitud y fase se reconoce con claridad
+tanto en las señales del robot como en la imagen del marcador.
 
 \begin{figure}[H]
 \centering
@@ -1497,7 +1482,8 @@ orientaciones en cuaterniones, el nodo convierte primero los ángulos a radianes
 y calcula después el cuaternión correspondiente antes de emitir la consigna
 postural del torso. En paralelo, publica un \texttt{Vector3} en el tópico de
 depuración del simulador marino con los valores suavizados de roll,
-pitch y heave (Tabla~\ref{tab:ros_interfaces_sim}), lo que resultó útil para inspección y depuración.
+pitch y heave (Tabla~\ref{tab:ros_interfaces_sim}), lo que facilita la
+inspección de la corrida y el contraste posterior con la evaluación offline.
 
 El simulador también incorpora un modo manual. Cuando
 \texttt{enable\_manual=true}, deja de sintetizar ondas automáticamente y pasa a
@@ -1592,9 +1578,10 @@ metros. Una vez detectadas las esquinas, OpenCV estima la pose relativa del
 marcador respecto del frame óptico de la cámara mediante \texttt{solvePnP}. El
 resultado se publica como \texttt{PoseStamped} en el tópico de pose del ArUco,
 mientras que la detección y la imagen de depuración se publican en los canales
-asociados (Tabla~\ref{tab:ros_interfaces_sim}) para inspección y depuración. Lo importante aquí es que el detector trabaja solo
-con imagen e intrínsecos de cámara: durante la corrida no usa conocimiento
-privilegiado del simulador, de la pose del robot ni de la pose del dron. Un
+asociados (Tabla~\ref{tab:ros_interfaces_sim}) para inspección y depuración.
+Durante la corrida, el detector trabaja solo con imagen e intrínsecos de
+cámara: no usa conocimiento privilegiado del simulador, de la pose del robot ni
+de la pose del dron. Un
 ejemplo del frame anotado que produce el detector puede verse en la
 Figura~\ref{fig:method_aruco_detection_frame}.
 
@@ -1734,7 +1721,7 @@ permite aislar variables, repetir exactamente las mismas corridas y cuantificar
 error respecto de ground truth. El laboratorio, en cambio, obliga a aceptar
 incertidumbre adicional y desplaza el foco hacia la coherencia entre la consigna
 propuesta, la respuesta física del robot y la observación visual del marcador.
-Por eso, antes de describir el montaje real en detalle, conviene explicitar qué
+Por eso, antes de describir el montaje real en detalle, explicitamos qué
 aspectos del sistema se conservaron y cuáles tuvieron que adaptarse.
 
 \begin{table}[H]
@@ -1771,8 +1758,8 @@ capaz de enviar comandos \texttt{Euler()} al robot mediante
 La versión real del nodo incorpora además un hilo dedicado de envío a frecuencia
 alta, del orden de \texttt{50 Hz}, mientras que el timer de ROS2 queda
 reservado para publicar la señal de depuración del simulador marino y registrar el
-estado del experimento (Tabla~\ref{tab:ros_interfaces_lab}). Esto es importante desde el punto de vista metodológico
-porque separa dos planos de la señal: por un lado, la referencia que describe el
+estado del experimento (Tabla~\ref{tab:ros_interfaces_lab}). Esta separación
+distingue dos planos de la señal: por un lado, la referencia que describe el
 movimiento deseado; por otro, el comando efectivamente transmitido a la API del
 robot. En el bag real versionado esta segunda capa aparece en el tópico de
 peticiones a la API Sport Mode, filtrando el identificador \texttt{api\_id=1007},
@@ -1783,8 +1770,8 @@ movimiento objetivo, el comando realmente enviado y la respuesta observada en el
 robot. A diferencia del caso simulado, ya no se contaba con un estado verdadero
 perfecto del sistema, por lo que el análisis dejó de formularse como comparación
 contra ground truth y pasó a entenderse como contraste entre referencia,
-actuación y respuesta medida. Desde el punto de vista metodológico, esto vuelve
-explícito el cambio de pregunta: en simulación preguntábamos cuánto error
+actuación y respuesta medida. Esto vuelve explícito el cambio de pregunta: en
+simulación preguntábamos cuánto error
 cometía el estimador visual respecto del estado verdadero; en laboratorio, en
 cambio, preguntamos hasta qué punto el movimiento solicitado se transmite al
 robot y reaparece en sus señales internas de estado.
@@ -1829,8 +1816,8 @@ levanta \texttt{stereo\_eye\_publisher},
 \texttt{world -> odom}. Durante la toma, la cámara se mantuvo en una posición
 aproximadamente fija por encima del cuadrúpedo, lo bastante estable como para
 parecerse geométricamente al escenario de cámara fija de simulación, aunque sin
-la rigidez perfecta del caso modelado en Gazebo. Por eso conviene presentar
-esta etapa como una aproximación experimental controlada y no como una réplica
+la rigidez perfecta del caso modelado en Gazebo. Por eso, esta etapa se
+presenta como una aproximación experimental controlada y no como una réplica
 exacta del caso idealizado.
 
 \begin{figure}[H]
@@ -1891,19 +1878,12 @@ la plataforma sintética de simulación y su comportamiento en entorno real.
 \section{Experimentación y resultados}
 
 Una vez definido el pipeline y explicitados los criterios metodológicos, la
-etapa experimental se organiza como una lectura progresiva de la evidencia. En
-primer lugar se presentan las corridas en simulación, donde se dispone de un
-ground truth consistente y donde resulta posible aislar con mayor claridad el
-efecto del movimiento marino sintético sobre la estimación visual. A
-continuación se deja planteada la estructura de la validación en laboratorio,
-pensada como un puente entre la consigna de movimiento y la respuesta medida en
-el robot real.
-
-Esta sección se escribió con una intención deliberadamente narrativa. En lugar
-de acumular gráficos sin jerarquía, cada bloque experimental se introduce a
-partir de la pregunta que busca responder, luego se muestran las figuras y
-tablas necesarias para sostener esa lectura, y recién después se reserva un
-espacio explícito para el análisis interpretativo. 
+evidencia se presenta como una progresión desde el caso más controlado hasta el
+contraste físico. Primero se analizan las corridas de simulación, donde la
+referencia reconstruida permite medir el desempeño del estimador con mayor
+aislamiento. Luego se presenta el laboratorio, donde el foco deja de estar en
+el error frente a ground truth y pasa a la correspondencia entre movimiento
+esperado, comando enviado y respuesta del robot.
 
 \subsection{Experimentos en simulación}
 
@@ -2005,8 +1985,8 @@ El caso \texttt{fixed\_camera} funciona como baseline metodológico del
 framework. Al mantener el sensor en una posición fija respecto del mundo, la
 variación visual proviene esencialmente del movimiento del marcador adherido al
 Go2. Esto vuelve más legible la relación entre la consigna sinusoidal del torso
-y la pose observada del marcador, y por eso conviene usar este escenario para
-introducir los resultados antes de pasar al caso con dron.
+y la pose observada del marcador, por lo que este escenario instala la
+referencia más limpia antes de pasar al caso con dron.
 
 \begin{figure}[H]
 \centering
@@ -2074,9 +2054,10 @@ que motiva el framework. Aunque en estas corridas el dron no ejecuta todavía un
 aterrizaje, su cámara inferior observa una plataforma que oscila y obliga a
 analizar la estimación visual en una condición menos ideal que la del caso
 fijo. La campaña final se apoyó en tres repeticiones comparables \((R1,\ R2,\
-R3)\), de las cuales \(R2\) se usa como corrida principal porque queda en una
-posición intermedia dentro del conjunto y, al mismo tiempo, ofrece suficiente
-cantidad de muestras para describir el comportamiento del escenario fuerte.
+R3)\), de las cuales \(R2\) se adopta como corrida principal porque combina una
+cantidad de muestras suficiente con la mayor dispersión angular del grupo, lo
+que la vuelve una referencia exigente sin dejar de ser representativa de la
+campaña.
 
 \begin{figure}[H]
 \centering
@@ -2165,8 +2146,7 @@ escenario es razonable pero sensible a la geometría efectiva de cada corrida.
 
 \subsubsection{Síntesis de la evidencia en simulación}
 
-Después de recorrer el baseline y el caso fuerte, lo importante no es repetir
-tablas sino recuperar qué aporta la evidencia de simulación al argumento
+La evidencia de simulación aporta dos conclusiones centrales al argumento
 general del trabajo. En primer lugar, la campaña \texttt{report\_v2} confirma
 que el pipeline visual sigue la dinámica global de una plataforma oscilante y
 que esa capacidad puede medirse con referencia reconstruible. En segundo lugar,
@@ -2196,14 +2176,13 @@ entorno físico.
 
 \subsection{Experimentos en laboratorio}
 
-La validación en laboratorio no replica punto por punto el esquema de evaluación
-de simulación, pero sí conserva su pregunta de fondo: hasta qué punto el
-movimiento propuesto al cuadrúpedo se refleja en señales observables del
-sistema. En lugar de comparar la pose estimada con un ground truth completo
-proveniente del simulador, aquí interesa contrastar la señal esperada, el
-comando efectivamente enviado y la respuesta interna publicada por el robot,
-apoyándose además en el montaje visual con ArUco y cámara fija descripto en la
-metodología. La implementación real aporta, para esta etapa, un setup
+La validación en laboratorio no replica el mismo esquema de lectura que la
+simulación, porque ya no dispone de un ground truth geométrico equivalente. Su
+pregunta es otra: hasta qué punto el movimiento propuesto al cuadrúpedo se
+refleja en señales observables del sistema. Por eso, en esta etapa el análisis
+se apoya en la señal esperada, el comando efectivamente enviado y la respuesta
+interna publicada por el robot, además del montaje visual con ArUco y cámara
+cuasi fija descripto en la metodología. La implementación real aporta un setup
 ROS2 dedicado, un bag versionado y un reporte cuantitativo suficientemente
 detallado como para cerrar una primera lectura experimental del caso físico.
 
@@ -2212,10 +2191,9 @@ detallado como para cerrar una primera lectura experimental del caso físico.
 El material principal de esta subsección proviene del registro de laboratorio
 citado en la Tabla~\ref{tab:appendix_rosbags}, grabado el \mbox{20 de marzo de 2026}.
 La corrida dura aproximadamente \(59{,}7\)~s y reúne del orden de \(1{,}59 \times 10^{5}\) mensajes, combinando señal de referencia, comandos enviados a la
-API del robot y telemetría de estado. Desde el punto de vista narrativo, este
-registro es suficiente para reconstruir la cadena completa del experimento: qué
-movimiento se quería producir, qué comando se envió efectivamente y cómo
-respondió el cuerpo del Go2.
+API del robot y telemetría de estado. Ese registro alcanza para reconstruir la
+cadena completa del experimento: qué movimiento se quería producir, qué comando
+se envió efectivamente y cómo respondió el cuerpo del Go2.
 
 \begin{table}[H]
 \centering
@@ -2244,20 +2222,11 @@ grabar imagen y calibración del estéreo, además de las salidas del detector A
 (Tablas~\ref{tab:ros_interfaces_sim} y \ref{tab:ros_interfaces_lab}). Sin embargo, la evidencia cuantitativa versionada
 que hoy sostiene mejor el informe se concentra en la reproducción del movimiento
 y en la respuesta del robot, no todavía en un cierre estadístico completo de la
-pose visual real.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.62\textwidth]{figures/images/fig_lab_real_fixed_camera.png}
-\caption{Montaje del caso experimental de laboratorio utilizado en la corrida de
-referencia, con ArUco montado sobre el Go2 y observación desde cámara
-aproximadamente fija.}
-\label{fig:lab_results_setup}
-\end{figure}
+pose visual real. El montaje puede verse en la Figura~\ref{fig:method_lab_setup}.
 
 \subsubsection{Fidelidad del camino de comando}
 
-Antes de discutir la respuesta física del robot, conviene verificar si la
+Antes de discutir la respuesta física del robot, verificamos si la
 consigna generada por el simulador marino llega al Go2 sin degradarse. Para eso
 se comparó la señal de depuración del simulador marino con los mensajes de
 peticiones API correspondientes al comando Euler
@@ -2287,16 +2256,15 @@ comando--- no es el principal cuello de botella del experimento. La diferencia
 entre objetivo y respuesta debe buscarse, entonces, en la dinámica física del
 robot y no en una mala transferencia de la consigna.
 
-\figureplaceholder
-  {fig:lab_api_fidelity}
-  {Figura pendiente generada a partir de
-  \texttt{plot\_movimiento\_comparaciones.py}, idealmente reutilizando
-  \texttt{plot\_02\_api\_fidelity.png}. La figura debería mostrar la relación
-  entre el roll y pitch esperados y los ejes \(x\) e \(y\) enviados por la API Sport Mode
-  (Tabla~\ref{tab:ros_interfaces_lab}), incluyendo la diagonal identidad para visualizar
-  la fidelidad del camino de comando.}
-  {Fidelidad del camino de comando entre la señal esperada del simulador marino
-  y el comando Euler enviado al Go2 real.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_plot_02_api_fidelity.png}
+\caption{Fidelidad del camino de comando entre la señal esperada del simulador
+marino y el comando Euler enviado al Go2 real. Cada panel compara la consigna
+angular con el valor transmitido por la API Sport Mode para el eje
+correspondiente, lo que permite visualizar la cercanía a la diagonal identidad.}
+\label{fig:lab_api_fidelity}
+\end{figure}
 
 \subsubsection{Comparación entre movimiento objetivo y respuesta del robot}
 
@@ -2317,15 +2285,15 @@ lag en una ventana de \(\pm 3\) segundos. Esa estrategia permite distinguir dos
 efectos distintos: por un lado, cuánto se parece la forma general del
 movimiento; por otro, cuánto retardo dinámico introduce el sistema físico.
 
-\figureplaceholder
-  {fig:lab_target_vs_odom}
-  {Gráfico pendiente generado a partir de
-  \texttt{plot\_01\_timeseries\_cmd\_vs\_real.png}. La figura debería mostrar
-  la señal esperada de roll y pitch junto con la respuesta real medida en
-  el estado deportivo, de modo de discutir forma general, amplitud y
-  desfase temporal.}
-  {Comparación temporal entre movimiento esperado y respuesta del robot real en
-  laboratorio.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_plot_01_timeseries_cmd_vs_real.png}
+\caption{Comparación temporal entre movimiento esperado y respuesta del robot
+real en laboratorio. Se muestran las consignas de \emph{roll} y \emph{pitch}
+junto con la actitud reportada por el estado deportivo del Go2, lo que permite
+leer forma general, amplitud efectiva y desfase temporal.}
+\label{fig:lab_target_vs_odom}
+\end{figure}
 
 Los resultados muestran una coherencia alta entre objetivo y respuesta, aunque
 no instantánea. A retardo cero, las correlaciones entre la señal esperada y la
@@ -2349,14 +2317,15 @@ restricciones de estabilidad. En este sentido, la evidencia del laboratorio no
 busca mostrar coincidencia perfecta, sino demostrar que la plataforma real sigue
 de manera consistente el movimiento propuesto.
 
-\figureplaceholder
-  {fig:lab_lag_correlation}
-  {Figura pendiente generada a partir de
-  \texttt{plot\_03\_lag\_correlation.png}. Debería mostrar la correlación entre
-  la señal esperada y la respuesta real en función del lag aplicado al comando,
-  para roll y pitch.}
-  {Curvas de correlación comando-respuesta en función del retardo temporal
-  aplicado a la señal esperada.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_plot_03_lag_correlation.png}
+\caption{Curvas de correlación entre comando y respuesta en función del retardo
+aplicado a la señal esperada. La figura resume cómo mejora la correspondencia
+entre la consigna y la actitud real del robot cuando se compensa el lag físico
+del sistema.}
+\label{fig:lab_lag_correlation}
+\end{figure}
 
 La comparación del eje vertical requiere una lectura aparte. En la corrida real
 versionada, la señal esperada y la señal enviada al robot no incluyeron heave
@@ -2368,20 +2337,20 @@ Por eso, esta corrida no puede leerse como una validación de heave oscilatorio,
 sino como una validación fuerte de roll y pitch con observación complementaria
 de la altura del tronco.
 
-\figureplaceholder
-  {fig:lab_heave_comparison}
-  {Figura pendiente generada a partir de
-  \texttt{plot\_05\_heave\_z\_comparison.png}. La figura debería distinguir entre
-  la consigna vertical enviada, el \(z\) absoluto del tronco y la versión
-  centrada de esa señal, para dejar explícito por qué esta corrida no sostiene
-  una comparación directa de heave dinámico.}
-  {Lectura del eje vertical en laboratorio: diferencia entre consigna de heave y
-  altura absoluta del tronco reportada por el robot.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_plot_05_heave_z_comparison.png}
+\caption{Lectura del eje vertical en laboratorio. La figura distingue entre la
+consigna de \emph{heave} enviada, la altura absoluta del tronco reportada por el
+robot y la versión centrada de esa señal, para dejar explícito por qué esta
+corrida no sostiene una comparación directa de \emph{heave} dinámico.}
+\label{fig:lab_heave_comparison}
+\end{figure}
 
 \subsubsection{Lectura conjunta con la simulación}
 
-El cierre del bloque experimental de laboratorio debería vincular esta evidencia
-con la historia más amplia del trabajo. No se trata de afirmar que ambos
+Este cierre vincula la evidencia de laboratorio con la historia más amplia del
+trabajo. No se trata de afirmar que ambos
 entornos son idénticos, sino de mostrar si el comportamiento observado en el
 laboratorio conserva rasgos suficientemente parecidos a los que motivaron la
 plataforma sintética en Gazebo. Esa comparación es la que habilita a presentar
