@@ -455,17 +455,6 @@ Finalmente, se presentan las herramientas de marcadores ArUco, geometría
 proyectiva y \texttt{solvePnP} que permiten pasar de la imagen a una
 descripción métrica de la pose relativa.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{figures/diagrams/translations_rotations.png}
-\caption{Diagrama conceptual de los movimientos considerados en este trabajo
-para modelar la plataforma marina: heave (traslación vertical) y las
-inclinaciones roll y pitch. Este esquema se utiliza para fijar la interpretación
-física de las roto-traslaciones que luego medimos y analizamos a lo largo del
-informe.}
-\label{fig:theory_motion_components}
-\end{figure}
-
 \subsection{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
 
 El framework no se apoya solamente en un modelo físico o en un detector visual,
@@ -836,14 +825,30 @@ partir de ese patrón.
 Una vez definido el movimiento que queremos emular, aparece la pregunta central
 de la plataforma experimental: \emph{¿cómo convertir ese movimiento deseado en
 una postura físicamente consistente del robot?} La respuesta se apoya en la
-cinemática y en la dinámica de un cuadrúpedo en contacto con el suelo. Intuiti-
-vamente, el Go2 puede pensarse como un torso rígido sostenido por cuatro patas
+cinemática y en la dinámica de un cuadrúpedo en contacto con el suelo. Intuitivamente, el Go2 puede pensarse como un torso rígido sostenido por cuatro patas
 articuladas. Si las patas cambian su configuración mientras los apoyos se
 mantienen, el torso puede inclinarse o subir y bajar sin necesidad de
 desplazarse horizontalmente. Esa es, precisamente, la propiedad que explotamos
 en este problema: no se usa al cuadrúpedo como vehículo de locomoción, sino como una
 estructura reconfigurable capaz de materializar un movimiento postural
 controlado.
+
+En este contexto, la Figura~\ref{fig:theory_motion_components} muestra cómo se
+interpretan sobre el propio Go2 las tres componentes retenidas por el
+framework. El eje vertical del torso fija la lectura de \emph{heave}, mientras
+que las inclinaciones alrededor de los ejes corporales permiten distinguir
+\emph{roll} y \emph{pitch} en la plataforma sintética.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/diagrams/translations_rotations.png}
+\caption{Convención corporal adoptada para el Go2 como plataforma marina
+sintética. El torso del robot sintetiza \emph{heave} como traslación vertical y
+\emph{roll}/\emph{pitch} como inclinaciones respecto de sus ejes corporales.
+Esta es la lectura específica del cuadrúpedo que después implementa la
+consigna postural del sistema.}
+\label{fig:theory_motion_components}
+\end{figure}
 
 Desde el punto de vista del modelado, un cuadrúpedo es un sistema multicuerpo
 con base flotante y restricciones de contacto. Si \(q\) reúne la pose del torso
@@ -1004,43 +1009,60 @@ muslo y rodilla. Ese puente entre espacio cartesiano y espacio articular es lo
 que vuelve realizable una consigna postural del torso como la que adopta el
 framework.
 
-También conviene distinguir dos marcos de referencia que reaparecen a lo largo
-del pipeline. El frame \texttt{base\_link} está asociado al torso y es el que
-transporta efectivamente el marcador. El frame \texttt{base\_footprint}, en
-cambio, resume la referencia del robot sobre el plano de apoyo y puede pensarse
-como la ``sombra'' del robot sobre el suelo. Esta distinción es útil porque la
-percepción visual se vincula directamente con la pose del torso, mientras que
-parte de la reconstrucción del ground truth y de la odometría se organiza
-respecto de un frame desacoplado del balanceo instantáneo del cuerpo.
-\texttt{base\_link} inclina y sube con el oleaje sintético;
-\texttt{base\_footprint} preserva una referencia más ligada al apoyo plano del
-robot.
+También conviene distinguir los marcos de referencia que reaparecen a lo largo
+de todo el pipeline. El frame \texttt{world} \(\{w\}\) funciona como
+referencia global de Gazebo. El frame \texttt{base\_footprint} \(\{bf\}\)
+resume la referencia del robot sobre el plano de apoyo y puede pensarse como la
+``sombra'' del cuadrúpedo sobre el suelo. El frame \texttt{base\_link}
+\(\{bl\}\), en cambio, está asociado al torso y es el que transporta
+efectivamente el marcador. Sobre esa base se define el frame del ArUco
+\(\{a\}\), rígidamente unido a la tabla montada sobre el lomo, mientras que
+\(\{c\}\) denota el frame de la cámara desde el que se observa la escena.
+En la notación cinemática de las ecuaciones anteriores, este torso coincide con
+el frame cuerpo del robot; aquí adoptamos los nombres ROS porque son los que
+reaparecen después en TF y en el postproceso. Esta organización se resume en la
+Figura~\ref{fig:theory_frames_overview}.
 
-\figureplaceholder{fig:theory_frames_overview}{Diagrama de marcos de referencia
-pendiente (\texttt{world}, \texttt{base\_footprint}, \texttt{base\_link},
-marcador ArUco y cámara). Esta figura se incluirá por separado para mostrar
-las transformaciones entre frames sin sobrecargar el diagrama de movimientos.}
-{Esquema pendiente de marcos y transformaciones geométricas del sistema.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/diagrams/ternas.png}
+\caption{Marcos de referencia empleados en el framework. Se muestran el frame
+global \texttt{world} \(\{w\}\), la referencia plana del robot
+\texttt{base\_footprint} \(\{bf\}\), el torso \texttt{base\_link}
+\(\{bl\}\), el frame del marcador ArUco \(\{a\}\) y el frame de la cámara
+\(\{c\}\). Esta cadena geométrica es la base de la comparación entre pose
+estimada y ground truth.}
+\label{fig:theory_frames_overview}
+\end{figure}
+
+La distinción entre \texttt{base\_footprint} y \texttt{base\_link} es
+especialmente útil porque parte de la reconstrucción del ground truth y de la
+odometría se organiza respecto de una referencia desacoplada del balanceo
+instantáneo del cuerpo. \texttt{base\_link} inclina y sube con el oleaje
+sintético; \texttt{base\_footprint} preserva una referencia más ligada al plano
+de apoyo. El frame del ArUco, a su vez, introduce el offset rígido del montaje,
+y el frame de cámara permite expresar en un mismo sistema la observación visual
+y la referencia reconstruida.
 
 La misma lógica de marcos organiza la comparación entre estimación y ground
-truth. Si \(\{c\}\) es el frame de la cámara, \(\{w\}\) el frame del mundo,
-\(\{b\}\) el frame del torso y \(\{m\}\) el frame del marcador, la pose
-observada del patrón puede escribirse como
+truth. Con esta notación, la pose observada del patrón puede escribirse como
 
 \begin{equation}
-{}^{c}\!T_m(t) =
-{}^{c}\!T_w(t)\,{}^{w}\!T_b(t)\,{}^{b}\!T_m.
+{}^{c}\!T_a(t) =
+{}^{c}\!T_w(t)\,{}^{w}\!T_{bf}(t)\,{}^{bf}\!T_{bl}(t)\,{}^{bl}\!T_a.
 \label{eq:camera_marker_chain}
 \end{equation}
 
 Esta expresión resume dos ideas que reaparecen a lo largo de todo el trabajo.
 Por un lado, la pose del marcador en cámara no depende sólo de la imagen, sino
-de una cadena de transformaciones físicas entre plataforma, marcador y sensor.
-Por otro lado, esa misma cadena permite reconstruir una referencia comparable
-contra la cual medir el estimador visual. Para una cámara fija,
-\({}^{c}\!T_w\) permanece constante; para una cámara montada sobre el dron, ese
-término también varía en el tiempo. En ambos casos, el problema de percepción
-se apoya en la misma organización geométrica.
+de una cadena de transformaciones físicas entre mundo, robot, marcador y
+sensor. Por otro lado, esa misma cadena permite reconstruir una referencia
+comparable contra la cual medir el estimador visual: \({}^{w}\!T_{bf}\) fija la
+pose global del robot, \({}^{bf}\!T_{bl}\) concentra la postura efectiva del
+torso y \({}^{bl}\!T_a\) representa el montaje rígido del marcador. Para una
+cámara fija, \({}^{c}\!T_w\) permanece constante; para una cámara montada sobre
+el dron, ese término también varía en el tiempo. En ambos casos, el problema
+de percepción se apoya en la misma organización geométrica.
 
 \subsection{Marcadores fiduciales y estimación de pose}
 
@@ -1642,7 +1664,11 @@ estado listadas en la Tabla~\ref{tab:ros_interfaces_sim}; luego se suma el
 offset fijo del marcador sobre el cuerpo del robot y se transforma esa pose al
 frame de la cámara mediante las extrínsecas definidas en cada setup. En el caso
 del dron, además, entra la pose del propio vehículo como parte de la cadena de
-transformaciones.
+transformaciones. En otras palabras, el postproceso recompone la cadena
+geométrica de la Ecuación~\ref{eq:camera_marker_chain} y de la
+Figura~\ref{fig:theory_frames_overview}: a partir de la pose global del robot,
+su postura efectiva y el montaje rígido del marcador, se obtiene una referencia
+en frame cámara directamente comparable con la salida de \texttt{solvePnP}.
 
 Esta separación entre estimación online y análisis offline resultó importante
 por dos motivos. En primer lugar, evita contaminar la medición del desempeño
