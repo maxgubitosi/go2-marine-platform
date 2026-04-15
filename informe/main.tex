@@ -267,12 +267,27 @@ Go2 como plataforma marina sintética. En vez de modelar una embarcación
 completa en el simulador, aprovechamos la capacidad del robot para modificar la
 postura de su torso y reproducir sobre él tres componentes del movimiento que
 resultan especialmente relevantes para el problema de percepción: roll, pitch y
-heave (Figura~\ref{fig:roll_pitch_heave}). Sobre ese torso montamos una tabla
-con un marcador ArUco, que pasa a funcionar como referencia visual de la
-plataforma. Esta decisión metodológica nos permite trabajar con un sistema
-cinemáticamente consistente, instrumentado dentro de un workspace ROS2 y
-observable desde cámaras simuladas o, más adelante, desde un setup físico en
-laboratorio.
+heave. Sin embargo, la elección del robot no responde solamente a una
+simplificación del modelado. También obedece a una decisión experimental: el
+Go2 nos permite mantener continuidad entre la plataforma simulada y la
+plataforma física, ya que disponemos del hardware real y podemos trasladar al
+laboratorio la misma lógica general de movimiento, instrumentación y
+observación visual. De este modo, la tesis no queda limitada a un escenario
+puramente virtual, sino que se organiza como una secuencia en la que la
+simulación constituye la primera etapa de validación y el laboratorio funciona
+como su prolongación natural en un entorno físico controlado.
+
+Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a funcionar
+como referencia visual de la plataforma. Esta decisión metodológica nos permite
+trabajar con un sistema cinemáticamente consistente, instrumentado dentro de un
+workspace ROS2 y observable desde cámaras simuladas o, más adelante, desde un
+setup físico en laboratorio. Además, deja planteado un camino claro para etapas
+posteriores del proyecto: una vez validada la cadena simulación--laboratorio,
+el siguiente paso natural sería estudiar el aterrizaje del dron sobre el lomo
+del cuadrúpedo, es decir, sobre la misma plataforma cuyo movimiento primero se
+sintetiza y luego se reproduce físicamente. Ese objetivo final no forma parte
+del alcance efectivo de esta tesis, pero sí orienta la elección de la
+plataforma experimental desde el comienzo.
 
 \begin{figure}[H]
 \centering
