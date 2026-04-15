@@ -1027,8 +1027,10 @@ resume la referencia del robot sobre el plano de apoyo y puede pensarse como la
 ``sombra'' del cuadrúpedo sobre el suelo. El frame \texttt{base\_link}
 \(\{bl\}\), en cambio, está asociado al torso y es el que transporta
 efectivamente el marcador. Sobre esa base se define el frame del ArUco
-\(\{a\}\), rígidamente unido a la tabla montada sobre el lomo, mientras que
-\(\{c\}\) denota el frame de la cámara desde el que se observa la escena.
+\(\{a\}\), rígidamente unido a la tabla montada sobre el lomo. Para la cámara,
+en cambio, conviene distinguir una cadena propia de frames; sin embargo, la
+observación visual y la pose publicada por el detector quedan finalmente
+expresadas en el frame óptico \(\{c\}\).
 En la notación cinemática de las ecuaciones anteriores, este torso coincide con
 el frame cuerpo del robot; aquí adoptamos los nombres ROS porque son los que
 reaparecen después en TF y en el postproceso. Esta organización se resume en la
@@ -1036,13 +1038,15 @@ Figura~\ref{fig:theory_frames_overview}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/diagrams/ternas.png}
+\includegraphics[width=0.9\textwidth]{figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf}
 \caption{Marcos de referencia empleados en el framework. Se muestran el frame
 global \texttt{world} \(\{w\}\), la referencia plana del robot
 \texttt{base\_footprint} \(\{bf\}\), el torso \texttt{base\_link}
-\(\{bl\}\), el frame del marcador ArUco \(\{a\}\) y el frame de la cámara
-\(\{c\}\). Esta cadena geométrica es la base de la comparación entre pose
-estimada y ground truth.}
+\(\{bl\}\), el frame del marcador ArUco \(\{a\}\) y la cadena de la cámara
+hasta \texttt{camera\_link\_optical} \(\{c\}\). La salida publicada en
+\texttt{/aruco/pose} queda expresada en ese frame óptico, de modo que esta
+cadena geométrica es la base de la comparación entre pose estimada y ground
+truth.}
 \label{fig:theory_frames_overview}
 \end{figure}
 
@@ -1601,6 +1605,25 @@ visualmente ambos casos.
 se observa la plataforma instrumentada con el marcador; a la derecha, el caso
 con cámara aérea, donde la percepción depende además de la pose del dron.}
 \label{fig:method_visual_setup}
+\end{figure}
+
+La Figura~\ref{fig:method_frames_scene} complementa esa vista con una
+superposición de ternas sobre la propia escena simulada. Así, los marcos
+discutidos en la Sección~\ref{mt} dejan de aparecer como una cadena abstracta y
+pueden leerse directamente sobre la relación espacial entre el dron, el Go2 y
+el marcador.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{figures/diagrams/ternas.png}
+\caption{Vista esquemática del montaje con cámara aérea y superposición de las
+ternas principales del pipeline geométrico. Se muestran el frame global
+\texttt{world}, la referencia \texttt{base\_footprint}, el torso
+\texttt{base\_link}, el frame del marcador ArUco y el frame de la cámara
+embarcada en el dron. Esta imagen permite ubicar sobre la escena concreta las
+referencias que después intervienen en la estimación visual y en la
+reconstrucción del ground truth.}
+\label{fig:method_frames_scene}
 \end{figure}
 
 En ambos casos la estimación visual se resolvió con un nodo
