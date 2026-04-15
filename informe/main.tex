@@ -211,9 +211,32 @@ inmediata el problema completo del aterrizaje, adoptamos una estrategia
 incremental: primero modelar y reproducir el movimiento de la plataforma, luego
 estimar su pose relativa desde distintas fuentes de imagen y, finalmente,
 estudiar hasta qué punto esa lógica de movimiento conserva sentido al
-trasladarse al robot real. Esta decisión responde a un criterio metodológico:
-entendemos que una validación seria del problema final requiere primero una
-base experimental controlada, trazable y repetible.
+trasladarse al robot real. Esta decisión responde a un criterio metodológico,
+pero también a una convicción sobre cómo conviene construir conocimiento útil
+en un problema de este tipo: antes de exigir autonomía completa, resulta más
+valioso aislar los componentes críticos, entender sus límites y disponer de
+herramientas para evaluarlos con precisión.
+
+Desde esta perspectiva, el aporte de la tesis no radica solamente en proponer
+una simplificación conveniente del escenario marítimo, sino en establecer una
+base experimental sobre la cual puedan apoyarse desarrollos posteriores. Al
+representar de manera controlada las perturbaciones que más afectan la
+percepción visual, integrar una cadena de estimación de pose en tiempo real y
+compararla luego contra referencias del simulador, construimos un entorno donde
+las decisiones técnicas dejan de evaluarse de forma intuitiva y pasan a poder
+analizarse con trazabilidad. Esto vuelve posible estudiar fallas, comparar
+configuraciones, justificar cambios de diseño y acumular evidencia antes de
+dar el salto hacia ensayos más complejos.
+
+En otras palabras, el enfoque progresivo no posterga el problema central, sino
+que lo vuelve abordable. En vez de enfrentar desde el inicio toda la
+complejidad del aterrizaje autónomo sobre plataformas marinas, la tesis propone
+una secuencia de validación que reduce riesgo sin perder relevancia para la
+aplicación final. Esa es, precisamente, la fortaleza del trabajo: ofrecer un
+framework que no solo reproduce un escenario desafiante, sino que organiza de
+manera medible y repetible el camino hacia experimentos futuros sobre hardware
+real y, eventualmente, hacia sistemas de aterrizaje con mayor grado de
+autonomía.
 
 \section{Introducción} \label{intro}
 
