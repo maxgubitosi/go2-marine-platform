@@ -1,0 +1,108 @@
+\documentclass[12pt,a4paper]{article}
+
+% --- Paquetes de Idioma y Codificación ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[T1]{fontenc}
+
+% --- Formato de Página y Márgenes ---
+\usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm,marginparwidth=1.75cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing % Interlineado 1.5
+
+% --- Paquetes para Ciencia y Gráficos ---
+\usepackage{amsmath, amsfonts, amssymb} % Matemáticas
+\usepackage{graphicx} % Imágenes
+\usepackage{booktabs} % Tablas profesionales
+\usepackage{hyperref} % Enlaces y marcadores
+
+% --- Configuración de Bibliografía ---
+% \usepackage[backend=biber,style=apa]{biblatex}
+\usepackage[backend=biber,style=ieee]{biblatex}
+\addbibresource{bibliografia.bib} % Archivo de referencias
+
+% ======================================================
+% COMIENZO DEL DOCUMENTO
+% ======================================================
+
+\begin{document}
+
+% --- PORTADA ---
+\begin{titlepage}
+
+	\begin{figure}
+	\centering
+	%descargar imagen desde https://images.udesa.edu.ar/sites/default/files/2023-04/logo_azul_vert_hipng.png
+	\includegraphics[width=0.45\linewidth]{logo_azul_vert_hipng.png}
+	\end{figure}
+
+    \centering
+    {\bfseries \Large Universidad de San Andrés \par}
+    \vspace{5mm}
+    {\Large Departamento Ingeniería \par}
+    \vspace{5mm}
+    {\Large Ingeniería en Inteligencia Artificial \par}
+	\vspace{10mm}
+
+    {\LARGE Proyecto Final  \par}
+	\vspace{10mm}
+
+    % Comentar si es la presentación definitiva
+    {\Large Versión Preliminar  \par}
+    \vspace{20mm}    
+
+    % Modificar con los datos del PF
+    {\bfseries\LARGE Título del Trabajo Final \par}
+    \vfill
+
+    % Si el PF es individual descomentar
+    % {\Large \textbf{Autor:} Nombre y Apellido \par}
+    % \vspace{5mm}
+    % {\Large \textbf{Legajo:} XXXXXXXXX \par}
+    % \vspace{5mm}
+
+    % Si el PF es grupal descomentar
+    {\Large \textbf{Autores y Legajos:} \\ Nombre y Apellido - Legajo \\ Nombre y Apellido - Legajo \par}
+    \vspace{5mm}
+
+    {\Large \textbf{Mentor:} Nombre y Apellido \par}
+    % Descomentar si hay comentor
+    % \vspace{5mm}
+    % {\Large \textbf{Comentor:} Nombre y Apellido \par}
+
+    \vspace{15mm}    
+    {\large Victoria, Buenos Aires\par}
+    \vspace{5mm}
+    {\large  Mes año (Ej: Mayo 2026) \par}
+\end{titlepage}
+
+% --- ÍNDICE ---
+\newpage
+\tableofcontents
+\newpage
+
+% --- CONTENIDO ---
+
+\section*{Resumen / Abstract}
+\addcontentsline{toc}{section}{Resumen / Abstract}
+Breve descripción (200-500 palabras) del problema, la propuesta y lo que se espera lograr.
+
+\section{Motivación / Introducción}
+Explicación del porqué de la investigación. ¿Cuál es el problema real o la brecha de conocimiento que justifica este trabajo? ¿Por qué es relevante en el contexto actual?
+
+\section{Marco Teórico}
+Revisión bibliográfica de las investigaciones previas. Se deben citar los trabajos clave utilizando el comando \texttt{\textbackslash cite\{key\}}, si se quiere nombrar a los autores se puede usar \texttt{\textbackslash textcite\{key\}}. Veamos un ejemplo a continuación.
+
+Uno de los hitos más significativos en el área del aprendizaje profundo ha sido la introducción de las redes residuales. Según plantean \textcite{he2016deep}, la implementación de conexiones de identidad permite el entrenamiento de arquitecturas extremadamente profundas, mitigando el problema del desvanecimiento del gradiente. Este enfoque no solo optimizó la precisión en tareas de clasificación, sino que redefinió el estado del arte en la visión por computadora moderna \cite{he2016deep}.
+
+\section{Metodología}
+
+
+\section{Resultados}
+
+
+% --- BIBLIOGRAFIA ---
+\section{Bibliografía}
+\printbibliography[heading=none]
+
+\end{document} 

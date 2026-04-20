@@ -1,8 +1,10 @@
-\documentclass[12pt]{article}
-\usepackage{palatino}
-\usepackage[round]{natbib}
-\usepackage{chapterbib}
-\usepackage[margin=1.0in]{geometry}
+\documentclass[12pt,a4paper]{article}
+\usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm,marginparwidth=1.75cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[nodisplayskipstretch]{setspace}
+\onehalfspacing
 \usepackage{multicol}
 \usepackage{adjustbox}
 \usepackage{tikz}
@@ -35,11 +37,8 @@
 % \usepackage{subfig}
 \usepackage{pdfpages}
 \usepackage{pdflscape}
-\usepackage[nodisplayskipstretch]{setspace}
 \usepackage{etoolbox}
 \AtBeginEnvironment{quote}{\singlespacing\small}
-\setstretch{1.5}
-\singlespacing
 \newcommand\fnote[1]{\captionsetup{font=footnotesize}\caption*{#1}}
 \sloppy
 \usepackage{comment}
@@ -47,14 +46,12 @@
 \usepackage{verbatim}
 \usepackage{endnotes}
 \usepackage{upgreek}
-\usepackage[T1]{fontenc}
-\usepackage{etoolbox}
 \usepackage{arydshln}
 \usepackage{soul}
 \usepackage{xcolor}
 \usepackage{fontspec}
-\usepackage[main=spanish,bidi=default]{babel}
-\usepackage{natbib}
+\usepackage[backend=biber,style=ieee,natbib=true]{biblatex}
+\addbibresource{bibliography.bib}
 % Evita el aviso de todonotes (margen para notas al margen / \todo).
 \setlength{\marginparwidth}{2cm}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -88,40 +85,37 @@
 
 \begin{document}
 
-\bibliographystyle{plainnat}
-
-\title{\textbf{Framework de simulación marina para un robot cuadrúpedo Unitree Go2 }
-% \thanks{The author thanks Federico Sturzenegger for his generous guidance and mentorship.}
-}
-\author{Máximo Gubitosi, Jack Spolski}
-\date{Abril, 2026}
-
 \begin{titlepage}
-\makeatletter
-% Tras \includegraphics hace falta \par; si no, el autor queda a la derecha de la imagen.
-\begin{center}
-\vspace*{1.5cm}
-{\LARGE\@title\par}
-\vspace{2cm}
-\includegraphics[width=0.48\textwidth]{figures/setup/logoudesa.jpg}
-\par
-\vspace{2cm}
-{\large\@author\par}
-\vspace{0.9em}
-{\large\@date\par}
-\end{center}
-\makeatother
-\begin{abstract}
+    \begin{figure}
+    \centering
+    \includegraphics[width=0.42\linewidth]{figures/setup/logoudesa.jpg}
+    \end{figure}
 
+    \centering
+    {\bfseries \Large Universidad de San Andrés \par}
+    \vspace{5mm}
+    {\Large Departamento Ingeniería \par}
+    \vspace{5mm}
+    {\Large Ingeniería en Inteligencia Artificial \par}
+    \vspace{10mm}
 
-\bigskip
+    {\LARGE Proyecto Final \par}
+    \vspace{10mm}
 
-% Word count: 1965
+    {\Large Versión Preliminar \par}
+    \vspace{20mm}
 
+    {\bfseries\LARGE Framework de simulación marina para un robot cuadrúpedo \par}
+    \vfill
 
-\end{abstract}
-\setcounter{page}{0}
-\thispagestyle{empty}
+    {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par}
+    \vspace{5mm}
+
+    {\Large \textbf{Mentores:} Juan Ignacio Giribet, Gastón Castro \par}
+    \vspace{15mm}
+    {\large Victoria, Buenos Aires\par}
+    \vspace{5mm}
+    {\large Abril 2026 \par}
 \end{titlepage}
 \clearpage
 
@@ -129,7 +123,10 @@
 \thispagestyle{empty}
 \clearpage
 
-\doublespacing
+\section*{Resumen / Abstract}
+\addcontentsline{toc}{section}{Resumen / Abstract}
+
+\analysisplaceholder{Insertar versión final del resumen (200--500 palabras).}
 
 
 
@@ -2492,6 +2489,7 @@ del publicador de imagen en el repositorio.
 %     \input{regressions/heterogeneity}
 % \end{landscape}
 
-\bibliography{bibliography}
+\section{Bibliografía}
+\printbibliography[heading=none]
 
 \end{document}
