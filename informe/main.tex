@@ -80,6 +80,16 @@
 \noindent\textbf{[BLOQUE DE ANÁLISIS]} #1
 \end{quote}
 }
+
+% Correcciones pendientes para la próxima pasada:
+% - Confirmar con Juan/Gastón la distinción mentor/comentor antes de modificar la portada.
+% - Figura de marcos TF2: si sigue viéndose chica en PDF, regenerar o recortar
+%   figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf desde el SVG para quitar margen interno.
+% - Figuras de laboratorio 29--32: ubicar el script/datos fuente y regenerar los PNG con ejes,
+%   ticks y leyendas más grandes. LaTeX no puede agrandar tipografías ya rasterizadas.
+% - Redactar Resumen/Abstract, Conclusiones y Trabajo futuro.
+% - Reemplazar o justificar los placeholders de figuras pendientes antes de la versión final.
+
 \setcounter{tocdepth}{2}
 \addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
 
@@ -99,7 +109,7 @@
     {\Large Ingeniería en Inteligencia Artificial \par}
     \vspace{10mm}
 
-    {\LARGE Proyecto Final \par}
+    {\LARGE Trabajo de grado \par}
     \vspace{10mm}
 
     {\Large Versión Preliminar \par}
@@ -196,19 +206,20 @@ validación experimental.
 
 \subsection{Conveniencia de un enfoque progresivo}
 
-Ese es el punto de partida de esta tesis. En lugar de abordar de manera
-inmediata el problema completo del aterrizaje, adoptamos una estrategia
-incremental: primero modelar y reproducir el movimiento de la plataforma, luego
-estimar su pose relativa desde distintas fuentes de imagen y, finalmente,
-estudiar hasta qué punto esa lógica de movimiento conserva sentido al
-trasladarse al robot real. Esta decisión responde a un criterio metodológico:
-antes de exigir autonomía completa, resulta más valioso aislar los componentes
-críticos, entender sus límites y disponer de herramientas para evaluarlos con
-precisión.
+La literatura sobre aterrizaje autónomo en plataformas móviles muestra que el
+problema suele abordarse como una cadena completa que combina percepción,
+estimación, seguimiento y control. Sin embargo, varios trabajos también dejan
+ver que la etapa de validación previa al ensayo real es decisiva, en especial
+cuando la plataforma está sometida a oscilaciones marinas
+\citep{SanchezLopez2014,Delbene2022,Cho2022,Keipour2022}. En ese contexto,
+adoptamos una estrategia incremental: primero modelar y reproducir el
+movimiento de la plataforma, luego estimar su pose relativa desde distintas
+fuentes de imagen y, finalmente, estudiar hasta qué punto esa lógica de
+movimiento conserva sentido al trasladarse al robot real.
 
-Desde esta perspectiva, el aporte de la tesis no radica solamente en proponer
-una simplificación conveniente del escenario marítimo, sino en establecer una
-base experimental sobre la cual puedan apoyarse desarrollos posteriores. Al
+Esta decisión responde a un criterio metodológico: antes de exigir autonomía
+completa, resulta más valioso aislar los componentes críticos, entender sus
+límites y disponer de herramientas para evaluarlos con precisión. Al
 representar de manera controlada las perturbaciones que más afectan la
 percepción visual, integrar una cadena de estimación de pose en tiempo real y
 compararla luego contra referencias del simulador, construimos un entorno donde
@@ -219,9 +230,9 @@ dar el salto hacia ensayos más complejos.
 
 En otras palabras, el enfoque progresivo no posterga el problema central, sino
 que lo vuelve abordable. En vez de enfrentar desde el inicio toda la
-complejidad del aterrizaje autónomo sobre plataformas marinas, la tesis propone
-una secuencia de validación que reduce riesgo sin perder relevancia para la
-aplicación final. Esa es, precisamente, la fortaleza del trabajo: ofrecer un
+complejidad del aterrizaje autónomo sobre plataformas marinas, este trabajo
+propone una secuencia de validación que reduce riesgo sin perder relevancia
+para la aplicación final. Esa es, precisamente, su fortaleza: ofrecer un
 framework que no solo reproduce un escenario desafiante, sino que organiza de
 manera medible y repetible el camino hacia experimentos futuros sobre hardware
 real y, eventualmente, hacia sistemas de aterrizaje con mayor grado de
@@ -231,23 +242,22 @@ autonomía.
 
 \subsection{Objetivo y alcance del trabajo}
 
-Nuestro trabajo se inscribe precisamente en esa necesidad. El objetivo general
-de la investigación es construir un framework que permita estudiar y, en etapas
-posteriores, probar aterrizaje de drones sobre plataformas marinas. Dentro de
-ese objetivo más amplio, en esta tesis nos concentramos en una capa previa pero
-indispensable: la construcción de una plataforma experimental para sintetizar
-movimiento marino, observarlo visualmente y contrastar el comportamiento
-obtenido en simulación con ensayos preliminares en laboratorio.
+El objetivo general de este trabajo es construir un framework que permita
+estudiar y, en etapas posteriores, probar aterrizaje de drones sobre
+plataformas marinas. Dentro de ese objetivo más amplio, nos concentramos en una
+capa previa pero indispensable: la construcción de una plataforma experimental
+para sintetizar movimiento marino, observarlo visualmente y contrastar el
+comportamiento obtenido en simulación con ensayos preliminares en laboratorio.
 
-También es importante explicitar el alcance del trabajo. La tesis no pretende
+También es importante explicitar el alcance del trabajo. Este trabajo no pretende
 resolver de extremo a extremo el aterrizaje automático de un dron sobre una
 plataforma marítima real. Tampoco busca modelar toda la dinámica de una
 embarcación ni agotar las alternativas de percepción visual disponibles. En
 cambio, se concentra en un conjunto acotado de decisiones que consideramos
 habilitantes para ese objetivo final: una representación simplificada pero útil
-del movimiento marino, una implementación reproducible sobre el Go2, un
-mecanismo de estimación visual de pose y un primer contraste entre la
-simulación y el laboratorio.
+del movimiento marino, una implementación reproducible sobre el robot cuadrúpedo
+Unitree Go2, un mecanismo de estimación visual de pose y un primer contraste
+entre la simulación y el laboratorio.
 
 Estas decisiones quedan organizadas alrededor de dos preguntas de validación. En
 simulación, nos preguntamos si el framework puede sintetizar movimiento marino,
@@ -259,20 +269,21 @@ ofrece Gazebo.
 
 \subsection{Plataforma experimental propuesta}
 
-La idea central del enfoque consiste en utilizar un robot cuadrúpedo Unitree
-Go2 como plataforma marina sintética. En vez de modelar una embarcación
-completa en el simulador, aprovechamos la capacidad del robot para modificar la
-postura de su torso y reproducir sobre él tres componentes del movimiento que
-resultan especialmente relevantes para el problema de percepción: roll, pitch y
-heave. Sin embargo, la elección del robot no responde solamente a una
-simplificación del modelado. También obedece a una decisión experimental: el
-Go2 nos permite mantener continuidad entre la plataforma simulada y la
-plataforma física, ya que disponemos del hardware real y podemos trasladar al
-laboratorio la misma lógica general de movimiento, instrumentación y
-observación visual. De este modo, la tesis no queda limitada a un escenario
-puramente virtual, sino que se organiza como una secuencia en la que la
-simulación constituye la primera etapa de validación y el laboratorio funciona
-como su prolongación natural en un entorno físico controlado.
+La idea central del enfoque consiste en utilizar el Unitree Go2, un robot
+cuadrúpedo comercial con torso actuado y control postural, como plataforma
+marina sintética. En vez de modelar una embarcación completa en el simulador,
+aprovechamos la capacidad del robot para modificar la postura de su torso y
+reproducir sobre él tres componentes del movimiento que resultan especialmente
+relevantes para el problema de percepción: roll, pitch y heave. Sin embargo, la
+elección del robot no responde solamente a una simplificación del modelado.
+También obedece a una decisión experimental: el Go2 nos permite mantener
+continuidad entre la plataforma simulada y la plataforma física, ya que
+disponemos del hardware real y podemos trasladar al laboratorio la misma lógica
+general de movimiento, instrumentación y observación visual. De este modo, este
+trabajo no queda limitado a un escenario puramente virtual, sino que se
+organiza como una secuencia en la que la simulación constituye la primera etapa
+de validación y el laboratorio funciona como su prolongación natural en un
+entorno físico controlado.
 
 Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a funcionar
 como referencia visual de la plataforma. Un ArUco es un marcador fiducial
@@ -288,7 +299,7 @@ simulación--laboratorio, el siguiente paso natural sería estudiar el
 aterrizaje del dron sobre el lomo del cuadrúpedo, es decir, sobre la misma
 plataforma cuyo movimiento primero se sintetiza y luego se reproduce
 físicamente. Ese objetivo final no forma parte del alcance efectivo de esta
-tesis, pero sí orienta la elección de la plataforma experimental desde el
+etapa, pero sí orienta la elección de la plataforma experimental desde el
 comienzo. La Figura~\ref{fig:intro_go2_aruco_drone_scheme} resume este montaje
 base: el Go2 como plataforma, el tablero con ArUco sobre el torso y un dron
 ubicado por encima como referencia del escenario de observación aérea.
@@ -304,10 +315,25 @@ como referencia del escenario de observación aérea.}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.45\linewidth]{figures/images/rollpitchheave.png}
-\caption{Convención de movimientos marinos usada en el trabajo. Se resaltan las
-componentes priorizadas en esta etapa (\textit{roll}, \textit{pitch} y
-\textit{heave}), junto con el resto de los grados de libertad para contexto.}
+\begin{tikzpicture}[x=1cm,y=1cm]
+\draw[fill=gray!10,draw=black!60,thick] (-2.2,-0.55) -- (1.9,-0.25) -- (2.25,0.55) -- (-1.85,0.25) -- cycle;
+\draw[fill=gray!18,draw=black!55] (-1.85,0.25) -- (2.25,0.55) -- (2.25,0.85) -- (-1.85,0.55) -- cycle;
+\draw[fill=gray!22,draw=black!50] (1.9,-0.25) -- (2.25,0.55) -- (2.25,0.85) -- (1.9,0.05) -- cycle;
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (0,1.9) node[above]{\small heave};
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (2.9,0.38) node[right]{\small surge};
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (-1.25,-1.35) node[below]{\small sway};
+\draw[-latex,orange!80!black,thick] (-2.65,-0.12) arc[start angle=180,end angle=310,radius=0.52];
+\node[orange!80!black] at (-3.05,-0.68) {\small roll};
+\draw[-latex,orange!80!black,thick] (2.6,0.05) arc[start angle=-15,end angle=105,radius=0.55];
+\node[orange!80!black] at (3.25,0.78) {\small pitch};
+\draw[-latex,orange!80!black,thick] (0.62,1.1) arc[start angle=35,end angle=325,radius=0.46];
+\node[orange!80!black] at (1.35,1.18) {\small yaw};
+\draw[blue!40!black,very thick] (-3.0,-1.05) sin (-2.3,-0.75) cos (-1.6,-1.05) sin (-0.9,-1.35) cos (-0.2,-1.05) sin (0.5,-0.75) cos (1.2,-1.05) sin (1.9,-1.35) cos (2.6,-1.05);
+\end{tikzpicture}
+\caption{Convención de movimientos marinos usada en el trabajo. Se muestran los
+seis grados de libertad de una plataforma; esta etapa prioriza
+\textit{roll}, \textit{pitch} y \textit{heave} por su efecto directo sobre la
+observación visual del marcador.}
 \label{fig:roll_pitch_heave}
 \end{figure}
 
@@ -347,7 +373,7 @@ la pose del vehículo aéreo.
 \centering
 \includegraphics[width=\linewidth]{figures/images/go2_aruco_lab.png}
 \end{minipage}
-\caption{Vista panorámica del recorrido metodológico de la tesis. A la izquierda,
+\caption{Vista panorámica del recorrido metodológico de este trabajo. A la izquierda,
 una vista representativa del entorno de simulación con el Go2 instrumentado con
 ArUco; a la derecha, el traslado al laboratorio con el Go2 real, marcador sobre
 el lomo y cámara mantenida en posición aproximadamente fija.}
@@ -364,7 +390,7 @@ el marcador montado sobre el robot y estima su pose relativa respecto del frame
 óptico de la cámara. Sin embargo, esa estimación online no agota el valor del
 framework. Una parte central del trabajo consiste en registrar cada corrida y
 comparar después la pose estimada con una referencia obtenida a partir del
-estado del simulador. De este modo, la tesis no se limita a producir una
+estado del simulador. De este modo, este trabajo no se limita a producir una
 detección visual funcional, sino que propone un entorno donde la calidad de esa
 estimación puede medirse de manera reproducible y con acceso a ground truth.
 
@@ -382,9 +408,9 @@ entre simulación y laboratorio convierte al framework en algo más que una
 herramienta de software: lo acerca a una metodología de validación para futuros
 ensayos sobre hardware.
 
-\subsection{Aportes y organización del informe}
+\subsection{Aportes y organización del trabajo}
 
-En este marco, el aporte de la tesis puede entenderse en cuatro planos. En
+En este marco, el aporte de este trabajo puede entenderse en cuatro planos. En
 primer lugar, desarrollamos un entorno de simulación que reutiliza un
 cuadrúpedo como soporte para emular movimiento marino relevante para percepción
 visual. En segundo lugar, integramos un pipeline de estimación de pose basado
@@ -398,19 +424,171 @@ aterrizaje autónomo, pero sí construyen una base experimental y metodológica
 para estudiar ese problema con menor riesgo y mayor trazabilidad.
 
 Las dos preguntas de validación recién formuladas también organizan el recorrido
-del informe. En la
-Sección~\ref{mt} presentamos el marco teórico y los conceptos necesarios para
-entender el ecosistema experimental basado en ROS2 y Gazebo, el modelado del
-movimiento marino, el uso postural del cuadrúpedo y la estimación visual con
-marcadores fiduciales. Luego describimos la metodología adoptada,
-distinguiendo la etapa de simulación de la etapa de laboratorio. Sobre esa
-base, presentamos la experimentación realizada y discutimos los hallazgos
-obtenidos en cada entorno. Finalmente, cerramos con las conclusiones del
-trabajo y con las líneas de trabajo futuro que permitirían extender este
+del documento. El Capítulo~\ref{sec:estado_arte} revisa antecedentes de
+aterrizaje sobre plataformas móviles, operación marina, marcadores fiduciales y
+validación en simulación. El Capítulo~\ref{mt} presenta el marco teórico y los
+conceptos necesarios para entender el ecosistema experimental basado en ROS2 y
+Gazebo, el modelado del movimiento marino, el uso postural del cuadrúpedo y la
+estimación visual con marcadores fiduciales. Luego describimos la metodología
+adoptada, distinguiendo la etapa de simulación de la etapa de laboratorio.
+Sobre esa base, presentamos la experimentación realizada y discutimos los
+hallazgos obtenidos en cada entorno. Finalmente, cerramos con las conclusiones
+del trabajo y con las líneas de trabajo futuro que permitirían extender este
 framework hacia ensayos más cercanos al aterrizaje autónomo sobre plataformas
 marinas.
 
 
+
+\section{Estado del arte} \label{sec:estado_arte}
+
+\subsection{Aterrizaje autónomo sobre plataformas móviles}
+
+El aterrizaje autónomo de vehículos aéreos no tripulados sobre plataformas
+móviles combina percepción, estimación de movimiento y control en la fase más
+riesgosa de una misión. En los primeros antecedentes modernos, el problema se
+formuló principalmente como seguimiento visual de un blanco móvil. Lee, Ryan y
+Kim propusieron un esquema de servo visual basado en imagen para que un VTOL
+siguiera y aterrizara sobre una plataforma en movimiento, generando comandos de
+velocidad a partir del error visual en la imagen \citep{Lee2012}. Ese enfoque
+instaló una idea que reaparece en buena parte de la literatura posterior: la
+cámara no sólo detecta el objetivo, sino que participa directamente en el lazo
+de control.
+
+Otros trabajos avanzaron sobre el diseño de blancos visuales y la estimación de
+pose relativa. Araar, Aouf y Vitanov estudiaron el aterrizaje de multirrotores
+sobre plataformas móviles mediante una landing pad diseñada para facilitar la
+estimación visual, combinando percepción e información inercial
+\citep{Araar2017}. Falanga y colaboradores, por su parte, mostraron un sistema
+capaz de aterrizar sobre una plataforma móvil usando sensado y cómputo a bordo,
+con detección y estimación del movimiento de la plataforma integradas en una
+arquitectura autónoma \citep{Falanga2017}. En conjunto, estos antecedentes
+muestran que el problema no se reduce al último instante de contacto: requiere
+localizar la plataforma, seguirla, mantenerla dentro del campo visual y
+coordinar la maniobra de aproximación.
+
+La línea más reciente mantiene esa estructura, pero presta mayor atención a la
+reproducibilidad y a la validación progresiva. Keipour y colaboradores
+propusieron un controlador de servo visual para aterrizar sobre un vehículo en
+movimiento usando cámara monocular, un sensor de distancia y cómputo a bordo,
+con pruebas en simulación, interiores y exteriores \citep{Keipour2022}. Este
+tipo de trabajo es importante porque no presenta la simulación como un recurso
+menor, sino como una etapa explícita antes de los ensayos físicos. Aun así, en
+estos antecedentes el escenario móvil suele ser terrestre o genérico; la
+dinámica marina aparece sólo de forma indirecta, si aparece.
+
+\subsection{Operación marina y cubiertas oscilantes}
+
+Cuando la plataforma objetivo se ubica en un entorno marítimo, el problema
+cambia cualitativamente. Ya no alcanza con seguir una traslación horizontal: la
+cubierta puede oscilar, inclinarse y modificar su apariencia de manera continua
+por efecto del oleaje. Sánchez-López y colaboradores abordaron explícitamente
+el aterrizaje visual sobre una cubierta de barco y emularon la dinámica de la
+cubierta mediante una plataforma física de seis grados de libertad,
+considerando distintos estados de mar y tipos de buque
+\citep{SanchezLopez2014}. Ese antecedente es central porque muestra una forma
+temprana de validación sustitutiva: antes de operar sobre una embarcación real,
+la cubierta se reproduce en un banco experimental controlado.
+
+En trabajos más recientes, Delbene, Baglietto y Simetti propusieron el
+aterrizaje autónomo de un UAV sobre un catamarán en entorno marino mediante una
+arquitectura que combina visión, AprilTags, ultrasonido y una etapa
+software-in-the-loop alimentada con movimientos reales del vehículo de
+superficie \citep{Delbene2022}. Cho y colaboradores, en cambio, estudiaron el
+aterrizaje sobre una cubierta de barco sometida a movimiento y oscilación por
+oleaje, extendiendo el servo visual basado en imagen con estimación de
+velocidad del barco, compensación de forma visual y un procedimiento completo
+de aproximación y touchdown \citep{Cho2022}. Estos trabajos acercan el problema
+al mar real, donde roll, pitch y heave dejan de ser detalles de modelado y
+pasan a ser perturbaciones centrales para la percepción y el control.
+
+También existen soluciones que resuelven el aterrizaje preciso desde una
+filosofía distinta. Alarcón y colaboradores presentaron un sistema de
+aterrizaje GNSS-free sobre plataformas móviles que estima la posición relativa
+mediante los ángulos de un cable físico entre UAV y plataforma
+\citep{Alarcon2019}. Su valor para esta revisión está en el contraste:
+demuestra que la literatura sobre plataformas móviles no es homogénea y que
+algunas soluciones alcanzan alta precisión evitando por completo el problema de
+la percepción visual. Para un framework centrado en visión, esa diferencia
+ayuda a delimitar el alcance: interesa validar cuándo la pose puede recuperarse
+desde imagen, no sólo resolver el aterrizaje por cualquier medio disponible.
+
+\subsection{Estimación de pose con marcadores fiduciales}
+
+Una parte importante de los sistemas de aterrizaje visual se apoya en
+marcadores artificiales, porque introducen en la escena un patrón de geometría
+conocida que puede detectarse de manera robusta. La familia ArUco fue
+formalizada por Garrido-Jurado y colaboradores como un sistema de generación y
+detección de marcadores cuadrados confiables bajo oclusión
+\citep{GarridoJurado2014}. Posteriormente, Romero-Ramírez, Muñoz-Salinas y
+Medina-Carnicer propusieron mejoras orientadas a acelerar la detección de
+marcadores cuadrados, un aspecto relevante cuando la estimación debe operar en
+tiempo real \citep{RomeroRamirez2018}.
+
+La familia AprilTag cumple un rol análogo y aparece en varios trabajos de
+robótica móvil y aterrizaje. Olson presentó AprilTag como un sistema fiducial
+capaz de recuperar localización 6-DoF desde una imagen \citep{Olson2011};
+Wang y Olson mejoraron luego el detector para aumentar eficiencia y robustez,
+especialmente en condiciones donde el tamaño aparente del tag es reducido
+\citep{WangOlson2016}. La elección entre ArUco, AprilTag u otros patrones no es
+un detalle menor: afecta la distancia de detección, la sensibilidad a
+oclusiones, el costo computacional y la precisión de las esquinas que luego
+alimentan la estimación geométrica.
+
+La detección del marcador, sin embargo, no es lo mismo que la estimación de
+pose. Una vez detectadas las esquinas del patrón, la pose relativa se obtiene
+resolviendo un problema Perspective-\(n\)-Point con la calibración de cámara y
+el tamaño físico del marcador. La familia de métodos PnP, incluyendo EPnP
+\citep{Lepetit2009}, aporta el puente geométrico entre correspondencias 2D--3D
+y una transformación rígida cámara--objeto. Esta distinción es clave para
+ordenar el estado del arte: algunos antecedentes evalúan el éxito del
+aterrizaje completo, otros la detección del patrón, y otros la exactitud de la
+pose estimada. Esas métricas no son equivalentes.
+
+\subsection{Simulación, SIL y validación previa al ensayo real}
+
+La simulación ocupa un lugar creciente en la literatura porque permite
+desacoplar subproblemas, repetir condiciones y reducir el riesgo de ensayos
+tempranos. En el caso marino, Sánchez-López y colaboradores ya habían usado una
+plataforma física de seis grados de libertad para emular una cubierta antes de
+operar en el mar \citep{SanchezLopez2014}. Delbene y colaboradores adoptaron un
+enfoque software-in-the-loop con Gazebo y ROS2 para integrar percepción y
+control alrededor de un catamarán, reutilizando telemetría real para excitar el
+escenario simulado \citep{Delbene2022}. Keipour y colaboradores también
+expusieron simulación, ensayos interiores y ensayos exteriores como niveles de
+validación progresiva \citep{Keipour2022}.
+
+Desde el punto de vista de infraestructura, Nguyen y Nguyen muestran que la
+combinación de Gazebo, PX4 y software-in-the-loop es una base habitual para
+probar algoritmos visuales en UAVs antes de trasladarlos a hardware
+\citep{Nguyen2019}. La tendencia general es clara: los entornos simulados no se
+usan solamente para depurar código, sino para construir evidencia previa sobre
+percepción, control y condiciones de falla. La dificultad está en que muchos
+trabajos reportan métricas finales de aterrizaje o éxito de misión, pero no
+siempre aíslan la exactitud geométrica del estimador de pose frente a una
+referencia limpia y repetible.
+
+\subsection{Síntesis crítica y ubicación de este trabajo}
+
+El panorama revisado permite separar tres familias de aportes. Una primera
+familia resuelve el aterrizaje completo sobre plataformas móviles y evalúa el
+sistema por éxito de aproximación o touchdown
+\citep{Lee2012,Araar2017,Falanga2017,Keipour2022}. Una segunda familia se
+concentra en el caso marino y reconoce que la cubierta oscilante introduce
+perturbaciones específicas sobre la percepción y el control
+\citep{SanchezLopez2014,Delbene2022,Cho2022}. Una tercera familia aporta las
+herramientas de percepción marker-based y estimación PnP que permiten recuperar
+pose relativa desde imagen
+\citep{GarridoJurado2014,RomeroRamirez2018,Olson2011,WangOlson2016,Lepetit2009}.
+
+La intersección entre esas familias sigue siendo menos poblada: no abundan los
+marcos pensados específicamente para validar cuantitativamente un estimador de
+pose visual, basado en marcador fiducial, bajo movimientos marinos sintetizados
+y con comparación directa contra ground truth del simulador. Este trabajo se
+ubica en esa zona metodológica. No compite con los sistemas que ya cierran el
+lazo de aterrizaje completo; construye una etapa previa para estudiar si la
+pose visual de una plataforma oscilante puede estimarse, registrarse y
+compararse de manera reproducible antes de avanzar hacia ensayos de mayor
+riesgo.
 
 \section{Marco teórico} \label{mt}
 
@@ -488,7 +666,7 @@ La utilidad de esta organización es doble. Por un lado, permite construir el
 experimento como una cadena modular en la que cada parte puede inspeccionarse o
 reemplazarse sin reescribir todo el sistema. Por otro, vuelve explícito quién
 produce cada dato, quién lo consume y en qué punto del pipeline se genera una
-corrida determinada. Esa trazabilidad es especialmente importante en esta tesis,
+corrida determinada. Esa trazabilidad es especialmente importante en este trabajo,
 porque más adelante necesitamos comparar lo que publica el detector visual con
 lo que registra el simulador y con lo que queda almacenado para la evaluación
 \textit{offline}.
@@ -506,7 +684,7 @@ cámara o desde un frame global sin mezclar descripciones incompatibles.
 Gazebo Classic aporta la otra mitad del ecosistema: el entorno de simulación
 física y sensorial. Conceptualmente, Gazebo integra la evolución dinámica del
 mundo con la generación de sensores, el renderizado y la interfaz de
-visualización \citep{gazebo_classic_architecture}. Para esta tesis eso resulta
+visualización \citep{gazebo_classic_architecture}. Para este trabajo eso resulta
 especialmente valioso porque la postura del Go2, la imagen observada por la
 cámara y gran parte del ground truth provienen de un mismo estado subyacente
 del simulador. No trabajamos, entonces, con una animación separada de los
@@ -620,8 +798,8 @@ M \dot{\nu} + C(\nu)\nu + D(\nu)\nu + g(\eta) = \tau + \tau_w,
 donde \(M\) representa la inercia, \(C(\nu)\nu\) los términos de Coriolis,
 \(D(\nu)\nu\) el amortiguamiento hidrodinámico, \(g(\eta)\) las fuerzas
 restauradoras asociadas a gravedad y flotación, \(\tau\) posibles acciones de
-control y \(\tau_w\) la excitación inducida por el mar. El objetivo de la
-tesis no es resolver este modelo con fidelidad hidrodinámica completa, sino
+control y \(\tau_w\) la excitación inducida por el mar. El objetivo de este
+trabajo no es resolver este modelo con fidelidad hidrodinámica completa, sino
 usar esta formulación para entender qué parte del movimiento conviene retener
 cuando el interés principal es describir la oscilación local de una plataforma.
 
@@ -702,12 +880,12 @@ discreta de \emph{heave}, \emph{pitch} y \emph{roll}.}
 En esta lectura, \(L_p\) y \(B_p\) representan, respectivamente, una longitud
 característica en la dirección proa--popa y una manga efectiva en la dirección
 babor--estribor. Estas relaciones no reemplazan al modelo dinámico completo,
-pero hacen explícita una idea central para esta tesis: el movimiento de la
+pero hacen explícita una idea central para este trabajo: el movimiento de la
 plataforma no depende solamente de la amplitud de la ola, sino también de la
 posición y de la extensión espacial de la superficie que esa ola está
 excitando.
 
-Esa relación también justifica el recorte adoptado en esta tesis. En un
+Esa relación también justifica el recorte adoptado en este trabajo. En un
 escenario real, \emph{surge}, \emph{sway} y \emph{yaw} pueden ser relevantes;
 sin embargo, cuando el interés se centra en una plataforma que mantiene su
 posición horizontal de manera aproximada y lo que se busca es sintetizar la
@@ -1032,7 +1210,7 @@ Figura~\ref{fig:theory_frames_overview}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf}
+\includegraphics[width=\textwidth]{figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf}
 \caption{Marcos de referencia empleados en el framework. Se muestran el frame
 global \texttt{world} \(\{w\}\), la referencia plana del robot
 \texttt{base\_footprint} \(\{bf\}\), el torso \texttt{base\_link}
@@ -1268,7 +1446,7 @@ movimiento que el estimador visual tiene que reconstruir.
 
 \section{Metodología}
 
-En esta tesis organizamos la metodología en dos etapas complementarias. La
+En este trabajo organizamos la metodología en dos etapas complementarias. La
 primera corresponde a la simulación, donde construimos un entorno controlado y
 reproducible para modelar el movimiento de una plataforma marina, observarla
 con distintas fuentes de imagen y evaluar la estimación visual contra un ground
@@ -1285,7 +1463,7 @@ registrar todas las señales relevantes del sistema. En esta etapa el problema
 se organizó como un pipeline de cuatro pasos: generación del movimiento
 marino, materialización de ese movimiento en el Go2, observación visual del
 marcador y evaluación offline contra una referencia reconstruible. Sobre la
-base conceptual introducida en la Sección~\ref{mt}, aquí nos concentramos en
+base conceptual introducida en el Capítulo~\ref{mt}, aquí nos concentramos en
 cómo se implementó cada una de esas etapas y con qué configuración se ejecutó
 la campaña experimental.
 
@@ -1304,14 +1482,14 @@ hidrodinámica detallada. Operativamente, el nodo
 consigna postural del torso en el tópico correspondiente
 (Tabla~\ref{tab:ros_interfaces_sim}) y trata al robot como plataforma
 instrumentada para el marcador ArUco. La implementación se concentra, entonces,
-en la parte del problema que realmente interesa medir en esta tesis: cómo cambia
+en la parte del problema que realmente interesa medir en este trabajo: cómo cambia
 la apariencia del marcador cuando la plataforma se inclina y se desplaza
 verticalmente.
 
 El nodo opera con una frecuencia de publicación de \mbox{20 Hz} y toma como
 referencia el tiempo transcurrido desde su inicialización. La configuración de
-referencia del repositorio —la misma que adoptamos como base metodológica en
-este informe— queda resumida en la Tabla~\ref{tab:method_marine_params}, donde
+referencia del repositorio —la misma que adoptamos como base metodológica—
+queda resumida en la Tabla~\ref{tab:method_marine_params}, donde
 cada fila asocia un hiperparámetro con su valor y su función en la señal
 sintetizada. Se eligió ese conjunto porque es el que efectivamente se usa para
 correr la simulación completa del repositorio y, por tanto, el mejor documentado
@@ -1431,7 +1609,7 @@ mismo tiempo. Incluso en esta versión simple, el movimiento resultante no es
 una oscilación rígidamente sincronizada, sino una combinación periódica más
 interesante para observar cómo responde el estimador visual.
 
-Adoptamos el patrón sinusoidal como referencia del informe por tres razones.
+Adoptamos el patrón sinusoidal como referencia metodológica por tres razones.
 Primero, cada hiperparámetro tiene un efecto fácilmente interpretable sobre la
 señal. Segundo, la excitación es altamente repetible, lo que permite comparar
 rosbags distintos sin introducir ambigüedad sobre la entrada del sistema.
@@ -1456,7 +1634,7 @@ El nodo también ofrece un patrón \texttt{irregular}, construido como suma de
 varias componentes sinusoidales por eje. Ese modo se utilizó durante el
 desarrollo para exploración y depuración, porque rompe la periodicidad estricta
 del caso simple y expone al detector a perturbaciones menos regulares. Sin
-embargo, no lo tomamos como caso principal del informe porque no fue calibrado
+embargo, no lo tomamos como caso principal de la evaluación porque no fue calibrado
 como un modelo físico de mar y resultaba menos conveniente como base
 reproducible para comparar estimación y ground truth. Por esa razón, el patrón
 sinusoidal quedó como referencia metodológica del trabajo, mientras que el
@@ -1480,7 +1658,7 @@ los mismos límites de amplitud y frecuencia base. El modo sinusoidal concentra
 cada eje en una componente periódica simple; el modo irregular superpone
 varias sinusoides con distintas frecuencias relativas, generando trayectorias
 menos previsibles. La figura muestra la consigna \emph{objetivo} antes del
-filtro de suavizado. Se adoptó el patrón sinusoidal como referencia del informe
+filtro de suavizado. Se adoptó el patrón sinusoidal como referencia metodológica
 porque resulta más interpretable y reproducible para comparar estimación y
 ground truth.}
 \label{fig:method_wave_patterns}
@@ -1575,7 +1753,7 @@ consistente con el resto del pipeline.
 
 \subsubsection{Estimación visual en simulación}
 
-Como se discutió en la Sección~\ref{mt}, el framework contempla dos fuentes de
+Como se discutió en el Capítulo~\ref{mt}, el framework contempla dos fuentes de
 imagen complementarias. Operativamente, la primera es una cámara fija nadir,
 ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
 bottom del \texttt{sjtu\_drone}, que despega automáticamente y luego mantiene un
@@ -1603,7 +1781,7 @@ con cámara aérea, donde la percepción depende además de la pose del dron.}
 
 La Figura~\ref{fig:method_frames_scene} complementa esa vista con una
 superposición de ternas sobre la propia escena simulada. Así, los marcos
-discutidos en la Sección~\ref{mt} dejan de aparecer como una cadena abstracta y
+discutidos en el Capítulo~\ref{mt} dejan de aparecer como una cadena abstracta y
 pueden leerse directamente sobre la relación espacial entre el dron, el Go2 y
 el marcador.
 
@@ -1703,8 +1881,8 @@ por dos motivos. En primer lugar, evita contaminar la medición del desempeño
 con información del simulador que no estaría disponible en una aplicación real.
 En segundo lugar, permite revisar una misma secuencia con distintos criterios de
 análisis sin modificar el detector ni repetir la simulación. Sobre esa base se
-generan los CSV y los gráficos de error que luego alimentan la sección
-experimental del informe.
+generan los CSV y los gráficos de error que luego alimentan el capítulo
+experimental.
 
 Con este pipeline ya estabilizado, la campaña final de simulación del capítulo
 se organizó como un conjunto de corridas comparables bajo un único perfil
@@ -1718,7 +1896,7 @@ metodológico, fue qué tan bien sigue el pipeline visual el movimiento sintéti
 cuando el sensor permanece fijo. La segunda, ya más cercana al objetivo final
 del framework, fue cuánto se degrada esa estimación cuando la observación pasa a
 depender también de una cámara aérea embarcada en el dron. Esta estructura de
-campaña se retoma en la sección experimental y explica por qué la comparación
+campaña se retoma en el capítulo experimental y explica por qué la comparación
 principal del capítulo no se plantea como una única corrida ejemplar, sino como
 un baseline más tres repeticiones comparables del caso fuerte.
 
@@ -1968,7 +2146,7 @@ observación pasa a depender también de la pose de un vehículo aéreo.
 
 \begin{table}[H]
 \centering
-\caption{Corridas seleccionadas para estructurar la sección experimental en
+\caption{Corridas seleccionadas para estructurar el capítulo experimental en
 simulación. La campaña final instala un baseline con cámara fija y luego
 profundiza el escenario con dron mediante tres repeticiones comparables.}
 \label{tab:sim_selected_runs}
@@ -2077,7 +2255,7 @@ los tres ejes y sigue de forma particularmente clara la componente de heave. El
 baseline concentra 275 muestras útiles sobre una corrida de 57,5 s, con una
 tasa de detección de 4,78 Hz, de modo que la evidencia visual queda sostenida
 por una cantidad de observaciones claramente mayor que en las campañas usadas
-en versiones anteriores del informe.
+en campañas preliminares.
 
 Desde el punto de vista del error, el baseline queda acotado en torno a
 \(\mu\|\Delta pos\| = 0{,}0578\) m y \(P95 = 0{,}0853\) m. La componente de
@@ -2103,7 +2281,7 @@ identificar limitaciones del pipeline antes de agregar la dinámica del dron.
 \subsubsection{Caso fuerte: cámara embarcada en el dron}
 
 El escenario con \texttt{sjtu\_drone} concentra el principal interés de la
-sección, porque introduce una geometría de observación más cercana al problema
+capítulo, porque introduce una geometría de observación más cercana al problema
 que motiva el framework. Aunque en estas corridas el dron no ejecuta todavía un
 aterrizaje, su cámara inferior observa una plataforma que oscila y obliga a
 analizar la estimación visual en una condición menos ideal que la del caso
@@ -2273,9 +2451,9 @@ metodología: marcador ArUco adherido al lomo del Go2, cámara estéreo utilizad
 en modo monocular, calibración previa del sensor y posición aproximadamente fija
 por encima del robot. En paralelo, el sistema visual quedó preparado para
 grabar imagen y calibración del estéreo, además de las salidas del detector ArUco
-(Tablas~\ref{tab:ros_interfaces_sim} y \ref{tab:ros_interfaces_lab}). Sin embargo, la evidencia cuantitativa versionada
-que hoy sostiene mejor el informe se concentra en la reproducción del movimiento
-y en la respuesta del robot, no todavía en un cierre estadístico completo de la
+(Tablas~\ref{tab:ros_interfaces_sim} y \ref{tab:ros_interfaces_lab}). Sin embargo, la evidencia cuantitativa
+versionada disponible se concentra en la reproducción del movimiento y en la
+respuesta del robot, no todavía en un cierre estadístico completo de la
 pose visual real. El montaje puede verse en la Figura~\ref{fig:method_lab_setup}.
 
 \subsubsection{Fidelidad del camino de comando}
@@ -2450,8 +2628,8 @@ móviles.
 \section{Identificadores de registros y archivos de datos}
 \label{sec:appendix_data}
 
-Esta sección concentra \textbf{nombres de archivo} y \textbf{rutas relativas al
-repositorio} citados en el informe. El cuerpo del texto prioriza campañas,
+Este apéndice concentra \textbf{nombres de archivo} y \textbf{rutas relativas al
+repositorio} citados en el documento. El cuerpo del texto prioriza campañas,
 fechas y etiquetas (\(R1\)--\(R3\), baseline); aquí se deja la correspondencia
 explícita para reproducibilidad.
 
