@@ -92,6 +92,8 @@
 
 \setcounter{tocdepth}{2}
 \addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
+\let\sectionwithoutpagebreak\section
+\renewcommand{\section}{\clearpage\sectionwithoutpagebreak}
 
 \begin{document}
 
@@ -322,13 +324,13 @@ como referencia del escenario de observación aérea.}
 \draw[-latex,blue!70!black,thick] (0,0.15) -- (0,1.9) node[above]{\small heave};
 \draw[-latex,blue!70!black,thick] (0,0.15) -- (2.9,0.38) node[right]{\small surge};
 \draw[-latex,blue!70!black,thick] (0,0.15) -- (-1.25,-1.35) node[below]{\small sway};
-\draw[-latex,orange!80!black,thick] (-2.65,-0.12) arc[start angle=180,end angle=310,radius=0.52];
-\node[orange!80!black] at (-3.05,-0.68) {\small roll};
+\draw[-latex,orange!80!black,thick] (-0.95,-1.32) arc[start angle=240,end angle=40,radius=0.54];
+\node[orange!80!black] at (-2.25,-0.94) {\small pitch};
 \draw[-latex,orange!80!black,thick] (2.6,0.05) arc[start angle=-15,end angle=105,radius=0.55];
-\node[orange!80!black] at (3.25,0.78) {\small pitch};
+\node[orange!80!black] at (3.25,0.78) {\small roll};
 \draw[-latex,orange!80!black,thick] (0.62,1.1) arc[start angle=35,end angle=325,radius=0.46];
 \node[orange!80!black] at (1.35,1.18) {\small yaw};
-\draw[blue!40!black,very thick] (-3.0,-1.05) sin (-2.3,-0.75) cos (-1.6,-1.05) sin (-0.9,-1.35) cos (-0.2,-1.05) sin (0.5,-0.75) cos (1.2,-1.05) sin (1.9,-1.35) cos (2.6,-1.05);
+\draw[blue!40!black,very thick] (-3.0,-0.88) sin (-2.3,-0.62) cos (-1.6,-0.88) sin (-0.9,-1.14) cos (-0.2,-0.88) sin (0.5,-0.62) cos (1.2,-0.88) sin (1.9,-1.14) cos (2.6,-0.88);
 \end{tikzpicture}
 \caption{Convención de movimientos marinos usada en el trabajo. Se muestran los
 seis grados de libertad de una plataforma; esta etapa prioriza
