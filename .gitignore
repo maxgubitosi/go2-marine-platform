@@ -33,6 +33,10 @@ output.avi
 # CSV generados
 *.csv
 
+# Entregables versionables para completar el informe en otro branch.
+!docs/lab_robot_fisico_entregable/
+!docs/lab_robot_fisico_entregable/**
+
 # Python venv y datasets
 marine_robot_dataset/venv/
 marine_robot_dataset/datasets/
@@ -41,3 +45,5 @@ marine_robot_dataset/datasets/
 *.pyo
 *.pyd
 .Python
+
+docs/lab_robot_fisico_entregable

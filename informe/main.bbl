@@ -1,0 +1,88 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alarc{\'o}n et~al.(2019)Alarc{\'o}n, S{\'a}nchez-Morales, Arrue, Dolz,
+  S{\'a}nchez-L{\'o}pez, and Campoy]{Alarcon2019}
+Francisco Alarc{\'o}n, David S{\'a}nchez-Morales, Rub{\'e}n Arrue,
+  Jos{\'e}~Mar{\'i}a Dolz, Jorge~L. S{\'a}nchez-L{\'o}pez, and Pascual Campoy.
+\newblock A precise and {GNSS}-free landing system on moving platforms for
+  rotary-wing {UAV}s.
+\newblock \emph{Sensors}, 19\penalty0 (4):\penalty0 886, 2019.
+\newblock \doi{10.3390/s19040886}.
+\newblock URL \url{https://doi.org/10.3390/s19040886}.
+
+\bibitem[Bellicoso et~al.(2017)Bellicoso, Jenelten, Fankhauser, Gehring,
+  Hwangbo, and Hutter]{Bellicoso2017}
+C.~Dario Bellicoso, Fabian Jenelten, Peter Fankhauser, Christian Gehring, Jemin
+  Hwangbo, and Marco Hutter.
+\newblock Dynamic locomotion and whole-body control for quadrupedal robots.
+\newblock In \emph{2017 IEEE/RSJ International Conference on Intelligent Robots
+  and Systems (IROS)}, pages 3359--3365, 2017.
+\newblock \doi{10.1109/IROS.2017.8206174}.
+\newblock URL \url{https://doi.org/10.1109/IROS.2017.8206174}.
+
+\bibitem[Delbene et~al.(2022)Delbene, Baglietto, and Simetti]{Delbene2022}
+Andrea Delbene, Marco Baglietto, and Enrico Simetti.
+\newblock Visual servoed autonomous landing of an {UAV} on a catamaran in a
+  marine environment.
+\newblock \emph{Sensors}, 22\penalty0 (9):\penalty0 3544, 2022.
+\newblock \doi{10.3390/s22093544}.
+\newblock URL \url{https://doi.org/10.3390/s22093544}.
+
+\bibitem[Fahmi et~al.(2019)Fahmi, Mastalli, Focchi, and Semini]{Fahmi2019}
+Shamel Fahmi, Carlos Mastalli, Michele Focchi, and Claudio Semini.
+\newblock Passive whole-body control for quadruped robots: Experimental
+  validation over challenging terrain.
+\newblock \emph{IEEE Robotics and Automation Letters}, 4\penalty0 (3):\penalty0
+  2553--2560, 2019.
+\newblock \doi{10.1109/LRA.2019.2908502}.
+\newblock URL \url{https://doi.org/10.1109/LRA.2019.2908502}.
+
+\bibitem[Fossen and Fjellstad(1995)]{Fossen1995}
+Thor~I. Fossen and Ola-Erik Fjellstad.
+\newblock Nonlinear modelling of marine vehicles in 6 degrees of freedom.
+\newblock \emph{Mathematical Modelling of Systems}, 1\penalty0 (1):\penalty0
+  17--27, 1995.
+\newblock \doi{10.1080/13873959508837004}.
+\newblock URL \url{https://doi.org/10.1080/13873959508837004}.
+
+\bibitem[Garrido-Jurado et~al.(2014)Garrido-Jurado, Mu{\~n}oz-Salinas,
+  Madrid-Cuevas, and Mar{\'i}n-Jim{\'e}nez]{GarridoJurado2014}
+S.~Garrido-Jurado, R.~Mu{\~n}oz-Salinas, F.~J. Madrid-Cuevas, and M.~J.
+  Mar{\'i}n-Jim{\'e}nez.
+\newblock Automatic generation and detection of highly reliable fiducial
+  markers under occlusion.
+\newblock \emph{Pattern Recognition}, 47\penalty0 (6):\penalty0 2280--2292,
+  2014.
+\newblock \doi{10.1016/j.patcog.2014.01.005}.
+\newblock URL \url{https://doi.org/10.1016/j.patcog.2014.01.005}.
+
+\bibitem[Lepetit et~al.(2009)Lepetit, Moreno-Noguer, and Fua]{Lepetit2009}
+Vincent Lepetit, Francesc Moreno-Noguer, and Pascal Fua.
+\newblock {EPnP}: An accurate o(n) solution to the {PnP} problem.
+\newblock \emph{International Journal of Computer Vision}, 81\penalty0
+  (2):\penalty0 155--166, 2009.
+\newblock \doi{10.1007/s11263-008-0152-6}.
+\newblock URL \url{https://doi.org/10.1007/s11263-008-0152-6}.
+
+\bibitem[Morales et~al.(2023)Morales, Castelo, Serra, and Lima]{Morales2023}
+Jes{\'u}s Morales, Isabel Castelo, Rodrigo Serra, and Pedro~U. Lima.
+\newblock Vision-based autonomous following of a moving platform and landing
+  for an unmanned aerial vehicle.
+\newblock \emph{Sensors}, 23\penalty0 (2):\penalty0 829, 2023.
+\newblock \doi{10.3390/s23020829}.
+\newblock URL \url{https://doi.org/10.3390/s23020829}.
+
+\bibitem[Schweighofer and Pinz(2006)]{Schweighofer2006}
+G.~Schweighofer and A.~Pinz.
+\newblock Robust pose estimation from a planar target.
+\newblock \emph{IEEE Transactions on Pattern Analysis and Machine
+  Intelligence}, 28\penalty0 (12):\penalty0 2024--2030, 2006.
+\newblock \doi{10.1109/TPAMI.2006.252}.
+\newblock URL \url{https://doi.org/10.1109/TPAMI.2006.252}.
+
+\end{thebibliography}
