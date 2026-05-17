@@ -2419,45 +2419,41 @@ pregunta es otra: hasta qué punto el movimiento propuesto al cuadrúpedo se
 refleja en señales observables del sistema. Por eso, en esta etapa el análisis
 se apoya en la señal esperada, el comando efectivamente enviado y la respuesta
 interna publicada por el robot, además del montaje visual con ArUco y cámara
-cuasi fija descripto en la metodología. La implementación real aporta un setup
-ROS2 dedicado, un bag versionado y un reporte cuantitativo suficientemente
-detallado como para cerrar una primera lectura experimental del caso físico.
+cuasi fija descripto en la metodología. El análisis que sigue se apoya en estos registros para caracterizar cuantitativamente la respuesta del sistema en condiciones físicas reales.
 
 \subsubsection{Presentación del material experimental}
 
-Un ensayo preliminar de laboratorio con consigna de mayor amplitud
-(\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch; referencia histórica
-listada en el Apéndice~\ref{sec:appendix_data}) ya había mostrado que el
-pipeline puede operar en ese rango. Sin embargo, las pruebas que ejecutaban en paralelo
-grabación de video, detección visual en tiempo real y recepción de tópicos
-del robot mostraron incidentes de procesamiento que dificultaban atribuir el
-comportamiento observado a una causa concreta. Para aislar la fuente del error
-y dejar fuera de la ecuación la carga computacional, se repitieron los ensayos
-sin grabación de video y registrando únicamente los tópicos necesarios para la
-comparación dinámica.
+Para llegar a los registros que sostienen este análisis fue necesario descartar
+una versión anterior del experimento. Un ensayo preliminar con consigna de mayor
+amplitud (\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch, detallado en el
+Apéndice~\ref{sec:appendix_data}) había confirmado que el pipeline puede operar
+en ese rango, pero las pruebas que ejecutaban en paralelo grabación de video,
+detección visual en tiempo real y recepción de tópicos del robot presentaron
+incidentes de procesamiento que dificultaban atribuir el comportamiento observado
+a una causa concreta. Para aislar la fuente del error y eliminar el efecto de la
+carga computacional, se repitieron los ensayos sin grabación de video, registrando
+únicamente los tópicos necesarios para la comparación dinámica.
 
-Esa lógica produjo dos registros que sostienen el análisis cuantitativo de
-esta subsección: el ensayo principal \textbf{R4}, de mayor amplitud, y el
-ensayo de control \textbf{R5}, de menor amplitud (nombres completos de los
-bags en el Apéndice~\ref{sec:appendix_data}). R4 dura \(59{,}63\)~s con
-consigna de roll de \(\pm 14{,}8^\circ\) y pitch de \(\pm 9{,}9^\circ\); R5
-dura \(59{,}67\)~s con consigna de \(\pm 9{,}9^\circ\) y
-\(\pm 7{,}9^\circ\). Ambos ensayos mantuvieron el modo de marcha estable en
-un único valor (\texttt{gait\_type}~=~9) durante toda la corrida, sin
+Esa decisión metodológica produjo dos registros sobre los que se apoya el análisis
+cuantitativo de esta subsección. El ensayo principal, denominado \textbf{R4}, tiene
+una duración de \(59{,}63\)~s y opera con consigna de roll de \(\pm 14{,}8^\circ\)
+y pitch de \(\pm 9{,}9^\circ\). El ensayo de control, \textbf{R5}, dura
+\(59{,}67\)~s con consigna de \(\pm 9{,}9^\circ\) y \(\pm 7{,}9^\circ\)
+respectivamente. Los nombres completos de los bags correspondientes se listan en el
+Apéndice~\ref{sec:appendix_data}. Ambos ensayos mantuvieron el modo de marcha
+estable en un único valor (\texttt{gait\_type}~=~9) durante toda la corrida, sin
 transiciones.
 
-La campaña real abarcó además otras sesiones registradas con el mismo
-montaje (Apéndice~\ref{sec:appendix_data}): una réplica de R5, una corrida
-adicional del mismo día y un grupo de corridas del 20-03 con consigna
-postural pero sin telemetría completa de \texttt{/sportmodestate}, además
-de la sesión visual del 10-03 en la que se ejecutó el pipeline de
-percepción sobre el robot real, discutida en la
-Sección~\ref{sec:lab_aruco_realtime}. Para el análisis cuantitativo de
-respuesta dinámica se eligieron R4 y R5 por ser las dos únicas corridas
-con telemetría completa de estado registrada en una geometría comparable;
-el resto de la campaña queda como evidencia de que la plataforma se ejecutó
-de forma repetida y que el pipeline visual funcionó por separado sobre el
-robot real.
+La campaña real abarcó además otras sesiones registradas con el mismo montaje
+(Apéndice~\ref{sec:appendix_data}): una réplica de R5, una corrida adicional del
+mismo día y un grupo de corridas del 20-03 con consigna postural pero sin
+telemetría completa de \texttt{/sportmodestate}, además de la sesión visual del
+10-03 en la que se ejecutó el pipeline de percepción sobre el robot real, discutida
+en la Sección~\ref{sec:lab_aruco_realtime}. Se eligieron R4 y R5 para el análisis
+cuantitativo de respuesta dinámica por ser las dos únicas corridas con telemetría
+completa de estado registrada en una geometría comparable. El resto de la campaña
+queda como evidencia de que la plataforma se ejecutó de forma repetida y de que el
+pipeline visual funcionó por separado sobre el robot real.
 
 \begin{table}[H]
 \centering
