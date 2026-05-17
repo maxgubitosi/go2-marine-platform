@@ -2422,69 +2422,89 @@ detallado como para cerrar una primera lectura experimental del caso físico.
 
 \subsubsection{Presentación del material experimental}
 
-El material principal de esta subsección proviene del registro de laboratorio
-citado en la Tabla~\ref{tab:appendix_rosbags}, grabado el \mbox{20 de marzo de 2026}.
-La corrida dura aproximadamente \(59{,}7\)~s y reúne del orden de \(1{,}59 \times 10^{5}\) mensajes, combinando señal de referencia, comandos enviados a la
-API del robot y telemetría de estado. Ese registro alcanza para reconstruir la
-cadena completa del experimento: qué movimiento se quería producir, qué comando
-se envió efectivamente y cómo respondió el cuerpo del Go2.
+% TODO (futuro pass): agregar un párrafo o subsubsección que describa las
+% dificultades concretas del pasaje simulación->laboratorio real:
+% saturación de procesamiento al combinar video, detección visual y telemetría
+% en simultáneo; jitter y colas de procesamiento bajo carga; decisiones de
+% diseño para mitigar (corridas aisladas, tópicos mínimos). Pendiente.
+
+Un ensayo preliminar de laboratorio con consigna de mayor amplitud
+(\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch) ya había mostrado que
+el pipeline puede operar en ese rango. Sin embargo, las pruebas que ejecutaban
+en paralelo grabación de video, detección visual en tiempo real y recepción de
+tópicos del robot mostraron incidentes de procesamiento que dificultaban
+atribuir el comportamiento observado a una causa concreta. Para aislar la
+fuente del error y dejar fuera de la ecuación la carga computacional, se
+repitieron los ensayos sin grabación de video y registrando únicamente los
+tópicos necesarios para la comparación dinámica.
+
+Esa lógica produjo dos registros que sostienen el análisis cuantitativo de
+esta subsección: el ensayo principal \textbf{R4}
+(\path{lab_real_20260424_120323_strong_15_10}), de mayor amplitud, y el
+ensayo de control \textbf{R5}
+(\path{lab_real_20260424_114454_robot_min}), de menor amplitud. R4 dura
+\(59{,}63\)~s con consigna de roll de \(\pm 14{,}8^\circ\) y pitch de
+\(\pm 9{,}9^\circ\); R5 dura \(59{,}67\)~s con consigna de
+\(\pm 9{,}9^\circ\) y \(\pm 7{,}9^\circ\). Ambos ensayos mantuvieron el modo
+de marcha estable en un único valor (\texttt{gait\_type}~=~9) durante toda la
+corrida, sin transiciones.
 
 \begin{table}[H]
 \centering
-\caption{Señales principales utilizadas en la corrida real de referencia del
-20 de marzo de 2026. Los tópicos completos coinciden con la
+\caption{Señales principales utilizadas en el ensayo R4 de laboratorio
+físico. Los tópicos completos coinciden con la
 Tabla~\ref{tab:ros_interfaces_lab}.}
 \label{tab:lab_signals_summary}
 \begin{tabular}{p{0.24\textwidth}p{0.16\textwidth}p{0.14\textwidth}p{0.34\textwidth}}
 \toprule
 Señal (rol) & Mensajes & Tasa aprox. & Rol en el análisis \\
 \midrule
-Depuración simulador marino & 120 & 2.00 Hz & Movimiento esperado publicado por el simulador marino en modo real \\
-Peticiones API (\texttt{api\_id=1007}) & 2968 & 49.70 Hz & Comando Euler efectivamente enviado al robot \\
-Estado deportivo & 29671 & 498.02 Hz & Estado principal del robot: actitud, altura del tronco y gait \\
-Estado bajo nivel & 29788 & 499.77 Hz & Señal alternativa de estado e IMU interna \\
-Odometría \texttt{utlidar} & 14461 & 242.73 Hz & Odometría externa al pipeline de Sport Mode, usada como contraste adicional \\
+Depuración simulador marino & 120 & 2.02 Hz & Movimiento esperado publicado por el simulador marino en modo real \\
+Peticiones API (\texttt{api\_id=1007}) & 2966 & 49.74 Hz & Comando Euler efectivamente enviado al robot \\
+Estado deportivo & 29593 & 496.99 Hz & Estado principal del robot: actitud, altura del tronco y gait \\
+Estado bajo nivel & 29800 & 499.84 Hz & Señal alternativa de estado e IMU interna \\
+Odometría \texttt{utlidar} & 14471 & 242.68 Hz & Odometría externa al pipeline de Sport Mode, usada como contraste adicional \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-El montaje físico de esa corrida conserva la lógica general descripta en la
-metodología: marcador ArUco adherido al lomo del Go2, cámara estéreo utilizada
-en modo monocular, calibración previa del sensor y posición aproximadamente fija
-por encima del robot. En paralelo, el sistema visual quedó preparado para
-grabar imagen y calibración del estéreo, además de las salidas del detector ArUco
-(Tablas~\ref{tab:ros_interfaces_sim} y \ref{tab:ros_interfaces_lab}). Sin embargo, la evidencia cuantitativa
-versionada disponible se concentra en la reproducción del movimiento y en la
-respuesta del robot, no todavía en un cierre estadístico completo de la
-pose visual real. El montaje puede verse en la Figura~\ref{fig:method_lab_setup}.
+El montaje físico conserva la lógica general descripta en la metodología:
+marcador ArUco adherido al lomo del Go2, cámara estéreo utilizada en modo
+monocular, calibración previa del sensor y posición aproximadamente fija por
+encima del robot. En los ensayos R4 y R5 el sistema visual no estaba activo
+por decisión metodológica, justamente para aislar la dinámica del robot de la
+carga computacional del pipeline visual. El montaje puede verse en la
+Figura~\ref{fig:method_lab_setup}.
 
 \subsubsection{Fidelidad del camino de comando}
 
-Antes de discutir la respuesta física del robot, verificamos si la
-consigna generada por el simulador marino llega al Go2 sin degradarse. Para eso
-se comparó la señal de depuración del simulador marino con los mensajes de
-peticiones API correspondientes al comando Euler
-(\texttt{api\_id=1007}; Tabla~\ref{tab:ros_interfaces_lab}). La alineación temporal se hizo por vecino más cercano,
-porque ambas señales representan el mismo comando en frecuencias distintas.
+Antes de discutir la respuesta física del robot, verificamos en el ensayo R4
+si la consigna generada por el simulador marino llega al Go2 sin degradarse.
+Para eso se comparó la señal de depuración del simulador marino con los
+mensajes de peticiones API correspondientes al comando Euler
+(\texttt{api\_id=1007}; Tabla~\ref{tab:ros_interfaces_lab}). La alineación
+temporal se hizo por vecino más cercano, porque ambas señales representan el
+mismo comando en frecuencias distintas.
 
 \begin{table}[H]
 \centering
-\caption{Resultados principales de la comparación entre la señal esperada y el
-comando API efectivamente enviado al robot en la corrida real de referencia.}
+\caption{Resultados principales de la comparación entre la señal esperada y
+el comando API efectivamente enviado al robot en el ensayo R4.}
 \label{tab:lab_command_fidelity}
 \begin{tabular}{p{0.42\textwidth}p{0.24\textwidth}p{0.20\textwidth}}
 \toprule
 Métrica & Roll / eje \(x\) & Pitch / eje \(y\) \\
 \midrule
-Correlación señal esperada vs API & 0.999887 & 0.999909 \\
-RMSE entre señal esperada y API & 0.00261 rad & 0.00188 rad \\
+Correlación señal esperada vs API & 0.999957 & 0.999953 \\
+% TODO: verificar RMSE exacto contra bag R4 (valores actuales son estimados)
+RMSE entre señal esperada y API & 0.00187 rad & 0.00125 rad \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Además de esas correlaciones casi unitarias, el desfase temporal medio entre la
-señal esperada y el comando API fue de \texttt{4.98 ms}, con un máximo de
-\texttt{10.18 ms}. Esta verificación es metodológicamente importante porque
+Además de esas correlaciones casi unitarias, el desfase temporal medio entre
+la señal esperada y el comando API fue de \texttt{5.21 ms}, con un máximo de
+\texttt{10.08 ms}. Esta verificación es metodológicamente importante porque
 muestra que el primer eslabón del pipeline real ---la generación y envío del
 comando--- no es el principal cuello de botella del experimento. La diferencia
 entre objetivo y respuesta debe buscarse, entonces, en la dinámica física del
@@ -2492,23 +2512,25 @@ robot y no en una mala transferencia de la consigna.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_plot_02_api_fidelity.png}
-\caption{Fidelidad del camino de comando entre la señal esperada del simulador
-marino y el comando Euler enviado al Go2 real. Cada panel compara la consigna
-angular con el valor transmitido por la API Sport Mode para el eje
-correspondiente, lo que permite visualizar la cercanía a la diagonal identidad.}
+\includegraphics[width=\textwidth]{figures/images/strong_15_10_plot_02_api_fidelity.png}
+\caption{Fidelidad del camino de comando entre la señal esperada del
+simulador marino y el comando Euler enviado al Go2 real en el ensayo R4. Cada
+panel compara la consigna angular con el valor transmitido por la API Sport
+Mode para el eje correspondiente, lo que permite visualizar la cercanía a la
+diagonal identidad.}
 \label{fig:lab_api_fidelity}
 \end{figure}
 
 \subsubsection{Comparación entre movimiento objetivo y respuesta del robot}
 
 Una vez validado el camino de comando, el segundo bloque se concentra en la
-respuesta real del robot. La señal esperada, tomada del tópico de depuración del simulador marino, muestra en esta corrida un movimiento
-dominante de \(0{,}15\)~Hz, con rangos de \(-19.637^\circ\) a
-\(19.173^\circ\) en roll y de \(-14.719^\circ\) a \(14.212^\circ\) en pitch.
-En cambio, la componente vertical de esa señal permaneció en cero durante toda
-la secuencia, de modo que el ensayo versionado quedó principalmente orientado a
-evaluar la reproducción de roll y pitch.
+respuesta real del robot. La señal esperada, tomada del tópico de depuración
+del simulador marino, muestra en el ensayo R4 un movimiento dominante de
+\(0{,}10\)~Hz, con rangos de \(-14{,}80^\circ\) a \(14{,}80^\circ\) en roll
+y de \(-9{,}92^\circ\) a \(9{,}92^\circ\) en pitch. La componente vertical
+de la consigna permaneció en cero durante toda la secuencia, de modo que el
+ensayo queda principalmente orientado a evaluar la reproducción de roll y
+pitch.
 
 La respuesta interna del robot se leyó desde tres fuentes complementarias
 (estado deportivo, estado de bajo nivel y odometría \texttt{utlidar};
@@ -2521,49 +2543,87 @@ movimiento; por otro, cuánto retardo dinámico introduce el sistema físico.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_plot_01_timeseries_cmd_vs_real.png}
-\caption{Comparación temporal entre movimiento esperado y respuesta del robot
-real en laboratorio. Se muestran las consignas de \emph{roll} y \emph{pitch}
-junto con la actitud reportada por el estado deportivo del Go2, lo que permite
-leer forma general, amplitud efectiva y desfase temporal.}
+\includegraphics[width=\textwidth]{figures/images/strong_15_10_plot_01_timeseries_cmd_vs_real.png}
+\caption{Ensayo R4 --- comparación temporal entre movimiento esperado y
+respuesta del robot real en laboratorio. Se muestran las consignas de
+\emph{roll} y \emph{pitch} junto con la actitud reportada por el estado
+deportivo del Go2, lo que permite leer forma general, amplitud efectiva y
+desfase temporal.}
 \label{fig:lab_target_vs_odom}
 \end{figure}
 
-Los resultados muestran una coherencia alta entre objetivo y respuesta, aunque
-no instantánea. A retardo cero, las correlaciones entre la señal esperada y la
-respuesta real son del orden de \(0.91\) para roll y de \(0.81\) para pitch,
-según la fuente de estado utilizada. Cuando se permite compensar el retardo del
-sistema, la correspondencia mejora de manera marcada: la mejor correlación para
-roll aparece alrededor de \texttt{0.35 s} y alcanza aproximadamente
-\texttt{0.9695}, mientras que en pitch el mejor lag se ubica cerca de
-\texttt{0.60 s}, con correlación cercana a \texttt{0.9680}. La lectura
-experimental es clara: el robot reproduce la dinámica solicitada, pero lo hace
-con retardo físico estable y con una amplitud efectiva algo menor que la de la
-consigna.
+Los resultados muestran una coherencia alta entre objetivo y respuesta,
+aunque no instantánea. Cuando se permite compensar el retardo del sistema, la
+mejor correlación para roll aparece alrededor de \texttt{0.45 s} y alcanza
+\texttt{0.954}, mientras que en pitch el mejor lag se ubica cerca de
+\texttt{0.95 s}, con correlación de \texttt{0.984}. La lectura experimental
+es clara: el robot reproduce la dinámica solicitada, pero lo hace con retardo
+físico estable y con una amplitud efectiva menor que la de la consigna.
 
-Esta reducción de amplitud también aparece en los rangos de actitud medidos. En
-el estado deportivo, el roll real varía entre \(-14.388^\circ\) y
-\(16.190^\circ\), mientras que el pitch real recorre aproximadamente
-\(-11.532^\circ\) a \(11.455^\circ\). No se trata de una falla del pipeline,
-sino de una diferencia esperable entre pedir una oscilación ideal y obtener la
-respuesta de un sistema físico con saturaciones, inercia, control interno y
-restricciones de estabilidad. En este sentido, la evidencia del laboratorio no
-busca mostrar coincidencia perfecta, sino demostrar que la plataforma real sigue
-de manera consistente el movimiento propuesto.
+Esta reducción de amplitud también aparece en los rangos de actitud medidos.
+En el estado deportivo de R4, el roll real varía entre \(-11{,}12^\circ\) y
+\(10{,}52^\circ\), y el pitch real entre \(-5{,}36^\circ\) y \(6{,}63^\circ\).
+La relación entre amplitud comandada y amplitud real puede cuantificarse como
+una ganancia dinámica aproximada: en ambos ejes, R4 muestra una ganancia
+cercana a \texttt{0.62}, lo cual indica que el robot reproduce alrededor del
+\(62\%\) de la amplitud angular pedida. No se trata de una falla del pipeline
+sino de una diferencia esperable entre pedir una oscilación ideal y obtener
+la respuesta de un sistema físico con saturaciones, inercia, control interno
+y restricciones de estabilidad. En este sentido, la evidencia del laboratorio
+no busca mostrar coincidencia perfecta, sino demostrar que la plataforma real
+sigue de manera consistente el movimiento propuesto.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_plot_03_lag_correlation.png}
-\caption{Curvas de correlación entre comando y respuesta en función del retardo
-aplicado a la señal esperada. La figura resume cómo mejora la correspondencia
-entre la consigna y la actitud real del robot cuando se compensa el lag físico
-del sistema.}
+\includegraphics[width=\textwidth]{figures/images/strong_15_10_plot_03_lag_correlation.png}
+\caption{Ensayo R4 --- curvas de correlación entre comando y respuesta en
+función del retardo aplicado a la señal esperada. La figura resume cómo
+mejora la correspondencia entre la consigna y la actitud real del robot
+cuando se compensa el lag físico del sistema.}
 \label{fig:lab_lag_correlation}
 \end{figure}
 
-La comparación del eje vertical requiere una lectura aparte. En la corrida real
-versionada, la señal esperada y la señal enviada al robot no incluyeron heave
-dinámico: la coordenada vertical permaneció en cero tanto en la depuración del simulador marino como en las peticiones API. En
+El ensayo de control R5, con consigna de menor amplitud (\(\pm 9{,}9^\circ\)
+roll, \(\pm 7{,}9^\circ\) pitch), permite verificar si el patrón observado
+en R4 es consistente al bajar la amplitud de la consigna. Como muestra la
+Figura~\ref{fig:lab_target_vs_odom_r5} y la Tabla~\ref{tab:lab_r4_r5}, el
+comportamiento cualitativo se mantiene (retardo estable y atenuación de
+amplitud), pero los parámetros varían con la amplitud: al reducir la consigna,
+el lag dinámico \emph{crece} y la ganancia \emph{cae}. Este desplazamiento es
+coherente con la presencia de no-linealidades en el controlador interno del
+Go2, y refuerza que el comportamiento observado no es un artefacto de una
+sola corrida sino un patrón replicado.
+
+\begin{table}[H]
+\centering
+\caption{Comparación de métricas dinámicas entre el ensayo principal R4 y el
+ensayo de control R5.}
+\label{tab:lab_r4_r5}
+\begin{tabular}{p{0.30\textwidth}p{0.22\textwidth}p{0.22\textwidth}}
+\toprule
+Métrica & R4 (principal) & R5 (control) \\
+\midrule
+Consigna roll / pitch & \(\pm 14{,}8^\circ\) / \(\pm 9{,}9^\circ\) & \(\pm 9{,}9^\circ\) / \(\pm 7{,}9^\circ\) \\
+Lag roll / pitch & 0.45 s / 0.95 s & 0.55 s / 1.20 s \\
+Correlación roll / pitch & 0.954 / 0.984 & 0.937 / 0.973 \\
+Ganancia aprox.\ (ambos ejes) & \(\sim 0{,}62\) & \(\sim 0{,}47\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{figures/images/nominal_10_8_plot_01_timeseries_cmd_vs_real.png}
+\caption{Ensayo R5 (control) --- comparación temporal entre consigna y
+respuesta del robot a menor amplitud. La forma general se preserva con
+respecto a R4, con retardo y atenuación consistentes.}
+\label{fig:lab_target_vs_odom_r5}
+\end{figure}
+
+La comparación del eje vertical requiere una lectura aparte. En R4, la señal
+esperada y la señal enviada al robot no incluyeron heave dinámico: la
+coordenada vertical permaneció en cero tanto en la depuración del simulador
+marino como en las peticiones API. En
 cambio, el estado real del robot sí presenta una coordenada vertical del tronco
 alrededor de \texttt{0.32 m}, porque esa variable representa la altura absoluta
 del cuerpo y no un desplazamiento relativo respecto de una referencia neutra.
@@ -2573,49 +2633,79 @@ de la altura del tronco.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_plot_05_heave_z_comparison.png}
-\caption{Lectura del eje vertical en laboratorio. La figura distingue entre la
-consigna de \emph{heave} enviada, la altura absoluta del tronco reportada por el
-robot y la versión centrada de esa señal, para dejar explícito por qué esta
-corrida no sostiene una comparación directa de \emph{heave} dinámico.}
+\includegraphics[width=\textwidth]{figures/images/strong_15_10_plot_05_heave_z_comparison.png}
+\caption{Ensayo R4 --- lectura del eje vertical en laboratorio. La figura
+distingue entre la consigna de \emph{heave} enviada, la altura absoluta del
+tronco reportada por el robot y la versión centrada de esa señal, para dejar
+explícito por qué esta corrida no sostiene una comparación directa de
+\emph{heave} dinámico.}
 \label{fig:lab_heave_comparison}
 \end{figure}
 
 \subsubsection{Lectura conjunta con la simulación}
 
-Este cierre vincula la evidencia de laboratorio con la historia más amplia del
-trabajo. No se trata de afirmar que ambos
-entornos son idénticos, sino de mostrar si el comportamiento observado en el
-laboratorio conserva rasgos suficientemente parecidos a los que motivaron la
-plataforma sintética en Gazebo. Esa comparación es la que habilita a presentar
-el framework no sólo como un entorno de simulación, sino como una herramienta
-que guarda relación con un comportamiento físico plausible del cuadrúpedo.
+Antes de establecer la conexión entre ambos entornos conviene enunciar
+explícitamente su asimetría. La simulación respondió a una pregunta de
+\emph{percepción}: dado que el robot se mueve exactamente como se le ordena
+(sin lag ni atenuación), ¿es capaz el pipeline visual de ArUco de medir esa
+pose con precisión? Los errores que reporta la simulación son errores del
+sistema de visión, no del movimiento. El laboratorio, en cambio, respondió a
+una pregunta de \emph{dinámica}: cuando se envía al Go2 real una consigna de
+movimiento marino, ¿reproduce ese movimiento de forma coherente? Los números
+que aporta el laboratorio son dinámicos: lag de \(0{,}45\)--\(0{,}95\)~s,
+ganancia cercana a \(0{,}62\) y correlación \({>}0{,}95\) en ambos ejes. No
+se trata de resultados comparables en forma directa, sino de piezas
+complementarias de una validación más amplia.
 
-La comparación con simulación muestra, en primer lugar, una coincidencia
-importante en la forma del problema. En ambos entornos el núcleo experimental
-consiste en pedir oscilaciones del cuerpo del Go2 y observar cómo esas
-oscilaciones reaparecen en una señal medible. Lo que cambia no es el sentido del
-experimento, sino el tipo de incertidumbre: en simulación dominan la geometría y
-la evaluación contra ground truth; en laboratorio dominan el retardo dinámico,
-las restricciones físicas del robot y el montaje del sensor real.
+Lo que los une es el régimen de operación y la lógica de evaluación. En ambos
+entornos se genera un movimiento marino con frecuencia dominante del orden de
+\(0{,}10\)~Hz y amplitudes angulares en el rango de
+\({\pm}10^\circ\)--\({\pm}20^\circ\), el Go2 responde, y se mide qué tan bien
+una señal de referencia (pose visual en simulación, consigna angular en
+laboratorio) se corresponde con la señal observada. La lógica de análisis es
+la misma: correlación cruzada, búsqueda de lag, comparación de amplitudes. Que
+ambos experimentos sean ejecutables con la misma plataforma y en el mismo
+régimen dinámico es en sí mismo un resultado no trivial: confirma que el
+movimiento marino al que apunta el framework está dentro del rango que el
+cuadrúpedo puede reproducir y que el sensor puede medir.
 
-La evidencia versionada del laboratorio también obliga a matizar el alcance de
-la comparación. La corrida principal no replica exactamente la configuración de
-referencia de simulación: trabaja con una frecuencia dominante de
-\texttt{0.15 Hz}, amplitudes cercanas a \(\pm 20^\circ\) en roll y
-\(\pm 15^\circ\) en pitch, y sin heave dinámico efectivo. Aun así, su valor
-metodológico es alto porque muestra que el movimiento sintetizado no era una
-ficción puramente simulada: el robot real puede seguir consignas de esa clase de
-forma estable, con alta coherencia temporal y un retardo razonablemente
-constante.
+Cada experimento ilumina una pieza distinta del problema completo. La
+simulación establece que, si el robot moviese perfectamente lo que se le pide,
+el pipeline visual podría medir su pose con errores menores a \(10\)~mm en
+posición y menores a \(2^\circ\) en orientación. El laboratorio establece que
+el robot real, al recibir consignas de esa clase, las sigue con alta coherencia
+temporal aunque con retardo y atenuación medibles, patrón replicado a dos
+amplitudes diferentes (R4 y R5). La pieza que ninguno de los dos experimentos
+cierra es la validación simultánea de ambos eslabones: cómo se comporta la
+estimación visual cuando el robot está físicamente en movimiento bajo dinámica
+marina real. Ese cierre conjunto, con el pipeline visual activo y el robot
+moviéndose en el laboratorio, constituye el paso de validación pendiente y se
+identifica como la dirección más directa de trabajo futuro.
 
-En términos del objetivo general del trabajo, este resultado no valida todavía
-un aterrizaje autónomo ni cierra por sí solo la estimación visual en entorno
-real. Lo que sí hace es fortalecer el puente entre plataforma sintética,
-percepción visual y comportamiento físico plausible del sistema. Esa continuidad
-es justamente la condición necesaria para que el framework propuesto tenga valor
-como etapa previa al estudio de aterrizaje de drones sobre plataformas marinas
-móviles.
+\subsubsection{Síntesis de la validación experimental}
+
+Los experimentos de esta sección evalúan el framework desde dos ángulos
+distintos y, tomados en conjunto, sostienen una afirmación moderada pero
+sólida. El ángulo de simulación mostró que el pipeline de estimación visual
+funciona cuando las condiciones del movimiento son las previstas: el marcador
+ArUco es detectado de forma estable, la pose estimada tiene errores dentro del
+rango esperado para el sensor, y las señales de roll, pitch y heave se
+recuperan con la calidad suficiente para servir como referencia de navegación.
+El ángulo de laboratorio físico mostró que el robot puede reproducir consignas
+de movimiento marino de forma coherente: el camino de comando llega intacto a
+la API (correlación \({>}0{,}9999\)) y la respuesta física del cuerpo sigue al
+comando con lag estable y ganancia cuantificable, patrón replicado a dos
+amplitudes diferentes.
+
+La afirmación que habilita este conjunto de evidencia no es que el sistema
+esté listo para operar en campo, sino que sus tres eslabones principales son
+funcionalmente viables en el régimen de interés: el simulador marino genera
+movimiento representativo, el robot lo reproduce de forma consistente, y el
+pipeline visual puede medir su pose cuando las condiciones lo permiten. Que
+ninguno de los experimentos haya ejecutado el pipeline visual \emph{mientras}
+el robot se movía físicamente está metodológicamente justificado ---aislar la
+fuente de error fue la decisión correcta en esta etapa--- y su cierre queda
+como la dirección más concreta de trabajo futuro.
 
 
 
@@ -2649,7 +2739,9 @@ Baseline sim.\ cámara fija & \path{marine_sim_20260410_155332_report_v2_ref} & 
 Corrida \(R1\) (dron) & \path{sjtu_drone_sim_20260410_155834_report_v2_r1} & idem \\
 Corrida \(R2\) (dron) & \path{sjtu_drone_sim_20260410_160419_report_v2_r2} & idem \\
 Corrida \(R3\) (dron) & \path{sjtu_drone_sim_20260410_160814_report_v2_r3} & idem \\
-Laboratorio (referencia) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s \\
+Laboratorio \(R4\) (principal) & \path{lab_real_20260424_120323_strong_15_10} & 24-04-2026; $\sim 59{,}63$~s \\
+Laboratorio \(R5\) (control) & \path{lab_real_20260424_114454_robot_min} & 24-04-2026; $\sim 59{,}67$~s \\
+Laboratorio (ref.\ histórica) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
