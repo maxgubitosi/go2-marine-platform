@@ -56,10 +56,12 @@ marine_robot_dataset/datasets/
 informe/*.aux
 informe/*.bbl
 informe/*.blg
+informe/*.bcf
 informe/*.fdb_latexmk
 informe/*.fls
 informe/*.log
 informe/*.out
+informe/*.run.xml
 informe/*.synctex.gz
 informe/*.toc
 informe/*.lof
@@ -67,3 +69,17 @@ informe/*.lot
 informe/*.xdv
 # PDF generado al compilar (no subir; el informe se compila desde main.tex)
 informe/*.pdf
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Material de referencia que NO va al repo:
+#   - Bundle de rosbags / imágenes / videos crudos traídos del branch experimental
+#     (se conserva solo localmente para análisis; ver informe/docs para la versión versionada).
+informe/refs/lab_bundle_for_informe/
+
+# Material fuente fotográfico sin curar (sí versionamos las copias estables
+# que ya se incorporaron al informe con nombres descriptivos en
+# informe/figures/images/, p.ej. fig_wave_platform_diagram.jpeg).
+informe/figures/images/jack-1705/

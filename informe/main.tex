@@ -867,17 +867,18 @@ La Figura~\ref{fig:platform_corner_heights} resume gráficamente esta
 aproximación discreta del movimiento de la plataforma a partir de alturas
 locales del agua medidas en zonas representativas de la cubierta.
 
-\figureplaceholder{fig:platform_corner_heights}{Figura pendiente del efecto del
-oleaje sobre una embarcación vista en perspectiva oblicua. La imagen final
-debería mostrar una lancha o pequeño barco sobre una superficie ondulada, con
-una geometría clara y simple, sin exceso de texto dentro del dibujo. Deben
-identificarse cuatro zonas representativas de la cubierta ---proa, popa,
-babor y estribor--- y sugerirse visualmente cómo las diferencias de altura del
-agua bajo esos puntos se traducen en \emph{heave}, \emph{pitch} y
-\emph{roll}. Idealmente, la figura debería privilegiar la intuición física:
-barco más olas, pocos rótulos y composición limpia.}{Esquema pendiente del
-efecto del oleaje sobre una embarcación y su relación con la aproximación
-discreta de \emph{heave}, \emph{pitch} y \emph{roll}.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/images/fig_wave_platform_diagram.jpeg}
+\caption{Esquema del efecto del oleaje sobre una embarcación: se identifican
+las cuatro zonas representativas de la cubierta (proa, popa, babor y
+estribor) y se sugiere cómo las diferencias de altura del agua bajo esos
+puntos se traducen en \emph{heave} (traslación vertical neta),
+\emph{pitch} (inclinación proa--popa) y \emph{roll} (inclinación
+babor--estribor). Esta lectura motiva la aproximación discreta usada en el
+texto.}
+\label{fig:platform_corner_heights}
+\end{figure}
 
 En esta lectura, \(L_p\) y \(B_p\) representan, respectivamente, una longitud
 característica en la dirección proa--popa y una manga efectiva en la dirección
@@ -1075,14 +1076,16 @@ régimen postural, con movimiento suave y sin perseguir desplazamientos sobre el
 plano. Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
 consigna de pose del cuerpo se transforma en una nueva geometría de patas.
 
-\figureplaceholder{fig:go2_postural_control_scheme}{Figura pendiente de la
-geometría postural del Go2. Sería útil mostrar una vista frontal y otra lateral
-del robot con las cuatro patas en apoyo, el frame \texttt{base\_link}, la
-proyección \texttt{base\_footprint} sobre el suelo y ejemplos de cómo cambios
-en altura, roll y pitch alteran la longitud relativa de las patas.}{Esquema
-pendiente del principio de control postural que permite utilizar al Go2 como
-plataforma marina sintética. Una figura así ayudaría a conectar la intuición
-geométrica con las ecuaciones de cinemática del cuadrúpedo.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/images/fig_go2_postures.jpeg}
+\caption{Tres configuraciones posturales del Go2 sobre apoyo cuadrúpedo
+estático. Mantener las cuatro patas en contacto con el suelo y modificar la
+pose del torso (altura, inclinación frontal o lateral) ilustra el principio
+que el framework utiliza para emular un movimiento marino sobre el cuerpo
+del robot, sin pedirle desplazamiento sobre el plano.}
+\label{fig:go2_postural_control_scheme}
+\end{figure}
 
 Si representamos por \(\{b\}\) el frame del torso, por \(\{w\}\) el frame del
 mundo y por \(\{f_i\}\) el punto de contacto del pie \(i\), la posición del pie
@@ -1307,13 +1310,17 @@ consistencia entre el orden de los vértices observados y el orden de los
 vértices del modelo es crucial, porque toda la estimación de pose depende de que
 las correspondencias 2D--3D sean geométricamente correctas.
 
-\figureplaceholder{fig:camera_marker_geometry}{Figura pendiente del modelo
-geométrico cámara--marcador. Sería conveniente mostrar el frame óptico de la
-cámara, el plano del marcador, sus cuatro vértices, el vector normal del patrón
-y los rayos proyectivos que conectan las esquinas del objeto con el plano de la
-imagen.}{Esquema pendiente de la proyección perspectiva de un marcador plano
-observado por una cámara calibrada. Una figura de este tipo facilitaría la
-lectura del modelo pinhole, de la homografía planar y del problema PnP.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/images/fig_lab_camera_marker_geometry.jpeg}
+\caption{Realización física de la geometría cámara--marcador en
+laboratorio: la cámara estéreo se mantiene aproximadamente fija sobre un
+trípode y observa el marcador ArUco adherido al lomo del Go2. Esta
+disposición materializa la relación entre el plano del marcador y el frame
+óptico de la cámara que el modelo pinhole y la rutina PnP utilizan para
+estimar la pose en tiempo real.}
+\label{fig:camera_marker_geometry}
+\end{figure}
 
 La relación entre los puntos tridimensionales del marcador y su proyección en la
 imagen se describe mediante el modelo pinhole de cámara. Para cada punto
@@ -2056,7 +2063,7 @@ exacta del caso idealizado.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.62\textwidth]{figures/images/fig_lab_real_fixed_camera.png}
+\includegraphics[width=0.6\textwidth]{figures/images/fig_lab_setup_montaje.jpeg}
 \caption{Montaje experimental de laboratorio utilizado para observar el
 movimiento del Go2 real con marcador ArUco, mediante una cámara mantenida en
 posición aproximadamente fija.}
@@ -2096,16 +2103,11 @@ objetivo fue contrastar el movimiento propuesto con el camino real de comando y
 con la respuesta interna del robot, usando esa relación como primer puente entre
 la plataforma sintética de simulación y su comportamiento en entorno real.
 
-\figureplaceholder
-  {fig:method_lab_comparison}
-  {Gráfico pendiente de comparación entre la señal esperada (depuración del simulador marino),
-  el comando Euler enviado por la API Sport Mode y el estado real medido por
-  estado deportivo u odometría \texttt{utlidar} (Tabla~\ref{tab:ros_interfaces_lab}). La figura debería
-  mostrar series temporales alineadas para ilustrar el criterio de contraste
-  entre objetivo, actuación y respuesta.}
-  {Esquema de la comparación realizada en laboratorio entre la señal objetivo
-  del movimiento, el comando transmitido y la respuesta medida por el
-  cuadrúpedo.}
+El resultado concreto de aplicar este esquema sobre los registros versionados
+del laboratorio se discute en la Sección~\ref{sec:lab_results_anchor}, con
+series temporales alineadas (Figura~\ref{fig:lab_target_vs_odom}) y curvas de
+correlación retardo--correlación (Figura~\ref{fig:lab_lag_correlation}) que
+materializan el contraste entre objetivo, actuación y respuesta.
 
 
 
@@ -2409,6 +2411,7 @@ aislar estas limitaciones con ground truth antes de trasladar la discusión a un
 entorno físico.
 
 \subsection{Experimentos en laboratorio}
+\label{sec:lab_results_anchor}
 
 La validación en laboratorio no replica el mismo esquema de lectura que la
 simulación, porque ya no dispone de un ground truth geométrico equivalente. Su
@@ -2422,48 +2425,58 @@ detallado como para cerrar una primera lectura experimental del caso físico.
 
 \subsubsection{Presentación del material experimental}
 
-% TODO (futuro pass): agregar un párrafo o subsubsección que describa las
-% dificultades concretas del pasaje simulación->laboratorio real:
-% saturación de procesamiento al combinar video, detección visual y telemetría
-% en simultáneo; jitter y colas de procesamiento bajo carga; decisiones de
-% diseño para mitigar (corridas aisladas, tópicos mínimos). Pendiente.
-
 Un ensayo preliminar de laboratorio con consigna de mayor amplitud
-(\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch) ya había mostrado que
-el pipeline puede operar en ese rango. Sin embargo, las pruebas que ejecutaban
-en paralelo grabación de video, detección visual en tiempo real y recepción de
-tópicos del robot mostraron incidentes de procesamiento que dificultaban
-atribuir el comportamiento observado a una causa concreta. Para aislar la
-fuente del error y dejar fuera de la ecuación la carga computacional, se
-repitieron los ensayos sin grabación de video y registrando únicamente los
-tópicos necesarios para la comparación dinámica.
+(\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch; referencia histórica
+listada en el Apéndice~\ref{sec:appendix_data}) ya había mostrado que el
+pipeline puede operar en ese rango. Sin embargo, las pruebas que ejecutaban en paralelo
+grabación de video, detección visual en tiempo real y recepción de tópicos
+del robot mostraron incidentes de procesamiento que dificultaban atribuir el
+comportamiento observado a una causa concreta. Para aislar la fuente del error
+y dejar fuera de la ecuación la carga computacional, se repitieron los ensayos
+sin grabación de video y registrando únicamente los tópicos necesarios para la
+comparación dinámica.
 
 Esa lógica produjo dos registros que sostienen el análisis cuantitativo de
-esta subsección: el ensayo principal \textbf{R4}
-(\path{lab_real_20260424_120323_strong_15_10}), de mayor amplitud, y el
-ensayo de control \textbf{R5}
-(\path{lab_real_20260424_114454_robot_min}), de menor amplitud. R4 dura
-\(59{,}63\)~s con consigna de roll de \(\pm 14{,}8^\circ\) y pitch de
-\(\pm 9{,}9^\circ\); R5 dura \(59{,}67\)~s con consigna de
-\(\pm 9{,}9^\circ\) y \(\pm 7{,}9^\circ\). Ambos ensayos mantuvieron el modo
-de marcha estable en un único valor (\texttt{gait\_type}~=~9) durante toda la
-corrida, sin transiciones.
+esta subsección: el ensayo principal \textbf{R4}, de mayor amplitud, y el
+ensayo de control \textbf{R5}, de menor amplitud (nombres completos de los
+bags en el Apéndice~\ref{sec:appendix_data}). R4 dura \(59{,}63\)~s con
+consigna de roll de \(\pm 14{,}8^\circ\) y pitch de \(\pm 9{,}9^\circ\); R5
+dura \(59{,}67\)~s con consigna de \(\pm 9{,}9^\circ\) y
+\(\pm 7{,}9^\circ\). Ambos ensayos mantuvieron el modo de marcha estable en
+un único valor (\texttt{gait\_type}~=~9) durante toda la corrida, sin
+transiciones.
+
+La campaña real abarcó además otras sesiones registradas con el mismo
+montaje (Apéndice~\ref{sec:appendix_data}): una réplica de R5, una corrida
+adicional del mismo día y un grupo de corridas del 20-03 con consigna
+postural pero sin telemetría completa de \texttt{/sportmodestate}, además
+de la sesión visual del 10-03 en la que se ejecutó el pipeline de
+percepción sobre el robot real, discutida en la
+Sección~\ref{sec:lab_aruco_realtime}. Para el análisis cuantitativo de
+respuesta dinámica se eligieron R4 y R5 por ser las dos únicas corridas
+con telemetría completa de estado registrada en una geometría comparable;
+el resto de la campaña queda como evidencia de que la plataforma se ejecutó
+de forma repetida y que el pipeline visual funcionó por separado sobre el
+robot real.
 
 \begin{table}[H]
 \centering
 \caption{Señales principales utilizadas en el ensayo R4 de laboratorio
 físico. Los tópicos completos coinciden con la
-Tabla~\ref{tab:ros_interfaces_lab}.}
+Tabla~\ref{tab:ros_interfaces_lab}. La fila de peticiones API reporta el
+subconjunto filtrado por \texttt{api\_id=1007} sobre un total de
+\(3{.}124\) mensajes en \texttt{/api/sport/request}; las tasas se calculan
+sobre la duración total del bag (\(\sim 59{,}66\)~s).}
 \label{tab:lab_signals_summary}
 \begin{tabular}{p{0.24\textwidth}p{0.16\textwidth}p{0.14\textwidth}p{0.34\textwidth}}
 \toprule
 Señal (rol) & Mensajes & Tasa aprox. & Rol en el análisis \\
 \midrule
-Depuración simulador marino & 120 & 2.02 Hz & Movimiento esperado publicado por el simulador marino en modo real \\
-Peticiones API (\texttt{api\_id=1007}) & 2966 & 49.74 Hz & Comando Euler efectivamente enviado al robot \\
-Estado deportivo & 29593 & 496.99 Hz & Estado principal del robot: actitud, altura del tronco y gait \\
-Estado bajo nivel & 29800 & 499.84 Hz & Señal alternativa de estado e IMU interna \\
-Odometría \texttt{utlidar} & 14471 & 242.68 Hz & Odometría externa al pipeline de Sport Mode, usada como contraste adicional \\
+Depuración simulador marino & \(120\) & \(2{,}01\) Hz & Movimiento esperado publicado por el simulador marino en modo real \\
+Peticiones API (\texttt{api\_id=1007}) & \(2{.}966\) & \(49{,}71\) Hz & Comando Euler efectivamente enviado al robot \\
+Estado deportivo & \(29{.}593\) & \(496{,}0\) Hz & Estado principal del robot: actitud, altura del tronco y gait \\
+Estado bajo nivel & \(29{.}763\) & \(498{,}9\) Hz & Señal alternativa de estado e IMU interna \\
+Odometría \texttt{utlidar} & \(14{.}451\) & \(242{,}2\) Hz & Odometría externa al pipeline de Sport Mode, usada como contraste adicional \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2475,6 +2488,66 @@ encima del robot. En los ensayos R4 y R5 el sistema visual no estaba activo
 por decisión metodológica, justamente para aislar la dinámica del robot de la
 carga computacional del pipeline visual. El montaje puede verse en la
 Figura~\ref{fig:method_lab_setup}.
+
+\subsubsection{Pipeline visual sobre el robot real}
+\label{sec:lab_aruco_realtime}
+
+R4 y R5 no son las únicas corridas de la campaña: hubo además sesiones
+dedicadas específicamente a verificar el pipeline visual con el Go2 real
+en movimiento. Una de ellas, la \textbf{sesión visual del 10-03}
+(bag listado en el Apéndice~\ref{sec:appendix_data}), ejecutó
+simultáneamente \texttt{stereo\_eye\_publisher}, \texttt{aruco\_detector}
+y el simulador marino en modo real sobre el robot, publicando pose
+estimada en \texttt{/aruco/pose} y frames anotados en
+\texttt{/aruco/debug\_image}. La detección operó de manera estable
+durante toda la corrida: el marcador fue identificado de forma
+consistente y la pose se actualizó en tiempo real, sin pérdidas que
+comprometieran la lectura visual.
+
+La Figura~\ref{fig:lab_aruco_realtime} muestra tres frames de esa
+sesión, distribuidos a lo largo de la corrida, con el overlay de
+identificación del marcador sobre el Go2 en posturas distintas inducidas
+por el simulador marino. Estos resultados no se reportan con métricas
+cuantitativas porque la evaluación numérica del pipeline visual ya quedó
+cubierta por las campañas de simulación con ground truth
+(Sección~\ref{sec:lab_results_anchor} y subsubsecciones previas), y porque
+el objetivo de la validación física se concentró en la dinámica del
+cuerpo del robot, no en re-medir la precisión del estimador. La separación
+entre la corrida con pipeline visual activo y los ensayos R4/R5 de
+caracterización dinámica respondió a una restricción práctica: la
+grabación simultánea de video, detección en tiempo real y telemetría
+completa del robot saturaba la PC y degradaba los registros. Aislar cada
+plano permitió obtener tanto evidencia visual del eslabón de percepción
+como métricas dinámicas limpias del eslabón de actuación.
+
+% TODO (figura): los tres frames muestran demasiado a la persona y sus pies
+% al costado del Go2. Recortar la mitad superior o aplicar edición con IA
+% para enfocar solo el robot + marcador antes de la entrega final.
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t00.png}
+\caption{Inicio}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t26.png}
+\caption{Mitad}
+\end{subfigure}\hfill
+\begin{subfigure}{0.32\textwidth}
+\centering
+\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t49.png}
+\caption{Final}
+\end{subfigure}
+\caption{Detección de ArUco en tiempo real durante la sesión visual del
+10-03 (ver Apéndice~\ref{sec:appendix_data}). Los tres frames provienen
+del tópico \texttt{/aruco/debug\_image} en distintos momentos de la
+corrida y muestran el marcador identificado de forma estable sobre el
+lomo del robot mientras éste reproduce la consigna postural del simulador
+marino.}
+\label{fig:lab_aruco_realtime}
+\end{figure}
 
 \subsubsection{Fidelidad del camino de comando}
 
@@ -2489,26 +2562,26 @@ mismo comando en frecuencias distintas.
 \begin{table}[H]
 \centering
 \caption{Resultados principales de la comparación entre la señal esperada y
-el comando API efectivamente enviado al robot en el ensayo R4.}
+el comando API efectivamente enviado al robot en el ensayo R4. Las
+correlaciones son de Pearson sobre las series alineadas por vecino más
+cercano; el desfase medio y máximo se reportan en términos absolutos.}
 \label{tab:lab_command_fidelity}
 \begin{tabular}{p{0.42\textwidth}p{0.24\textwidth}p{0.20\textwidth}}
 \toprule
 Métrica & Roll / eje \(x\) & Pitch / eje \(y\) \\
 \midrule
-Correlación señal esperada vs API & 0.999957 & 0.999953 \\
-% TODO: verificar RMSE exacto contra bag R4 (valores actuales son estimados)
-RMSE entre señal esperada y API & 0.00187 rad & 0.00125 rad \\
+Correlación señal esperada vs API & \(0{,}999957\) & \(0{,}999953\) \\
+Desfase temporal medio esperado vs API & \multicolumn{2}{c}{\(5{,}21\)~ms} \\
+Desfase temporal máximo esperado vs API & \multicolumn{2}{c}{\(10{,}08\)~ms} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Además de esas correlaciones casi unitarias, el desfase temporal medio entre
-la señal esperada y el comando API fue de \texttt{5.21 ms}, con un máximo de
-\texttt{10.08 ms}. Esta verificación es metodológicamente importante porque
-muestra que el primer eslabón del pipeline real ---la generación y envío del
-comando--- no es el principal cuello de botella del experimento. La diferencia
-entre objetivo y respuesta debe buscarse, entonces, en la dinámica física del
-robot y no en una mala transferencia de la consigna.
+Esas correlaciones casi unitarias, sumadas a un desfase medio de pocos
+milisegundos, indican que el primer eslabón del pipeline real ---la generación
+y envío del comando--- no es el principal cuello de botella del experimento.
+La diferencia entre objetivo y respuesta debe buscarse, entonces, en la
+dinámica física del robot y no en una mala transferencia de la consigna.
 
 \begin{figure}[H]
 \centering
@@ -2554,9 +2627,9 @@ desfase temporal.}
 
 Los resultados muestran una coherencia alta entre objetivo y respuesta,
 aunque no instantánea. Cuando se permite compensar el retardo del sistema, la
-mejor correlación para roll aparece alrededor de \texttt{0.45 s} y alcanza
-\texttt{0.954}, mientras que en pitch el mejor lag se ubica cerca de
-\texttt{0.95 s}, con correlación de \texttt{0.984}. La lectura experimental
+mejor correlación para roll aparece alrededor de \(0{,}45\)~s y alcanza
+\(0{,}954\), mientras que en pitch el mejor lag se ubica cerca de
+\(0{,}95\)~s, con correlación de \(0{,}984\). La lectura experimental
 es clara: el robot reproduce la dinámica solicitada, pero lo hace con retardo
 físico estable y con una amplitud efectiva menor que la de la consigna.
 
@@ -2564,14 +2637,19 @@ Esta reducción de amplitud también aparece en los rangos de actitud medidos.
 En el estado deportivo de R4, el roll real varía entre \(-11{,}12^\circ\) y
 \(10{,}52^\circ\), y el pitch real entre \(-5{,}36^\circ\) y \(6{,}63^\circ\).
 La relación entre amplitud comandada y amplitud real puede cuantificarse como
-una ganancia dinámica aproximada: en ambos ejes, R4 muestra una ganancia
-cercana a \texttt{0.62}, lo cual indica que el robot reproduce alrededor del
-\(62\%\) de la amplitud angular pedida. No se trata de una falla del pipeline
-sino de una diferencia esperable entre pedir una oscilación ideal y obtener
-la respuesta de un sistema físico con saturaciones, inercia, control interno
-y restricciones de estabilidad. En este sentido, la evidencia del laboratorio
-no busca mostrar coincidencia perfecta, sino demostrar que la plataforma real
-sigue de manera consistente el movimiento propuesto.
+una ganancia dinámica aproximada: tomada como cociente entre las amplitudes
+RMS del estado real y del comando, R4 muestra una ganancia promedio cercana a
+\(0{,}62\), lo cual indica que el robot reproduce, en orden de magnitud, en
+torno al \(60\%\) de la amplitud angular pedida (la lectura por rangos
+extremos da valores algo más altos en \emph{roll} ---del orden de
+\(0{,}73\)--- y algo más bajos en \emph{pitch} ---del orden de \(0{,}60\)---,
+lo cual es consistente con un sistema que no atenúa por igual ambos ejes). No
+se trata de una falla del pipeline sino de una diferencia esperable entre
+pedir una oscilación ideal y obtener la respuesta de un sistema físico con
+saturaciones, inercia, control interno y restricciones de estabilidad. En
+este sentido, la evidencia del laboratorio no busca mostrar coincidencia
+perfecta, sino demostrar que la plataforma real sigue de manera consistente
+el movimiento propuesto.
 
 \begin{figure}[H]
 \centering
@@ -2604,9 +2682,9 @@ ensayo de control R5.}
 Métrica & R4 (principal) & R5 (control) \\
 \midrule
 Consigna roll / pitch & \(\pm 14{,}8^\circ\) / \(\pm 9{,}9^\circ\) & \(\pm 9{,}9^\circ\) / \(\pm 7{,}9^\circ\) \\
-Lag roll / pitch & 0.45 s / 0.95 s & 0.55 s / 1.20 s \\
-Correlación roll / pitch & 0.954 / 0.984 & 0.937 / 0.973 \\
-Ganancia aprox.\ (ambos ejes) & \(\sim 0{,}62\) & \(\sim 0{,}47\) \\
+Lag óptimo roll / pitch & \(0{,}45\) s / \(0{,}95\) s & \(0{,}55\) s / \(1{,}20\) s \\
+Correlación máxima roll / pitch & \(0{,}954\) / \(0{,}984\) & \(0{,}937\) / \(0{,}973\) \\
+Ganancia dinámica aprox. & \(\sim 0{,}62\) & \(\sim 0{,}47\) \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2625,7 +2703,7 @@ esperada y la señal enviada al robot no incluyeron heave dinámico: la
 coordenada vertical permaneció en cero tanto en la depuración del simulador
 marino como en las peticiones API. En
 cambio, el estado real del robot sí presenta una coordenada vertical del tronco
-alrededor de \texttt{0.32 m}, porque esa variable representa la altura absoluta
+alrededor de \(0{,}32\)~m, porque esa variable representa la altura absoluta
 del cuerpo y no un desplazamiento relativo respecto de una referencia neutra.
 Por eso, esta corrida no puede leerse como una validación de heave oscilatorio,
 sino como una validación fuerte de roll y pitch con observación complementaria
@@ -2653,7 +2731,7 @@ sistema de visión, no del movimiento. El laboratorio, en cambio, respondió a
 una pregunta de \emph{dinámica}: cuando se envía al Go2 real una consigna de
 movimiento marino, ¿reproduce ese movimiento de forma coherente? Los números
 que aporta el laboratorio son dinámicos: lag de \(0{,}45\)--\(0{,}95\)~s,
-ganancia cercana a \(0{,}62\) y correlación \({>}0{,}95\) en ambos ejes. No
+ganancia cercana a \(0{,}62\) y correlación mayor a \(0{,}95\) en ambos ejes. No
 se trata de resultados comparables en forma directa, sino de piezas
 complementarias de una validación más amplia.
 
@@ -2671,11 +2749,14 @@ cuadrúpedo puede reproducir y que el sensor puede medir.
 
 Cada experimento ilumina una pieza distinta del problema completo. La
 simulación establece que, si el robot moviese perfectamente lo que se le pide,
-el pipeline visual podría medir su pose con errores menores a \(10\)~mm en
-posición y menores a \(2^\circ\) en orientación. El laboratorio establece que
-el robot real, al recibir consignas de esa clase, las sigue con alta coherencia
-temporal aunque con retardo y atenuación medibles, patrón replicado a dos
-amplitudes diferentes (R4 y R5). La pieza que ninguno de los dos experimentos
+el pipeline visual puede medir su pose con errores del orden de unos pocos
+centímetros (\(\mu\|\Delta pos\|=0{,}058\)~m en el baseline y
+\(\overline{|\Delta Z|}\) entre \(2\) y \(2{,}4\)~cm en el escenario con
+dron) y con errores angulares de aproximadamente
+\(2^\circ\)--\(3^\circ\) en \emph{roll} y \emph{pitch}. El laboratorio
+establece que el robot real, al recibir consignas de esa clase, las sigue con
+alta coherencia temporal aunque con retardo y atenuación medibles, patrón
+replicado a dos amplitudes diferentes (R4 y R5). La pieza que ninguno de los dos experimentos
 cierra es la validación simultánea de ambos eslabones: cómo se comporta la
 estimación visual cuando el robot está físicamente en movimiento bajo dinámica
 marina real. Ese cierre conjunto, con el pipeline visual activo y el robot
@@ -2693,9 +2774,9 @@ rango esperado para el sensor, y las señales de roll, pitch y heave se
 recuperan con la calidad suficiente para servir como referencia de navegación.
 El ángulo de laboratorio físico mostró que el robot puede reproducir consignas
 de movimiento marino de forma coherente: el camino de comando llega intacto a
-la API (correlación \({>}0{,}9999\)) y la respuesta física del cuerpo sigue al
-comando con lag estable y ganancia cuantificable, patrón replicado a dos
-amplitudes diferentes.
+la API (correlación mayor a \(0{,}9999\) en ambos ejes) y la respuesta física
+del cuerpo sigue al comando con lag estable y ganancia cuantificable, patrón
+replicado a dos amplitudes diferentes.
 
 La afirmación que habilita este conjunto de evidencia no es que el sistema
 esté listo para operar en campo, sino que sus tres eslabones principales son
@@ -2739,9 +2820,15 @@ Baseline sim.\ cámara fija & \path{marine_sim_20260410_155332_report_v2_ref} & 
 Corrida \(R1\) (dron) & \path{sjtu_drone_sim_20260410_155834_report_v2_r1} & idem \\
 Corrida \(R2\) (dron) & \path{sjtu_drone_sim_20260410_160419_report_v2_r2} & idem \\
 Corrida \(R3\) (dron) & \path{sjtu_drone_sim_20260410_160814_report_v2_r3} & idem \\
-Laboratorio \(R4\) (principal) & \path{lab_real_20260424_120323_strong_15_10} & 24-04-2026; $\sim 59{,}63$~s \\
-Laboratorio \(R5\) (control) & \path{lab_real_20260424_114454_robot_min} & 24-04-2026; $\sim 59{,}67$~s \\
-Laboratorio (ref.\ histórica) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s \\
+Laboratorio \(R4\) (principal) & \path{lab_real_20260424_120323_strong_15_10} & 24-04-2026; $\sim 59{,}66$~s; sin video \\
+Laboratorio \(R5\) (control) & \path{lab_real_20260424_114454_robot_min} & 24-04-2026; $\sim 59{,}67$~s; sin video \\
+Laboratorio (réplica R5) & \path{lab_real_20260424_113142_robot_min} & 24-04-2026; $\sim 63{,}56$~s; sin video \\
+Laboratorio (corrida adicional) & \path{lab_real__robot_min} & 24-04-2026; $\sim 42{,}96$~s; sin video \\
+Laboratorio (mov.\ corto, 20-03) & \path{lab_real_20260320_112522_trote_robot_full} & 20-03-2026; $\sim 59{,}65$~s; sin \texttt{/sportmodestate} \\
+Laboratorio (mov.\ doble, 20-03) & \path{lab_real_20260320_114312_movimiento_full} & 20-03-2026; $\sim 119{,}55$~s; sin \texttt{/sportmodestate} \\
+Laboratorio (mov.\ v2, 20-03) & \path{lab_real_20260320_120742_movimiento_full_v2} & 20-03-2026; $\sim 59{,}70$~s; sin \texttt{/sportmodestate} \\
+Laboratorio (pipeline visual) & \path{lab_real_20260310_133022} & 10-03-2026; $\sim 59{,}25$~s; con \texttt{/aruco/pose}, \texttt{/aruco/debug\_image} y \texttt{/stereo\_camera/image\_raw} \\
+Laboratorio (ref.\ histórica) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s; sólo \texttt{metadata.yaml} disponible en este checkout \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
