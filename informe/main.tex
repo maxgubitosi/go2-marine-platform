@@ -114,8 +114,6 @@
     {\LARGE Trabajo de grado \par}
     \vspace{10mm}
 
-    {\Large Versión Preliminar \par}
-    \vspace{20mm}
 
     {\bfseries\LARGE Framework de simulación marina para un robot cuadrúpedo \par}
     \vfill
@@ -1731,13 +1729,6 @@ sentido, cumplió un rol de apoyo en el desarrollo: permitió inspeccionar el
 pipeline en estados controlados antes de exigirle seguimiento continuo sobre
 secuencias periódicas de un minuto.
 
-\figureplaceholder
-  {fig:method_marine_simulator}
-  {Esquema del generador de movimiento marino: parámetros de oleaje, consigna
-  postural, modo manual y relación con el torso del Go2 en Gazebo.}
-  {Arquitectura del simulador marino utilizado para generar roll, pitch y heave
-  sobre el cuerpo del Go2.}
-
 \subsubsection{Control postural del Go2 en simulación}
 
 El generador de movimiento marino no mueve directamente un objeto externo en
@@ -1785,15 +1776,15 @@ visualmente ambos casos.
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}[t]{0.28\textwidth}
+\begin{subfigure}[t]{0.40\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/setup/unitree-aruco.png}
+\includegraphics[height=0.36\textwidth]{figures/setup/unitree-aruco.png}
 \caption{Go2 con el marcador ArUco montado sobre el torso.}
 \end{subfigure}
 \hfill
-\begin{subfigure}[t]{0.62\textwidth}
+\begin{subfigure}[t]{0.58\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/setup/drone-unitree-aruco.png}
+\includegraphics[height=0.36\textwidth]{figures/setup/drone-unitree-aruco.png}
 \caption{Escenario con dron simulado en hover sobre la plataforma.}
 \end{subfigure}
 \caption{Vistas del entorno simulado utilizadas en el framework. A la izquierda
@@ -1912,13 +1903,19 @@ campaña se retoma en el capítulo experimental y explica por qué la comparaci�
 principal del capítulo no se plantea como una única corrida ejemplar, sino como
 un baseline más tres repeticiones comparables del caso fuerte.
 
-\figureplaceholder
-  {fig:method_pipeline}
-  {Pipeline completo desde Gazebo hasta la evaluación offline: simulador marino,
-  fuente de imagen, detección ArUco, registro experimental y comparación posterior
-  contra ground truth.}
-  {Pipeline implementado para estimar en tiempo real la pose del marcador y
-  evaluarla luego contra el estado verdadero del simulador.}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/diagrams/method_pipeline/method_pipeline.pdf}
+\caption{Pipeline completo de simulación, desde Gazebo hasta la evaluación
+\textit{offline}. Durante la ejecución en tiempo real, el simulador marino
+prescribe el movimiento del torso del Go2 en Gazebo, una fuente de imagen
+---cámara fija o dron SJTU--- observa el marcador ArUco y el detector estima su
+pose, que se preserva junto con el resto de las señales en un registro
+experimental. La comparación contra ground truth se realiza después,
+reconstruyendo la pose verdadera del marcador a partir de ese registro y
+contrastándola con la estimación visual.}
+\label{fig:method_pipeline}
+\end{figure}
 
 \subsection{Metodología en laboratorio}
 
@@ -2671,10 +2668,6 @@ Ganancia dinámica aprox. & \(\sim 0{,}62\) & \(\sim 0{,}47\) \\
 \end{tabular}
 \end{table}
 
-% TODO(data): reemplazar o complementar esta tabla con un gráfico de barras de
-% error por eje cuando estén disponibles los datos crudos o métricas MAE/RMSE
-% de laboratorio comparables con la sección de simulación.
-
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/images/nominal_10_8_plot_01_timeseries_cmd_vs_real.png}
@@ -2683,6 +2676,46 @@ respuesta del robot a menor amplitud. La forma general se preserva con
 respecto a R4, con retardo y atenuación consistentes.}
 \label{fig:lab_target_vs_odom_r5}
 \end{figure}
+
+Para cerrar la lectura cuantitativa del laboratorio con el mismo criterio que
+el capítulo de simulación, se reconstruyó el error por eje entre la consigna
+marina y la respuesta real del robot. El ensayo R5 es el único de la campaña
+cuyo registro crudo conserva la telemetría de estado completa, de modo que
+sobre ese bag se rehízo la comparación a partir de la referencia
+(\texttt{/marine\_platform/debug\_state}) y de la odometría del cuerpo
+(\texttt{/utlidar/robot\_odom}), cuya actitud coincide con la del estado
+deportivo. Como la diferencia instantánea entre comando y respuesta está
+dominada por el retardo físico ya discutido, el error se reporta sobre el
+residual obtenido una vez compensado el lag óptimo de cada eje, lo que separa
+la discrepancia de forma y amplitud de la simple diferencia de fase.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/results/lab_error_hist.png}
+\caption{Ensayo R5 --- distribución del error residual de actitud entre la
+consigna marina y la respuesta real del Go2, una vez compensado el retardo
+físico óptimo de cada eje (\(0{,}58\)~s en roll y \(1{,}16\)~s en pitch). Se
+muestran \(\Delta roll\) y \(\Delta pitch\) calculados sobre los datos crudos
+del rosbag; la línea negra marca el cero y la línea roja punteada la media de
+cada distribución.}
+\label{fig:lab_error_hist}
+\end{figure}
+
+La Figura~\ref{fig:lab_error_hist} muestra la distribución de ese residual por
+eje. Ambas quedan centradas cerca de cero ---media de \(-0{,}77^\circ\) en roll
+y \(+0{,}55^\circ\) en pitch---, lo que confirma que el robot no introduce un
+sesgo sistemático de actitud. Su forma, sin embargo, no es la de un ruido de
+medición: en vez de concentrarse alrededor de la media, la frecuencia se
+acumula hacia los extremos, con una dispersión de \(3{,}86^\circ\) en roll y
+\(2{,}93^\circ\) en pitch. Esa estructura bimodal es la huella de un residual
+dominado por la atenuación de amplitud de la plataforma ---la respuesta
+reproduce cerca de la mitad de la consigna, en línea con la ganancia dinámica
+\(\sim 0{,}47\) de la Tabla~\ref{tab:lab_r4_r5}---: al restar una sinusoide
+atenuada de la consigna queda otra sinusoide de menor amplitud, cuyo histograma
+se concentra en los picos y no en el centro. Leído junto con la simulación,
+este gráfico cumple el mismo rol que los histogramas de error de aquel
+capítulo: traslada la comparación temporal a una distribución de error por eje,
+acotada y reproducible.
 
 La comparación del eje vertical requiere una lectura aparte. En R4, la señal
 esperada y la señal enviada al robot no incluyeron heave dinámico: la
@@ -2694,17 +2727,6 @@ del cuerpo y no un desplazamiento relativo respecto de una referencia neutra.
 Por eso, esta corrida no puede leerse como una validación de heave oscilatorio,
 sino como una validación fuerte de roll y pitch con observación complementaria
 de la altura del tronco.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{figures/images/strong_15_10_plot_05_heave_z_comparison.png}
-\caption{Ensayo R4 --- lectura del eje vertical en laboratorio. La figura
-distingue entre la consigna de \emph{heave} enviada, la altura absoluta del
-tronco reportada por el robot y la versión centrada de esa señal, para dejar
-explícito por qué esta corrida no sostiene una comparación directa de
-\emph{heave} dinámico.}
-\label{fig:lab_heave_comparison}
-\end{figure}
 
 \subsubsection{Lectura conjunta con la simulación}
 
