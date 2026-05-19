@@ -1,0 +1,8 @@
+/* Override de estilo para method_pipeline.mmd (se pasa a mmdc con --cssFile).
+   Mermaid centra el titulo de cada subgraph; el del cuadro "Evaluacion
+   offline" quedaba encima de la flecha que entra desde el rosbag, asi que se
+   re-ancla al borde izquierdo del cuadro.
+   rect offline: x=254.72, width=292  ->  texto alineado a la izquierda + padding. */
+#my-svg-offline .cluster-label {
+  transform: translate(268.7px, 935.292px);
+}

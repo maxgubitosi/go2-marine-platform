@@ -1,0 +1,53 @@
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Helvetica, Arial, sans-serif","fontSize":"14px","lineColor":"#475569"},"flowchart":{"curve":"basis","htmlLabels":true,"nodeSpacing":40,"rankSpacing":48,"padding":8}}}%%
+flowchart TB
+
+  subgraph online["Ejecución en tiempo real · Gazebo / ROS 2"]
+    direction TB
+    SIM["<b>Simulador marino</b><br/>marine_platform_simulator<br/>genera roll, pitch y heave"]
+    GZ["<b>Gazebo Classic</b><br/>Go2 fijo al suelo;<br/>el torso reproduce el oleaje"]
+    SRC["<b>Fuente de imagen</b>"]
+    FIX["Cámara fija nadir · z = 2 m<br/>/fixed_camera/camera/image_raw"]
+    DRN["Dron SJTU en hover · z = 3 m<br/>/drone/bottom/image_raw"]
+    DET["<b>Detección ArUco</b><br/>aruco_detector · solvePnP<br/>pose del marcador en frame cámara"]
+    BAG[("<b>Registro experimental</b><br/>rosbag")]
+
+    SIM -->|"/body_pose · 20 Hz"| GZ
+    GZ -->|"escena con el<br/>marcador en movimiento"| SRC
+    SRC --> FIX
+    SRC --> DRN
+    FIX -->|"imagen + intrínsecos"| DET
+    DRN -->|"imagen + intrínsecos"| DET
+    DET -->|"/aruco/pose"| BAG
+    GZ -.->|"odometría, IMU, TF<br/>y pose del dron"| BAG
+  end
+
+  subgraph offline["Evaluación offline"]
+    direction TB
+    GT["<b>Reconstrucción del ground truth</b><br/>cadena cámara–marcador:<br/>pose del tronco + offset del marcador<br/>+ extrínsecas (+ pose del dron)"]
+    CMP["<b>Comparación estimación vs. ground truth</b>"]
+    OUT["CSV y gráficos de error<br/>de posición y orientación"]
+    GT --> CMP --> OUT
+  end
+
+  BAG ==>|"reproceso sin<br/>reejecutar Gazebo"| GT
+
+  classDef sim fill:#fdebd9,stroke:#d97706,stroke-width:1.5px,color:#0f172a
+  classDef gazebo fill:#e2e8f0,stroke:#475569,stroke-width:1.5px,color:#0f172a
+  classDef camera fill:#d5eeeb,stroke:#0f766e,stroke-width:1.5px,color:#0f172a
+  classDef aruco fill:#dde6fb,stroke:#1d4ed8,stroke-width:1.5px,color:#0f172a
+  classDef rosbag fill:#e9ddfa,stroke:#7c3aed,stroke-width:1.5px,color:#0f172a
+  classDef eval fill:#d9efe1,stroke:#15803d,stroke-width:1.5px,color:#0f172a
+
+  class SIM sim
+  class GZ gazebo
+  class SRC camera
+  class FIX camera
+  class DRN camera
+  class DET aruco
+  class BAG rosbag
+  class GT eval
+  class CMP eval
+  class OUT eval
+
+  style online fill:#f8fafc,stroke:#cbd5e1,stroke-width:1px,color:#334155
+  style offline fill:#f1f5f9,stroke:#cbd5e1,stroke-width:1px,color:#334155
