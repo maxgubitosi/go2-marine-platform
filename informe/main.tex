@@ -2609,8 +2609,9 @@ aunque no instantánea. Cuando se permite compensar el retardo del sistema, la
 mejor correlación para roll aparece alrededor de \(0{,}45\)~s y alcanza
 \(0{,}954\), mientras que en pitch el mejor lag se ubica cerca de
 \(0{,}95\)~s, con correlación de \(0{,}984\). La lectura experimental
-es clara: el robot reproduce la dinámica solicitada, pero lo hace con retardo
-físico estable y con una amplitud efectiva menor que la de la consigna.
+es clara: el robot reproduce la forma principal de la dinámica solicitada,
+pero lo hace con retardo físico estable y con una amplitud efectiva menor que
+la de la consigna.
 
 Esta reducción de amplitud también aparece en los rangos de actitud medidos.
 En el estado deportivo de R4, el roll real varía entre \(-11{,}12^\circ\) y
@@ -2639,6 +2640,26 @@ mejora la correspondencia entre la consigna y la actitud real del robot
 cuando se compensa el lag físico del sistema.}
 \label{fig:lab_lag_correlation}
 \end{figure}
+
+La Figura~\ref{fig:lab_lag_correlation} permite precisar esta lectura. Las
+correlaciones máximas son altas y aparecen en retardos bien definidos, lo que
+sugiere que el desacople dominante entre comando y respuesta no es una
+deformación geométrica compleja del movimiento, sino una combinación de fase y
+escala. En términos de modelo, para cada eje angular puede plantearse una
+relación afín lineal con retardo,
+\[
+\theta_{\mathrm{real},i}(t) \approx
+g_i\,\theta_{\mathrm{cmd},i}(t-\tau_i) + b_i,
+\qquad i \in \{\mathrm{roll}, \mathrm{pitch}\},
+\]
+donde \(g_i\) representa la ganancia efectiva, \(\tau_i\) el retardo dinámico y
+\(b_i\) un posible offset pequeño de medición. Bajo esa lectura, ajustar
+parámetros de amplitud y sincronización permitiría mapear la consigna al
+movimiento observado con un residuo considerablemente menor. No se afirma con
+esto una reproducción perfecta: las correlaciones no son exactamente unitarias
+y la señal real conserva irregularidades propias del controlador interno. Sí se
+afirma que, en este régimen, buena parte del error es paramétrico ---ganancia y
+tiempo--- antes que una pérdida de la estructura temporal del movimiento.
 
 El ensayo de control R5, con consigna de menor amplitud (\(\pm 9{,}9^\circ\)
 roll, \(\pm 7{,}9^\circ\) pitch), permite verificar si el patrón observado
@@ -2784,7 +2805,8 @@ El ángulo de laboratorio físico mostró que el robot puede reproducir consigna
 de movimiento marino de forma coherente: el camino de comando llega intacto a
 la capa de actuación (correlación mayor a \(0{,}9999\) en ambos ejes) y la respuesta física
 del cuerpo sigue al comando con lag estable y ganancia cuantificable, patrón
-replicado a dos amplitudes diferentes.
+replicado a dos amplitudes diferentes. Esa relación sugiere un error dinámico
+parametrizable antes que una pérdida de la forma global del movimiento.
 
 La afirmación que habilita este conjunto de evidencia no es que el sistema
 esté listo para operar en campo, sino que sus tres eslabones principales son
