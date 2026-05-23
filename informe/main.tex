@@ -408,6 +408,8 @@ el torso y cámara mantenida en posición fija.}
 
 \subsection{Pipeline de percepción y evaluación}
 
+La Figura~\ref{fig:intro_framework_overview} resume visualmente el recorrido
+metodológico de simulación a laboratorio que organiza este trabajo.
 En ambos casos, la estimación visual se resolvió mediante un pipeline basado en
 marcadores ArUco y \texttt{solvePnP}. Este último es el procedimiento geométrico
 que permite recuperar la pose relativa del marcador a partir de sus esquinas
@@ -791,6 +793,8 @@ induce \emph{pitch}; y diferencia de altura entre babor y estribor, que induce
 \label{fig:wave_platform_response}
 \end{figure}
 
+La Figura~\ref{fig:wave_platform_response} ilustra esta interpretación
+geométrica del oleaje antes de introducir la formulación matemática.
 La formulación clásica de dinámica marina describe el movimiento de una
 embarcación mediante seis grados de libertad \citep{Fossen1995}. Tres de ellos
 son traslacionales: \emph{surge}, \emph{sway} y \emph{heave}. Los otros tres
@@ -977,8 +981,9 @@ irregular representada como combinación de varias componentes.}
 \label{fig:wave_regular_irregular}
 \end{figure}
 
-El recorte a \emph{heave}, \emph{roll} y \emph{pitch} fija, entonces, qué parte
-del movimiento queremos sintetizar y por qué esa parte es suficiente para una
+La Figura~\ref{fig:wave_regular_irregular} contrasta ambos perfiles de
+superficie libre. El recorte a \emph{heave}, \emph{roll} y \emph{pitch} fija,
+entonces, qué parte del movimiento queremos sintetizar y por qué esa parte es suficiente para una
 primera validación de percepción visual. Sin embargo, todavía queda abierta una
 pregunta clave: qué dispositivo experimental puede materializar ese movimiento
 de manera repetible y, al mismo tiempo, ser observado por una cámara con una
@@ -1094,10 +1099,10 @@ J_c(q)\ddot{q} + \dot{J}_c(q,\dot{q})\dot{q} = 0.
 \end{equation}
 
 En un problema de locomoción completa estas restricciones conviven con cambios
-de apoyo, despegues y redistribución dinámica de cargas. En nuestro caso, en
-cambio, la situación es bastante más simple: el framework utiliza al Go2 en un
-régimen postural, con movimiento suave y sin perseguir desplazamientos sobre el
-plano. Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
+de apoyo, despegues y redistribución dinámica de cargas. En nuestro caso, en cambio, la situación es bastante más simple: el
+framework utiliza al Go2 en un régimen postural, con movimiento suave y sin
+perseguir desplazamientos sobre el plano
+(Figura~\ref{fig:go2_postural_control_scheme}). Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
 consigna de pose del cuerpo se transforma en una nueva geometría de patas.
 
 \begin{figure}[H]
@@ -1307,6 +1312,8 @@ Perspective-\(n\)-Point usando la calibración intrínseca de la cámara y las
 esquinas detectadas del marcador \citep{opencv_calib3d}. En otras palabras, el
 detector no se limita a responder ``hay un ArUco''; produce una hipótesis
 métrica sobre dónde está y cómo está orientado ese patrón respecto del sensor.
+El patrón concreto utilizado se muestra en la
+Figura~\ref{fig:aruco_marker_id0}.
 
 \begin{figure}[H]
 \centering
@@ -1346,6 +1353,8 @@ estimar la pose en tiempo real.}
 \label{fig:camera_marker_geometry}
 \end{figure}
 
+La Figura~\ref{fig:camera_marker_geometry} muestra la realización física de
+esta geometría cámara--marcador en el laboratorio.
 La relación entre los puntos tridimensionales del marcador y su proyección en la
 imagen se describe mediante el modelo pinhole de cámara. Para cada punto
 \(P_i = [X_i \;\; Y_i \;\; Z_i \;\; 1]^\top\), se cumple
@@ -1642,7 +1651,8 @@ Primero, cada hiperparámetro tiene un efecto fácilmente interpretable sobre la
 señal. Segundo, la excitación es altamente repetible, lo que permite comparar
 registros distintos sin introducir ambigüedad sobre la entrada del sistema.
 Tercero, la relación entre frecuencia, amplitud y fase se reconoce con claridad
-tanto en las señales del robot como en la imagen del marcador.
+tanto en las señales del robot como en la imagen del marcador
+(Figura~\ref{fig:method_motion_components}).
 
 \begin{figure}[H]
 \centering
@@ -1674,7 +1684,8 @@ irregular, en cambio, superpone oscilaciones con distintas escalas
 temporales y genera trayectorias menos previsibles. Esta segunda opción es útil
 para tensionar el detector y explorar la robustez del pipeline, pero no resulta
 la mejor base cuando se quiere explicar el sistema con claridad o comparar una
-configuración con otra de manera controlada.
+configuración con otra de manera controlada
+(Figura~\ref{fig:method_wave_patterns}).
 
 \begin{figure}[H]
 \centering
@@ -1833,7 +1844,8 @@ una altura nominal de \(2{,}0\) m. Su frame permanece rígido respecto del mundo
 de modo que toda la variabilidad de la secuencia proviene del movimiento del
 Go2. En el caso del dron, por el contrario, la cámara deja de ser un observador
 inmóvil: el vehículo despega de forma automática y, tras un retardo inicial,
-mantiene un hover nominal por encima de la plataforma. Esta organización permite
+mantiene un hover nominal por encima de la plataforma
+(Figura~\ref{fig:method_camera_sources}). Esta organización permite
 pasar de un escenario geométricamente más limpio a otro donde la percepción
 depende además de la dinámica del vehículo aéreo.
 
@@ -1899,7 +1911,8 @@ del framework, fue cuánto se degrada esa estimación cuando la observación pas
 depender también de una cámara aérea embarcada en el dron. Esta estructura de
 campaña se retoma en el capítulo experimental y explica por qué la comparación
 principal del capítulo no se plantea como una única corrida ejemplar, sino como
-un baseline más tres repeticiones comparables del caso fuerte.
+un baseline más tres repeticiones comparables del caso fuerte
+(Figura~\ref{fig:method_pipeline}).
 
 \begin{figure}[H]
 \centering
@@ -1958,8 +1971,9 @@ permite aislar variables, repetir exactamente las mismas corridas y cuantificar
 error respecto de ground truth. El laboratorio, en cambio, obliga a aceptar
 incertidumbre adicional y desplaza el foco hacia la coherencia entre la consigna
 propuesta, la respuesta física del robot y la observación visual del marcador.
-Por eso, antes de describir el montaje real en detalle, explicitamos qué
-aspectos del sistema se conservaron y cuáles tuvieron que adaptarse.
+Por eso, antes de describir el montaje real en detalle, explicitamos en la
+Tabla~\ref{tab:method_sim_to_lab} qué aspectos del sistema se conservaron y
+cuáles tuvieron que adaptarse.
 
 \begin{table}[H]
 \centering
@@ -2119,7 +2133,8 @@ esta subsección comparten la misma consigna de movimiento marino sinusoidal y
 los mismos parámetros de referencia ya presentados en la metodología
 (Tabla~\ref{tab:method_marine_params}). Sobre esa base fija se construyó una
 campaña con un baseline de cámara fija y tres repeticiones comparables del
-escenario con dron. Esta estructura no se eligió sólo para acumular más
+escenario con dron, que se detallan en la
+Tabla~\ref{tab:sim_selected_runs}. Esta estructura no se eligió sólo para acumular más
 registros, sino para separar con claridad dos preguntas.
 Primero, qué tan bien sigue el pipeline visual el movimiento del marcador cuando
 el sensor permanece fijo. Segundo, cuánto se degrada esa estimación cuando la
@@ -2335,8 +2350,9 @@ lectura marina del problema: \(|\Delta roll|\), \(|\Delta pitch|\) y
 \end{figure}
 
 La corrida principal del dron, mostrada en las
-Figuras~\ref{fig:sim_drone_position_vs_gt} y
-\ref{fig:sim_drone_orientation_vs_gt}, conserva la capacidad de seguir la
+Figuras~\ref{fig:sim_drone_position_vs_gt},
+\ref{fig:sim_drone_orientation_vs_gt} y
+\ref{fig:sim_drone_error_hist}, conserva la capacidad de seguir la
 dinámica global del marcador, pero lo hace bajo una geometría de observación
 menos favorable que la del caso fijo. En particular, la figura de posición
 permite ver que la señal estimada acompaña la periodicidad dominante en
@@ -2360,6 +2376,24 @@ La principal limitación aparece en la posición absoluta y no en la forma
 temporal de las oscilaciones. En las tres corridas del dron persiste un sesgo
 sistemático en \(Y\), de signo negativo, que alcanza
 \(-0{,}322\) m en \(R1\), \(-0{,}297\) m en \(R2\) y \(-0{,}151\) m en \(R3\).
+La hipótesis más probable para este desplazamiento sistemático en \(Y\) no es
+un sesgo del estimador visual, sino un movimiento físico real del robot. Al
+recibir comandos de roll y pitch, el controlador de estabilidad del Go2 —tanto
+en simulación como en el robot real— ajusta la posición horizontal del torso
+para mantener el centro de masa dentro del polígono de soporte, lo que genera
+un pequeño desplazamiento lateral (\emph{sway}) no incluido en la consigna.
+Este efecto fue observable también en los ensayos de laboratorio, donde el
+cuadrúpedo se desplazaba perceptiblemente en la dirección lateral mientras
+ejecutaba la oscilación postural. En simulación, ese movimiento queda registrado
+en la odometría del trunk y se propaga al ground truth del marcador, mientras
+que la estimación visual del ArUco lo lee como parte de la pose observada. La
+lectura de este trabajo se centró deliberadamente en roll, pitch y heave, por
+lo que este grado de libertad pasivo no fue compensado ni modelado. La
+hipótesis es verificable inspeccionando la trayectoria \(XY\) del ground truth
+del trunk en el rosbag: si el desplazamiento en \(Y\) aparece en la odometría
+del robot antes de que el estimador visual lo reporte, entonces su origen es
+dinámico y no un artefacto de la cadena de percepción.
+
 Por eso la lectura principal del capítulo no se apoya en la posición cruda,
 sino en la comparación de roll, pitch y heave. Las
 figuras de posición, además, se muestran sin bias medio por eje solo para
@@ -2479,7 +2513,8 @@ Odometría externa & \(14{.}451\) & \(242{,}2\) Hz & Lectura independiente usada
 El montaje físico conserva la lógica general descripta en la metodología:
 marcador ArUco adherido al torso del Go2, cámara estéreo utilizada en modo
 monocular, calibración previa del sensor y posición aproximadamente fija por
-encima del robot. En los ensayos R4 y R5 el sistema visual no estaba activo
+encima del robot. La disponibilidad efectiva de señales en R4 se resume en la
+Tabla~\ref{tab:lab_signals_summary}. En los ensayos R4 y R5 el sistema visual no estaba activo
 por decisión metodológica, justamente para aislar la dinámica del robot de la
 carga computacional del pipeline visual. El montaje puede verse en la
 Figura~\ref{fig:method_lab_setup}.
