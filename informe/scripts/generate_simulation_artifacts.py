@@ -391,9 +391,9 @@ def plot_position_vs_gt(df: pd.DataFrame, title: str, out_path: Path, debias: bo
 
 
 def plot_orientation_vs_gt(df: pd.DataFrame, title: str, out_path: Path) -> None:
-    fig, axes = plt.subplots(3, 1, figsize=(10.2, 7.4), sharex=True)
+    fig, axes = plt.subplots(2, 1, figsize=(10.2, 5.3), sharex=True)
     t = df["t_rel"].to_numpy()
-    for ax, axis in zip(axes, ["roll", "pitch", "yaw"]):
+    for ax, axis in zip(axes, ["roll", "pitch"]):
         est = df[f"est_{axis}"].to_numpy()
         gt = df[f"gt_{axis}"].to_numpy()
 

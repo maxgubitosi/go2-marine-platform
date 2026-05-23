@@ -149,7 +149,7 @@ La primera parte del trabajo se desarrolla en simulación con ROS2 Humble y
 Gazebo Classic. Allí se integra un generador de movimiento marino, un pipeline
 de detección ArUco basado en \texttt{solvePnP}, fuentes de imagen de cámara
 fija y cámara embarcada en un dron simulado, y una evaluación \textit{offline}
-contra ground truth. En el caso base con cámara fija, el sistema recupera la
+contra el ground truth. En el caso base con cámara fija, el sistema recupera la
 dinámica global del marcador con un error medio de posición de
 \(5{,}8\) cm. En el escenario con dron, más cercano a la aplicación final, las
 tres corridas comparables conservan errores absolutos medios de alrededor de
@@ -197,11 +197,11 @@ de forma confiable.
 
 \subsection{Necesidad de validación segura y reproducible}
 
-Esta dificultad técnica se combina, además, con un problema metodológico. Las
+Esta dificultad técnica se combina con un problema metodológico. Las
 pruebas directas sobre hardware real son costosas, difíciles de repetir y
 arriesgadas para los equipos involucrados. En un escenario de aterrizaje sobre
-una plataforma marina, un error de estimación de pose puede traducirse en una
-maniobra fallida, una colisión o la pérdida del vehículo. Por ese motivo,
+una plataforma marina, un error de estimación de pose puede traducirse en una 
+colisión o la pérdida del vehículo. Por ese motivo,
 resulta necesario contar con un entorno de validación que permita desacoplar
 subproblemas, reproducir condiciones de movimiento y medir desempeño con
 criterios objetivos antes de avanzar hacia ensayos de mayor riesgo.
@@ -247,25 +247,22 @@ fuentes de imagen y, finalmente, estudiar hasta qué punto esa lógica de
 movimiento conserva sentido al trasladarse al robot real.
 
 Esta decisión responde a un criterio metodológico: antes de exigir autonomía
-completa, resulta más valioso aislar los componentes críticos, entender sus
-límites y disponer de herramientas para evaluarlos con precisión. Al
-representar de manera controlada las perturbaciones que más afectan la
-percepción visual, integrar una cadena de estimación de pose en tiempo real y
-compararla luego contra referencias del simulador, construimos un entorno donde
-las decisiones técnicas dejan de evaluarse de forma intuitiva y pasan a poder
-analizarse con trazabilidad. Esto vuelve posible estudiar fallas, comparar
-configuraciones, justificar cambios de diseño y acumular evidencia antes de
-dar el salto hacia ensayos más complejos.
+completa, conviene aislar los componentes críticos, entender sus límites y
+evaluarlos con precisión. Al reproducir de forma controlada las perturbaciones
+que más afectan la percepción visual, integrar estimación de pose en tiempo real
+y contrastarla con referencias del simulador, las decisiones técnicas dejan de
+evaluarse de forma intuitiva y pasan a analizarse con trazabilidad, lo que
+permite estudiar fallas, comparar configuraciones y acumular evidencia antes de
+ensayos más complejos.
 
 En otras palabras, el enfoque progresivo no posterga el problema central, sino
 que lo vuelve abordable. En vez de enfrentar desde el inicio toda la
-complejidad del aterrizaje autónomo sobre plataformas marinas, este trabajo
-propone una secuencia de validación que reduce riesgo sin perder relevancia
-para la aplicación final. Esa es, precisamente, su fortaleza: ofrecer un
-framework que no solo reproduce un escenario desafiante, sino que organiza de
-manera medible y repetible el camino hacia experimentos futuros sobre hardware
-real y, eventualmente, hacia sistemas de aterrizaje con mayor grado de
-autonomía.
+complejidad del aterrizaje autónomo sobre plataformas marinas, se
+propone una secuencia de validación que reduce riesgo sin perder relevancia para
+la aplicación final. Su fortaleza es ofrecer un framework que no solo reproduce
+un escenario desafiante, sino que organiza de manera medible y repetible el
+camino hacia experimentos futuros sobre hardware real y, eventualmente, hacia
+sistemas de aterrizaje con mayor grado de autonomía.
 
 \section{Introducción} \label{intro}
 
@@ -325,7 +322,7 @@ sistema cinemáticamente consistente, observable desde cámaras simuladas o, má
 adelante, desde un setup físico en laboratorio. Además, deja planteado un
 camino claro para etapas posteriores del proyecto: una vez validada la cadena
 simulación--laboratorio, el siguiente paso natural sería estudiar el
-aterrizaje del dron sobre el lomo del cuadrúpedo, es decir, sobre la misma
+aterrizaje del dron sobre el torso del cuadrúpedo, es decir, sobre la misma
 plataforma cuyo movimiento primero se sintetiza y luego se reproduce
 físicamente. Ese objetivo final no forma parte del alcance efectivo de esta
 etapa, pero sí orienta la elección de la plataforma experimental desde el
@@ -405,7 +402,7 @@ la pose del vehículo aéreo.
 \caption{Vista panorámica del recorrido metodológico de este trabajo. A la izquierda,
 una vista representativa del entorno de simulación con el Go2 instrumentado con
 ArUco; a la derecha, el traslado al laboratorio con el Go2 real, marcador sobre
-el lomo y cámara mantenida en posición aproximadamente fija.}
+el torso y cámara mantenida en posición fija.}
 \label{fig:intro_framework_overview}
 \end{figure}
 
@@ -1231,7 +1228,7 @@ resume la referencia del robot sobre el plano de apoyo y puede pensarse como la
 ``sombra'' del cuadrúpedo sobre el suelo. El frame \texttt{base\_link}
 \(\{bl\}\), en cambio, está asociado al torso y es el que transporta
 efectivamente el marcador. Sobre esa base se define el frame del ArUco
-\(\{a\}\), rígidamente unido a la tabla montada sobre el lomo. Para la cámara,
+\(\{a\}\), rígidamente unido a la tabla montada sobre el torso. Para la cámara,
 en cambio, conviene distinguir una cadena propia de frames; sin embargo, la
 observación visual y la pose publicada por el detector quedan finalmente
 expresadas en el frame óptico \(\{c\}\).
@@ -1342,7 +1339,7 @@ las correspondencias 2D--3D sean geométricamente correctas.
 \includegraphics[width=0.72\textwidth]{figures/images/fig_lab_camera_marker_geometry.jpeg}
 \caption{Realización física de la geometría cámara--marcador en
 laboratorio: la cámara estéreo se mantiene aproximadamente fija sobre un
-trípode y observa el marcador ArUco adherido al lomo del Go2. Esta
+trípode y observa el marcador ArUco adherido al torso del Go2. Esta
 disposición materializa la relación entre el plano del marcador y el frame
 óptico de la cámara que el modelo pinhole y la rutina PnP utilizan para
 estimar la pose en tiempo real.}
@@ -1776,15 +1773,17 @@ visualmente ambos casos.
 
 \begin{figure}[H]
 \centering
-\begin{subfigure}[t]{0.40\textwidth}
+\newlength{\methodvisualsetupheight}
+\setlength{\methodvisualsetupheight}{0.38\textwidth}
+\begin{subfigure}[t]{0.406\textwidth}
 \centering
-\includegraphics[height=0.36\textwidth]{figures/setup/unitree-aruco.png}
+\includegraphics[height=\methodvisualsetupheight,keepaspectratio]{figures/setup/unitree-aruco.png}
 \caption{Go2 con el marcador ArUco montado sobre el torso.}
-\end{subfigure}
+\end{subfigure}%
 \hfill
-\begin{subfigure}[t]{0.58\textwidth}
+\begin{subfigure}[t]{0.588\textwidth}
 \centering
-\includegraphics[height=0.36\textwidth]{figures/setup/drone-unitree-aruco.png}
+\includegraphics[height=\methodvisualsetupheight,keepaspectratio]{figures/setup/drone-unitree-aruco.png}
 \caption{Escenario con dron simulado en hover sobre la plataforma.}
 \end{subfigure}
 \caption{Vistas del entorno simulado utilizadas en el framework. A la izquierda
@@ -1801,13 +1800,12 @@ el marcador.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.62\textwidth]{figures/diagrams/ternas.png}
+\includegraphics[width=0.36\textwidth]{figures/diagrams/ternas.png}
 \caption{Vista esquemática del montaje con cámara aérea y superposición de las
-ternas principales del pipeline geométrico. Se muestran el marco global, la
-referencia plana del robot, el torso, el marco del marcador ArUco y el marco de
-la cámara embarcada en el dron. Esta imagen permite ubicar sobre la escena concreta las
-referencias que después intervienen en la estimación visual y en la
-reconstrucción del ground truth.}
+ternas principales del pipeline geométrico: marco global, referencia plana del
+robot, torso, marcador ArUco y cámara embarcada. La imagen ubica en la escena
+las referencias usadas para la estimación visual y la reconstrucción del ground
+truth.}
 \label{fig:method_frames_scene}
 \end{figure}
 
@@ -1974,7 +1972,7 @@ Aspecto & Simulación & Laboratorio \\
 Entrada del sistema & Consigna postural sobre un modelo controlado y repetible (Tabla~\ref{tab:ros_interfaces_sim}) & Misma lógica de movimiento, ejecutada como comando de actitud sobre el Go2 real \\
 Referencia de comparación & Ground truth reconstruible a partir del estado del simulador & Comando esperado, comando efectivo y estado interno del robot \\
 Sensor visual & Cámara ideal definida por el modelo y sus extrínsecas & Cámara estéreo side-by-side usada como monocular, calibrada formalmente y fijada sobre la escena \\
-Montaje del marcador & Relación rígida definida por el modelo del robot & ArUco adherido físicamente sobre el lomo del cuadrúpedo \\
+Montaje del marcador & Relación rígida definida por el modelo del robot & ArUco adherido físicamente sobre el torso del cuadrúpedo \\
 Repetibilidad & Alta, con corridas equivalentes y registros comparables & Dependiente del montaje, la calibración y la ejecución física \\
 \bottomrule
 \end{tabular}
@@ -2019,7 +2017,7 @@ propias del montaje real.
 \subsubsection{Estimación visual con cámara en configuración cuasi fija}
 
 Para observar visualmente el movimiento del robot en laboratorio, se montó un
-marcador ArUco adherido sobre el lomo del cuadrúpedo. Esta decisión buscó
+marcador ArUco adherido sobre el torso del cuadrúpedo. Esta decisión buscó
 preservar, en la medida de lo posible, la misma lógica geométrica del entorno
 simulado: un patrón fiducial rígidamente unido al cuerpo cuya pose pudiera
 inferirse desde una cámara externa. En el entorno real se utilizó el mismo
@@ -2232,9 +2230,11 @@ series antes de calcular estos histogramas.}
 \includegraphics[width=0.82\textwidth]{figures/results/sim_fixed_angle_error_hist_raw.png}
 \caption{Distribución raw del error angular en el baseline con cámara fija.
 Aquí se muestran \(\Delta pitch\) y \(\Delta yaw\) sin recentrado adicional,
-como apoyo para la lectura angular del caso base. El histograma conserva el
-desfase temporal de la cadena de medición; por eso debe leerse como error crudo
-y no como una distribución ya centrada en cero.}
+como apoyo para la lectura angular del caso base. La componente yaw se incluye
+solo como control diagnóstico, dado que el escenario no la excita
+deliberadamente. El histograma conserva el desfase temporal de la cadena de
+medición; por eso debe leerse como error crudo y no como una distribución ya
+centrada en cero.}
 \label{fig:sim_fixed_angle_error_hist_raw}
 \end{figure}
 
@@ -2262,12 +2262,13 @@ Desde el punto de vista del error, el baseline queda acotado en torno a
 \(\mu\|\Delta pos\| = 0{,}0578\) m y \(P95 = 0{,}0853\) m. La componente de
 heave concentra la mayor dispersión posicional, con un error absoluto medio de
 \(0{,}034\) m, mientras que el error angular se mantiene en torno a
-\(2{,}44^\circ\) en roll y \(2{,}00^\circ\) en pitch. El
-histograma raw de la Figura~\ref{fig:sim_fixed_angle_error_hist_raw} muestra,
-además, que yaw permanece mucho más acotado
-\((\overline{|\Delta yaw|} \approx 0{,}17^\circ)\), lo que coincide con la
-intuición geométrica de que la rotación planar del marcador es la componente
-más estable del problema.
+\(2{,}44^\circ\) en roll y \(2{,}00^\circ\) en pitch. Aunque el histograma raw
+de la Figura~\ref{fig:sim_fixed_angle_error_hist_raw} también incluye yaw, esa
+componente no se usa como indicador principal de desempeño: en este trabajo no
+se envían comandos de rotación planar y la referencia mantiene yaw en cero. Por
+lo tanto, su error reducido refleja sobre todo que esa variable fue poco
+excitada, no una propiedad relevante del estimador para el alcance de esta
+etapa.
 
 También aparece aquí una limitación que conviene dejar explícita porque luego se
 repite en el caso fuerte. En \(Y\), la señal estimada acompaña la fase global
@@ -2306,9 +2307,11 @@ fase y forma temporal.}
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_orientation_vs_gt.png}
 \caption{Comparación entre orientación estimada y ground truth en la corrida
-principal con cámara embarcada en el dron. En roll se aplica
+principal con cámara embarcada en el dron, restringida a roll y pitch. En roll se aplica
 \textit{unwrap} angular solo para visualización, con el fin de evitar los
-saltos artificiales asociados a la discontinuidad en \(\pm 180^\circ\).}
+saltos artificiales asociados a la discontinuidad en \(\pm 180^\circ\). Se
+omite yaw porque el experimento no prescribe rotación planar deliberada y esa
+componente no forma parte de las métricas centrales de esta etapa.}
 \label{fig:sim_drone_orientation_vs_gt}
 \end{figure}
 
@@ -2340,9 +2343,8 @@ permite ver que la señal estimada acompaña la periodicidad dominante en
 heave y conserva la estructura temporal en \(X\) y \(Z\), aun cuando
 la nube de observaciones aparece más abierta que en el baseline. La figura de
 orientación refuerza esa lectura: roll y pitch siguen la
-oscilación principal del movimiento, mientras que yaw permanece
-acotado y estable, aunque ya no cumple un rol central en la narrativa del
-capítulo.
+oscilación principal del movimiento, que es la parte angular efectivamente
+excitada por la consigna de oleaje usada en esta etapa.
 
 Cuantitativamente, la corrida \(R2\) queda en
 \(\overline{|\Delta roll|} = 3{,}02^\circ\),
@@ -2475,7 +2477,7 @@ Odometría externa & \(14{.}451\) & \(242{,}2\) Hz & Lectura independiente usada
 \end{table}
 
 El montaje físico conserva la lógica general descripta en la metodología:
-marcador ArUco adherido al lomo del Go2, cámara estéreo utilizada en modo
+marcador ArUco adherido al torso del Go2, cámara estéreo utilizada en modo
 monocular, calibración previa del sensor y posición aproximadamente fija por
 encima del robot. En los ensayos R4 y R5 el sistema visual no estaba activo
 por decisión metodológica, justamente para aislar la dinámica del robot de la
@@ -2533,7 +2535,7 @@ como métricas dinámicas limpias del eslabón de actuación.
 \caption{Detección de ArUco en tiempo real durante la sesión visual del
 10-03 (ver Apéndice~\ref{sec:appendix_data}). Los tres frames corresponden a
 distintos momentos de la corrida y muestran el marcador identificado de forma
-estable sobre el lomo del robot mientras éste reproduce la consigna postural del
+estable sobre el torso del robot mientras éste reproduce la consigna postural del
 simulador marino.}
 \label{fig:lab_aruco_realtime}
 \end{figure}
