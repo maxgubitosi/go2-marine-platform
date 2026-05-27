@@ -115,7 +115,7 @@
     \vspace{10mm}
 
 
-    {\bfseries\LARGE Framework de simulación marina para un robot cuadrúpedo \par}
+    {\bfseries\LARGE Entorno de simulación para dinámica simplificada de plataformas marinas mediante un robot cuadrúpedo \par}
     \vfill
 
     {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par}
@@ -136,36 +136,36 @@
 \section*{Resumen}
 \addcontentsline{toc}{section}{Resumen}
 
-Este trabajo presenta un framework experimental para desarrollar y evaluar
-estimación de pose visual en el contexto de aterrizaje de drones sobre
-plataformas marinas en movimiento. En lugar de abordar directamente el
-aterrizaje autónomo completo, se construye una etapa previa de validación:
-utilizar un robot cuadrúpedo Unitree Go2 como plataforma marina sintética,
-reproducir sobre su torso componentes de roll, pitch y heave, observar un
-marcador ArUco montado sobre la plataforma y comparar la pose estimada contra
-referencias conocidas o reconstruibles.
+Este trabajo propone una alternativa de ensayo segura y reproducible para
+estudiar estimación de pose visual en el contexto de aterrizaje de drones sobre
+plataformas marinas en movimiento. En lugar de comenzar con pruebas directas
+sobre una embarcación o con maniobras de aterrizaje completas, se utiliza un
+robot cuadrúpedo Unitree Go2 como plataforma experimental para reproducir, en
+condiciones controladas, una dinámica simplificada de plataforma marina. De este
+modo, se aíslan los efectos del movimiento de la superficie objetivo sobre la
+percepción visual y se obtiene una etapa previa de validación sin comprometer la
+integridad de los sistemas robóticos involucrados.
 
-La primera parte del trabajo se desarrolla en simulación con ROS2 Humble y
-Gazebo Classic. Allí se integra un generador de movimiento marino, un pipeline
-de detección ArUco basado en \texttt{solvePnP}, fuentes de imagen de cámara
-fija y cámara embarcada en un dron simulado, y una evaluación \textit{offline}
-contra el ground truth. En el caso base con cámara fija, el sistema recupera la
-dinámica global del marcador con un error medio de posición de
-\(5{,}8\) cm. En el escenario con dron, más cercano a la aplicación final, las
-tres corridas comparables conservan errores absolutos medios de alrededor de
-\(2^\circ\)--\(3^\circ\) en roll y pitch, y de \(2\)--\(2{,}4\) cm en la
-componente vertical.
+La primera parte del trabajo se desarrolla en un entorno de simulación robótica.
+Allí se integra un generador de movimiento de plataforma, un patrón fiducial
+observado desde una cámara fija o desde una cámara embarcada en un dron
+simulado, y una evaluación \textit{offline} contra una referencia reconstruible
+del simulador. La estimación de pose se formula a partir del método de
+Perspectiva por \(n\) Puntos (Perspective-\(n\)-Point, PnP), que
+permite recuperar la pose relativa del patrón visual a partir de su geometría
+conocida y de la calibración de cámara. En los ensayos de simulación, el sistema
+reproduce la dinámica global del marcador y conserva una estimación consistente
+de las componentes principales del movimiento bajo distintas configuraciones de
+observación.
 
 La segunda parte traslada la lógica experimental al Go2 real. En laboratorio se
-verifica que la consigna postural llega al robot sin degradación apreciable,
-con correlaciones mayores a \(0{,}9999\) entre la señal esperada y el comando
-enviado. La respuesta física conserva una relación medible con la consigna,
-aunque introduce retardo y atenuación: en el ensayo principal, los mejores
-retardos se ubican entre \(0{,}45\) s y \(0{,}95\) s, con una ganancia dinámica
-aproximada de \(0{,}62\). En conjunto, los resultados muestran que el Go2
-funciona como una aproximación experimental útil de una plataforma marina
-oscilante y que el framework propuesto permite estudiar percepción, movimiento
-y evaluación de forma progresiva, medible y reproducible.
+verifica que la consigna postural llega al robot sin degradación apreciable y
+que la respuesta física conserva una relación medible con el movimiento
+esperado, aunque introduce retardo y atenuación propios del sistema. En
+conjunto, los resultados muestran que el Go2 funciona como una aproximación
+experimental útil de una plataforma marina oscilante y que el entorno propuesto
+permite estudiar percepción, movimiento y evaluación de forma progresiva,
+medible y reproducible.
 
 
 
@@ -190,25 +190,25 @@ móvil, lo que puede ampliar el tiempo efectivo de misión, reducir la
 dependencia de infraestructura costera y acercar el vehículo al área de
 interés. Esta capacidad resultaría especialmente valiosa en operaciones de
 búsqueda y rescate, vigilancia y monitoreo marítimo, inspección de
-infraestructura offshore y observación ambiental. También abriría una vía para
-tareas logísticas livianas entre embarcaciones o plataformas, siempre que la
-relación geométrica entre el vehículo y la superficie objetivo pudiera medirse
-de forma confiable.
+infraestructura \textit{offshore} y observación ambiental. También abriría una
+vía para tareas logísticas livianas entre embarcaciones o plataformas, siempre
+que la relación geométrica entre el vehículo y la superficie objetivo pudiera
+medirse de forma confiable.
 
 \subsection{Necesidad de validación segura y reproducible}
 
 Esta dificultad técnica se combina con un problema metodológico. Las
-pruebas directas sobre hardware real son costosas, difíciles de repetir y
-arriesgadas para los equipos involucrados. En un escenario de aterrizaje sobre
+pruebas directas sobre sistemas físicos reales son costosas, difíciles de
+repetir y arriesgadas para los equipos involucrados. En un escenario de aterrizaje sobre
 una plataforma marina, un error de estimación de pose puede traducirse en una 
 colisión o la pérdida del vehículo. Por ese motivo,
 resulta necesario contar con un entorno de validación que permita desacoplar
 subproblemas, reproducir condiciones de movimiento y medir desempeño con
 criterios objetivos antes de avanzar hacia ensayos de mayor riesgo.
 
-Sin un framework de estas características, la validación del problema debería
+Sin un entorno de estas características, la validación del problema debería
 recorrer caminos considerablemente más costosos. Una primera alternativa sería
-desarrollar hardware experimental a medida para reproducir el movimiento de una
+desarrollar equipamiento experimental a medida para reproducir el movimiento de una
 cubierta, montar sensores, instrumentar cámaras y establecer mecanismos de
 seguridad que permitan recuperar el vehículo frente a fallas. Aunque este
 enfoque ofrecería un mayor realismo físico en etapas tempranas, también
@@ -227,10 +227,10 @@ aborto, procedimientos de recuperación y condiciones ambientales favorables. A
 ello se suma que, aun con una preparación cuidadosa, el entorno marítimo
 introduce variabilidad difícil de controlar, lo que complica la repetibilidad
 de los experimentos y vuelve más costoso aislar errores de percepción, control
-o instrumentación. En comparación con estas alternativas, un framework de
+o instrumentación. En comparación con estas alternativas, un entorno de
 simulación permite iterar con mayor rapidez, explorar fallas de manera segura y
 llegar a las pruebas físicas con hipótesis y métricas mejor definidas.
-En este sentido, el problema no es sólo de control o de visión, sino también de
+En este sentido, el problema no es solo de control o de visión, sino también de
 validación experimental.
 
 \subsection{Conveniencia de un enfoque progresivo}
@@ -259,21 +259,22 @@ En otras palabras, el enfoque progresivo no posterga el problema central, sino
 que lo vuelve abordable. En vez de enfrentar desde el inicio toda la
 complejidad del aterrizaje autónomo sobre plataformas marinas, se
 propone una secuencia de validación que reduce riesgo sin perder relevancia para
-la aplicación final. Su fortaleza es ofrecer un framework que no solo reproduce
+la aplicación final. Su fortaleza es ofrecer un entorno que no solo reproduce
 un escenario desafiante, sino que organiza de manera medible y repetible el
-camino hacia experimentos futuros sobre hardware real y, eventualmente, hacia
-sistemas de aterrizaje con mayor grado de autonomía.
+camino hacia experimentos futuros sobre sistemas físicos reales y,
+eventualmente, hacia sistemas de aterrizaje con mayor autonomía.
 
 \section{Introducción} \label{intro}
 
 \subsection{Objetivo y alcance del trabajo}
 
-El objetivo general de este trabajo es construir un framework que permita
+El objetivo general de este trabajo es construir un entorno experimental que permita
 estudiar y, en etapas posteriores, probar aterrizaje de drones sobre
 plataformas marinas. Dentro de ese objetivo más amplio, nos concentramos en una
 capa previa pero indispensable: la construcción de una plataforma experimental
-para sintetizar movimiento marino, observarlo visualmente y contrastar el
-comportamiento obtenido en simulación con ensayos preliminares en laboratorio.
+para sintetizar movimiento de plataforma marina, observarlo visualmente y
+contrastar el comportamiento obtenido en simulación con ensayos preliminares en
+laboratorio.
 
 También es importante explicitar el alcance del trabajo. Este trabajo no pretende
 resolver de extremo a extremo el aterrizaje automático de un dron sobre una
@@ -281,30 +282,31 @@ plataforma marítima real. Tampoco busca modelar toda la dinámica de una
 embarcación ni agotar las alternativas de percepción visual disponibles. En
 cambio, se concentra en un conjunto acotado de decisiones que consideramos
 habilitantes para ese objetivo final: una representación simplificada pero útil
-del movimiento marino, una implementación reproducible sobre el robot cuadrúpedo
-Unitree Go2, un mecanismo de estimación visual de pose y un primer contraste
-entre la simulación y el laboratorio.
+del movimiento de una plataforma marina, una implementación reproducible sobre
+el robot cuadrúpedo Unitree Go2, un mecanismo de estimación visual de pose y un
+primer contraste entre la simulación y el laboratorio.
 
 Estas decisiones quedan organizadas alrededor de dos preguntas de validación. En
-simulación, nos preguntamos si el framework puede sintetizar movimiento marino,
-observarlo visualmente y medir la calidad de la estimación de pose contra una
-referencia reconstruible. En laboratorio, nos preguntamos si esa misma lógica
-de movimiento conserva sentido físico en el Go2 real y si puede observarse con
-un montaje visual controlado, aun sin disponer del tipo de ground truth que
-ofrece Gazebo.
+simulación, nos preguntamos si el entorno puede sintetizar movimiento de
+plataforma marina, observarlo visualmente y medir la calidad de la estimación de
+pose contra una referencia reconstruible. En laboratorio, nos preguntamos si esa
+misma lógica de movimiento conserva sentido físico en el Go2 real y si puede
+observarse con un montaje visual controlado, aun sin disponer del tipo de
+referencia verdadera que ofrece Gazebo.
 
 \subsection{Plataforma experimental propuesta}
 
 La idea central del enfoque consiste en utilizar el Unitree Go2, un robot
 cuadrúpedo comercial con torso actuado y control postural, como plataforma
-marina sintética. En vez de modelar una embarcación completa en el simulador,
-aprovechamos la capacidad del robot para modificar la postura de su torso y
-reproducir sobre él tres componentes del movimiento que resultan especialmente
-relevantes para el problema de percepción: roll, pitch y heave. Sin embargo, la
-elección del robot no responde solamente a una simplificación del modelado.
-También obedece a una decisión experimental: el Go2 nos permite mantener
+marina sintética \citep{unitree_go2}. En vez de modelar una embarcación completa
+en el simulador, aprovechamos la capacidad del robot para modificar la postura
+de su torso y reproducir sobre él tres componentes del movimiento que resultan
+especialmente relevantes para el problema de percepción: \textit{roll},
+\textit{pitch} y \textit{heave}. Sin embargo, la elección del robot no responde
+solamente a una simplificación del modelado, sino también a una decisión
+experimental: el Go2 nos permite mantener
 continuidad entre la plataforma simulada y la plataforma física, ya que
-disponemos del hardware real y podemos trasladar al laboratorio la misma lógica
+disponemos del \textit{hardware} real y podemos trasladar al laboratorio la misma lógica
 general de movimiento, instrumentación y observación visual. De este modo, este
 trabajo no queda limitado a un escenario puramente virtual, sino que se
 organiza como una secuencia en la que la simulación constituye la primera etapa
@@ -314,12 +316,14 @@ entorno físico controlado.
 Sobre ese torso montamos una tabla con un marcador ArUco, que pasa a funcionar
 como referencia visual de la plataforma. Un ArUco es un marcador fiducial
 cuadrado diseñado para ser detectado e identificado desde la imagen, de modo
-que su pose relativa pueda recuperarse con una cámara calibrada. Para articular
+que su pose relativa pueda recuperarse con una cámara calibrada
+\citep{GarridoJurado2014}. Para articular
 esa plataforma, los sensores y el registro de datos utilizamos ROS2 Humble como
 \emph{middleware} de comunicación entre procesos robóticos y Gazebo Classic como
-simulador físico y sensorial. Esta combinación nos permite trabajar con un
+sistema de simulación física y sensorial
+\citep{Macenski2022,Koenig2004Gazebo}. Esta combinación nos permite trabajar con un
 sistema cinemáticamente consistente, observable desde cámaras simuladas o, más
-adelante, desde un setup físico en laboratorio. Además, deja planteado un
+adelante, desde un montaje físico en laboratorio. Además, deja planteado un
 camino claro para etapas posteriores del proyecto: una vez validada la cadena
 simulación--laboratorio, el siguiente paso natural sería estudiar el
 aterrizaje del dron sobre el torso del cuadrúpedo, es decir, sobre la misma
@@ -333,7 +337,7 @@ ubicado por encima como referencia del escenario de observación aérea.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.52\linewidth]{figures/images/esquema-go2-aruco-dron.png}
-\caption{Esquema conceptual del setup experimental base: Go2 instrumentado con
+\caption{Esquema conceptual del montaje experimental base: Go2 instrumentado con
 tablero y marcador ArUco sobre el torso, junto con un dron ubicado por encima
 como referencia del escenario de observación aérea.}
 \label{fig:intro_go2_aruco_drone_scheme}
@@ -345,18 +349,18 @@ como referencia del escenario de observación aérea.}
 \draw[fill=gray!10,draw=black!60,thick] (-2.2,-0.55) -- (1.9,-0.25) -- (2.25,0.55) -- (-1.85,0.25) -- cycle;
 \draw[fill=gray!18,draw=black!55] (-1.85,0.25) -- (2.25,0.55) -- (2.25,0.85) -- (-1.85,0.55) -- cycle;
 \draw[fill=gray!22,draw=black!50] (1.9,-0.25) -- (2.25,0.55) -- (2.25,0.85) -- (1.9,0.05) -- cycle;
-\draw[-latex,blue!70!black,thick] (0,0.15) -- (0,1.9) node[above]{\small heave};
-\draw[-latex,blue!70!black,thick] (0,0.15) -- (2.9,0.38) node[right]{\small surge};
-\draw[-latex,blue!70!black,thick] (0,0.15) -- (-1.25,-1.35) node[below]{\small sway};
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (0,1.9) node[above]{\small\textit{heave}};
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (2.9,0.38) node[right]{\small\textit{surge}};
+\draw[-latex,blue!70!black,thick] (0,0.15) -- (-1.25,-1.35) node[below]{\small\textit{sway}};
 \draw[-latex,orange!80!black,thick] (-0.95,-1.32) arc[start angle=240,end angle=40,radius=0.54];
-\node[orange!80!black] at (-2.25,-0.94) {\small pitch};
+\node[orange!80!black] at (-2.25,-0.94) {\small\textit{pitch}};
 \draw[-latex,orange!80!black,thick] (2.6,0.05) arc[start angle=-15,end angle=105,radius=0.55];
-\node[orange!80!black] at (3.25,0.78) {\small roll};
+\node[orange!80!black] at (3.25,0.78) {\small\textit{roll}};
 \draw[-latex,orange!80!black,thick] (0.62,1.1) arc[start angle=35,end angle=325,radius=0.46];
-\node[orange!80!black] at (1.35,1.18) {\small yaw};
+\node[orange!80!black] at (1.35,1.18) {\small\textit{yaw}};
 \draw[blue!40!black,very thick] (-3.0,-0.88) sin (-2.3,-0.62) cos (-1.6,-0.88) sin (-0.9,-1.14) cos (-0.2,-0.88) sin (0.5,-0.62) cos (1.2,-0.88) sin (1.9,-1.14) cos (2.6,-0.88);
 \end{tikzpicture}
-\caption{Convención de movimientos marinos usada en el trabajo. Se muestran los
+\caption{Convención de movimientos de plataforma marina usada en el trabajo. Se muestran los
 seis grados de libertad de una plataforma; esta etapa prioriza
 \textit{roll}, \textit{pitch} y \textit{heave} por su efecto directo sobre la
 observación visual del marcador.}
@@ -367,26 +371,28 @@ Como se observa en la Figura~\ref{fig:roll_pitch_heave}, el movimiento de una
 plataforma marina puede describirse, en general, mediante seis grados de
 libertad. En el alcance actual del trabajo no buscamos reproducir
 esa dinámica completa, sino aislar las perturbaciones que más directamente
-afectan la pose observada del marcador. En nuestro setup, roll y pitch cambian
-la orientación aparente del plano del ArUco respecto de la cámara, mientras que
-heave modifica la distancia relativa y, con ello, su escala proyectada en la
-imagen. En cambio, las componentes horizontales y la rotación en yaw no se
+afectan la pose observada del marcador. En nuestro montaje, \textit{roll} y
+\textit{pitch} cambian la orientación aparente del plano del ArUco respecto de la
+cámara, mientras que \textit{heave} modifica la distancia relativa y, con ello,
+su escala proyectada en la imagen. En cambio, las componentes horizontales y la
+rotación en \textit{yaw} no se
 priorizan en esta etapa porque la simulación las mantiene anuladas para validar
 primero la cadena movimiento--percepción--evaluación sobre el subconjunto de
 variaciones visuales más influyentes.
 
-La primera parte del framework se desarrolló íntegramente en simulación sobre
-ROS2 Humble y Gazebo Classic. Allí construimos un pipeline que integra la
-generación del movimiento marino, la observación visual del marcador y la
-evaluación posterior contra ground truth. El movimiento del torso del Go2 se
-controla publicando consignas posturales que inducen oscilaciones periódicas en
-roll, pitch y heave. Sobre ese escenario incorporamos dos fuentes de imagen
+La primera parte del entorno se desarrolló íntegramente en simulación sobre
+ROS2 Humble y Gazebo Classic. Allí construimos un \textit{pipeline} que integra
+la generación del movimiento de plataforma marina, la observación visual del
+marcador y la evaluación posterior contra una referencia verdadera. El
+movimiento del torso del Go2 se controla publicando consignas posturales que
+inducen oscilaciones periódicas en \textit{roll}, \textit{pitch} y
+\textit{heave}. Sobre ese escenario incorporamos dos fuentes de imagen
 complementarias. La primera es una cámara fija nadir, útil para estudiar el
 problema en un caso controlado donde toda la variabilidad proviene del
-movimiento de la plataforma. La segunda es la cámara bottom de un dron
-\texttt{sjtu\_drone}, que introduce un escenario más cercano a la aplicación
-final, ya que la percepción depende tanto del movimiento del objetivo como de
-la pose del vehículo aéreo.
+movimiento de la plataforma. La segunda es la cámara inferior de un dron
+\texttt{sjtu\_drone} \citep{sjtu_drone}, que introduce un escenario más cercano
+a la aplicación final, ya que la percepción depende tanto del movimiento del
+objetivo como de la pose del vehículo aéreo.
 
 \begin{figure}[H]
 \centering
@@ -406,21 +412,23 @@ el torso y cámara mantenida en posición fija.}
 \label{fig:intro_framework_overview}
 \end{figure}
 
-\subsection{Pipeline de percepción y evaluación}
+\subsection{\textit{Pipeline} de percepción y evaluación}
 
 La Figura~\ref{fig:intro_framework_overview} resume visualmente el recorrido
 metodológico de simulación a laboratorio que organiza este trabajo.
-En ambos casos, la estimación visual se resolvió mediante un pipeline basado en
-marcadores ArUco y \texttt{solvePnP}. Este último es el procedimiento geométrico
-que permite recuperar la pose relativa del marcador a partir de sus esquinas
-detectadas y de la calibración de la cámara. El sistema detecta en tiempo real
-el marcador montado sobre el robot y estima su pose relativa respecto del frame
-óptico de la cámara. Sin embargo, esa estimación online no agota el valor del
-framework. Una parte central del trabajo consiste en registrar cada corrida y
+En ambos casos, la estimación visual se resolvió mediante un \textit{pipeline}
+basado en marcadores ArUco y en el método de Perspectiva por \(n\) Puntos (PnP)
+\citep{Lepetit2009}. Este procedimiento geométrico permite recuperar la pose
+relativa del marcador a partir de sus esquinas detectadas y de la calibración de
+la cámara. El sistema detecta en tiempo real
+el marcador montado sobre el robot y estima su pose relativa respecto del marco
+óptico de la cámara. Sin embargo, esa estimación \textit{online} no agota el
+valor del entorno. Una parte central del trabajo consiste en registrar cada corrida y
 comparar después la pose estimada con una referencia obtenida a partir del
 estado del simulador. De este modo, este trabajo no se limita a producir una
 detección visual funcional, sino que propone un entorno donde la calidad de esa
-estimación puede medirse de manera reproducible y con acceso a ground truth.
+estimación puede medirse de manera reproducible y con acceso a una referencia
+verdadera.
 
 La segunda parte del trabajo traslada esta lógica al laboratorio. Una vez
 establecida la metodología en simulación, utilizamos el Go2 real para
@@ -432,20 +440,20 @@ referencia perfecta que ofrece la simulación, sino estudiar la relación entre
 el movimiento deseado y las señales efectivamente publicadas por el cuadrúpedo,
 con el fin de evaluar si la síntesis de oleaje planteada en el entorno virtual
 mantiene correlación con el comportamiento físico del sistema. Esta transición
-entre simulación y laboratorio convierte al framework en algo más que una
-herramienta de software: lo acerca a una metodología de validación para futuros
-ensayos sobre hardware.
+entre simulación y laboratorio convierte al entorno en algo más que una
+herramienta de \textit{software}: lo acerca a una metodología de validación para futuros
+ensayos sobre \textit{hardware}.
 
 \subsection{Aportes y organización del trabajo}
 
 En este marco, el aporte de este trabajo puede entenderse en cuatro planos. En
 primer lugar, desarrollamos un entorno de simulación que reutiliza un
-cuadrúpedo como soporte para emular movimiento marino relevante para percepción
-visual. En segundo lugar, integramos un pipeline de estimación de pose basado
+cuadrúpedo como soporte para emular movimiento de plataforma marina relevante
+para percepción visual. En segundo lugar, integramos un \textit{pipeline} de estimación de pose basado
 en ArUco que puede operar tanto con una cámara fija como con una cámara montada
 en un dron simulado. En tercer lugar, incorporamos un esquema de registro y
-evaluación offline que permite contrastar la estimación contra ground truth en
-simulación. Finalmente, extendimos el trabajo al laboratorio para comenzar a
+evaluación \textit{offline} que permite contrastar la estimación contra una
+referencia verdadera en simulación. Finalmente, extendimos el trabajo al laboratorio para comenzar a
 analizar el vínculo entre la plataforma marina sintetizada y el comportamiento
 real del robot. Estos aportes no constituyen todavía un sistema completo de
 aterrizaje autónomo, pero sí construyen una base experimental y metodológica
@@ -456,13 +464,13 @@ del documento. El Capítulo~\ref{sec:estado_arte} revisa antecedentes de
 aterrizaje sobre plataformas móviles, operación marina, marcadores fiduciales y
 validación en simulación. El Capítulo~\ref{mt} presenta el marco teórico y los
 conceptos necesarios para entender el ecosistema experimental basado en ROS2 y
-Gazebo, el modelado del movimiento marino, el uso postural del cuadrúpedo y la
+Gazebo, el modelado del movimiento de plataforma marina, el uso postural del cuadrúpedo y la
 estimación visual con marcadores fiduciales. Luego describimos la metodología
 adoptada, distinguiendo la etapa de simulación de la etapa de laboratorio.
 Sobre esa base, presentamos la experimentación realizada y discutimos los
 hallazgos obtenidos en cada entorno. Finalmente, cerramos con las conclusiones
 del trabajo y con las líneas de trabajo futuro que permitirían extender este
-framework hacia ensayos más cercanos al aterrizaje autónomo sobre plataformas
+entorno hacia ensayos más cercanos al aterrizaje autónomo sobre plataformas
 marinas.
 
 
@@ -474,100 +482,97 @@ marinas.
 El aterrizaje autónomo de vehículos aéreos no tripulados sobre plataformas
 móviles combina percepción, estimación de movimiento y control en la fase más
 riesgosa de una misión. En los primeros antecedentes modernos, el problema se
-formuló principalmente como seguimiento visual de un blanco móvil. Lee, Ryan y
-Kim propusieron un esquema de servo visual basado en imagen para que un VTOL
-siguiera y aterrizara sobre una plataforma en movimiento, generando comandos de
-velocidad a partir del error visual en la imagen \citep{Lee2012}. Ese enfoque
+formuló principalmente como seguimiento visual de un blanco móvil.
+\citet{Lee2012} propusieron un esquema de servo visual basado en imagen para que
+un VTOL siguiera y aterrizara sobre una plataforma en movimiento, generando comandos de
+velocidad a partir del error visual en la imagen. Ese enfoque
 instaló una idea que reaparece en buena parte de la literatura posterior: la
-cámara no sólo detecta el objetivo, sino que participa directamente en el lazo
+cámara no solo detecta el objetivo, sino que participa directamente en el lazo
 de control.
 
 Otros trabajos avanzaron sobre el diseño de blancos visuales y la estimación de
-pose relativa. Araar, Aouf y Vitanov estudiaron el aterrizaje de multirrotores
-sobre plataformas móviles mediante una landing pad diseñada para facilitar la
-estimación visual, combinando percepción e información inercial
-\citep{Araar2017}. Falanga y colaboradores, por su parte, mostraron un sistema
-capaz de aterrizar sobre una plataforma móvil usando sensado y cómputo a bordo,
-con detección y estimación del movimiento de la plataforma integradas en una
-arquitectura autónoma \citep{Falanga2017}. En conjunto, estos antecedentes
+pose relativa. \citet{Araar2017} estudiaron el aterrizaje de multirrotores
+sobre plataformas móviles mediante una plataforma de aterrizaje diseñada para
+facilitar la estimación visual, combinando percepción e información inercial.
+\citet{Falanga2017}, por su parte, mostraron un sistema capaz de aterrizar sobre
+una plataforma móvil usando sensado y cómputo a bordo, con detección y
+estimación del movimiento de la plataforma integradas en una arquitectura
+autónoma. En conjunto, estos antecedentes
 muestran que el problema no se reduce al último instante de contacto: requiere
 localizar la plataforma, seguirla, mantenerla dentro del campo visual y
 coordinar la maniobra de aproximación.
 
 La línea más reciente mantiene esa estructura, pero presta mayor atención a la
-reproducibilidad y a la validación progresiva. Keipour y colaboradores
+reproducibilidad y a la validación progresiva. \citet{Keipour2022}
 propusieron un controlador de servo visual para aterrizar sobre un vehículo en
 movimiento usando cámara monocular, un sensor de distancia y cómputo a bordo,
-con pruebas en simulación, interiores y exteriores \citep{Keipour2022}. Este
+con pruebas en simulación, interiores y exteriores. Este
 tipo de trabajo es importante porque no presenta la simulación como un recurso
 menor, sino como una etapa explícita antes de los ensayos físicos. Aun así, en
 estos antecedentes el escenario móvil suele ser terrestre o genérico; la
-dinámica marina aparece sólo de forma indirecta, si aparece.
+dinámica marina aparece solo de forma indirecta, si aparece.
 
 \subsection{Operación marina y cubiertas oscilantes}
 
 Cuando la plataforma objetivo se ubica en un entorno marítimo, el problema
 cambia cualitativamente. Ya no alcanza con seguir una traslación horizontal: la
 cubierta puede oscilar, inclinarse y modificar su apariencia de manera continua
-por efecto del oleaje. Sánchez-López y colaboradores abordaron explícitamente
-el aterrizaje visual sobre una cubierta de barco y emularon la dinámica de la
+por efecto del oleaje. \citet{SanchezLopez2014} abordaron explícitamente el
+aterrizaje visual sobre una cubierta de barco y emularon la dinámica de la
 cubierta mediante una plataforma física de seis grados de libertad,
-considerando distintos estados de mar y tipos de buque
-\citep{SanchezLopez2014}. Ese antecedente es central porque muestra una forma
+considerando distintos estados de mar y tipos de buque. Ese antecedente es central porque muestra una forma
 temprana de validación sustitutiva: antes de operar sobre una embarcación real,
 la cubierta se reproduce en un banco experimental controlado.
 
-En trabajos más recientes, Delbene, Baglietto y Simetti propusieron el
-aterrizaje autónomo de un UAV sobre un catamarán en entorno marino mediante una
+En trabajos más recientes, \citet{Delbene2022} propusieron el aterrizaje
+autónomo de un UAV sobre un catamarán en entorno marino mediante una
 arquitectura que combina visión, AprilTags, ultrasonido y una etapa
-software-in-the-loop alimentada con movimientos reales del vehículo de
-superficie \citep{Delbene2022}. Cho y colaboradores, en cambio, estudiaron el
-aterrizaje sobre una cubierta de barco sometida a movimiento y oscilación por
-oleaje, extendiendo el servo visual basado en imagen con estimación de
-velocidad del barco, compensación de forma visual y un procedimiento completo
-de aproximación y touchdown \citep{Cho2022}. Estos trabajos acercan el problema
-al mar real, donde roll, pitch y heave dejan de ser detalles de modelado y
+\textit{software-in-the-loop} alimentada con movimientos reales del vehículo de
+superficie. \citet{Cho2022}, en cambio, estudiaron el aterrizaje sobre una
+cubierta de barco sometida a movimiento y oscilación por oleaje, extendiendo el
+servo visual basado en imagen con estimación de velocidad del barco,
+compensación de forma visual y un procedimiento completo de aproximación y
+contacto final. Estos trabajos acercan el problema
+al mar real, donde \textit{roll}, \textit{pitch} y \textit{heave} dejan de ser detalles de modelado y
 pasan a ser perturbaciones centrales para la percepción y el control.
 
 También existen soluciones que resuelven el aterrizaje preciso desde una
-filosofía distinta. Alarcón y colaboradores presentaron un sistema de
-aterrizaje GNSS-free sobre plataformas móviles que estima la posición relativa
-mediante los ángulos de un cable físico entre UAV y plataforma
-\citep{Alarcon2019}. Su valor para esta revisión está en el contraste:
+filosofía distinta. \citet{Alarcon2019} presentaron un sistema de aterrizaje
+sin GNSS sobre plataformas móviles que estima la posición relativa mediante los
+ángulos de un cable físico entre UAV y plataforma. Su valor para esta revisión está en el contraste:
 demuestra que la literatura sobre plataformas móviles no es homogénea y que
 algunas soluciones alcanzan alta precisión evitando por completo el problema de
-la percepción visual. Para un framework centrado en visión, esa diferencia
+la percepción visual. Para un entorno centrado en visión, esa diferencia
 ayuda a delimitar el alcance: interesa validar cuándo la pose puede recuperarse
-desde imagen, no sólo resolver el aterrizaje por cualquier medio disponible.
+desde imagen, no solo resolver el aterrizaje por cualquier medio disponible.
 
 \subsection{Estimación de pose con marcadores fiduciales}
 
 Una parte importante de los sistemas de aterrizaje visual se apoya en
 marcadores artificiales, porque introducen en la escena un patrón de geometría
 conocida que puede detectarse de manera robusta. La familia ArUco fue
-formalizada por Garrido-Jurado y colaboradores como un sistema de generación y
-detección de marcadores cuadrados confiables bajo oclusión
-\citep{GarridoJurado2014}. Posteriormente, Romero-Ramírez, Muñoz-Salinas y
-Medina-Carnicer propusieron mejoras orientadas a acelerar la detección de
-marcadores cuadrados, un aspecto relevante cuando la estimación debe operar en
-tiempo real \citep{RomeroRamirez2018}.
+formalizada por \citet{GarridoJurado2014} como un sistema de generación y
+detección de marcadores cuadrados confiables bajo oclusión. Posteriormente,
+\citet{RomeroRamirez2018} propusieron mejoras orientadas a acelerar la
+detección de marcadores cuadrados, un aspecto relevante cuando la estimación
+debe operar en tiempo real.
 
 La familia AprilTag cumple un rol análogo y aparece en varios trabajos de
-robótica móvil y aterrizaje. Olson presentó AprilTag como un sistema fiducial
-capaz de recuperar localización 6-DoF desde una imagen \citep{Olson2011};
-Wang y Olson mejoraron luego el detector para aumentar eficiencia y robustez,
-especialmente en condiciones donde el tamaño aparente del tag es reducido
-\citep{WangOlson2016}. La elección entre ArUco, AprilTag u otros patrones no es
+robótica móvil y aterrizaje. \citet{Olson2011} presentó AprilTag como un sistema
+fiducial capaz de recuperar localización en seis grados de libertad desde una imagen;
+\citet{WangOlson2016} mejoraron luego el detector para aumentar eficiencia y
+robustez, especialmente en condiciones donde el tamaño aparente del marcador es
+reducido. La elección entre ArUco, AprilTag u otros patrones no es
 un detalle menor: afecta la distancia de detección, la sensibilidad a
 oclusiones, el costo computacional y la precisión de las esquinas que luego
 alimentan la estimación geométrica.
 
 La detección del marcador, sin embargo, no es lo mismo que la estimación de
 pose. Una vez detectadas las esquinas del patrón, la pose relativa se obtiene
-resolviendo un problema Perspective-\(n\)-Point con la calibración de cámara y
-el tamaño físico del marcador. La familia de métodos PnP, incluyendo EPnP
-\citep{Lepetit2009}, aporta el puente geométrico entre correspondencias 2D--3D
-y una transformación rígida cámara--objeto. Esta distinción es clave para
+resolviendo un problema de Perspectiva por \(n\) Puntos (PnP) con la calibración
+de cámara y el tamaño físico del marcador. La familia de métodos PnP, incluyendo
+EPnP \citep{Lepetit2009}, aporta el puente geométrico entre correspondencias
+2D--3D y una transformación rígida cámara--objeto. Esta distinción es clave para
 ordenar el estado del arte: algunos antecedentes evalúan el éxito del
 aterrizaje completo, otros la detección del patrón, y otros la exactitud de la
 pose estimada. Esas métricas no son equivalentes.
@@ -576,19 +581,18 @@ pose estimada. Esas métricas no son equivalentes.
 
 La simulación ocupa un lugar creciente en la literatura porque permite
 desacoplar subproblemas, repetir condiciones y reducir el riesgo de ensayos
-tempranos. En el caso marino, Sánchez-López y colaboradores ya habían usado una
+tempranos. En el caso marino, \citet{SanchezLopez2014} ya habían usado una
 plataforma física de seis grados de libertad para emular una cubierta antes de
-operar en el mar \citep{SanchezLopez2014}. Delbene y colaboradores adoptaron un
-enfoque software-in-the-loop con Gazebo y ROS2 para integrar percepción y
+operar en el mar. \citet{Delbene2022} adoptaron un enfoque
+\textit{software-in-the-loop} con Gazebo y ROS2 para integrar percepción y
 control alrededor de un catamarán, reutilizando telemetría real para excitar el
-escenario simulado \citep{Delbene2022}. Keipour y colaboradores también
-expusieron simulación, ensayos interiores y ensayos exteriores como niveles de
-validación progresiva \citep{Keipour2022}.
+escenario simulado. \citet{Keipour2022} también expusieron simulación, ensayos
+interiores y ensayos exteriores como niveles de validación progresiva.
 
-Desde el punto de vista de infraestructura, Nguyen y Nguyen muestran que la
-combinación de Gazebo, PX4 y software-in-the-loop es una base habitual para
-probar algoritmos visuales en UAVs antes de trasladarlos a hardware
-\citep{Nguyen2019}. La tendencia general es clara: los entornos simulados no se
+Desde el punto de vista de infraestructura, \citet{Nguyen2019} muestran que la
+combinación de Gazebo, PX4 y \textit{software-in-the-loop} es una base habitual
+para probar algoritmos visuales en UAVs antes de trasladarlos a \textit{hardware}.
+La tendencia general es clara: los entornos simulados no se
 usan solamente para depurar código, sino para construir evidencia previa sobre
 percepción, control y condiciones de falla. La dificultad está en que muchos
 trabajos reportan métricas finales de aterrizaje o éxito de misión, pero no
@@ -597,21 +601,22 @@ referencia limpia y repetible.
 
 \subsection{Síntesis crítica y ubicación de este trabajo}
 
-El panorama revisado permite separar tres familias de aportes. Una primera
+Los trabajos anteriormente mencionados permiten separar tres familias de aportes. Una primera
 familia resuelve el aterrizaje completo sobre plataformas móviles y evalúa el
-sistema por éxito de aproximación o touchdown
+sistema por éxito de aproximación o contacto final
 \citep{Lee2012,Araar2017,Falanga2017,Keipour2022}. Una segunda familia se
 concentra en el caso marino y reconoce que la cubierta oscilante introduce
 perturbaciones específicas sobre la percepción y el control
 \citep{SanchezLopez2014,Delbene2022,Cho2022}. Una tercera familia aporta las
-herramientas de percepción marker-based y estimación PnP que permiten recuperar
+herramientas de percepción basada en marcadores y estimación PnP que permiten recuperar
 pose relativa desde imagen
 \citep{GarridoJurado2014,RomeroRamirez2018,Olson2011,WangOlson2016,Lepetit2009}.
 
 La intersección entre esas familias sigue siendo menos poblada: no abundan los
-marcos pensados específicamente para validar cuantitativamente un estimador de
-pose visual, basado en marcador fiducial, bajo movimientos marinos sintetizados
-y con comparación directa contra ground truth del simulador. Este trabajo se
+entornos pensados específicamente para validar cuantitativamente un estimador de
+pose visual, basado en marcador fiducial, bajo movimientos de plataforma marina
+sintetizados y con comparación directa contra \textit{ground truth} del
+simulador. Este trabajo se
 ubica en esa zona metodológica. No compite con los sistemas que ya cierran el
 lazo de aterrizaje completo; construye una etapa previa para estudiar si la
 pose visual de una plataforma oscilante puede estimarse, registrarse y
@@ -661,15 +666,15 @@ preserve las perturbaciones dominantes del escenario. Sobre esa base se
 describe la elección del Unitree Go2 como plataforma marina sintética y la
 instrumentación visual con cámara fija, dron y marcador fiducial. Después se
 discute cómo el cuadrúpedo materializa una consigna postural y cómo se ordenan
-los marcos de referencia necesarios para comparar estimación y ground truth.
+los marcos de referencia necesarios para comparar estimación y \textit{ground truth}.
 Finalmente, se presentan las herramientas de marcadores ArUco, geometría
 proyectiva y \texttt{solvePnP} que permiten pasar de la imagen a una
 descripción métrica de la pose relativa.
 
 \subsection{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
 
-El framework no se apoya solamente en un modelo físico o en un detector visual,
-también necesita una infraestructura de software capaz de coordinar control,
+El entorno no se apoya solamente en un modelo físico o en un detector visual,
+también necesita una infraestructura de \textit{software} capaz de coordinar control,
 sensado, estimación y evaluación. En este trabajo esa infraestructura está dada
 por ROS2 y Gazebo Classic. ROS2 funciona como \emph{middleware} del sistema: en
 lugar de concebir el experimento como un programa monolítico, lo organizamos
@@ -681,7 +686,7 @@ sin perder coherencia entre ellas.
 
 En este contexto, el \emph{grafo} de ROS2 puede pensarse como un mapa de qué
 componentes están activos y cómo se conectan entre sí. Cada \emph{nodo} es uno
-de esos componentes y encapsula una responsabilidad concreta del pipeline: por
+de esos componentes y encapsula una responsabilidad concreta del \textit{pipeline}: por
 ejemplo, generar el movimiento, publicar una imagen, detectar el marcador o
 registrar una corrida. Los \emph{tópicos}, en cambio, son canales nombrados por
 los que esos nodos intercambian mensajes de un tipo bien definido. Un nodo
@@ -693,7 +698,7 @@ circulan como piezas distintas pero compatibles dentro de una misma red.
 La utilidad de esta organización es doble. Por un lado, permite construir el
 experimento como una cadena modular en la que cada parte puede inspeccionarse o
 reemplazarse sin reescribir todo el sistema. Por otro, vuelve explícito quién
-produce cada dato, quién lo consume y en qué punto del pipeline se genera una
+produce cada dato, quién lo consume y en qué punto del \textit{pipeline} se genera una
 corrida determinada. Esa trazabilidad es especialmente importante en este trabajo,
 porque más adelante necesitamos comparar lo que publica el detector visual con
 lo que registra el simulador y con lo que queda almacenado para la evaluación
@@ -706,27 +711,27 @@ orientación. En ROS2, esa relación se organiza mediante \emph{TF}/\emph{tf2},
 una biblioteca que mantiene a lo largo del tiempo una estructura de
 transformaciones entre marcos de referencia y permite convertir poses, puntos y
 vectores entre ellos \citep{tf2_humble}. Esta capa es crucial porque hace
-posible hablar de la misma escena desde el frame del robot, desde el de la
-cámara o desde un frame global sin mezclar descripciones incompatibles.
+posible hablar de la misma escena desde el marco del robot, desde el de la
+cámara o desde un marco global sin mezclar descripciones incompatibles.
 
 Gazebo Classic aporta la otra mitad del ecosistema: el entorno de simulación
 física y sensorial. Conceptualmente, Gazebo integra la evolución dinámica del
 mundo con la generación de sensores, el renderizado y la interfaz de
 visualización \citep{gazebo_classic_architecture}. Para este trabajo eso resulta
 especialmente valioso porque la postura del Go2, la imagen observada por la
-cámara y gran parte del ground truth provienen de un mismo estado subyacente
+cámara y gran parte del \textit{ground truth} provienen de un mismo estado subyacente
 del simulador. No trabajamos, entonces, con una animación separada de los
 datos, sino con un entorno donde la escena visual y las señales del sistema
 quedan ligadas a la misma evolución temporal.
 
-Finalmente, la reproducibilidad del framework depende del registro. Un
+Finalmente, la reproducibilidad del entorno depende del registro. Un
 \emph{rosbag} es un registro persistente de los datos intercambiados por el
 sistema, que puede reproducirse e inspeccionarse después sin volver a ejecutar
 la simulación \citep{ros2_rosbag2_tutorial}. En nuestro caso, esto permite
-separar la estimación en tiempo real del análisis offline, revisar una misma
+separar la estimación en tiempo real del análisis \textit{offline}, revisar una misma
 secuencia con distintos criterios y comparar la pose estimada del marcador con
 una referencia reconstruida a partir del estado del simulador. En otras
-palabras, ROS2, Gazebo, TF y los rosbags no son accesorios del experimento:
+palabras, ROS2, Gazebo, TF y los \emph{rosbags} no son accesorios del experimento:
 constituyen la base que vuelve trazable y repetible el problema que queremos
 estudiar.
 
@@ -754,7 +759,7 @@ roto-traslación completa de la plataforma.
 \draw[fill=black!15,thick] (1.6,1.35) -- (3.6,1.35) -- (3.2,0.9) -- (2.0,0.9) -- cycle;
 \draw[fill=gray!35,thick] (2.45,1.35) rectangle (2.8,1.75);
 \draw[latex-latex,red!75!black,thick] (4.55,0.55) -- (4.55,1.35);
-\node[red!75!black,right] at (4.65,0.95) {\scriptsize heave};
+\node[red!75!black,right] at (4.65,0.95) {\scriptsize \emph{heave}};
 \end{tikzpicture}
 \end{minipage}
 \hfill
@@ -768,7 +773,7 @@ roto-traslación completa de la plataforma.
 \draw[fill=gray!35,thick] (2.45,1.4) rectangle (2.8,1.8);
 \end{scope}
 \draw[latex-,orange!85!black,thick] (4.45,1.0) arc[start angle=-35,end angle=18,radius=0.45];
-\node[orange!85!black,right] at (4.95,1.28) {\scriptsize pitch};
+\node[orange!85!black,right] at (4.95,1.28) {\scriptsize \emph{pitch}};
 \end{tikzpicture}
 \end{minipage}
 \hfill
@@ -782,7 +787,7 @@ roto-traslación completa de la plataforma.
 \draw[fill=gray!35,thick] (2.5,1.4) rectangle (2.85,1.8);
 \end{scope}
 \draw[latex-,teal!70!black,thick] (4.45,1.55) arc[start angle=155,end angle=95,radius=0.45];
-\node[teal!70!black,right] at (4.95,1.78) {\scriptsize roll};
+\node[teal!70!black,right] at (4.95,1.78) {\scriptsize \emph{roll}};
 \end{tikzpicture}
 \end{minipage}
 \caption{Interpretación física simplificada del movimiento de una plataforma
@@ -801,7 +806,7 @@ son traslacionales: \emph{surge}, \emph{sway} y \emph{heave}. Los otros tres
 son rotacionales: \emph{roll}, \emph{pitch} y \emph{yaw}. Si reunimos posición
 y orientación en el vector
 \(\eta = [x \;\; y \;\; z \;\; \phi \;\; \theta \;\; \psi]^\top\), y las
-velocidades lineales y angulares en el frame del cuerpo en
+velocidades lineales y angulares en el marco del cuerpo en
 \(\nu = [u \;\; v \;\; w \;\; p \;\; q \;\; r]^\top\), una forma compacta de la
 cinemática es
 
@@ -811,7 +816,7 @@ cinemática es
 \end{equation}
 
 donde \(J(\eta)\) transforma velocidades expresadas en el cuerpo en derivadas
-de posición y orientación respecto del frame inercial. Esta ecuación resume una
+de posición y orientación respecto del marco inercial. Esta ecuación resume una
 idea importante: la pose de la plataforma no cambia de manera arbitraria, sino
 como resultado de un acoplamiento entre traslaciones, rotaciones y la
 orientación instantánea del casco.
@@ -987,7 +992,7 @@ entonces, qué parte del movimiento queremos sintetizar y por qué esa parte es 
 primera validación de percepción visual. Sin embargo, todavía queda abierta una
 pregunta clave: qué dispositivo experimental puede materializar ese movimiento
 de manera repetible y, al mismo tiempo, ser observado por una cámara con una
-geometría controlada. Esa es la función que en nuestro framework cumple el
+geometría controlada. Esa es la función que en nuestro entorno cumple el
 cuadrúpedo instrumentado.
 
 \subsection{Plataforma robótica e instrumentación visual}
@@ -1026,7 +1031,7 @@ móvil.
 
 En ambas configuraciones, la percepción se resuelve con un detector visual que
 consume imagen e intrínsecos de cámara y produce una pose estimada del marcador
-respecto del frame óptico. Desde el punto de vista conceptual, este detector
+respecto del marco óptico. Desde el punto de vista conceptual, este detector
 opera como puente entre dos descripciones distintas de la misma escena: la
 física, representada por la postura real o simulada del robot, y la proyectiva,
 representada por la imagen que observa la cámara. La metodología detallará qué
@@ -1050,7 +1055,7 @@ controlado.
 
 En este contexto, la Figura~\ref{fig:theory_motion_components} muestra cómo se
 interpretan sobre el propio Go2 las tres componentes retenidas por el
-framework. El eje vertical del torso fija la lectura de \emph{heave}, mientras
+entorno. El eje vertical del torso fija la lectura de \emph{heave}, mientras
 que las inclinaciones alrededor de los ejes corporales permiten distinguir
 \emph{roll} y \emph{pitch} en la plataforma sintética.
 
@@ -1100,7 +1105,7 @@ J_c(q)\ddot{q} + \dot{J}_c(q,\dot{q})\dot{q} = 0.
 
 En un problema de locomoción completa estas restricciones conviven con cambios
 de apoyo, despegues y redistribución dinámica de cargas. En nuestro caso, en cambio, la situación es bastante más simple: el
-framework utiliza al Go2 en un régimen postural, con movimiento suave y sin
+entorno utiliza al Go2 en un régimen postural, con movimiento suave y sin
 perseguir desplazamientos sobre el plano
 (Figura~\ref{fig:go2_postural_control_scheme}). Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
 consigna de pose del cuerpo se transforma en una nueva geometría de patas.
@@ -1111,12 +1116,12 @@ consigna de pose del cuerpo se transforma en una nueva geometría de patas.
 \caption{Tres configuraciones posturales del Go2 sobre apoyo cuadrúpedo
 estático. Mantener las cuatro patas en contacto con el suelo y modificar la
 pose del torso (altura, inclinación frontal o lateral) ilustra el principio
-que el framework utiliza para emular un movimiento marino sobre el cuerpo
+que el entorno utiliza para emular un movimiento marino sobre el cuerpo
 del robot, sin pedirle desplazamiento sobre el plano.}
 \label{fig:go2_postural_control_scheme}
 \end{figure}
 
-Si representamos por \(\{b\}\) el frame del torso, por \(\{w\}\) el frame del
+Si representamos por \(\{b\}\) el marco del torso, por \(\{w\}\) el marco del
 mundo y por \(\{f_i\}\) el punto de contacto del pie \(i\), la posición del pie
 en el mundo puede escribirse como
 
@@ -1129,16 +1134,16 @@ en el mundo puede escribirse como
 
 donde \( {}^{w}\!p_b \) y \( {}^{w}\!R_b \) son la posición y orientación del
 torso, \(q_i\) es el vector articular de la pata \(i\), y
-\({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el frame del
+\({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el marco del
 cuerpo. Esta relación resume una idea clave: la postura del torso no se controla
 de forma aislada, sino a través de la geometría conjunta del cuerpo y de las
-cuatro patas. En otras palabras, ordenar un roll o un pitch del torso equivale a
+cuatro patas. En otras palabras, ordenar un \emph{roll} o un \emph{pitch} del torso equivale a
 pedir una nueva organización espacial de los cuatro apoyos relativos al cuerpo.
 
 En un régimen de apoyo cuasiestático o de apoyo controlado, si asumimos que los
 puntos de contacto se mantienen aproximadamente fijos en el mundo, entonces una
 pose deseada del torso determina de manera unívoca qué posiciones deberían
-adoptar los pies en el frame del cuerpo:
+adoptar los pies en el marco del cuerpo:
 
 \begin{equation}
 {}^{b}\!p_{f_i}^{\star} =
@@ -1151,11 +1156,11 @@ Esta ecuación es la base cinemática del control postural empleado en robots
 cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
 una pose del cuerpo y se reconfiguran las patas para realizarla de manera
 coherente \citep{Bellicoso2017,Fahmi2019}. Esa misma idea es la que hace
-posible utilizar al Go2 como plataforma marina sintética. En nuestro framework
+posible utilizar al Go2 como plataforma marina sintética. En nuestro entorno
 la entrada física relevante no es una secuencia de torques individuales, sino
-una consigna postural del torso con \(x=y=0\), yaw nulo y variaciones en
-altura, roll y pitch. Conceptualmente, esa consigna no describe directamente la
-postura articular de las patas, sino la pose deseada del cuerpo que el stack de
+una consigna postural del torso con \(x=y=0\), \emph{yaw} nulo y variaciones en
+altura, \emph{roll} y \emph{pitch}. Conceptualmente, esa consigna no describe directamente la
+postura articular de las patas, sino la pose deseada del cuerpo que el sistema de
 control debe realizar.
 
 También resulta útil introducir una noción elemental de estabilidad. Si los
@@ -1171,10 +1176,10 @@ p_{\text{CoM}}^{xy} \in \mathcal{P}_s.
 
 Aunque en la simulación no resolvemos explícitamente un problema de estabilidad
 con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
-de roll, pitch y heave deben permanecer acotadas. Si la consigna postural fuera
+de \emph{roll}, \emph{pitch} y \emph{heave} deben permanecer acotadas. Si la consigna postural fuera
 excesiva, el robot dejaría de comportarse como una plataforma controlada y
 aparecerían limitaciones mecánicas o configuraciones poco realistas para el
-objetivo del framework.
+objetivo del entorno.
 
 Además, alrededor de una postura nominal puede obtenerse una lectura física muy
 intuitiva mediante una linealización de primer orden. Si \(\delta p_b\) es una
@@ -1193,8 +1198,8 @@ aproxima por
 donde \( {}^{b}\!p_{f_i,0} \) es la posición nominal del pie. Esta expresión
 permite interpretar directamente el efecto de cada grado de libertad: un cambio
 simétrico de altura afecta a las cuatro patas de manera parecida y genera
-heave; una diferencia entre patas izquierdas y derechas induce roll; y una
-diferencia entre patas delanteras y traseras induce pitch. En otras palabras, la
+\emph{heave}; una diferencia entre patas izquierdas y derechas induce \emph{roll}; y una
+diferencia entre patas delanteras y traseras induce \emph{pitch}. En otras palabras, la
 dinámica marina reducida se traduce en una redistribución geométrica de apoyo.
 De este modo, cada componente del oleaje sintético puede asociarse con una
 modificación física concreta del robot.
@@ -1224,49 +1229,47 @@ En términos de interpretación, el Jacobiano de cada pata traduce una pequeña
 corrección en la ubicación deseada del pie en una pequeña corrección de hombro,
 muslo y rodilla. Ese puente entre espacio cartesiano y espacio articular es lo
 que vuelve realizable una consigna postural del torso como la que adopta el
-framework.
+entorno.
 
 También conviene distinguir los marcos de referencia que reaparecen a lo largo
-de todo el pipeline. El frame \texttt{world} \(\{w\}\) funciona como
-referencia global de Gazebo. El frame \texttt{base\_footprint} \(\{bf\}\)
+de todo el \textit{pipeline}. El marco \texttt{world} \(\{w\}\) funciona como
+referencia global de Gazebo. El marco \texttt{base\_footprint} \(\{bf\}\)
 resume la referencia del robot sobre el plano de apoyo y puede pensarse como la
-``sombra'' del cuadrúpedo sobre el suelo. El frame \texttt{base\_link}
+``sombra'' del cuadrúpedo sobre el suelo. El marco \texttt{base\_link}
 \(\{bl\}\), en cambio, está asociado al torso y es el que transporta
-efectivamente el marcador. Sobre esa base se define el frame del ArUco
+efectivamente el marcador. Sobre esa base se define el marco del ArUco
 \(\{a\}\), rígidamente unido a la tabla montada sobre el torso. Para la cámara,
-en cambio, conviene distinguir una cadena propia de frames; sin embargo, la
+en cambio, conviene distinguir una cadena propia de marcos; sin embargo, la
 observación visual y la pose publicada por el detector quedan finalmente
-expresadas en el frame óptico \(\{c\}\).
+expresadas en el marco óptico \(\{c\}\).
 En la notación cinemática de las ecuaciones anteriores, este torso coincide con
-el frame cuerpo del robot; aquí adoptamos los nombres ROS porque son los que
+el marco del cuerpo del robot; aquí adoptamos los nombres ROS porque son los que
 reaparecen después en TF y en el postproceso. Esta organización se resume en la
 Figura~\ref{fig:theory_frames_overview}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf}
-\caption{Marcos de referencia empleados en el framework. Se muestran el frame
+\caption{Marcos de referencia empleados en el entorno. Se muestran el marco
 global \texttt{world} \(\{w\}\), la referencia plana del robot
 \texttt{base\_footprint} \(\{bf\}\), el torso \texttt{base\_link}
-\(\{bl\}\), el frame del marcador ArUco \(\{a\}\) y la cadena de la cámara
+\(\{bl\}\), el marco del marcador ArUco \(\{a\}\) y la cadena de la cámara
 hasta \texttt{camera\_link\_optical} \(\{c\}\). La salida publicada en
-\texttt{/aruco/pose} queda expresada en ese frame óptico, de modo que esta
-cadena geométrica es la base de la comparación entre pose estimada y ground
-truth.}
+\texttt{/aruco/pose} queda expresada en ese marco óptico, de modo que esta
+cadena geométrica es la base de la comparación entre pose estimada y \textit{ground truth}.}
 \label{fig:theory_frames_overview}
 \end{figure}
 
 La distinción entre \texttt{base\_footprint} y \texttt{base\_link} es
-especialmente útil porque parte de la reconstrucción del ground truth y de la
+especialmente útil porque parte de la reconstrucción del \textit{ground truth} y de la
 odometría se organiza respecto de una referencia desacoplada del balanceo
 instantáneo del cuerpo. \texttt{base\_link} inclina y sube con el oleaje
 sintético; \texttt{base\_footprint} preserva una referencia más ligada al plano
-de apoyo. El frame del ArUco, a su vez, introduce el offset rígido del montaje,
-y el frame de cámara permite expresar en un mismo sistema la observación visual
+de apoyo. El marco del ArUco, a su vez, introduce el desplazamiento rígido del montaje,
+y el marco de la cámara permite expresar en un mismo sistema la observación visual
 y la referencia reconstruida.
 
-La misma lógica de marcos organiza la comparación entre estimación y ground
-truth. Con esta notación, la pose observada del patrón puede escribirse como
+La misma lógica de marcos organiza la comparación entre estimación y \textit{ground truth}. Con esta notación, la pose observada del patrón puede escribirse como
 
 \begin{equation}
 {}^{c}\!T_a(t) =
@@ -1275,7 +1278,7 @@ truth. Con esta notación, la pose observada del patrón puede escribirse como
 \end{equation}
 
 Esta expresión resume dos ideas que reaparecen a lo largo de todo el trabajo.
-Por un lado, la pose del marcador en cámara no depende sólo de la imagen, sino
+Por un lado, la pose del marcador en cámara no depende solo de la imagen, sino
 de una cadena de transformaciones físicas entre mundo, robot, marcador y
 sensor. Por otro lado, esa misma cadena permite reconstruir una referencia
 comparable contra la cual medir el estimador visual: \({}^{w}\!T_{bf}\) fija la
@@ -1303,7 +1306,7 @@ suficientemente separados en distancia de Hamming, errores locales de lectura
 producidos por ruido, desenfoque u oclusión parcial tienen menor probabilidad
 de convertir un marcador en otro marcador válido.
 
-Desde el punto de vista del pipeline, la detección del marcador es solo la
+Desde el punto de vista del \textit{pipeline}, la detección del marcador es solo la
 primera mitad del problema. La segunda consiste en estimar la transformación
 rígida entre el patrón y la cámara a partir de correspondencias entre puntos
 conocidos del marcador y sus proyecciones en la imagen. Ese es, precisamente,
@@ -1325,7 +1328,7 @@ sobre el Go2 y cuya pose se estima en tiempo real desde las cámaras simuladas.}
 \end{figure}
 
 Si el lado del marcador es \(L\), sus cuatro vértices pueden definirse en el
-frame del objeto como un conjunto coplanar de puntos conocidos:
+marco del objeto como un conjunto coplanar de puntos conocidos:
 
 \begin{equation}
 P_1 = \left[-\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
@@ -1347,8 +1350,8 @@ las correspondencias 2D--3D sean geométricamente correctas.
 \caption{Realización física de la geometría cámara--marcador en
 laboratorio: la cámara estéreo se mantiene aproximadamente fija sobre un
 trípode y observa el marcador ArUco adherido al torso del Go2. Esta
-disposición materializa la relación entre el plano del marcador y el frame
-óptico de la cámara que el modelo pinhole y la rutina PnP utilizan para
+disposición materializa la relación entre el plano del marcador y el marco
+óptico de la cámara que el modelo de cámara de orificio y la rutina PnP utilizan para
 estimar la pose en tiempo real.}
 \label{fig:camera_marker_geometry}
 \end{figure}
@@ -1356,7 +1359,7 @@ estimar la pose en tiempo real.}
 La Figura~\ref{fig:camera_marker_geometry} muestra la realización física de
 esta geometría cámara--marcador en el laboratorio.
 La relación entre los puntos tridimensionales del marcador y su proyección en la
-imagen se describe mediante el modelo pinhole de cámara. Para cada punto
+imagen se describe mediante el modelo de cámara de orificio. Para cada punto
 \(P_i = [X_i \;\; Y_i \;\; Z_i \;\; 1]^\top\), se cumple
 
 \begin{equation}
@@ -1392,11 +1395,11 @@ f_x & 0 & c_x \\
 \label{eq:camera_intrinsics}
 \end{equation}
 
-y \((R,t)\) representa la transformación rígida entre el frame del marcador y el
-frame óptico de la cámara. Esta ecuación deja en evidencia una dependencia
+y \((R,t)\) representa la transformación rígida entre el marco del marcador y el
+marco óptico de la cámara. Esta ecuación deja en evidencia una dependencia
 fundamental del sistema: para estimar pose no alcanza con detectar el patrón; es
 necesario conocer también la calibración intrínseca de la cámara y el tamaño
-físico del marcador. Si la calibración es imprecisa, el error no aparece sólo en
+físico del marcador. Si la calibración es imprecisa, el error no aparece solo en
 la distancia estimada al marcador: también sesga la orientación recuperada,
 porque ambos componentes se ajustan simultáneamente para explicar la misma
 proyección 2D.
@@ -1426,7 +1429,7 @@ r_1 & r_2 & t
 \end{equation}
 
 siendo \(r_1\) y \(r_2\) las dos primeras columnas de la matriz de rotación
-\(R\). Esta expresión muestra que un marcador plano no sólo aporta cuatro
+\(R\). Esta expresión muestra que un marcador plano no solo aporta cuatro
 correspondencias puntuales, sino una transformación proyectiva completa entre su
 plano y la imagen. También explica por qué la estimación de pose con blancos
 planares puede volverse ambigua o numéricamente delicada en configuraciones poco
@@ -1476,10 +1479,10 @@ cuanto más cercana está la observación a una configuración proyectiva degene
 mayor es la sensibilidad de la pose estimada frente a pequeños errores de
 localización.
 
-Esta geometría proyectiva explica, además, por qué el recorte a roll, pitch y
-heave es tan relevante en este problema. Si el marcador está fijado al torso del
-robot, roll y pitch se reflejan principalmente en la parte rotacional de
-\((R,t)\), mientras que heave altera la distancia relativa y, por lo tanto, la
+Esta geometría proyectiva explica, además, por qué el recorte a \emph{roll}, \emph{pitch} y
+\emph{heave} es tan relevante en este problema. Si el marcador está fijado al torso del
+robot, \emph{roll} y \emph{pitch} se reflejan principalmente en la parte rotacional de
+\((R,t)\), mientras que \emph{heave} altera la distancia relativa y, por lo tanto, la
 escala aparente del patrón en la imagen. En otras palabras, el movimiento que
 escogimos modelar no es solo una abstracción mecánica; es exactamente el
 movimiento que el estimador visual tiene que reconstruir.
@@ -1491,20 +1494,19 @@ movimiento que el estimador visual tiene que reconstruir.
 En este trabajo organizamos la metodología en dos etapas complementarias. La
 primera corresponde a la simulación, donde construimos un entorno controlado y
 reproducible para modelar el movimiento de una plataforma marina, observarla
-con distintas fuentes de imagen y evaluar la estimación visual contra un ground
-truth conocido. La segunda corresponde al laboratorio, donde trasladamos parte
+con distintas fuentes de imagen y evaluar la estimación visual contra un \textit{ground truth} conocido. La segunda corresponde al laboratorio, donde trasladamos parte
 de esa lógica al robot real para analizar qué ocurre al pasar de un entorno
 idealizado a uno físico y hasta qué punto el movimiento propuesto en simulación
 guarda relación con el comportamiento observado en el Go2.
 
 \subsection{Metodología en simulación}
 
-La simulación fue el primer entorno de validación del framework porque nos
+La simulación fue el primer entorno de validación del entorno porque nos
 permitió controlar la escena, repetir corridas bajo condiciones comparables y
 registrar todas las señales relevantes del sistema. En esta etapa el problema
-se organizó como un pipeline de cuatro pasos: generación del movimiento
+se organizó como un \textit{pipeline} de cuatro pasos: generación del movimiento
 marino, materialización de ese movimiento en el Go2, observación visual del
-marcador y evaluación offline contra una referencia reconstruible. Sobre la
+marcador y evaluación \textit{offline} contra una referencia reconstruible. Sobre la
 base conceptual introducida en el Capítulo~\ref{mt}, aquí nos concentramos en
 cómo se organizó cada una de esas etapas y con qué configuración se ejecutó la
 campaña experimental.
@@ -1514,7 +1516,7 @@ banco de pruebas metodológico. Cada corrida se registró durante aproximadament
 un minuto, lo que permitió volver sobre una misma secuencia para analizarla
 varias veces sin repetir la ejecución completa. Dentro de esa estructura, la
 cámara fija se utilizó como caso base y la cámara embarcada en el dron simulado
-como extensión más exigente del mismo pipeline.
+como extensión más exigente del mismo \textit{pipeline}.
 
 \subsubsection{Generación del movimiento marino}
 
@@ -1548,11 +1550,11 @@ Componente & Valor base & Función en la señal \\
 \midrule
 Frecuencia de actualización & \(20{,}0\) Hz & Resolución temporal de la consigna \\
 Frecuencia base del oleaje & \(0{,}1\) Hz & Escala temporal del movimiento sintetizado \\
-Amplitud máxima de roll & \(15{,}0^\circ\) & Excursión lateral de la plataforma \\
-Amplitud máxima de pitch & \(10{,}0^\circ\) & Excursión longitudinal de la plataforma \\
-Amplitud máxima de heave & \(0{,}10\) m & Desplazamiento vertical máximo \\
-Desacople temporal de pitch & \(1{,}0\) & Relación temporal respecto de roll \\
-Desacople temporal de heave & \(1{,}5\) & Oscilación vertical más rápida que la angular \\
+Amplitud máxima de \emph{roll} & \(15{,}0^\circ\) & Excursión lateral de la plataforma \\
+Amplitud máxima de \emph{pitch} & \(10{,}0^\circ\) & Excursión longitudinal de la plataforma \\
+Amplitud máxima de \emph{heave} & \(0{,}10\) m & Desplazamiento vertical máximo \\
+Desacople temporal de \emph{pitch} & \(1{,}0\) & Relación temporal respecto de \emph{roll} \\
+Desacople temporal de \emph{heave} & \(1{,}5\) & Oscilación vertical más rápida que la angular \\
 Suavizado exponencial & \(0{,}95\) & Atenuación de cambios bruscos entre muestras \\
 \bottomrule
 \end{tabular}
@@ -1582,9 +1584,9 @@ descriptas por su rol experimental.}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.30\textwidth}p{0.42\textwidth}p{0.22\textwidth}}
 \toprule
-Rol en el pipeline & Uso metodológico & Etapa \\
+Rol en el \textit{pipeline} & Uso metodológico & Etapa \\
 \midrule
-Consigna postural del torso & Entrada que materializa roll, pitch y heave sobre el Go2 simulado & Ejecución \\
+Consigna postural del torso & Entrada que materializa \emph{roll}, \emph{pitch} y \emph{heave} sobre el Go2 simulado & Ejecución \\
 Referencia suavizada del movimiento & Señal auxiliar para contrastar la consigna objetivo con la corrida registrada & Evaluación \\
 Comandos manuales & Herramienta de verificación de poses aisladas antes de las corridas continuas & Desarrollo \\
 Estado cinemático del robot & Base para reconstruir la pose verdadera del marcador en el mundo simulado & Evaluación \\
@@ -1605,9 +1607,9 @@ Go2 real.}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.30\textwidth}p{0.42\textwidth}p{0.22\textwidth}}
 \toprule
-Rol en el pipeline & Uso metodológico & Etapa \\
+Rol en el \textit{pipeline} & Uso metodológico & Etapa \\
 \midrule
-Referencia de movimiento & Señal esperada de roll, pitch y heave para la corrida física & Evaluación \\
+Referencia de movimiento & Señal esperada de \emph{roll}, \emph{pitch} y \emph{heave} para la corrida física & Evaluación \\
 Comando de actitud & Comando efectivamente transmitido al Go2 real & Actuación \\
 Estado principal del robot & Actitud, altura del tronco y modo de marcha reportados por el robot & Evaluación \\
 Estado de bajo nivel & Lectura alternativa de actitud e IMU interna & Evaluación \\
@@ -1620,7 +1622,7 @@ Calibración de cámara & Intrínsecos medidos para estimación visual en labora
 \end{table}
 
 El patrón de referencia del trabajo es el sinusoidal. Si denotamos por \(A_r\),
-\(A_p\) y \(A_h\) las amplitudes máximas de roll, pitch y heave, y por
+\(A_p\) y \(A_h\) las amplitudes máximas de \emph{roll}, \emph{pitch} y \emph{heave}, y por
 \(\omega = 2 \pi f\) la pulsación angular asociada a la frecuencia base
 \(f\), la consigna se define como:
 
@@ -1637,11 +1639,11 @@ h(t) = A_h \sin(\omega \kappa_h t),
 \end{equation}
 
 donde \(\kappa_p\) y \(\kappa_h\) corresponden a los desacoples temporales de
-pitch y heave. En la configuración de referencia, \(\kappa_p = 1{,}0\) y
+\emph{pitch} y \emph{heave}. En la configuración de referencia, \(\kappa_p = 1{,}0\) y
 \(\kappa_h = 1{,}5\). Esto
-hace que roll y pitch evolucionen en escalas temporales similares, mientras que
-heave introduce una oscilación algo más rápida. A su vez, el desfase fijo de
-\(\pi/3\) en pitch evita que las tres componentes alcancen sus extremos al
+hace que \emph{roll} y \emph{pitch} evolucionen en escalas temporales similares, mientras que
+\emph{heave} introduce una oscilación algo más rápida. A su vez, el desfase fijo de
+\(\pi/3\) en \emph{pitch} evita que las tres componentes alcancen sus extremos al
 mismo tiempo. Incluso en esta versión simple, el movimiento resultante no es
 una oscilación rígidamente sincronizada, sino una combinación periódica más
 interesante para observar cómo responde el estimador visual.
@@ -1657,10 +1659,10 @@ tanto en las señales del robot como en la imagen del marcador
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/images/fig_method_motion_components.png}
-\caption{Componentes temporales de roll, pitch y heave en el patrón
+\caption{Componentes temporales de \emph{roll}, \emph{pitch} y \emph{heave} en el patrón
 sinusoidal con los valores de referencia (\(f=0{,}1\) Hz,
 \(A_r=\pm 15^\circ\), \(A_p=\pm 10^\circ\), \(A_h=\pm 0{,}1\) m,
-\(\kappa_p=1\), \(\kappa_h=1{,}5\), desfase fijo \(\pi/3\) en pitch).
+\(\kappa_p=1\), \(\kappa_h=1{,}5\), desfase fijo \(\pi/3\) en \emph{pitch}).
 La línea punteada es la consigna objetivo antes del filtro; la continua es la
 señal suavizada (\(\alpha=0{,}95\)) que se usa como referencia postural para el
 robot.}
@@ -1673,7 +1675,7 @@ desarrollo para exploración y depuración, porque rompe la periodicidad estrict
 del caso simple y expone al detector a perturbaciones menos regulares. Sin
 embargo, no lo tomamos como caso principal de la evaluación porque no fue calibrado
 como un modelo físico de mar y resultaba menos conveniente como base
-reproducible para comparar estimación y ground truth. Por esa razón, el patrón
+reproducible para comparar estimación y \textit{ground truth}. Por esa razón, el patrón
 sinusoidal quedó como referencia metodológica del trabajo, mientras que el
 irregular se mantuvo como variante complementaria de ensayo.
 
@@ -1682,7 +1684,7 @@ patrón sinusoidal concentra la variación de cada eje en una componente dominan
 y vuelve más transparente la relación entre entrada y respuesta; el patrón
 irregular, en cambio, superpone oscilaciones con distintas escalas
 temporales y genera trayectorias menos previsibles. Esta segunda opción es útil
-para tensionar el detector y explorar la robustez del pipeline, pero no resulta
+para tensionar el detector y explorar la robustez del \textit{pipeline}, pero no resulta
 la mejor base cuando se quiere explicar el sistema con claridad o comparar una
 configuración con otra de manera controlada
 (Figura~\ref{fig:method_wave_patterns}).
@@ -1697,7 +1699,7 @@ varias sinusoides con distintas frecuencias relativas, generando trayectorias
 menos previsibles. La figura muestra la consigna \emph{objetivo} antes del
 filtro de suavizado. Se adoptó el patrón sinusoidal como referencia metodológica
 porque resulta más interpretable y reproducible para comparar estimación y
-ground truth.}
+\textit{ground truth}.}
 \label{fig:method_wave_patterns}
 \end{figure}
 
@@ -1711,7 +1713,7 @@ pasa-bajos de primer orden. Si \(\alpha\) denota el coeficiente de suavizado y
 \tilde{x}_k = \alpha \tilde{x}_{k-1} + (1-\alpha) x_k.
 \end{equation}
 
-El mismo esquema se usa para roll, pitch y heave. En la configuración base,
+El mismo esquema se usa para \emph{roll}, \emph{pitch} y \emph{heave}. En la configuración base,
 \(\alpha = 0{,}95\), de modo que la salida conserva una memoria fuerte del
 estado previo y amortigua cambios abruptos entre iteraciones consecutivas. Esto
 ayuda a evitar transiciones poco plausibles en Gazebo y reduce movimientos
@@ -1722,31 +1724,31 @@ a un movimiento físicamente ejecutable por el robot.
 
 Luego del suavizado, la posición deseada se fija como
 \((0, 0, \tilde{h}_k)\), de manera que el único desplazamiento lineal es la
-componente vertical. La orientación se representa con roll y pitch suavizados,
-mientras que yaw se mantiene en cero. La misma referencia suavizada queda
+componente vertical. La orientación se representa con \emph{roll} y \emph{pitch} suavizados,
+mientras que \emph{yaw} se mantiene en cero. La misma referencia suavizada queda
 registrada junto con la corrida, lo que facilita la inspección posterior y el
 contraste con la evaluación \textit{offline}.
 
 El simulador también incorpora un modo manual. En ese caso deja de sintetizar
-ondas automáticamente y acepta consignas discretas de roll, pitch y heave,
+ondas automáticamente y acepta consignas discretas de \emph{roll}, \emph{pitch} y \emph{heave},
 además de aplicar saturaciones de seguridad y recuperar una posición neutral.
 Este modo no fue la base de las corridas experimentales, pero sí resultó valioso
 para verificar poses aisladas, revisar la coherencia geométrica de la escena y
 diagnosticar problemas antes de pasar a secuencias continuas de oleaje. En ese
 sentido, cumplió un rol de apoyo en el desarrollo: permitió inspeccionar el
-pipeline en estados controlados antes de exigirle seguimiento continuo sobre
+\textit{pipeline} en estados controlados antes de exigirle seguimiento continuo sobre
 secuencias periódicas de un minuto.
 
 \subsubsection{Control postural del Go2 en simulación}
 
 El generador de movimiento marino no mueve directamente un objeto externo en
 Gazebo, sino que prescribe una pose deseada del cuerpo del Go2. Esa consigna
-mantiene nulo el desplazamiento horizontal, fija yaw en cero, introduce una
-altura variable asociada a heave y define una orientación dada por roll y pitch.
+mantiene nulo el desplazamiento horizontal, fija \emph{yaw} en cero, introduce una
+altura variable asociada a \emph{heave} y define una orientación dada por \emph{roll} y \emph{pitch}.
 El objetivo de este diseño es que la ``plataforma marina'' no sea una malla
 rígida desacoplada del robot, sino la propia postura del cuadrúpedo.
 
-Durante el bringup del Go2 en simulación, el stack de control del robot consume
+Durante el arranque del Go2 en simulación, el sistema de control del robot consume
 esa pose deseada del torso y la traduce en una nueva configuración articular.
 Desde un punto de vista funcional, el proceso puede leerse de la siguiente
 manera: a partir de una postura nominal, el controlador reubica las patas para
@@ -1763,23 +1765,22 @@ movimiento marino sintetizado no aparece únicamente como una animación del
 modelo, sino como una secuencia reproducible de configuraciones del robot que
 puede seguirse también desde sus variables internas.
 
-Esa misma cadena de estado es la que luego se usa para construir el ground
-truth del marcador. En la evaluación offline se reconstruye primero la pose del
+Esa misma cadena de estado es la que luego se usa para construir el \textit{ground truth} del marcador. En la evaluación \textit{offline} se reconstruye primero la pose del
 tronco a partir de la odometría, la IMU y la pose base--footprint
-(Tabla~\ref{tab:ros_interfaces_sim}); después se suma el offset fijo del ArUco
-respecto del cuerpo del Go2 y se corrige el offset de \textit{spawn} del robot
+(Tabla~\ref{tab:ros_interfaces_sim}); después se suma el desplazamiento fijo del ArUco
+respecto del cuerpo del Go2 y se corrige el desplazamiento de inicialización del robot
 en el mundo, fijado en \(0{,}40\) m sobre el eje \(x\) en la configuración de
 referencia. De este modo, la pose verdadera del marcador no se toma como un
 dato trivial del simulador, sino como una cantidad reconstruida de forma
-consistente con el resto del pipeline.
+consistente con el resto del \textit{pipeline}.
 
 \subsubsection{Estimación visual en simulación}
 
-Como se discutió en el Capítulo~\ref{mt}, el framework contempla dos fuentes de
+Como se discutió en el Capítulo~\ref{mt}, el entorno contempla dos fuentes de
 imagen complementarias. Operativamente, la primera es una cámara fija nadir,
 ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
 inferior de un dron simulado, que despega automáticamente y luego mantiene un
-hover por encima del Go2. La Figura~\ref{fig:method_visual_setup} resume
+vuelo estacionario por encima del Go2. La Figura~\ref{fig:method_visual_setup} resume
 visualmente ambos casos.
 
 \begin{figure}[H]
@@ -1795,9 +1796,9 @@ visualmente ambos casos.
 \begin{subfigure}[t]{0.588\textwidth}
 \centering
 \includegraphics[height=\methodvisualsetupheight,keepaspectratio]{figures/setup/drone-unitree-aruco.png}
-\caption{Escenario con dron simulado en hover sobre la plataforma.}
+\caption{Escenario con dron simulado en vuelo estacionario sobre la plataforma.}
 \end{subfigure}
-\caption{Vistas del entorno simulado utilizadas en el framework. A la izquierda
+\caption{Vistas del entorno simulado utilizadas en el entorno. A la izquierda
 se observa la plataforma instrumentada con el marcador; a la derecha, el caso
 con cámara aérea, donde la percepción depende además de la pose del dron.}
 \label{fig:method_visual_setup}
@@ -1813,10 +1814,9 @@ el marcador.
 \centering
 \includegraphics[width=0.36\textwidth]{figures/diagrams/ternas.png}
 \caption{Vista esquemática del montaje con cámara aérea y superposición de las
-ternas principales del pipeline geométrico: marco global, referencia plana del
+ternas principales del \textit{pipeline} geométrico: marco global, referencia plana del
 robot, torso, marcador ArUco y cámara embarcada. La imagen ubica en la escena
-las referencias usadas para la estimación visual y la reconstrucción del ground
-truth.}
+las referencias usadas para la estimación visual y la reconstrucción del \textit{ground truth}.}
 \label{fig:method_frames_scene}
 \end{figure}
 
@@ -1824,11 +1824,11 @@ En ambos casos la estimación visual se resolvió con el mismo detector ArUco. E
 procedimiento consume la imagen RGB y la calibración intrínseca de la cámara,
 busca el marcador del diccionario 6x6 con identificador \(0\) y asume un lado de
 \(0{,}50\) metros. Una vez detectadas las esquinas, OpenCV estima la pose
-relativa del marcador respecto del frame óptico de la cámara mediante
+relativa del marcador respecto del marco óptico de la cámara mediante
 solvePnP. Durante la corrida, el detector trabaja solo con imagen e
 intrínsecos de cámara: no usa conocimiento privilegiado del simulador, de la
-pose del robot ni de la pose del dron. Un ejemplo del frame anotado que produce
-el detector puede verse en la Figura~\ref{fig:method_aruco_detection_frame}.
+pose del robot ni de la pose del dron. Un ejemplo de la imagen anotada que
+produce el detector puede verse en la Figura~\ref{fig:method_aruco_detection_frame}.
 
 \begin{figure}[H]
 \centering
@@ -1840,11 +1840,11 @@ los ejes de pose estimada superpuestos en tiempo real.}
 \end{figure}
 
 En el caso base, la cámara fija se modeló como un sensor estático en Gazebo con
-una altura nominal de \(2{,}0\) m. Su frame permanece rígido respecto del mundo,
+una altura nominal de \(2{,}0\) m. Su marco permanece rígido respecto del mundo,
 de modo que toda la variabilidad de la secuencia proviene del movimiento del
 Go2. En el caso del dron, por el contrario, la cámara deja de ser un observador
 inmóvil: el vehículo despega de forma automática y, tras un retardo inicial,
-mantiene un hover nominal por encima de la plataforma
+mantiene un vuelo estacionario nominal por encima de la plataforma
 (Figura~\ref{fig:method_camera_sources}). Esta organización permite
 pasar de un escenario geométricamente más limpio a otro donde la percepción
 depende además de la dinámica del vehículo aéreo.
@@ -1867,7 +1867,7 @@ para la estimación de pose del ArUco en tiempo real.}
 \label{fig:method_camera_sources}
 \end{figure}
 
-\subsubsection{Registro y evaluación offline}
+\subsubsection{Registro y evaluación \textit{offline}}
 
 La etapa de simulación se cerró siempre con el registro de la corrida durante
 aproximadamente un minuto. Ese registro incluye, según el escenario, la imagen
@@ -1878,19 +1878,19 @@ puede reprocesarse sin volver a ejecutar Gazebo.
 
 La evaluación se separó deliberadamente de la percepción en tiempo real. Durante
 la corrida, el detector procesa únicamente imagen e intrínsecos de cámara. La
-comparación con el ground truth se hace después, a partir del registro
+comparación con el \textit{ground truth} se hace después, a partir del registro
 experimental. En ese análisis \textit{offline} se reconstruye la pose del tronco
-del Go2 en el mundo, se suma el offset fijo del marcador sobre el cuerpo del
-robot y se transforma esa pose al frame de la cámara mediante las extrínsecas
-definidas en cada setup. En el caso del dron, además, entra la pose del propio
+del Go2 en el mundo, se suma el desplazamiento fijo del marcador sobre el cuerpo del
+robot y se transforma esa pose al marco de la cámara mediante las extrínsecas
+definidas en cada montaje. En el caso del dron, además, entra la pose del propio
 vehículo como parte de la cadena de transformaciones. En otras palabras, el
 postproceso recompone la cadena geométrica de la
 Ecuación~\ref{eq:camera_marker_chain} y de la
 Figura~\ref{fig:theory_frames_overview}: a partir de la pose global del robot,
 su postura efectiva y el montaje rígido del marcador, se obtiene una referencia
-en frame cámara directamente comparable con la estimación visual.
+en el marco de la cámara, directamente comparable con la estimación visual.
 
-Esta separación entre estimación online y análisis offline resultó importante
+Esta separación entre estimación \textit{online} y análisis \textit{offline} resultó importante
 por dos motivos. En primer lugar, evita contaminar la medición del desempeño
 con información del simulador que no estaría disponible en una aplicación real.
 En segundo lugar, permite revisar una misma secuencia con distintos criterios de
@@ -1898,20 +1898,20 @@ análisis sin modificar el detector ni repetir la simulación. Sobre esa base se
 generan los CSV y los gráficos de error que luego alimentan el capítulo
 experimental.
 
-Con este pipeline ya estabilizado, la campaña final de simulación del capítulo
+Con este \textit{pipeline} ya estabilizado, la campaña final de simulación del capítulo
 se organizó como un conjunto de corridas comparables bajo un único perfil
 experimental, al que nos referiremos como configuración de referencia. Esa
 campaña fijó una excitación sinusoidal común, mantuvo constante la posición
 inicial del Go2 y repitió el mismo montaje visual en cuatro registros: un
-baseline con cámara fija y tres repeticiones del escenario con dron. La
+caso base con cámara fija y tres repeticiones del escenario con dron. La
 motivación de este diseño fue separar con claridad dos preguntas. La primera, de carácter
-metodológico, fue qué tan bien sigue el pipeline visual el movimiento sintético
+metodológico, fue qué tan bien sigue el \textit{pipeline} visual el movimiento sintético
 cuando el sensor permanece fijo. La segunda, ya más cercana al objetivo final
-del framework, fue cuánto se degrada esa estimación cuando la observación pasa a
+del entorno, fue cuánto se degrada esa estimación cuando la observación pasa a
 depender también de una cámara aérea embarcada en el dron. Esta estructura de
 campaña se retoma en el capítulo experimental y explica por qué la comparación
 principal del capítulo no se plantea como una única corrida ejemplar, sino como
-un baseline más tres repeticiones comparables del caso fuerte
+un caso base más tres repeticiones comparables del caso fuerte
 (Figura~\ref{fig:method_pipeline}).
 
 \begin{figure}[H]
@@ -1922,7 +1922,7 @@ un baseline más tres repeticiones comparables del caso fuerte
 prescribe el movimiento del torso del Go2 en Gazebo, una fuente de imagen
 ---cámara fija o dron SJTU--- observa el marcador ArUco y el detector estima su
 pose, que se preserva junto con el resto de las señales en un registro
-experimental. La comparación contra ground truth se realiza después,
+experimental. La comparación contra \textit{ground truth} se realiza después,
 reconstruyendo la pose verdadera del marcador a partir de ese registro y
 contrastándola con la estimación visual.}
 \label{fig:method_pipeline}
@@ -1930,10 +1930,10 @@ contrastándola con la estimación visual.}
 
 \subsection{Metodología en laboratorio}
 
-Una vez estabilizado el pipeline en simulación, trasladamos parte de la
+Una vez estabilizado el \textit{pipeline} en simulación, trasladamos parte de la
 metodología al laboratorio para estudiar el pasaje desde un entorno controlado
 hacia uno físico. En esta segunda etapa el objetivo ya no fue disponer de un
-ground truth perfecto como en Gazebo, sino verificar dos cuestiones más
+\textit{ground truth} perfecto como en Gazebo, sino verificar dos cuestiones más
 concretas: primero, si el movimiento propuesto sobre el torso del Go2 puede
 reproducirse de manera razonable en el robot real; y segundo, si ese movimiento
 puede observarse visualmente mediante un marcador ArUco y una cámara mantenida
@@ -1944,14 +1944,14 @@ realizarse respecto de la simulación.
 \subsubsection{Dificultades del pasaje de simulación a laboratorio}
 
 El pasaje de simulación a laboratorio no consistió en trasladar sin cambios un
-pipeline ya resuelto, sino en adaptar cada una de sus partes a un entorno donde
+\textit{pipeline} ya resuelto, sino en adaptar cada una de sus partes a un entorno donde
 desaparecen varias de las idealizaciones de Gazebo. En simulación, la escena, la
 calibración de cámara, el montaje del sensor y el estado del robot están
 definidos por el modelo. En laboratorio, en cambio, esas mismas piezas deben
 construirse y verificarse experimentalmente: la cámara requiere calibración
 real, el marcador debe montarse físicamente sobre el robot, la posición del
 sensor deja de ser perfectamente rígida y la comparación ya no puede apoyarse en
-un ground truth exacto del sistema.
+un \textit{ground truth} exacto del sistema.
 
 Desde el punto de vista metodológico, hubo tres adaptaciones importantes. La
 primera afectó a la entrada del sistema: la idea de imponer un movimiento del
@@ -1968,7 +1968,7 @@ estado listadas en la Tabla~\ref{tab:ros_interfaces_lab}.
 Estas diferencias no invalidan el vínculo entre ambos entornos, pero sí cambian
 la naturaleza de las preguntas que puede responder cada uno. La simulación
 permite aislar variables, repetir exactamente las mismas corridas y cuantificar
-error respecto de ground truth. El laboratorio, en cambio, obliga a aceptar
+error respecto de \textit{ground truth}. El laboratorio, en cambio, obliga a aceptar
 incertidumbre adicional y desplaza el foco hacia la coherencia entre la consigna
 propuesta, la respuesta física del robot y la observación visual del marcador.
 Por eso, antes de describir el montaje real en detalle, explicitamos en la
@@ -1985,7 +1985,7 @@ Aspecto & Simulación & Laboratorio \\
 \midrule
 Entrada del sistema & Consigna postural sobre un modelo controlado y repetible (Tabla~\ref{tab:ros_interfaces_sim}) & Misma lógica de movimiento, ejecutada como comando de actitud sobre el Go2 real \\
 Referencia de comparación & Ground truth reconstruible a partir del estado del simulador & Comando esperado, comando efectivo y estado interno del robot \\
-Sensor visual & Cámara ideal definida por el modelo y sus extrínsecas & Cámara estéreo side-by-side usada como monocular, calibrada formalmente y fijada sobre la escena \\
+Sensor visual & Cámara ideal definida por el modelo y sus extrínsecas & Cámara estéreo lado a lado usada como monocular, calibrada formalmente y fijada sobre la escena \\
 Montaje del marcador & Relación rígida definida por el modelo del robot & ArUco adherido físicamente sobre el torso del cuadrúpedo \\
 Repetibilidad & Alta, con corridas equivalentes y registros comparables & Dependiente del montaje, la calibración y la ejecución física \\
 \bottomrule
@@ -2013,7 +2013,7 @@ En esta etapa, el interés principal estuvo puesto en la correspondencia entre e
 movimiento objetivo, el comando realmente enviado y la respuesta observada en el
 robot. A diferencia del caso simulado, ya no se contaba con un estado verdadero
 perfecto del sistema, por lo que el análisis dejó de formularse como comparación
-contra ground truth y pasó a entenderse como contraste entre referencia,
+contra \textit{ground truth} y pasó a entenderse como contraste entre referencia,
 actuación y respuesta medida. Esto vuelve explícito el cambio de pregunta: en
 simulación preguntábamos cuánto error
 cometía el estimador visual respecto del estado verdadero; en laboratorio, en
@@ -2044,9 +2044,9 @@ pruebas se trabajó únicamente con una de sus dos cámaras, tratándola como un
 sensor monocular. La imagen original se recortó para conservar un solo ojo y se
 usó el izquierdo en las pruebas versionadas (rutas en el
 Apéndice~\ref{sec:appendix_data}). Antes de su uso fue necesario calibrarla con
-un checkerboard y validar esa calibración visualmente. El resultado de
-calibración reporta \(20\) imágenes con error RMS de \(0{,}221\) px, suficiente
-para sostener el pipeline de estimación visual con intrínsecos medidos y no
+un tablero de calibración y validar esa calibración visualmente. El resultado de
+calibración reporta \(20\) imágenes con error cuadrático medio (RMS) de \(0{,}221\) px, suficiente
+para sostener el \textit{pipeline} de estimación visual con intrínsecos medidos y no
 ideales.
 
 Durante la toma, la cámara se mantuvo en una posición aproximadamente fija por
@@ -2079,7 +2079,7 @@ señales internas del robot aportan distintas lecturas de su estado
 
 Metodológicamente, esta decisión tiene dos ventajas. En primer lugar, permite
 comparar directamente la señal propuesta con una señal efectivamente disponible
-en el robot real, sin depender de un sistema externo de ground truth. En
+en el robot real, sin depender de un sistema externo de \textit{ground truth}. En
 segundo lugar, separa el problema en dos niveles: fidelidad del camino de
 comando, por un lado, y fidelidad de la respuesta física del cuerpo, por otro.
 Así, el laboratorio pasa a funcionar como una validación de correspondencia
@@ -2106,12 +2106,12 @@ materializan el contraste entre objetivo, actuación y respuesta.
 
 \section{Experimentación y resultados}
 
-Una vez definido el pipeline y explicitados los criterios metodológicos, la
+Una vez definido el \textit{pipeline} y explicitados los criterios metodológicos, la
 evidencia se presenta como una progresión desde el caso más controlado hasta el
 contraste físico. Primero se analizan las corridas de simulación, donde la
 referencia reconstruida permite medir el desempeño del estimador con mayor
 aislamiento. Luego se presenta el laboratorio, donde el foco deja de estar en
-el error frente a ground truth y pasa a la correspondencia entre movimiento
+el error frente a \textit{ground truth} y pasa a la correspondencia entre movimiento
 esperado, comando enviado y respuesta del robot.
 
 \subsection{Experimentos en simulación}
@@ -2119,8 +2119,8 @@ esperado, comando enviado y respuesta del robot.
 Las pruebas en simulación constituyen el núcleo cuantitativo más sólido del
 trabajo, porque permiten contrastar la pose estimada visualmente con la pose de
 referencia obtenida a partir del simulador. La campaña final se organizó como
-una progresión deliberada: primero, un baseline con cámara fija para instalar el
-caso más limpio del framework; después, tres repeticiones comparables con cámara
+una progresión deliberada: primero, un caso base con cámara fija para instalar el
+caso más limpio del entorno; después, tres repeticiones comparables con cámara
 embarcada en dron para estudiar el mismo movimiento bajo una geometría de
 observación más exigente. Todas las corridas se registraron durante
 aproximadamente un minuto y se reevaluaron \textit{offline} con el mismo
@@ -2132,18 +2132,18 @@ Con el fin de aislar el efecto de la fuente de imagen, todas las corridas de
 esta subsección comparten la misma consigna de movimiento marino sinusoidal y
 los mismos parámetros de referencia ya presentados en la metodología
 (Tabla~\ref{tab:method_marine_params}). Sobre esa base fija se construyó una
-campaña con un baseline de cámara fija y tres repeticiones comparables del
+campaña con un caso base de cámara fija y tres repeticiones comparables del
 escenario con dron, que se detallan en la
-Tabla~\ref{tab:sim_selected_runs}. Esta estructura no se eligió sólo para acumular más
+Tabla~\ref{tab:sim_selected_runs}. Esta estructura no se eligió solo para acumular más
 registros, sino para separar con claridad dos preguntas.
-Primero, qué tan bien sigue el pipeline visual el movimiento del marcador cuando
+Primero, qué tan bien sigue el \textit{pipeline} visual el movimiento del marcador cuando
 el sensor permanece fijo. Segundo, cuánto se degrada esa estimación cuando la
 observación pasa a depender también de la pose de un vehículo aéreo.
 
 \begin{table}[H]
 \centering
 \caption{Corridas seleccionadas para estructurar el capítulo experimental en
-simulación. La campaña final instala un baseline con cámara fija y luego
+simulación. La campaña final instala un caso base con cámara fija y luego
 profundiza el escenario con dron mediante tres repeticiones comparables.}
 \label{tab:sim_selected_runs}
 \begin{adjustbox}{max width=\textwidth}
@@ -2151,7 +2151,7 @@ profundiza el escenario con dron mediante tres repeticiones comparables.}
 \toprule
 Corrida & Fuente de imagen & Duración & Movimiento & Propósito en el relato experimental \\
 \midrule
-Baseline fijo & Cámara fija & 57,5 s & Configuración sinusoidal de referencia & Instalar el caso metodológicamente más limpio y fijar una referencia visual del pipeline. \\
+Caso base fijo & Cámara fija & 57,5 s & Configuración sinusoidal de referencia & Instalar el caso metodológicamente más limpio y fijar una referencia visual del \textit{pipeline}. \\
 R1 & Cámara embarcada en dron & 57,7 s & Configuración sinusoidal de referencia & Primera repetición comparable del escenario fuerte, con alta disponibilidad de muestras. \\
 R2 & Cámara embarcada en dron & 57,4 s & Configuración sinusoidal de referencia & Corrida principal del dron; se usa para las series temporales y los histogramas detallados. \\
 R3 & Cámara embarcada en dron & 57,7 s & Configuración sinusoidal de referencia & Tercera repetición comparable del dron; se usa para discutir variabilidad entre ejecuciones equivalentes. \\
@@ -2160,7 +2160,7 @@ R3 & Cámara embarcada en dron & 57,7 s & Configuración sinusoidal de referenci
 \end{adjustbox}
 \end{table}
 
-En términos concretos, el baseline y las tres repeticiones del dron corresponden
+En términos concretos, el caso base y las tres repeticiones del dron corresponden
 a los registros listados en la Tabla~\ref{tab:appendix_rosbags} (abril de
 2026). Las cuatro corridas se reevaluaron con el mismo criterio
 \textit{offline} y con la misma posición inicial del Go2, de modo que las
@@ -2171,9 +2171,9 @@ de una mezcla de configuraciones distintas del escenario.
 
 La evaluación se apoya en un conjunto acotado de métricas que dialogan de forma
 directa con el movimiento marino que se quiso sintetizar. En esta campaña se
-privilegian tres variables: el error angular en roll, el error angular
-en pitch y el error en heave, medido como \(\Delta Z\) en el
-frame de la cámara. Estas magnitudes son las que mejor capturan la parte del
+privilegian tres variables: el error angular en \emph{roll}, el error angular
+en \emph{pitch} y el error en \emph{heave}, medido como \(\Delta Z\) en el
+marco de la cámara. Estas magnitudes son las que mejor capturan la parte del
 problema vinculada con el balanceo, el cabeceo y la variación vertical de la
 plataforma. Como descriptores complementarios se conservan la cantidad de
 muestras útiles, la tasa de detección y, de forma secundaria, el error
@@ -2183,17 +2183,17 @@ euclidiano de posición \(\|\Delta pos\|\) y la lectura por ejes \(X/Y/Z\).
 \centering
 \caption{Resumen cuantitativo de las tres corridas del escenario con dron,
 calculado a partir de la evaluación \textit{offline}
-contra ground truth reconstruido en frame cámara. La tabla prioriza el error
-absoluto medio en roll, pitch y heave.}
+contra \textit{ground truth} reconstruido en el marco de la cámara. La tabla prioriza el error
+absoluto medio en \emph{roll}, \emph{pitch} y \emph{heave}.}
 \label{tab:sim_drone_quant_structure}
 \begin{adjustbox}{max width=\textwidth}
 \begin{tabular}{p{0.10\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.14\textwidth}p{0.22\textwidth}}
 \toprule
-Corrida & Muestras & Detección & \(\overline{|\Delta roll|}\) & \(\overline{|\Delta pitch|}\) & \(\overline{|\Delta Z|}\) & Observación sintética \\
+Corrida & Muestras & Detección & \(\overline{|\Delta \mathit{roll}|}\) & \(\overline{|\Delta \mathit{pitch}|}\) & \(\overline{|\Delta Z|}\) & Observación sintética \\
 \midrule
-R1 & 306 & 5,30 Hz & 2,69$^\circ$ & 1,98$^\circ$ & 0,020 m & Mayor disponibilidad de muestras; el error de heave queda levemente más acotado que en las otras repeticiones. \\
+R1 & 306 & 5,30 Hz & 2,69$^\circ$ & 1,98$^\circ$ & 0,020 m & Mayor disponibilidad de muestras; el error de \emph{heave} queda levemente más acotado que en las otras repeticiones. \\
 R2 & 264 & 4,60 Hz & 3,02$^\circ$ & 2,21$^\circ$ & 0,023 m & Corrida principal; concentra la mayor dispersión angular del grupo y por eso resulta una referencia exigente. \\
-R3 & 270 & 4,68 Hz & 2,75$^\circ$ & 2,06$^\circ$ & 0,024 m & Menor error posicional global del grupo, con desempeño angular intermedio y heave comparable a R2. \\
+R3 & 270 & 4,68 Hz & 2,75$^\circ$ & 2,06$^\circ$ & 0,024 m & Menor error posicional global del grupo, con desempeño angular intermedio y \emph{heave} comparable a R2. \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
@@ -2201,14 +2201,14 @@ R3 & 270 & 4,68 Hz & 2,75$^\circ$ & 2,06$^\circ$ & 0,024 m & Menor error posicio
 
 Conviene leer estas métricas en dos niveles. Primero, como una descripción
 local de cada corrida: cuántas detecciones útiles hubo y qué orden de magnitud
-alcanzan roll, pitch y heave. Segundo, como una
-comparación entre escenarios: el baseline con cámara fija no compite en peso
+alcanzan \emph{roll}, \emph{pitch} y \emph{heave}. Segundo, como una
+comparación entre escenarios: el caso base con cámara fija no compite en peso
 con el dron, sino que ofrece una base de lectura sobre la cual interpretar por
 qué el escenario con sensor móvil resulta más exigente.
 
 \subsubsection{Caso base: cámara fija}
 
-El caso de cámara fija funciona como baseline metodológico del framework. Al
+El caso de cámara fija funciona como caso base metodológico del entorno. Al
 mantener el sensor en una posición fija respecto del mundo, la
 variación visual proviene esencialmente del movimiento del marcador adherido al
 Go2. Esto vuelve más legible la relación entre la consigna sinusoidal del torso
@@ -2218,8 +2218,8 @@ referencia más limpia antes de pasar al caso con dron.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_fixed_position_vs_gt.png}
-\caption{Comparación temporal entre posición estimada y ground truth en el
-escenario base con cámara fija. La señal estimada se muestra sin bias medio por
+\caption{Comparación temporal entre posición estimada y \textit{ground truth} en el
+escenario base con cámara fija. La señal estimada se muestra sin sesgo medio por
 eje solo para visualización, con el objetivo de facilitar la comparación de
 forma y fase entre ambas curvas. No se aplica compensación temporal: el pequeño
 desfase visible entre ambas señales forma parte de la lectura diagnóstica del
@@ -2232,7 +2232,7 @@ resultado.}
 \includegraphics[width=0.92\textwidth]{figures/results/sim_fixed_error_hist.png}
 \caption{Distribución de errores de posición en el caso base con cámara fija.
 Se muestran \(\Delta X\), \(\Delta Y\), \(\Delta Z\) y el error euclidiano
-\(\|\Delta pos\|\), todos calculados sobre la evaluación cruda en frame
+\(\|\Delta pos\|\), todos calculados sobre la evaluación cruda en marco
 cámara. Como las señales no fueron compensadas temporalmente, parte del
 desplazamiento respecto de cero proviene del desfase entre estimación y
 referencia; una lectura centrada en cero requeriría alinear o recentrar las
@@ -2243,9 +2243,9 @@ series antes de calcular estos histogramas.}
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.82\textwidth]{figures/results/sim_fixed_angle_error_hist_raw.png}
-\caption{Distribución raw del error angular en el baseline con cámara fija.
-Aquí se muestran \(\Delta pitch\) y \(\Delta yaw\) sin recentrado adicional,
-como apoyo para la lectura angular del caso base. La componente yaw se incluye
+\caption{Distribución cruda del error angular en el caso base con cámara fija.
+Aquí se muestran \(\Delta \mathit{pitch}\) y \(\Delta \mathit{yaw}\) sin recentrado adicional,
+como apoyo para la lectura angular del caso base. La componente \emph{yaw} se incluye
 solo como control diagnóstico, dado que el escenario no la excita
 deliberadamente. El histograma conserva el desfase temporal de la cadena de
 medición; por eso debe leerse como error crudo y no como una distribución ya
@@ -2255,8 +2255,8 @@ centrada en cero.}
 
 La Figura~\ref{fig:sim_fixed_position_vs_gt} muestra que, en el caso más limpio
 del capítulo, la señal estimada reproduce la dinámica global del marcador en
-los tres ejes y sigue de forma particularmente clara la componente de heave. El
-baseline concentra 275 muestras útiles sobre una corrida de 57,5 s, con una
+los tres ejes y sigue de forma particularmente clara la componente de \emph{heave}. El
+caso base concentra 275 muestras útiles sobre una corrida de 57,5 s, con una
 tasa de detección de 4,78 Hz, de modo que la evidencia visual queda sostenida
 por una cantidad de observaciones claramente mayor que en las campañas usadas
 en campañas preliminares.
@@ -2264,7 +2264,7 @@ en campañas preliminares.
 Al leer las Figuras~\ref{fig:sim_fixed_position_vs_gt},
 \ref{fig:sim_fixed_error_hist} y \ref{fig:sim_fixed_angle_error_hist_raw} es
 importante distinguir error geométrico de desfase temporal. La estimación visual
-se obtiene a partir de imágenes, mientras que el ground truth se reconstruye con
+se obtiene a partir de imágenes, mientras que el \textit{ground truth} se reconstruye con
 señales del simulador registradas a otra frecuencia y luego alineadas por marca
 temporal. Un retardo pequeño entre ambas cadenas desplaza la fase de dos señales
 sinusoidales parecidas; cuando se resta una contra la otra, ese retardo aparece
@@ -2273,14 +2273,14 @@ eso estos histogramas crudos son útiles para reportar la cadena completa, pero
 una figura orientada a aislar el error del estimador debería compensar el
 desfase o recentrar la distribución alrededor de cero.
 
-Desde el punto de vista del error, el baseline queda acotado en torno a
+Desde el punto de vista del error, el caso base queda acotado en torno a
 \(\mu\|\Delta pos\| = 0{,}0578\) m y \(P95 = 0{,}0853\) m. La componente de
-heave concentra la mayor dispersión posicional, con un error absoluto medio de
+\emph{heave} concentra la mayor dispersión posicional, con un error absoluto medio de
 \(0{,}034\) m, mientras que el error angular se mantiene en torno a
-\(2{,}44^\circ\) en roll y \(2{,}00^\circ\) en pitch. Aunque el histograma raw
-de la Figura~\ref{fig:sim_fixed_angle_error_hist_raw} también incluye yaw, esa
+\(2{,}44^\circ\) en \emph{roll} y \(2{,}00^\circ\) en \emph{pitch}. Aunque el histograma crudo
+de la Figura~\ref{fig:sim_fixed_angle_error_hist_raw} también incluye \emph{yaw}, esa
 componente no se usa como indicador principal de desempeño: en este trabajo no
-se envían comandos de rotación planar y la referencia mantiene yaw en cero. Por
+se envían comandos de rotación planar y la referencia mantiene \emph{yaw} en cero. Por
 lo tanto, su error reducido refleja sobre todo que esa variable fue poco
 excitada, no una propiedad relevante del estimador para el alcance de esta
 etapa.
@@ -2290,16 +2290,16 @@ repite en el caso fuerte. En \(Y\), la señal estimada acompaña la fase global
 del movimiento, pero el error lateral deriva lentamente a lo largo de la
 corrida: su media pasa de aproximadamente \(-0{,}0247\) m en los primeros
 10 s a \(-0{,}0571\) m al final, con una pendiente de
-\(-0{,}71\) mm/s. Esta caída no refleja un drift equivalente del ground truth,
-sino una deriva del error de estimación. Precisamente por eso el baseline
+\(-0{,}71\) mm/s. Esta caída no refleja una deriva equivalente del \textit{ground truth},
+sino una deriva del error de estimación. Precisamente por eso el caso base
 resulta útil: instala una referencia visual limpia y, al mismo tiempo, permite
-identificar limitaciones del pipeline antes de agregar la dinámica del dron.
+identificar limitaciones del \textit{pipeline} antes de agregar la dinámica del dron.
 
 \subsubsection{Caso fuerte: cámara embarcada en el dron}
 
 El escenario con dron concentra el principal interés del capítulo, porque
 introduce una geometría de observación más cercana al problema que motiva el
-framework. Aunque en estas corridas el dron no ejecuta todavía un
+entorno. Aunque en estas corridas el dron no ejecuta todavía un
 aterrizaje, su cámara inferior observa una plataforma que oscila y obliga a
 analizar la estimación visual en una condición menos ideal que la del caso
 fijo. La campaña final se apoyó en tres repeticiones comparables \((R1,\ R2,\
@@ -2311,9 +2311,9 @@ campaña.
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_position_vs_gt.png}
-\caption{Comparación entre posición estimada y ground truth en la corrida
+\caption{Comparación entre posición estimada y \textit{ground truth} en la corrida
 principal del escenario con dron \((R2)\). La señal estimada se muestra sin
-bias medio por eje solo para visualización, de modo de facilitar la lectura de
+sesgo medio por eje solo para visualización, de modo de facilitar la lectura de
 fase y forma temporal.}
 \label{fig:sim_drone_position_vs_gt}
 \end{figure}
@@ -2321,11 +2321,11 @@ fase y forma temporal.}
 \begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_orientation_vs_gt.png}
-\caption{Comparación entre orientación estimada y ground truth en la corrida
-principal con cámara embarcada en el dron, restringida a roll y pitch. En roll se aplica
+\caption{Comparación entre orientación estimada y \textit{ground truth} en la corrida
+principal con cámara embarcada en el dron, restringida a \emph{roll} y \emph{pitch}. En \emph{roll} se aplica
 \textit{unwrap} angular solo para visualización, con el fin de evitar los
 saltos artificiales asociados a la discontinuidad en \(\pm 180^\circ\). Se
-omite yaw porque el experimento no prescribe rotación planar deliberada y esa
+omite \emph{yaw} porque el experimento no prescribe rotación planar deliberada y esa
 componente no forma parte de las métricas centrales de esta etapa.}
 \label{fig:sim_drone_orientation_vs_gt}
 \end{figure}
@@ -2335,7 +2335,7 @@ componente no forma parte de las métricas centrales de esta etapa.}
 \includegraphics[width=\textwidth]{figures/results/sim_drone_error_hist.png}
 \caption{Distribución de errores crudos de la corrida principal del escenario
 con dron. La figura resume sesgo y dispersión para las componentes de posición
-y orientación estimadas en frame cámara.}
+y orientación estimadas en el marco de la cámara.}
 \label{fig:sim_drone_error_hist}
 \end{figure}
 
@@ -2343,9 +2343,9 @@ y orientación estimadas en frame cámara.}
 \centering
 \includegraphics[width=\textwidth]{figures/results/sim_drone_runs_comparison.png}
 \caption{Comparación entre las tres corridas del escenario con dron. Se
-muestran boxplots de error absoluto en las variables que más interesan para la
-lectura marina del problema: \(|\Delta roll|\), \(|\Delta pitch|\) y
-\(|\Delta heave| = |\Delta Z|\).}
+muestran diagramas de caja de error absoluto en las variables que más interesan para la
+lectura marina del problema: \(|\Delta \mathit{roll}|\), \(|\Delta \mathit{pitch}|\) y
+\(|\Delta \mathit{heave}| = |\Delta Z|\).}
 \label{fig:sim_drone_runs_comparison}
 \end{figure}
 
@@ -2356,15 +2356,15 @@ Figuras~\ref{fig:sim_drone_position_vs_gt},
 dinámica global del marcador, pero lo hace bajo una geometría de observación
 menos favorable que la del caso fijo. En particular, la figura de posición
 permite ver que la señal estimada acompaña la periodicidad dominante en
-heave y conserva la estructura temporal en \(X\) y \(Z\), aun cuando
-la nube de observaciones aparece más abierta que en el baseline. La figura de
-orientación refuerza esa lectura: roll y pitch siguen la
+\emph{heave} y conserva la estructura temporal en \(X\) y \(Z\), aun cuando
+la nube de observaciones aparece más abierta que en el caso base. La figura de
+orientación refuerza esa lectura: \emph{roll} y \emph{pitch} siguen la
 oscilación principal del movimiento, que es la parte angular efectivamente
 excitada por la consigna de oleaje usada en esta etapa.
 
 Cuantitativamente, la corrida \(R2\) queda en
-\(\overline{|\Delta roll|} = 3{,}02^\circ\),
-\(\overline{|\Delta pitch|} = 2{,}21^\circ\) y
+\(\overline{|\Delta \mathit{roll}|} = 3{,}02^\circ\),
+\(\overline{|\Delta \mathit{pitch}|} = 2{,}21^\circ\) y
 \(\overline{|\Delta Z|} = 0{,}023\) m. Estas tres magnitudes son las que mejor
 describen cuánto se degrada la observación cuando el sensor pasa de estar fijo
 a estar embarcado en un vehículo aéreo. En ese sentido, el escenario con dron
@@ -2378,25 +2378,25 @@ sistemático en \(Y\), de signo negativo, que alcanza
 \(-0{,}322\) m en \(R1\), \(-0{,}297\) m en \(R2\) y \(-0{,}151\) m en \(R3\).
 La hipótesis más probable para este desplazamiento sistemático en \(Y\) no es
 un sesgo del estimador visual, sino un movimiento físico real del robot. Al
-recibir comandos de roll y pitch, el controlador de estabilidad del Go2 —tanto
+recibir comandos de \emph{roll} y \emph{pitch}, el controlador de estabilidad del Go2 —tanto
 en simulación como en el robot real— ajusta la posición horizontal del torso
 para mantener el centro de masa dentro del polígono de soporte, lo que genera
 un pequeño desplazamiento lateral (\emph{sway}) no incluido en la consigna.
 Este efecto fue observable también en los ensayos de laboratorio, donde el
 cuadrúpedo se desplazaba perceptiblemente en la dirección lateral mientras
 ejecutaba la oscilación postural. En simulación, ese movimiento queda registrado
-en la odometría del trunk y se propaga al ground truth del marcador, mientras
+en la odometría del torso y se propaga al \textit{ground truth} del marcador, mientras
 que la estimación visual del ArUco lo lee como parte de la pose observada. La
-lectura de este trabajo se centró deliberadamente en roll, pitch y heave, por
+lectura de este trabajo se centró deliberadamente en \emph{roll}, \emph{pitch} y \emph{heave}, por
 lo que este grado de libertad pasivo no fue compensado ni modelado. La
-hipótesis es verificable inspeccionando la trayectoria \(XY\) del ground truth
-del trunk en el rosbag: si el desplazamiento en \(Y\) aparece en la odometría
+hipótesis es verificable inspeccionando la trayectoria \(XY\) del \textit{ground truth}
+del torso en el \emph{rosbag}: si el desplazamiento en \(Y\) aparece en la odometría
 del robot antes de que el estimador visual lo reporte, entonces su origen es
 dinámico y no un artefacto de la cadena de percepción.
 
 Por eso la lectura principal del capítulo no se apoya en la posición cruda,
-sino en la comparación de roll, pitch y heave. Las
-figuras de posición, además, se muestran sin bias medio por eje solo para
+sino en la comparación de \emph{roll}, \emph{pitch} y \emph{heave}. Las
+figuras de posición, además, se muestran sin sesgo medio por eje solo para
 visualización; los histogramas y tablas conservan siempre los errores crudos.
 
 La comparación entre \(R1\), \(R2\) y \(R3\), resumida en la
@@ -2404,11 +2404,11 @@ Tabla~\ref{tab:sim_drone_quant_structure} y en la
 Figura~\ref{fig:sim_drone_runs_comparison}, muestra que el escenario con dron
 es comparable entre repeticiones, aunque no idéntico. Las tres corridas se
 mantienen en el mismo orden de magnitud, con medianas de
-\(|\Delta roll|\) entre \(1{,}63^\circ\) y \(1{,}70^\circ\), medianas de
-\(|\Delta pitch|\) entre \(1{,}19^\circ\) y \(1{,}44^\circ\), y medianas de
+\(|\Delta \mathit{roll}|\) entre \(1{,}63^\circ\) y \(1{,}70^\circ\), medianas de
+\(|\Delta \mathit{pitch}|\) entre \(1{,}19^\circ\) y \(1{,}44^\circ\), y medianas de
 \(|\Delta Z|\) entre \(0{,}0106\) m y \(0{,}0133\) m. La diferencia principal
 aparece en \(R2\), que concentra la mayor dispersión angular del grupo, mientras
-que \(R1\) ofrece la mayor tasa de detección y el heave más acotado. \(R3\), en
+que \(R1\) ofrece la mayor tasa de detección y el \emph{heave} más acotado. \(R3\), en
 cambio, mantiene una dispersión angular intermedia y a la vez reduce de forma
 marcada el error posicional global, lo que muestra que la repetibilidad del
 escenario es razonable pero sensible a la geometría efectiva de cada corrida.
@@ -2416,38 +2416,38 @@ escenario es razonable pero sensible a la geometría efectiva de cada corrida.
 \subsubsection{Síntesis de la evidencia en simulación}
 
 La evidencia de simulación aporta dos conclusiones centrales al argumento
-general del trabajo. En primer lugar, la campaña final confirma que el pipeline
+general del trabajo. En primer lugar, la campaña final confirma que el \textit{pipeline}
 visual sigue la dinámica global de una plataforma oscilante y que esa capacidad
 puede medirse con referencia reconstruible. En segundo lugar, la repetición del
 escenario con dron muestra que esa lectura no depende de una única corrida
 aislada, sino de tres ejecuciones comparables que conservan el mismo orden de
-magnitud en roll, pitch y heave.
+magnitud en \emph{roll}, \emph{pitch} y \emph{heave}.
 
-En conjunto, la evidencia de simulación permite afirmar que el framework sirve
+En conjunto, la evidencia de simulación permite afirmar que el entorno sirve
 como banco de pruebas controlado para percepción visual sobre plataformas
-oscilantes. El baseline fijo instala una referencia limpia, con un error medio
-de posición de 5,8 cm y una recuperación clara de la componente de heave;
+oscilantes. El caso base fijo instala una referencia limpia, con un error medio
+de posición de 5,8 cm y una recuperación clara de la componente de \emph{heave};
 mientras que el escenario con dron conserva la dinámica global del problema en
 una condición más exigente, con errores absolutos medios de alrededor de
-\(2^\circ\) a \(3^\circ\) en roll/pitch y de 2 a 2,4 cm en
-heave. Esta evidencia alcanza para justificar el valor metodológico de
+\(2^\circ\) a \(3^\circ\) en \emph{roll}/\emph{pitch} y de 2 a 2,4 cm en
+\emph{heave}. Esta evidencia alcanza para justificar el valor metodológico de
 la simulación como paso previo a la discusión experimental del entorno físico.
 
-Las limitaciones también quedan claras. La componente de heave sigue siendo la
-parte posicional más sensible del problema, roll y pitch se
+Las limitaciones también quedan claras. La componente de \emph{heave} sigue siendo la
+parte posicional más sensible del problema, \emph{roll} y \emph{pitch} se
 degradan de forma visible cuando la geometría de observación se vuelve menos
 favorable, y en el escenario con dron persiste un sesgo sistemático en
 \(Y\) que no debe interpretarse como movimiento real de la plataforma, sino
 como una limitación actual de la cadena geométrica de estimación y evaluación.
 Precisamente por eso la simulación cumple su función metodológica: permite
-aislar estas limitaciones con ground truth antes de trasladar la discusión a un
+aislar estas limitaciones con \textit{ground truth} antes de trasladar la discusión a un
 entorno físico.
 
 \subsection{Experimentos en laboratorio}
 \label{sec:lab_results_anchor}
 
 La validación en laboratorio no replica el mismo esquema de lectura que la
-simulación, porque ya no dispone de un ground truth geométrico equivalente. Su
+simulación, porque ya no dispone de un \textit{ground truth} geométrico equivalente. Su
 pregunta es otra: hasta qué punto el movimiento propuesto al cuadrúpedo se
 refleja en señales observables del sistema. Por eso, en esta etapa el análisis
 se apoya en la señal esperada, el comando efectivamente enviado y la respuesta
@@ -2460,8 +2460,8 @@ condiciones físicas reales.
 
 Para llegar a los registros que sostienen este análisis fue necesario descartar
 una versión anterior del experimento. Un ensayo preliminar con consigna de mayor
-amplitud (\(\pm 19^\circ\) en roll y \(\pm 15^\circ\) en pitch, detallado en el
-Apéndice~\ref{sec:appendix_data}) había confirmado que el pipeline puede operar
+amplitud (\(\pm 19^\circ\) en \emph{roll} y \(\pm 15^\circ\) en \emph{pitch}, detallado en el
+Apéndice~\ref{sec:appendix_data}) había confirmado que el \textit{pipeline} puede operar
 en ese rango, pero las pruebas que ejecutaban en paralelo grabación de video,
 detección visual en tiempo real y recepción de telemetría del robot presentaron
 incidentes de procesamiento que dificultaban atribuir el comportamiento observado
@@ -2471,8 +2471,8 @@ carga computacional, se repitieron los ensayos sin grabación de video, registra
 
 Esa decisión metodológica produjo dos registros sobre los que se apoya el análisis
 cuantitativo de esta subsección. El ensayo principal, denominado \textbf{R4}, tiene
-una duración de \(59{,}63\)~s y opera con consigna de roll de \(\pm 14{,}8^\circ\)
-y pitch de \(\pm 9{,}9^\circ\). El ensayo de control, \textbf{R5}, dura
+una duración de \(59{,}63\)~s y opera con consigna de \emph{roll} de \(\pm 14{,}8^\circ\)
+y \emph{pitch} de \(\pm 9{,}9^\circ\). El ensayo de control, \textbf{R5}, dura
 \(59{,}67\)~s con consigna de \(\pm 9{,}9^\circ\) y \(\pm 7{,}9^\circ\)
 respectivamente. Los nombres completos de los registros correspondientes se listan en el
 Apéndice~\ref{sec:appendix_data}. Ambos ensayos mantuvieron el modo de marcha
@@ -2482,12 +2482,12 @@ La campaña real abarcó además otras sesiones registradas con el mismo montaje
 (Apéndice~\ref{sec:appendix_data}): una réplica de R5, una corrida adicional del
 mismo día y un grupo de corridas del 20-03 con consigna postural pero sin
 telemetría completa de estado, además de la sesión visual del
-10-03 en la que se ejecutó el pipeline de percepción sobre el robot real, discutida
+10-03 en la que se ejecutó el \textit{pipeline} de percepción sobre el robot real, discutida
 en la Sección~\ref{sec:lab_aruco_realtime}. Se eligieron R4 y R5 para el análisis
 cuantitativo de respuesta dinámica por ser las dos únicas corridas con telemetría
 completa de estado registrada en una geometría comparable. El resto de la campaña
 queda como evidencia de que la plataforma se ejecutó de forma repetida y de que el
-pipeline visual funcionó por separado sobre el robot real.
+\textit{pipeline} visual funcionó por separado sobre el robot real.
 
 \begin{table}[H]
 \centering
@@ -2503,7 +2503,7 @@ Señal (rol) & Mensajes & Tasa aprox. & Rol en el análisis \\
 \midrule
 Referencia de movimiento & \(120\) & \(2{,}01\) Hz & Movimiento esperado por el simulador marino en modo real \\
 Comando de actitud & \(2{.}966\) & \(49{,}71\) Hz & Comando efectivamente enviado al robot \\
-Estado deportivo & \(29{.}593\) & \(496{,}0\) Hz & Estado principal del robot: actitud, altura del tronco y gait \\
+Estado deportivo & \(29{.}593\) & \(496{,}0\) Hz & Estado principal del robot: actitud, altura del tronco y modo de marcha \\
 Estado bajo nivel & \(29{.}763\) & \(498{,}9\) Hz & Señal alternativa de estado e IMU interna \\
 Odometría externa & \(14{.}451\) & \(242{,}2\) Hz & Lectura independiente usada como contraste adicional \\
 \bottomrule
@@ -2516,14 +2516,14 @@ monocular, calibración previa del sensor y posición aproximadamente fija por
 encima del robot. La disponibilidad efectiva de señales en R4 se resume en la
 Tabla~\ref{tab:lab_signals_summary}. En los ensayos R4 y R5 el sistema visual no estaba activo
 por decisión metodológica, justamente para aislar la dinámica del robot de la
-carga computacional del pipeline visual. El montaje puede verse en la
+carga computacional del \textit{pipeline} visual. El montaje puede verse en la
 Figura~\ref{fig:method_lab_setup}.
 
 \subsubsection{Pipeline visual sobre el robot real}
 \label{sec:lab_aruco_realtime}
 
 R4 y R5 no son las únicas corridas de la campaña: hubo además sesiones
-dedicadas específicamente a verificar el pipeline visual con el Go2 real en
+dedicadas específicamente a verificar el \textit{pipeline} visual con el Go2 real en
 movimiento. Una de ellas, la \textbf{sesión visual del 10-03}
 (registro listado en el Apéndice~\ref{sec:appendix_data}), ejecutó
 simultáneamente adquisición de imagen, detección ArUco y movimiento postural
@@ -2531,23 +2531,23 @@ sobre el robot. La detección operó de manera estable durante toda la corrida: 
 marcador fue identificado de forma consistente y la pose se actualizó en tiempo
 real, sin pérdidas que comprometieran la lectura visual.
 
-La Figura~\ref{fig:lab_aruco_realtime} muestra tres frames de esa
-sesión, distribuidos a lo largo de la corrida, con el overlay de
+La Figura~\ref{fig:lab_aruco_realtime} muestra tres cuadros de esa
+sesión, distribuidos a lo largo de la corrida, con la superposición de
 identificación del marcador sobre el Go2 en posturas distintas inducidas
 por el simulador marino. Estos resultados no se reportan con métricas
-cuantitativas porque la evaluación numérica del pipeline visual ya quedó
-cubierta por las campañas de simulación con ground truth
+cuantitativas porque la evaluación numérica del \textit{pipeline} visual ya quedó
+cubierta por las campañas de simulación con \textit{ground truth}
 (Sección~\ref{sec:lab_results_anchor} y subsubsecciones previas), y porque
 el objetivo de la validación física se concentró en la dinámica del
 cuerpo del robot, no en re-medir la precisión del estimador. La separación
-entre la corrida con pipeline visual activo y los ensayos R4/R5 de
+entre la corrida con \textit{pipeline} visual activo y los ensayos R4/R5 de
 caracterización dinámica respondió a una restricción práctica: la
 grabación simultánea de video, detección en tiempo real y telemetría
 completa del robot saturaba la PC y degradaba los registros. Aislar cada
 plano permitió obtener tanto evidencia visual del eslabón de percepción
 como métricas dinámicas limpias del eslabón de actuación.
 
-% TODO (figura): los tres frames muestran demasiado a la persona y sus pies
+% TODO (figura): los tres cuadros muestran demasiado a la persona y sus pies
 % al costado del Go2. Recortar la mitad superior o aplicar edición con IA
 % para enfocar solo el robot + marcador antes de la entrega final.
 \begin{figure}[H]
@@ -2568,7 +2568,7 @@ como métricas dinámicas limpias del eslabón de actuación.
 \caption{Final}
 \end{subfigure}
 \caption{Detección de ArUco en tiempo real durante la sesión visual del
-10-03 (ver Apéndice~\ref{sec:appendix_data}). Los tres frames corresponden a
+10-03 (ver Apéndice~\ref{sec:appendix_data}). Los tres cuadros corresponden a
 distintos momentos de la corrida y muestran el marcador identificado de forma
 estable sobre el torso del robot mientras éste reproduce la consigna postural del
 simulador marino.}
@@ -2603,7 +2603,7 @@ Pitch & \(0{,}999953\) & \(5{,}21\)~ms & \(10{,}08\)~ms \\
 \end{table}
 
 Esas correlaciones casi unitarias, sumadas a un desfase medio de pocos
-milisegundos, indican que el primer eslabón del pipeline real ---la generación
+milisegundos, indican que el primer eslabón del \textit{pipeline} real ---la generación
 y envío del comando--- no es el principal cuello de botella del experimento. La
 figura de dispersión usada durante el análisis confirmaba visualmente esta
 cercanía a la diagonal identidad, pero en el cuerpo del informe resulta
@@ -2616,16 +2616,16 @@ robot y no en una mala transferencia de la consigna.
 Una vez validado el camino de comando, el segundo bloque se concentra en la
 respuesta real del robot. La señal esperada muestra en el ensayo R4 un
 movimiento dominante de
-\(0{,}10\)~Hz, con rangos de \(-14{,}80^\circ\) a \(14{,}80^\circ\) en roll
-y de \(-9{,}92^\circ\) a \(9{,}92^\circ\) en pitch. La componente vertical
+\(0{,}10\)~Hz, con rangos de \(-14{,}80^\circ\) a \(14{,}80^\circ\) en \emph{roll}
+y de \(-9{,}92^\circ\) a \(9{,}92^\circ\) en \emph{pitch}. La componente vertical
 de la consigna permaneció en cero durante toda la secuencia, de modo que el
-ensayo queda principalmente orientado a evaluar la reproducción de roll y
-pitch.
+ensayo queda principalmente orientado a evaluar la reproducción de \emph{roll} y
+\emph{pitch}.
 
 La respuesta interna del robot se leyó desde tres fuentes complementarias
 (Tabla~\ref{tab:ros_interfaces_lab}). Para poder compararlas con la señal de
 referencia se interpoló el estado real al tiempo de muestreo de esa referencia y
-luego se calcularon correlaciones tanto a retardo cero como con búsqueda de lag
+luego se calcularon correlaciones tanto a retardo cero como con búsqueda de retardo
 en una ventana de \(\pm 3\) segundos. Esa estrategia permite distinguir dos
 efectos distintos: por un lado, cuánto se parece la forma general del
 movimiento; por otro, cuánto retardo dinámico introduce el sistema físico.
@@ -2643,25 +2643,25 @@ desfase temporal.}
 
 Los resultados muestran una coherencia alta entre objetivo y respuesta,
 aunque no instantánea. Cuando se permite compensar el retardo del sistema, la
-mejor correlación para roll aparece alrededor de \(0{,}45\)~s y alcanza
-\(0{,}954\), mientras que en pitch el mejor lag se ubica cerca de
+mejor correlación para \emph{roll} aparece alrededor de \(0{,}45\)~s y alcanza
+\(0{,}954\), mientras que en \emph{pitch} el mejor retardo se ubica cerca de
 \(0{,}95\)~s, con correlación de \(0{,}984\). La lectura experimental
 es clara: el robot reproduce la forma principal de la dinámica solicitada,
 pero lo hace con retardo físico estable y con una amplitud efectiva menor que
 la de la consigna.
 
 Esta reducción de amplitud también aparece en los rangos de actitud medidos.
-En el estado deportivo de R4, el roll real varía entre \(-11{,}12^\circ\) y
-\(10{,}52^\circ\), y el pitch real entre \(-5{,}36^\circ\) y \(6{,}63^\circ\).
+En el estado deportivo de R4, el \emph{roll} real varía entre \(-11{,}12^\circ\) y
+\(10{,}52^\circ\), y el \emph{pitch} real entre \(-5{,}36^\circ\) y \(6{,}63^\circ\).
 La relación entre amplitud comandada y amplitud real puede cuantificarse como
 una ganancia dinámica aproximada: tomada como cociente entre las amplitudes
-RMS del estado real y del comando, R4 muestra una ganancia promedio cercana a
+cuadráticas medias (RMS) del estado real y del comando, R4 muestra una ganancia promedio cercana a
 \(0{,}62\), lo cual indica que el robot reproduce, en orden de magnitud, en
 torno al \(60\%\) de la amplitud angular pedida (la lectura por rangos
 extremos da valores algo más altos en \emph{roll} ---del orden de
 \(0{,}73\)--- y algo más bajos en \emph{pitch} ---del orden de \(0{,}60\)---,
 lo cual es consistente con un sistema que no atenúa por igual ambos ejes). No
-se trata de una falla del pipeline sino de una diferencia esperable entre
+se trata de una falla del \textit{pipeline} sino de una diferencia esperable entre
 pedir una oscilación ideal y obtener la respuesta de un sistema físico con
 saturaciones, inercia, control interno y restricciones de estabilidad. En
 este sentido, la evidencia del laboratorio no busca mostrar coincidencia
@@ -2674,7 +2674,7 @@ el movimiento propuesto.
 \caption{Ensayo R4 --- curvas de correlación entre comando y respuesta en
 función del retardo aplicado a la señal esperada. La figura resume cómo
 mejora la correspondencia entre la consigna y la actitud real del robot
-cuando se compensa el lag físico del sistema.}
+cuando se compensa el retardo físico del sistema.}
 \label{fig:lab_lag_correlation}
 \end{figure}
 
@@ -2687,10 +2687,10 @@ relación afín lineal con retardo,
 \[
 \theta_{\mathrm{real},i}(t) \approx
 g_i\,\theta_{\mathrm{cmd},i}(t-\tau_i) + b_i,
-\qquad i \in \{\mathrm{roll}, \mathrm{pitch}\},
+\qquad i \in \{\mathit{roll}, \mathit{pitch}\},
 \]
 donde \(g_i\) representa la ganancia efectiva, \(\tau_i\) el retardo dinámico y
-\(b_i\) un posible offset pequeño de medición. Bajo esa lectura, ajustar
+\(b_i\) un posible sesgo pequeño de medición. Bajo esa lectura, ajustar
 parámetros de amplitud y sincronización permitiría mapear la consigna al
 movimiento observado con un residuo considerablemente menor. No se afirma con
 esto una reproducción perfecta: las correlaciones no son exactamente unitarias
@@ -2699,12 +2699,12 @@ afirma que, en este régimen, buena parte del error es paramétrico ---ganancia 
 tiempo--- antes que una pérdida de la estructura temporal del movimiento.
 
 El ensayo de control R5, con consigna de menor amplitud (\(\pm 9{,}9^\circ\)
-roll, \(\pm 7{,}9^\circ\) pitch), permite verificar si el patrón observado
+\emph{roll}, \(\pm 7{,}9^\circ\) \emph{pitch}), permite verificar si el patrón observado
 en R4 es consistente al bajar la amplitud de la consigna. Como muestra la
 Figura~\ref{fig:lab_target_vs_odom_r5} y la Tabla~\ref{tab:lab_r4_r5}, el
 comportamiento cualitativo se mantiene (retardo estable y atenuación de
 amplitud), pero los parámetros varían con la amplitud: al reducir la consigna,
-el lag dinámico \emph{crece} y la ganancia \emph{cae}. Este desplazamiento es
+el retardo dinámico \emph{crece} y la ganancia \emph{cae}. Este desplazamiento es
 coherente con la presencia de no-linealidades en el controlador interno del
 Go2, y refuerza que el comportamiento observado no es un artefacto de una
 sola corrida sino un patrón replicado.
@@ -2718,9 +2718,9 @@ ensayo de control R5.}
 \toprule
 Métrica & R4 (principal) & R5 (control) \\
 \midrule
-Consigna roll / pitch & \(\pm 14{,}8^\circ\) / \(\pm 9{,}9^\circ\) & \(\pm 9{,}9^\circ\) / \(\pm 7{,}9^\circ\) \\
-Lag óptimo roll / pitch & \(0{,}45\) s / \(0{,}95\) s & \(0{,}55\) s / \(1{,}20\) s \\
-Correlación máxima roll / pitch & \(0{,}954\) / \(0{,}984\) & \(0{,}937\) / \(0{,}973\) \\
+Consigna \emph{roll} / \emph{pitch} & \(\pm 14{,}8^\circ\) / \(\pm 9{,}9^\circ\) & \(\pm 9{,}9^\circ\) / \(\pm 7{,}9^\circ\) \\
+Lag óptimo \emph{roll} / \emph{pitch} & \(0{,}45\) s / \(0{,}95\) s & \(0{,}55\) s / \(1{,}20\) s \\
+Correlación máxima \emph{roll} / \emph{pitch} & \(0{,}954\) / \(0{,}984\) & \(0{,}937\) / \(0{,}973\) \\
 Ganancia dinámica aprox. & \(\sim 0{,}62\) & \(\sim 0{,}47\) \\
 \bottomrule
 \end{tabular}
@@ -2744,7 +2744,7 @@ sobre ese bag se rehízo la comparación a partir de la referencia
 (\texttt{/utlidar/robot\_odom}), cuya actitud coincide con la del estado
 deportivo. Como la diferencia instantánea entre comando y respuesta está
 dominada por el retardo físico ya discutido, el error se reporta sobre el
-residual obtenido una vez compensado el lag óptimo de cada eje, lo que separa
+residual obtenido una vez compensado el retardo óptimo de cada eje, lo que separa
 la discrepancia de forma y amplitud de la simple diferencia de fase.
 
 \begin{figure}[H]
@@ -2752,20 +2752,20 @@ la discrepancia de forma y amplitud de la simple diferencia de fase.
 \includegraphics[width=0.92\textwidth]{figures/results/lab_error_hist.png}
 \caption{Ensayo R5 --- distribución del error residual de actitud entre la
 consigna marina y la respuesta real del Go2, una vez compensado el retardo
-físico óptimo de cada eje (\(0{,}58\)~s en roll y \(1{,}16\)~s en pitch). Se
-muestran \(\Delta roll\) y \(\Delta pitch\) calculados sobre los datos crudos
-del rosbag; la línea negra marca el cero y la línea roja punteada la media de
+físico óptimo de cada eje (\(0{,}58\)~s en \emph{roll} y \(1{,}16\)~s en \emph{pitch}). Se
+muestran \(\Delta \mathit{roll}\) y \(\Delta \mathit{pitch}\) calculados sobre los datos crudos
+del \emph{rosbag}; la línea negra marca el cero y la línea roja punteada la media de
 cada distribución.}
 \label{fig:lab_error_hist}
 \end{figure}
 
 La Figura~\ref{fig:lab_error_hist} muestra la distribución de ese residual por
-eje. Ambas quedan centradas cerca de cero ---media de \(-0{,}77^\circ\) en roll
-y \(+0{,}55^\circ\) en pitch---, lo que confirma que el robot no introduce un
+eje. Ambas quedan centradas cerca de cero ---media de \(-0{,}77^\circ\) en \emph{roll}
+y \(+0{,}55^\circ\) en \emph{pitch}---, lo que confirma que el robot no introduce un
 sesgo sistemático de actitud. Su forma, sin embargo, no es la de un ruido de
 medición: en vez de concentrarse alrededor de la media, la frecuencia se
-acumula hacia los extremos, con una dispersión de \(3{,}86^\circ\) en roll y
-\(2{,}93^\circ\) en pitch. Esa estructura bimodal es la huella de un residual
+acumula hacia los extremos, con una dispersión de \(3{,}86^\circ\) en \emph{roll} y
+\(2{,}93^\circ\) en \emph{pitch}. Esa estructura bimodal es la huella de un residual
 dominado por la atenuación de amplitud de la plataforma ---la respuesta
 reproduce cerca de la mitad de la consigna, en línea con la ganancia dinámica
 \(\sim 0{,}47\) de la Tabla~\ref{tab:lab_r4_r5}---: al restar una sinusoide
@@ -2776,14 +2776,14 @@ capítulo: traslada la comparación temporal a una distribución de error por ej
 acotada y reproducible.
 
 La comparación del eje vertical requiere una lectura aparte. En R4, la señal
-esperada y la señal enviada al robot no incluyeron heave dinámico: la
+esperada y la señal enviada al robot no incluyeron \emph{heave} dinámico: la
 coordenada vertical permaneció en cero tanto en la referencia de movimiento como
 en el comando enviado al robot. En
 cambio, el estado real del robot sí presenta una coordenada vertical del tronco
 alrededor de \(0{,}32\)~m, porque esa variable representa la altura absoluta
 del cuerpo y no un desplazamiento relativo respecto de una referencia neutra.
-Por eso, esta corrida no puede leerse como una validación de heave oscilatorio,
-sino como una validación fuerte de roll y pitch con observación complementaria
+Por eso, esta corrida no puede leerse como una validación de \emph{heave} oscilatorio,
+sino como una validación fuerte de \emph{roll} y \emph{pitch} con observación complementaria
 de la altura del tronco.
 
 \subsubsection{Lectura conjunta con la simulación}
@@ -2791,12 +2791,12 @@ de la altura del tronco.
 Antes de establecer la conexión entre ambos entornos conviene enunciar
 explícitamente su asimetría. La simulación respondió a una pregunta de
 \emph{percepción}: dado que el robot se mueve exactamente como se le ordena
-(sin lag ni atenuación), ¿es capaz el pipeline visual de ArUco de medir esa
+(sin retardo ni atenuación), ¿es capaz el \textit{pipeline} visual de ArUco de medir esa
 pose con precisión? Los errores que reporta la simulación son errores del
 sistema de visión, no del movimiento. El laboratorio, en cambio, respondió a
 una pregunta de \emph{dinámica}: cuando se envía al Go2 real una consigna de
 movimiento marino, ¿reproduce ese movimiento de forma coherente? Los números
-que aporta el laboratorio son dinámicos: lag de \(0{,}45\)--\(0{,}95\)~s,
+que aporta el laboratorio son dinámicos: retardo de \(0{,}45\)--\(0{,}95\)~s,
 ganancia cercana a \(0{,}62\) y correlación mayor a \(0{,}95\) en ambos ejes. No
 se trata de resultados comparables en forma directa, sino de piezas
 complementarias de una validación más amplia.
@@ -2807,16 +2807,16 @@ entornos se genera un movimiento marino con frecuencia dominante del orden de
 \({\pm}10^\circ\)--\({\pm}20^\circ\), el Go2 responde, y se mide qué tan bien
 una señal de referencia (pose visual en simulación, consigna angular en
 laboratorio) se corresponde con la señal observada. La lógica de análisis es
-la misma: correlación cruzada, búsqueda de lag, comparación de amplitudes. Que
+la misma: correlación cruzada, búsqueda de retardo, comparación de amplitudes. Que
 ambos experimentos sean ejecutables con la misma plataforma y en el mismo
 régimen dinámico es en sí mismo un resultado no trivial: confirma que el
-movimiento marino al que apunta el framework está dentro del rango que el
+movimiento marino al que apunta el entorno está dentro del rango que el
 cuadrúpedo puede reproducir y que el sensor puede medir.
 
 Cada experimento ilumina una pieza distinta del problema completo. La
 simulación establece que, si el robot moviese perfectamente lo que se le pide,
-el pipeline visual puede medir su pose con errores del orden de unos pocos
-centímetros (\(\mu\|\Delta pos\|=0{,}058\)~m en el baseline y
+el \textit{pipeline} visual puede medir su pose con errores del orden de unos pocos
+centímetros (\(\mu\|\Delta pos\|=0{,}058\)~m en el caso base y
 \(\overline{|\Delta Z|}\) entre \(2\) y \(2{,}4\)~cm en el escenario con
 dron) y con errores angulares de aproximadamente
 \(2^\circ\)--\(3^\circ\) en \emph{roll} y \emph{pitch}. El laboratorio
@@ -2825,23 +2825,23 @@ alta coherencia temporal aunque con retardo y atenuación medibles, patrón
 replicado a dos amplitudes diferentes (R4 y R5). La pieza que ninguno de los dos experimentos
 cierra es la validación simultánea de ambos eslabones: cómo se comporta la
 estimación visual cuando el robot está físicamente en movimiento bajo dinámica
-marina real. Ese cierre conjunto, con el pipeline visual activo y el robot
+marina real. Ese cierre conjunto, con el \textit{pipeline} visual activo y el robot
 moviéndose en el laboratorio, constituye el paso de validación pendiente y se
 identifica como la dirección más directa de trabajo futuro.
 
 \subsubsection{Síntesis de la validación experimental}
 
-Los experimentos de esta sección evalúan el framework desde dos ángulos
+Los experimentos de esta sección evalúan el entorno desde dos ángulos
 distintos y, tomados en conjunto, sostienen una afirmación moderada pero
-sólida. El ángulo de simulación mostró que el pipeline de estimación visual
+sólida. El ángulo de simulación mostró que el \textit{pipeline} de estimación visual
 funciona cuando las condiciones del movimiento son las previstas: el marcador
 ArUco es detectado de forma estable, la pose estimada tiene errores dentro del
-rango esperado para el sensor, y las señales de roll, pitch y heave se
+rango esperado para el sensor, y las señales de \emph{roll}, \emph{pitch} y \emph{heave} se
 recuperan con la calidad suficiente para servir como referencia de navegación.
 El ángulo de laboratorio físico mostró que el robot puede reproducir consignas
 de movimiento marino de forma coherente: el camino de comando llega intacto a
 la capa de actuación (correlación mayor a \(0{,}9999\) en ambos ejes) y la respuesta física
-del cuerpo sigue al comando con lag estable y ganancia cuantificable, patrón
+del cuerpo sigue al comando con retardo estable y ganancia cuantificable, patrón
 replicado a dos amplitudes diferentes. Esa relación sugiere un error dinámico
 parametrizable antes que una pérdida de la forma global del movimiento.
 
@@ -2849,8 +2849,8 @@ La afirmación que habilita este conjunto de evidencia no es que el sistema
 esté listo para operar en campo, sino que sus tres eslabones principales son
 funcionalmente viables en el régimen de interés: el simulador marino genera
 movimiento representativo, el robot lo reproduce de forma consistente, y el
-pipeline visual puede medir su pose cuando las condiciones lo permiten. Que
-ninguno de los experimentos haya ejecutado el pipeline visual \emph{mientras}
+\textit{pipeline} visual puede medir su pose cuando las condiciones lo permiten. Que
+ninguno de los experimentos haya ejecutado el \textit{pipeline} visual \emph{mientras}
 el robot se movía físicamente está metodológicamente justificado ---aislar la
 fuente de error fue la decisión correcta en esta etapa--- y su cierre queda
 como la dirección más concreta de trabajo futuro.
@@ -2859,7 +2859,7 @@ como la dirección más concreta de trabajo futuro.
 
 \section{Conclusiones}
 
-El objetivo general de este trabajo se cumplió: se construyó un framework
+El objetivo general de este trabajo se cumplió: se construyó un entorno
 experimental que permite sintetizar movimiento marino sobre un robot
 cuadrúpedo, observar visualmente esa plataforma mediante un marcador fiducial y
 evaluar la estimación de pose en condiciones controladas. El resultado principal
@@ -2870,14 +2870,14 @@ permitió mantener continuidad entre simulación y laboratorio, reproducir
 consignas posturales comparables y construir una cadena de validación menos
 riesgosa que un ensayo directo sobre una embarcación real.
 
-En simulación, el framework permitió evaluar el pipeline visual con acceso a una
+En simulación, el entorno permitió evaluar el \textit{pipeline} visual con acceso a una
 referencia reconstruible. El caso de cámara fija mostró que la estimación basada
 en ArUco recupera la dinámica global del marcador con errores acotados, con un
 error medio de posición de \(5{,}8\) cm. El escenario con cámara embarcada en
 dron introdujo una geometría de observación más exigente y, aun así, conservó
 el orden de magnitud esperado para las variables centrales del problema:
-errores absolutos medios de aproximadamente \(2^\circ\)--\(3^\circ\) en roll y
-pitch, y de \(2\)--\(2{,}4\) cm en heave. Estos resultados no implican una
+errores absolutos medios de aproximadamente \(2^\circ\)--\(3^\circ\) en \emph{roll} y
+\emph{pitch}, y de \(2\)--\(2{,}4\) cm en \emph{heave}. Estos resultados no implican una
 estimación perfecta, pero sí muestran que la cadena
 percepción--registro--evaluación permite medir el comportamiento del sistema con suficiente
 trazabilidad para comparar escenarios y diagnosticar degradaciones.
@@ -2895,19 +2895,19 @@ e inercia, y constituye precisamente una de las razones para incorporar el
 laboratorio como puente entre simulación y futuros ensayos de mayor riesgo.
 
 El trabajo también deja límites claros. El movimiento marino modelado es una
-simplificación: se priorizaron roll, pitch y heave, sin reproducir todavía yaw,
-surge y sway ni una dinámica hidrodinámica completa. En el escenario con dron
+simplificación: se priorizaron \emph{roll}, \emph{pitch} y \emph{heave}, sin reproducir todavía \emph{yaw},
+\emph{surge} y \emph{sway} ni una dinámica hidrodinámica completa. En el escenario con dron
 apareció un sesgo sistemático en \(Y\), lo que muestra que la geometría de
 observación y la cadena de transformación todavía requieren refinamiento. En los
 histogramas de simulación, parte del desplazamiento respecto de cero proviene de
 desfases temporales no compensados entre estimación y referencia. En
-laboratorio, la validación dinámica se concentró principalmente en roll y pitch:
-el eje vertical no incluyó heave oscilatorio comparable al de simulación. Por
+laboratorio, la validación dinámica se concentró principalmente en \emph{roll} y \emph{pitch}:
+el eje vertical no incluyó \emph{heave} oscilatorio comparable al de simulación. Por
 último, el trabajo no ejecuta todavía un aterrizaje real ni pretende validar el
 sistema en condiciones marítimas completas.
 
 Estas limitaciones no debilitan la contribución central, sino que delimitan con
-precisión el estado alcanzado. El framework resultante permite generar
+precisión el estado alcanzado. El entorno resultante permite generar
 movimiento representativo, observarlo visualmente, registrar evidencia y
 comparar resultados bajo criterios cuantitativos. Con ello, el proyecto deja una
 plataforma metodológica concreta para continuar el desarrollo de percepción y
@@ -2919,7 +2919,7 @@ ambiciosas.
 \section{Trabajo futuro}
 
 La línea inmediata de trabajo futuro es cerrar la validación conjunta en
-laboratorio: ejecutar el robot real con movimiento postural, el pipeline visual
+laboratorio: ejecutar el robot real con movimiento postural, el \textit{pipeline} visual
 activo y telemetría completa en una misma corrida. En esta etapa del proyecto,
 esos planos se evaluaron por separado para evitar que la saturación de cómputo
 contaminara los registros. Una repetición del experimento con mayor capacidad de
@@ -2930,7 +2930,7 @@ el Go2 se mueve físicamente bajo la consigna marina.
 Un segundo paso necesario es incorporar una referencia externa de pose para el
 laboratorio. En la versión actual, la respuesta física se estima a partir de las
 mediciones internas publicadas por el Unitree Go2 y de señales auxiliares del
-montaje. Para obtener un ground truth físico más independiente, sería valioso
+montaje. Para obtener un \textit{ground truth} físico más independiente, sería valioso
 utilizar el sistema OptiTrack disponible en el laboratorio, con marcadores
 reflectivos montados sobre el robot y cámaras infrarrojas capaces de reconstruir
 su posición y orientación con alta precisión. Esa referencia permitiría
@@ -2939,12 +2939,12 @@ visualmente con ArUco y las señales internas reportadas por el robot.
 
 También queda pendiente extender la validación dinámica del movimiento marino.
 En los ensayos de laboratorio analizados, la comparación cuantitativa se apoyó
-principalmente en roll y pitch, mientras que heave quedó representado como
+principalmente en \emph{roll} y \emph{pitch}, mientras que \emph{heave} quedó representado como
 altura absoluta del tronco y no como oscilación vertical comandada. Una campaña
-posterior debería incluir heave dinámico en el Go2 real, junto con una lectura
+posterior debería incluir \emph{heave} dinámico en el Go2 real, junto con una lectura
 externa que permita distinguir entre altura nominal, desplazamiento vertical
 relativo y error de seguimiento. En paralelo, el modelo de movimiento podría
-ampliarse para incluir yaw, surge y sway, incorporar oleaje irregular calibrado
+ampliarse para incluir \emph{yaw}, \emph{surge} y \emph{sway}, incorporar oleaje irregular calibrado
 con datos reales o aproximarse a modelos hidrodinámicos más representativos de
 una cubierta marina.
 
@@ -2975,7 +2975,7 @@ ensayos reales con hipótesis más claras.
 
 Este apéndice concentra \textbf{nombres de archivo} y \textbf{rutas relativas al
 repositorio} citados en el documento. El cuerpo del texto prioriza campañas,
-fechas y etiquetas (\(R1\)--\(R3\), baseline); aquí se deja la correspondencia
+fechas y etiquetas (\(R1\)--\(R3\), caso base); aquí se deja la correspondencia
 explícita para reproducibilidad.
 
 \begin{table}[H]
@@ -2988,7 +2988,7 @@ explícita para reproducibilidad.
 \toprule
 Referencia en el texto & Nombre base del archivo & Notas \\
 \midrule
-Baseline sim.\ cámara fija & \path{marine_sim_20260410_155332_report_v2_ref} & Campaña \texttt{report\_v2}; $\sim 57{,}5$~s \\
+Caso base sim.\ cámara fija & \path{marine_sim_20260410_155332_report_v2_ref} & Campaña \texttt{report\_v2}; $\sim 57{,}5$~s \\
 Corrida \(R1\) (dron) & \path{sjtu_drone_sim_20260410_155834_report_v2_r1} & idem \\
 Corrida \(R2\) (dron) & \path{sjtu_drone_sim_20260410_160419_report_v2_r2} & idem \\
 Corrida \(R3\) (dron) & \path{sjtu_drone_sim_20260410_160814_report_v2_r3} & idem \\
@@ -2999,8 +2999,8 @@ Laboratorio (corrida adicional) & \path{lab_real__robot_min} & 24-04-2026; $\sim
 Laboratorio (mov.\ corto, 20-03) & \path{lab_real_20260320_112522_trote_robot_full} & 20-03-2026; $\sim 59{,}65$~s; sin \texttt{/sportmodestate} \\
 Laboratorio (mov.\ doble, 20-03) & \path{lab_real_20260320_114312_movimiento_full} & 20-03-2026; $\sim 119{,}55$~s; sin \texttt{/sportmodestate} \\
 Laboratorio (mov.\ v2, 20-03) & \path{lab_real_20260320_120742_movimiento_full_v2} & 20-03-2026; $\sim 59{,}70$~s; sin \texttt{/sportmodestate} \\
-Laboratorio (pipeline visual) & \path{lab_real_20260310_133022} & 10-03-2026; $\sim 59{,}25$~s; con \texttt{/aruco/pose}, \texttt{/aruco/debug\_image} y \texttt{/stereo\_camera/image\_raw} \\
-Laboratorio (ref.\ histórica) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s; sólo \texttt{metadata.yaml} disponible en este checkout \\
+Laboratorio (\textit{pipeline} visual) & \path{lab_real_20260310_133022} & 10-03-2026; $\sim 59{,}25$~s; con \texttt{/aruco/pose}, \texttt{/aruco/debug\_image} y \texttt{/stereo\_camera/image\_raw} \\
+Laboratorio (ref.\ histórica) & \path{lab_real_20260320_125002_movimiento_full_v3} & 20-03-2026; $\sim 59{,}73$~s; solo \texttt{metadata.yaml} disponible en esta copia local \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
