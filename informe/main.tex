@@ -151,7 +151,7 @@ Allí se integra un generador de movimiento de plataforma, un patrón fiducial
 observado desde una cámara fija o desde una cámara embarcada en un dron
 simulado, y una evaluación \textit{offline} contra una referencia reconstruible
 del simulador. La estimación de pose se formula a partir del método de
-Perspectiva por \(n\) Puntos (Perspective-\(n\)-Point, PnP), que
+Perspectiva por \(n\) Puntos (PnP), que
 permite recuperar la pose relativa del patrón visual a partir de su geometría
 conocida y de la calibración de cámara. En los ensayos de simulación, el sistema
 reproduce la dinámica global del marcador y conserva una estimación consistente
@@ -463,15 +463,15 @@ Las dos preguntas de validación recién formuladas también organizan el recorr
 del documento. El Capítulo~\ref{sec:estado_arte} revisa antecedentes de
 aterrizaje sobre plataformas móviles, operación marina, marcadores fiduciales y
 validación en simulación. El Capítulo~\ref{mt} presenta el marco teórico y los
-conceptos necesarios para entender el ecosistema experimental basado en ROS2 y
-Gazebo, el modelado del movimiento de plataforma marina, el uso postural del cuadrúpedo y la
-estimación visual con marcadores fiduciales. Luego describimos la metodología
-adoptada, distinguiendo la etapa de simulación de la etapa de laboratorio.
-Sobre esa base, presentamos la experimentación realizada y discutimos los
-hallazgos obtenidos en cada entorno. Finalmente, cerramos con las conclusiones
-del trabajo y con las líneas de trabajo futuro que permitirían extender este
-entorno hacia ensayos más cercanos al aterrizaje autónomo sobre plataformas
-marinas.
+conceptos necesarios para entender el ecosistema experimental, la dinámica
+marina y la estimación visual con marcadores fiduciales. Luego, el
+Capítulo~\ref{sec:metodologia} formula el modelado propuesto y describe la
+metodología adoptada, distinguiendo la etapa de simulación de la etapa de
+laboratorio. Sobre esa base, presentamos la experimentación realizada y
+discutimos los hallazgos obtenidos en cada entorno. Finalmente, cerramos con las
+conclusiones del trabajo y con las líneas de trabajo futuro que permitirían
+extender este entorno hacia ensayos más cercanos al aterrizaje autónomo sobre
+plataformas marinas.
 
 
 
@@ -627,49 +627,23 @@ riesgo.
 
 \subsection{Introducción conceptual}
 
-Cuando se piensa en el aterrizaje de un dron sobre una superficie en
-movimiento, la dificultad más evidente parece ser visual: detectar la
-plataforma y conocer su pose relativa con suficiente precisión. Sin embargo,
-esa dificultad es apenas el último eslabón de una cadena más amplia. Antes de
-que una cámara recupere una pose, existe una superficie que se traslada y se
-inclina; y antes de que ese movimiento pueda medirse, hace falta una
-descripción física que permita distinguir qué componentes son relevantes, cómo
-evolucionan y de qué manera afectan la observación. En línea con esa
-perspectiva, trabajos recientes sobre aterrizaje autónomo en plataformas
-móviles y marinas abordan de forma articulada la dinámica de la plataforma, la
-estimación visual de su estado y las decisiones de control del vehículo
-\citep{Alarcon2019,Delbene2022,Morales2023}. Retomamos esa misma lógica para
-organizar este marco teórico: partir del ecosistema experimental que vuelve
-observable y registrable el problema, describir luego el movimiento que
-queremos sintetizar, y recién entonces vincularlo con la plataforma robótica y
-con la percepción visual.
+El marco teórico reúne los conceptos generales que permiten leer el problema
+antes de especificar el modelo propuesto. La separación es deliberada: aquí se
+presentan las herramientas y principios que sostienen el trabajo; la decisión
+de usar el Go2 como plataforma marina sintética, el recorte de grados de
+libertad y la cadena experimental completa se formulan luego como parte de la
+metodología. De este modo, el modelado no queda tratado como un antecedente
+dado, sino como una construcción propia del proyecto.
 
-En nuestro caso, esa cadena recorre cinco niveles acoplados. El primero es de
-infraestructura: hace falta un entorno de simulación y comunicación que permita
-coordinar sensores, marcos de referencia y registros reproducibles. El
-segundo es físico: caracterizar un movimiento semejante al de una plataforma
-marina y reducirlo a las componentes que más perturban la observación del
-marcador. El tercero es mecánico: traducir esa descripción a un sistema
-robotizado capaz de reproducir de manera repetible inclinaciones y
-desplazamientos verticales. El cuarto es geométrico: organizar marcos y
-transformaciones para relacionar el torso del robot, el marcador y la cámara.
-El quinto es visual: relacionar la pose tridimensional del marcador con su
-proyección en la imagen y reconstruirla a partir de un modelo de cámara
-calibrada. Ninguna de estas piezas es independiente de las otras.
-
-Desde esa perspectiva, el desarrollo teórico avanza en el mismo sentido que el
-problema. Primero se introduce el ecosistema experimental basado en ROS2,
-Gazebo, transformaciones entre marcos y registros reproducibles, porque es allí
-donde el sistema adquiere trazabilidad. Luego se presenta una representación
-simplificada del movimiento marino que
-preserve las perturbaciones dominantes del escenario. Sobre esa base se
-describe la elección del Unitree Go2 como plataforma marina sintética y la
-instrumentación visual con cámara fija, dron y marcador fiducial. Después se
-discute cómo el cuadrúpedo materializa una consigna postural y cómo se ordenan
-los marcos de referencia necesarios para comparar estimación y \textit{ground truth}.
-Finalmente, se presentan las herramientas de marcadores ArUco, geometría
-proyectiva y \texttt{solvePnP} que permiten pasar de la imagen a una
-descripción métrica de la pose relativa.
+Para estudiar la estimación de pose visual sobre una plataforma marina en
+movimiento necesitamos articular tres planos. El primero es experimental: un
+entorno distribuido debe coordinar sensores, marcos de referencia, simulación
+física y registros reproducibles. El segundo es físico: el oleaje induce
+traslaciones y rotaciones que pueden describirse con el vocabulario de la
+dinámica marina. El tercero es geométrico-visual: una cámara calibrada observa
+un patrón fiducial y, a partir de sus esquinas, permite recuperar una pose
+relativa mediante métodos PnP. Las subsecciones siguientes desarrollan esos
+fundamentos sin fijar todavía una implementación particular.
 
 \subsection{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
 
@@ -735,7 +709,231 @@ palabras, ROS2, Gazebo, TF y los \emph{rosbags} no son accesorios del experiment
 constituyen la base que vuelve trazable y repetible el problema que queremos
 estudiar.
 
-\subsection{Movimiento marino simplificado}
+
+\subsection{Dinámica marina y movimiento de plataforma}
+
+La dinámica marina suele describir el movimiento de una embarcación mediante
+seis grados de libertad: tres traslacionales, asociados a \emph{surge},
+\emph{sway} y \emph{heave}, y tres rotacionales, asociados a \emph{roll},
+\emph{pitch} y \emph{yaw} \citep{Fossen1995}. Esta descomposición es útil porque
+permite distinguir entre desplazamientos del cuerpo completo e inclinaciones de
+la cubierta, aun cuando en un sistema real todas esas componentes aparezcan
+acopladas por la interacción entre casco, gravedad, flotación, amortiguamiento y
+excitación del oleaje.
+
+Para el problema de percepción que motiva este trabajo, la consecuencia más
+importante es geométrica: una cubierta marina no solo cambia de posición, sino
+también de orientación respecto de la cámara. El movimiento vertical modifica la
+distancia aparente al patrón, mientras que las inclinaciones alteran la
+proyección de su plano en la imagen. Por eso, antes de discutir una
+implementación concreta, conviene retener el vínculo conceptual entre oleaje,
+postura de plataforma y observación visual. El recorte metodológico y su
+realización sobre el cuadrúpedo se definen en el capítulo siguiente.
+
+\subsection{Marcadores fiduciales y estimación de pose}
+
+La estimación visual de pose aborda el problema de recuperar, a partir de una
+imagen, la posición y orientación relativa de un objeto respecto de una cámara.
+En este trabajo ese objeto puede representarse mediante un patrón plano de
+geometría conocida, condición que permite usar marcadores fiduciales como
+referencia visual controlada. En particular, los marcadores ArUco combinan dos
+propiedades útiles a la vez: un contorno cuadrado que permite localizar con
+precisión las esquinas del patrón y un código binario interno que permite
+identificar de forma robusta qué marcador está siendo observado
+\citep{GarridoJurado2014}. Esa combinación
+vuelve al marcador simultáneamente detectable y geométricamente utilizable. La
+robustez no depende solo de la segmentación del borde negro exterior, sino
+también del diseño del diccionario: si los identificadores válidos están
+suficientemente separados en distancia de Hamming, errores locales de lectura
+producidos por ruido, desenfoque u oclusión parcial tienen menor probabilidad
+de convertir un marcador en otro marcador válido.
+
+Desde el punto de vista geométrico, la detección del marcador es solo la
+primera mitad del problema. La segunda consiste en estimar la transformación
+rígida entre el patrón y la cámara a partir de correspondencias entre puntos
+conocidos del marcador y sus proyecciones en la imagen. Ese es el rol del problema de Perspectiva por \(n\) Puntos (PnP):
+resolver una transformación cámara--objeto usando la calibración intrínseca de la
+cámara y las esquinas detectadas del marcador \citep{opencv_calib3d}. En otras palabras, el
+detector no se limita a responder ``hay un ArUco''; produce una hipótesis
+métrica sobre dónde está y cómo está orientado ese patrón respecto del sensor.
+El patrón concreto utilizado se muestra en la
+Figura~\ref{fig:aruco_marker_id0}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.28\textwidth]{figures/images/aruco_id0_dict_6x6_250.png}
+\caption{Marcador ArUco utilizado en el proyecto, correspondiente al identificador
+\(0\) del diccionario \texttt{DICT\_6X6\_250}. Su geometría cuadrada y su
+codificación interna permiten usar sus esquinas como correspondencias visuales
+para estimación de pose.}
+\label{fig:aruco_marker_id0}
+\end{figure}
+
+Si el lado del marcador es \(L\), sus cuatro vértices pueden definirse en el
+marco del objeto como un conjunto coplanar de puntos conocidos:
+
+\begin{equation}
+P_1 = \left[-\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
+P_2 = \left[\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
+P_3 = \left[\frac{L}{2}, -\frac{L}{2}, 0\right]^\top,\;
+P_4 = \left[-\frac{L}{2}, -\frac{L}{2}, 0\right]^\top.
+\label{eq:marker_corners}
+\end{equation}
+
+La detección visual aporta las proyecciones bidimensionales
+\(p_i = [u_i \;\; v_i \;\; 1]^\top\) de esos puntos en la imagen. La
+consistencia entre el orden de los vértices observados y el orden de los
+vértices del modelo es crucial, porque toda la estimación de pose depende de que
+las correspondencias 2D--3D sean geométricamente correctas. La relación entre
+los puntos tridimensionales del marcador y su proyección en la
+imagen se describe mediante el modelo de cámara de orificio. Para cada punto
+\(P_i = [X_i \;\; Y_i \;\; Z_i \;\; 1]^\top\), se cumple
+
+\begin{equation}
+s_i
+\begin{bmatrix}
+u_i \\
+v_i \\
+1
+\end{bmatrix}
+=
+K
+\begin{bmatrix}
+R & t
+\end{bmatrix}
+\begin{bmatrix}
+X_i \\
+Y_i \\
+Z_i \\
+1
+\end{bmatrix},
+\label{eq:pinhole_projection}
+\end{equation}
+
+donde \(K\) es la matriz de parámetros intrínsecos
+
+\begin{equation}
+K =
+\begin{bmatrix}
+f_x & 0 & c_x \\
+0 & f_y & c_y \\
+0 & 0 & 1
+\end{bmatrix},
+\label{eq:camera_intrinsics}
+\end{equation}
+
+y \((R,t)\) representa la transformación rígida entre el marco del marcador y el
+marco óptico de la cámara. Esta ecuación deja en evidencia una dependencia
+fundamental del sistema: para estimar pose no alcanza con detectar el patrón; es
+necesario conocer también la calibración intrínseca de la cámara y el tamaño
+físico del marcador. Si la calibración es imprecisa, el error no aparece solo en
+la distancia estimada al marcador: también sesga la orientación recuperada,
+porque ambos componentes se ajustan simultáneamente para explicar la misma
+proyección 2D.
+
+En el caso particular de un marcador plano, la geometría admite además una
+formulación equivalente mediante homografía. Si todos los puntos del objeto
+satisfacen \(Z_i = 0\), entonces la proyección se reduce a
+
+\begin{equation}
+s_i\,p_i = H
+\begin{bmatrix}
+X_i \\
+Y_i \\
+1
+\end{bmatrix},
+\label{eq:planar_homography}
+\end{equation}
+
+donde la homografía \(H\) puede descomponerse como
+
+\begin{equation}
+H = K
+\begin{bmatrix}
+r_1 & r_2 & t
+\end{bmatrix},
+\label{eq:homography_decomposition}
+\end{equation}
+
+siendo \(r_1\) y \(r_2\) las dos primeras columnas de la matriz de rotación
+\(R\). Esta expresión muestra que un marcador plano no solo aporta cuatro
+correspondencias puntuales, sino una transformación proyectiva completa entre su
+plano y la imagen. También explica por qué la estimación de pose con blancos
+planares puede volverse ambigua o numéricamente delicada en configuraciones poco
+favorables, por ejemplo cuando el patrón se observa casi frontalmente y el ruido
+de esquina compite con una proyección muy poco deformada \citep{Schweighofer2006}.
+
+La recuperación de \((R,t)\) puede formularse entonces como un problema de
+Perspectiva por \(n\) Puntos. En términos generales, se busca la transformación
+que minimiza el error de reproyección entre los puntos observados y los puntos
+predichos por el modelo:
+
+\begin{equation}
+(\hat{R},\hat{t}) =
+\arg\min_{R,t}
+\sum_{i=1}^{4}
+\left\|
+p_i - \pi\!\left(K(RP_i + t)\right)
+\right\|_2^2,
+\label{eq:pnp_optimization}
+\end{equation}
+
+donde \(\pi(\cdot)\) denota la proyección perspectiva en coordenadas de imagen.
+Entre las soluciones eficientes para este problema se encuentra EPnP, que
+permite estimar la pose a partir de correspondencias 2D--3D con costo lineal en
+la cantidad de puntos \citep{Lepetit2009}. En el caso de un marcador cuadrado,
+el número de puntos es pequeño, pero la formulación sigue siendo conceptualmente
+la misma: a partir de cuatro esquinas coplanares y calibración conocida, se
+recupera la pose del marcador respecto de la cámara. En la práctica, el objetivo
+no es únicamente hallar una solución geométricamente válida, sino encontrar la
+que minimiza de la manera más consistente el error inducido por ruido,
+cuantización de píxeles y distorsión residual. Por eso, el error de
+reproyección funciona como criterio natural para comparar hipótesis de pose.
+
+Si se linealiza la proyección alrededor de una solución nominal
+\((R_0,t_0)\), pequeñas perturbaciones en la imagen y en la pose quedan
+relacionadas aproximadamente por un Jacobiano de sensibilidad \(J_\pi\):
+
+\begin{equation}
+\delta p \approx J_\pi\,\delta \xi,
+\label{eq:projection_jacobian_linearization}
+\end{equation}
+
+donde \(\delta \xi\) representa una perturbación infinitesimal de la pose en el
+espacio tangente de \(SE(3)\). Esta linealización ayuda a interpretar un hecho
+empírico importante: cuanto más pequeñas aparecen las esquinas del marcador o
+cuanto más cercana está la observación a una configuración proyectiva degenerada,
+mayor es la sensibilidad de la pose estimada frente a pequeños errores de
+localización.
+
+En conjunto, estos conceptos separan la base geométrica del problema de su
+realización experimental. La metodología siguiente toma esta formulación y la
+integra con el modelo de movimiento, los marcos de referencia y las fuentes de
+imagen necesarias para evaluar la estimación de pose en el entorno propuesto.
+
+
+\section{Metodología y modelado propuesto} \label{sec:metodologia}
+
+En este capítulo formulamos el aporte metodológico del trabajo: usar un robot
+cuadrúpedo como plataforma marina sintética para generar, observar y evaluar
+movimiento vertical e inclinaciones relevantes para estimación visual. A
+diferencia del capítulo anterior, que introdujo los fundamentos generales, aquí
+se especifica cómo esos conceptos se convierten en un modelo ejecutable y
+evaluable. Primero definimos el modelo reducido de plataforma y su realización
+sobre el Go2; luego describimos dos etapas complementarias, simulación y
+laboratorio.
+
+\subsection{Modelado propuesto: plataforma marina sintética con Go2}
+
+El modelado propuesto parte de una simplificación deliberada: no se busca
+reproducir una embarcación completa, sino sintetizar las componentes de
+movimiento que más inciden en la observación visual de una cubierta oscilante.
+Esa decisión permite usar el cuadrúpedo como un dispositivo experimental
+controlado, donde el torso actúa como soporte móvil del marcador y las señales
+de \emph{roll}, \emph{pitch} y \emph{heave} definen la plataforma marina
+sintética.
+
+\subsubsection{Modelo reducido de movimiento de plataforma marina}
 
 El punto de partida del problema es físico antes que computacional. Una
 plataforma apoyada sobre el mar no responde al paso de una ola únicamente
@@ -864,7 +1062,7 @@ donde \(z\) representa el movimiento vertical, \(\phi\) el \emph{roll},
 \(\theta\) el \emph{pitch}, y \(\kappa_{\phi}\), \(\kappa_{\theta}\) resumen de
 forma agregada cuánto acompaña la plataforma la pendiente local de la
 superficie. Esta ecuación no pretende ser un modelo naval exhaustivo. Su valor
-teórico está en capturar la intuición correcta: la elevación local del agua
+metodológico está en capturar la intuición correcta: la elevación local del agua
 explica el ascenso y descenso de la plataforma, mientras que la pendiente de la
 ola explica su inclinación.
 
@@ -921,7 +1119,7 @@ plataforma no depende solamente de la amplitud de la ola, sino también de la
 posición y de la extensión espacial de la superficie que esa ola está
 excitando.
 
-Esa relación también justifica el recorte adoptado en este trabajo. En un
+Sobre esta base definimos el recorte metodológico adoptado en este trabajo. En un
 escenario real, \emph{surge}, \emph{sway} y \emph{yaw} pueden ser relevantes;
 sin embargo, cuando el interés se centra en una plataforma que mantiene su
 posición horizontal de manera aproximada y lo que se busca es sintetizar la
@@ -995,7 +1193,7 @@ de manera repetible y, al mismo tiempo, ser observado por una cámara con una
 geometría controlada. Esa es la función que en nuestro entorno cumple el
 cuadrúpedo instrumentado.
 
-\subsection{Plataforma robótica e instrumentación visual}
+\subsubsection{Plataforma robótica e instrumentación visual}
 
 La plataforma elegida para materializar ese movimiento es un robot cuadrúpedo
 Unitree Go2. La decisión no se tomó para reutilizar un robot de locomoción en
@@ -1034,13 +1232,13 @@ consume imagen e intrínsecos de cámara y produce una pose estimada del marcado
 respecto del marco óptico. Desde el punto de vista conceptual, este detector
 opera como puente entre dos descripciones distintas de la misma escena: la
 física, representada por la postura real o simulada del robot, y la proyectiva,
-representada por la imagen que observa la cámara. La metodología detallará qué
-nodos implementan cada una de estas funciones, pero el punto teórico es más
-simple: el sistema queda organizado como una cadena en la que una plataforma
+representada por la imagen que observa la cámara. Las subsecciones siguientes
+detallan qué nodos implementan cada una de estas funciones; en esta etapa, la idea central
+es que el sistema queda organizado como una cadena en la que una plataforma
 postural genera un patrón observable y una cámara recupera una pose relativa a
 partir de ese patrón.
 
-\subsection{Control postural del Go2 y marcos de referencia}
+\subsubsection{Control postural del Go2 y marcos de referencia}
 
 Una vez definido el movimiento que queremos emular, aparece la pregunta central
 de la plataforma experimental: \emph{¿cómo convertir ese movimiento deseado en
@@ -1288,226 +1486,16 @@ cámara fija, \({}^{c}\!T_w\) permanece constante; para una cámara montada sobr
 el dron, ese término también varía en el tiempo. En ambos casos, el problema
 de percepción se apoya en la misma organización geométrica.
 
-\subsection{Marcadores fiduciales y estimación de pose}
 
-Una vez que el movimiento existe y puede ser generado por el Go2, el problema se
-traslada a la cámara: hay que recuperar, a partir de una imagen, la pose
-relativa de un objeto plano cuya posición y orientación cambian continuamente.
-Los marcadores fiduciales resultan apropiados para este escenario porque
-introducen una geometría conocida y una identidad visual controlada dentro de
-la escena. En particular, los marcadores ArUco combinan dos propiedades útiles
-a la vez: un contorno cuadrado que permite localizar con precisión las esquinas
-del patrón y un código binario interno que permite identificar de forma robusta
-qué marcador está siendo observado \citep{GarridoJurado2014}. Esa combinación
-vuelve al marcador simultáneamente detectable y geométricamente utilizable. La
-robustez no depende solo de la segmentación del borde negro exterior, sino
-también del diseño del diccionario: si los identificadores válidos están
-suficientemente separados en distancia de Hamming, errores locales de lectura
-producidos por ruido, desenfoque u oclusión parcial tienen menor probabilidad
-de convertir un marcador en otro marcador válido.
-
-Desde el punto de vista del \textit{pipeline}, la detección del marcador es solo la
-primera mitad del problema. La segunda consiste en estimar la transformación
-rígida entre el patrón y la cámara a partir de correspondencias entre puntos
-conocidos del marcador y sus proyecciones en la imagen. Ese es, precisamente,
-el rol de \texttt{solvePnP}: resolver una instancia del problema
-Perspective-\(n\)-Point usando la calibración intrínseca de la cámara y las
-esquinas detectadas del marcador \citep{opencv_calib3d}. En otras palabras, el
-detector no se limita a responder ``hay un ArUco''; produce una hipótesis
-métrica sobre dónde está y cómo está orientado ese patrón respecto del sensor.
-El patrón concreto utilizado se muestra en la
-Figura~\ref{fig:aruco_marker_id0}.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.28\textwidth]{figures/images/aruco_id0_dict_6x6_250.png}
-\caption{Marcador ArUco utilizado en el proyecto, correspondiente al identificador
-\(0\) del diccionario \texttt{DICT\_6X6\_250}. Este es el patrón que se monta
-sobre el Go2 y cuya pose se estima en tiempo real desde las cámaras simuladas.}
-\label{fig:aruco_marker_id0}
-\end{figure}
-
-Si el lado del marcador es \(L\), sus cuatro vértices pueden definirse en el
-marco del objeto como un conjunto coplanar de puntos conocidos:
-
-\begin{equation}
-P_1 = \left[-\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
-P_2 = \left[\frac{L}{2}, \frac{L}{2}, 0\right]^\top,\;
-P_3 = \left[\frac{L}{2}, -\frac{L}{2}, 0\right]^\top,\;
-P_4 = \left[-\frac{L}{2}, -\frac{L}{2}, 0\right]^\top.
-\label{eq:marker_corners}
-\end{equation}
-
-La detección visual aporta las proyecciones bidimensionales
-\(p_i = [u_i \;\; v_i \;\; 1]^\top\) de esos puntos en la imagen. La
-consistencia entre el orden de los vértices observados y el orden de los
-vértices del modelo es crucial, porque toda la estimación de pose depende de que
-las correspondencias 2D--3D sean geométricamente correctas.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{figures/images/fig_lab_camera_marker_geometry.jpeg}
-\caption{Realización física de la geometría cámara--marcador en
-laboratorio: la cámara estéreo se mantiene aproximadamente fija sobre un
-trípode y observa el marcador ArUco adherido al torso del Go2. Esta
-disposición materializa la relación entre el plano del marcador y el marco
-óptico de la cámara que el modelo de cámara de orificio y la rutina PnP utilizan para
-estimar la pose en tiempo real.}
-\label{fig:camera_marker_geometry}
-\end{figure}
-
-La Figura~\ref{fig:camera_marker_geometry} muestra la realización física de
-esta geometría cámara--marcador en el laboratorio.
-La relación entre los puntos tridimensionales del marcador y su proyección en la
-imagen se describe mediante el modelo de cámara de orificio. Para cada punto
-\(P_i = [X_i \;\; Y_i \;\; Z_i \;\; 1]^\top\), se cumple
-
-\begin{equation}
-s_i
-\begin{bmatrix}
-u_i \\
-v_i \\
-1
-\end{bmatrix}
-=
-K
-\begin{bmatrix}
-R & t
-\end{bmatrix}
-\begin{bmatrix}
-X_i \\
-Y_i \\
-Z_i \\
-1
-\end{bmatrix},
-\label{eq:pinhole_projection}
-\end{equation}
-
-donde \(K\) es la matriz de parámetros intrínsecos
-
-\begin{equation}
-K =
-\begin{bmatrix}
-f_x & 0 & c_x \\
-0 & f_y & c_y \\
-0 & 0 & 1
-\end{bmatrix},
-\label{eq:camera_intrinsics}
-\end{equation}
-
-y \((R,t)\) representa la transformación rígida entre el marco del marcador y el
-marco óptico de la cámara. Esta ecuación deja en evidencia una dependencia
-fundamental del sistema: para estimar pose no alcanza con detectar el patrón; es
-necesario conocer también la calibración intrínseca de la cámara y el tamaño
-físico del marcador. Si la calibración es imprecisa, el error no aparece solo en
-la distancia estimada al marcador: también sesga la orientación recuperada,
-porque ambos componentes se ajustan simultáneamente para explicar la misma
-proyección 2D.
-
-En el caso particular de un marcador plano, la geometría admite además una
-formulación equivalente mediante homografía. Si todos los puntos del objeto
-satisfacen \(Z_i = 0\), entonces la proyección se reduce a
-
-\begin{equation}
-s_i\,p_i = H
-\begin{bmatrix}
-X_i \\
-Y_i \\
-1
-\end{bmatrix},
-\label{eq:planar_homography}
-\end{equation}
-
-donde la homografía \(H\) puede descomponerse como
-
-\begin{equation}
-H = K
-\begin{bmatrix}
-r_1 & r_2 & t
-\end{bmatrix},
-\label{eq:homography_decomposition}
-\end{equation}
-
-siendo \(r_1\) y \(r_2\) las dos primeras columnas de la matriz de rotación
-\(R\). Esta expresión muestra que un marcador plano no solo aporta cuatro
-correspondencias puntuales, sino una transformación proyectiva completa entre su
-plano y la imagen. También explica por qué la estimación de pose con blancos
-planares puede volverse ambigua o numéricamente delicada en configuraciones poco
-favorables, por ejemplo cuando el patrón se observa casi frontalmente y el ruido
-de esquina compite con una proyección muy poco deformada \citep{Schweighofer2006}.
-
-La recuperación de \((R,t)\) puede formularse entonces como un problema de
-Perspective-\(n\)-Point. En términos generales, se busca la transformación que
-minimiza el error de reproyección entre los puntos observados y los puntos
-predichos por el modelo:
-
-\begin{equation}
-(\hat{R},\hat{t}) =
-\arg\min_{R,t}
-\sum_{i=1}^{4}
-\left\|
-p_i - \pi\!\left(K(RP_i + t)\right)
-\right\|_2^2,
-\label{eq:pnp_optimization}
-\end{equation}
-
-donde \(\pi(\cdot)\) denota la proyección perspectiva en coordenadas de imagen.
-Entre las soluciones eficientes para este problema se encuentra EPnP, que
-permite estimar la pose a partir de correspondencias 2D--3D con costo lineal en
-la cantidad de puntos \citep{Lepetit2009}. En el caso de un marcador cuadrado,
-el número de puntos es pequeño, pero la formulación sigue siendo conceptualmente
-la misma: a partir de cuatro esquinas coplanares y calibración conocida, se
-recupera la pose del marcador respecto de la cámara. En la práctica, el objetivo
-no es únicamente hallar una solución geométricamente válida, sino encontrar la
-que minimiza de la manera más consistente el error inducido por ruido,
-cuantización de píxeles y distorsión residual. Por eso, el error de
-reproyección funciona como criterio natural para comparar hipótesis de pose.
-
-Si se linealiza la proyección alrededor de una solución nominal
-\((R_0,t_0)\), pequeñas perturbaciones en la imagen y en la pose quedan
-relacionadas aproximadamente por un Jacobiano de sensibilidad \(J_\pi\):
-
-\begin{equation}
-\delta p \approx J_\pi\,\delta \xi,
-\label{eq:projection_jacobian_linearization}
-\end{equation}
-
-donde \(\delta \xi\) representa una perturbación infinitesimal de la pose en el
-espacio tangente de \(SE(3)\). Esta linealización ayuda a interpretar un hecho
-empírico importante: cuanto más pequeñas aparecen las esquinas del marcador o
-cuanto más cercana está la observación a una configuración proyectiva degenerada,
-mayor es la sensibilidad de la pose estimada frente a pequeños errores de
-localización.
-
-Esta geometría proyectiva explica, además, por qué el recorte a \emph{roll}, \emph{pitch} y
-\emph{heave} es tan relevante en este problema. Si el marcador está fijado al torso del
-robot, \emph{roll} y \emph{pitch} se reflejan principalmente en la parte rotacional de
-\((R,t)\), mientras que \emph{heave} altera la distancia relativa y, por lo tanto, la
-escala aparente del patrón en la imagen. En otras palabras, el movimiento que
-escogimos modelar no es solo una abstracción mecánica; es exactamente el
-movimiento que el estimador visual tiene que reconstruir.
-
-
-
-\section{Metodología}
-
-En este trabajo organizamos la metodología en dos etapas complementarias. La
-primera corresponde a la simulación, donde construimos un entorno controlado y
-reproducible para modelar el movimiento de una plataforma marina, observarla
-con distintas fuentes de imagen y evaluar la estimación visual contra un \textit{ground truth} conocido. La segunda corresponde al laboratorio, donde trasladamos parte
-de esa lógica al robot real para analizar qué ocurre al pasar de un entorno
-idealizado a uno físico y hasta qué punto el movimiento propuesto en simulación
-guarda relación con el comportamiento observado en el Go2.
 
 \subsection{Metodología en simulación}
 
-La simulación fue el primer entorno de validación del entorno porque nos
+La simulación fue el primer entorno de validación del modelo propuesto porque nos
 permitió controlar la escena, repetir corridas bajo condiciones comparables y
 registrar todas las señales relevantes del sistema. En esta etapa el problema
 se organizó como un \textit{pipeline} de cuatro pasos: generación del movimiento
 marino, materialización de ese movimiento en el Go2, observación visual del
-marcador y evaluación \textit{offline} contra una referencia reconstruible. Sobre la
-base conceptual introducida en el Capítulo~\ref{mt}, aquí nos concentramos en
+marcador y evaluación \textit{offline} contra una referencia reconstruible. Con el modelado ya definido, aquí nos concentramos en
 cómo se organizó cada una de esas etapas y con qué configuración se ejecutó la
 campaña experimental.
 
@@ -1776,7 +1764,7 @@ consistente con el resto del \textit{pipeline}.
 
 \subsubsection{Estimación visual en simulación}
 
-Como se discutió en el Capítulo~\ref{mt}, el entorno contempla dos fuentes de
+Como parte del modelado propuesto, el entorno contempla dos fuentes de
 imagen complementarias. Operativamente, la primera es una cámara fija nadir,
 ubicada sobre la plataforma y orientada hacia abajo. La segunda es la cámara
 inferior de un dron simulado, que despega automáticamente y luego mantiene un
@@ -1798,7 +1786,7 @@ visualmente ambos casos.
 \includegraphics[height=\methodvisualsetupheight,keepaspectratio]{figures/setup/drone-unitree-aruco.png}
 \caption{Escenario con dron simulado en vuelo estacionario sobre la plataforma.}
 \end{subfigure}
-\caption{Vistas del entorno simulado utilizadas en el entorno. A la izquierda
+\caption{Vistas del entorno simulado utilizadas en la metodología. A la izquierda
 se observa la plataforma instrumentada con el marcador; a la derecha, el caso
 con cámara aérea, donde la percepción depende además de la pose del dron.}
 \label{fig:method_visual_setup}
@@ -1806,7 +1794,7 @@ con cámara aérea, donde la percepción depende además de la pose del dron.}
 
 La Figura~\ref{fig:method_frames_scene} complementa esa vista con una
 superposición de ternas sobre la propia escena simulada. Así, los marcos
-discutidos en el Capítulo~\ref{mt} dejan de aparecer como una cadena abstracta y
+definidos en el modelado propuesto dejan de aparecer como una cadena abstracta y
 pueden leerse directamente sobre la relación espacial entre el dron, el Go2 y
 el marcador.
 
@@ -1824,8 +1812,7 @@ En ambos casos la estimación visual se resolvió con el mismo detector ArUco. E
 procedimiento consume la imagen RGB y la calibración intrínseca de la cámara,
 busca el marcador del diccionario 6x6 con identificador \(0\) y asume un lado de
 \(0{,}50\) metros. Una vez detectadas las esquinas, OpenCV estima la pose
-relativa del marcador respecto del marco óptico de la cámara mediante
-solvePnP. Durante la corrida, el detector trabaja solo con imagen e
+relativa del marcador respecto del marco óptico de la cámara mediante el método de Perspectiva por \(n\) Puntos (PnP). Durante la corrida, el detector trabaja solo con imagen e
 intrínsecos de cámara: no usa conocimiento privilegiado del simulador, de la
 pose del robot ni de la pose del dron. Un ejemplo de la imagen anotada que
 produce el detector puede verse en la Figura~\ref{fig:method_aruco_detection_frame}.
@@ -2039,6 +2026,17 @@ diccionario de marcadores y un lado físico de \(0{,}20\) m. El objetivo no fue
 replicar con exactitud el caso de Gazebo, sino mantener una relación clara entre
 el movimiento del torso y la pose del marcador observada en la imagen.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{figures/images/fig_lab_camera_marker_geometry.jpeg}
+\caption{Geometría cámara--marcador del montaje de laboratorio: la cámara
+estéreo se mantiene aproximadamente fija sobre un trípode y observa el marcador
+ArUco adherido al torso del Go2. Esta disposición materializa la relación entre
+el plano del marcador y el marco óptico de la cámara utilizada por el método
+PnP para estimar pose en tiempo real.}
+\label{fig:camera_marker_geometry}
+\end{figure}
+
 La adquisición visual se realizó con una cámara estéreo, aunque para estas
 pruebas se trabajó únicamente con una de sus dos cámaras, tratándola como un
 sensor monocular. La imagen original se recortó para conservar un solo ojo y se
@@ -2101,6 +2099,8 @@ del laboratorio se discute en la Sección~\ref{sec:lab_results_anchor}, con
 series temporales alineadas (Figura~\ref{fig:lab_target_vs_odom}) y curvas de
 correlación retardo--correlación (Figura~\ref{fig:lab_lag_correlation}) que
 materializan el contraste entre objetivo, actuación y respuesta.
+
+
 
 
 
