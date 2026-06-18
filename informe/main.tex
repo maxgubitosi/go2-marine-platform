@@ -617,18 +617,19 @@ entornos pensados específicamente para validar cuantitativamente un estimador d
 pose visual, basado en marcador fiducial, bajo movimientos de plataforma marina
 sintetizados y con comparación directa contra \textit{ground truth} del
 simulador. Este trabajo se
-ubica en esa zona metodológica. No compite con los sistemas que ya cierran el
-lazo de aterrizaje completo; construye una etapa previa para estudiar si la
-pose visual de una plataforma oscilante puede estimarse, registrarse y
-compararse de manera reproducible antes de avanzar hacia ensayos de mayor
-riesgo.
+ubica en esa zona metodológica: construye una etapa previa de estudio de
+factibilidad sobre la capacidad de una plataforma cuadrúpeda para reproducir
+dinámicas de movimiento oscilante y sobre la capacidad de los métodos visuales
+para estimar su pose. El objetivo es determinar si la pose visual de una
+plataforma oscilante puede estimarse, registrarse y compararse de manera
+reproducible antes de avanzar hacia ensayos de mayor riesgo.
 
 \section{Marco teórico} \label{mt}
 
 \subsection{Introducción conceptual}
 
-El marco teórico reúne los conceptos generales que permiten leer el problema
-antes de especificar el modelo propuesto. La separación es deliberada: aquí se
+El marco teórico reúne los conceptos generales requeridos para el desarrollo
+técnico del modelo propuesto. La separación es deliberada: aquí se
 presentan las herramientas y principios que sostienen el trabajo; la decisión
 de usar el Go2 como plataforma marina sintética, el recorte de grados de
 libertad y la cadena experimental completa se formulan luego como parte de la
@@ -653,7 +654,9 @@ sensado, estimación y evaluación. En este trabajo esa infraestructura está da
 por ROS2 y Gazebo Classic. ROS2 funciona como \emph{middleware} del sistema: en
 lugar de concebir el experimento como un programa monolítico, lo organizamos
 como un grafo de procesos especializados que intercambian información mediante
-publicación y suscripción tipada \citep{ros2_basic_concepts}. Esta decisión no
+publicación y suscripción tipada \citep{ros2_basic_concepts}.
+% TODO(figura, sugerencia tutor #5): agregar un diagrama del grafo de nodos/tópicos
+% (conexión y comunicación entre nodos) y referenciarlo desde aquí. Pendiente fase de gráficos. Esta decisión no
 es un detalle de implementación. Es la que permite desacoplar la generación del
 movimiento, la fuente de imagen, la estimación visual y el análisis posterior,
 sin perder coherencia entre ellas.
@@ -691,7 +694,9 @@ cámara o desde un marco global sin mezclar descripciones incompatibles.
 Gazebo Classic aporta la otra mitad del ecosistema: el entorno de simulación
 física y sensorial. Conceptualmente, Gazebo integra la evolución dinámica del
 mundo con la generación de sensores, el renderizado y la interfaz de
-visualización \citep{gazebo_classic_architecture}. Para este trabajo eso resulta
+visualización \citep{gazebo_classic_architecture}.
+% TODO(figura, sugerencia tutor #6): agregar una captura de la interfaz de Gazebo
+% con la escena del Go2. Pendiente fase de gráficos. Para este trabajo eso resulta
 especialmente valioso porque la postura del Go2, la imagen observada por la
 cámara y gran parte del \textit{ground truth} provienen de un mismo estado subyacente
 del simulador. No trabajamos, entonces, con una animación separada de los
@@ -726,8 +731,8 @@ importante es geométrica: una cubierta marina no solo cambia de posición, sino
 también de orientación respecto de la cámara. El movimiento vertical modifica la
 distancia aparente al patrón, mientras que las inclinaciones alteran la
 proyección de su plano en la imagen. Por eso, antes de discutir una
-implementación concreta, conviene retener el vínculo conceptual entre oleaje,
-postura de plataforma y observación visual. El recorte metodológico y su
+implementación concreta, conviene tener presente la relación entre el oleaje, la
+postura de la plataforma y la observación visual. El recorte metodológico y su
 realización sobre el cuadrúpedo se definen en el capítulo siguiente.
 
 \subsection{Marcadores fiduciales y estimación de pose}
@@ -736,7 +741,8 @@ La estimación visual de pose aborda el problema de recuperar, a partir de una
 imagen, la posición y orientación relativa de un objeto respecto de una cámara.
 En este trabajo ese objeto puede representarse mediante un patrón plano de
 geometría conocida, condición que permite usar marcadores fiduciales como
-referencia visual controlada. En particular, los marcadores ArUco combinan dos
+referencia visual controlada. En particular, los marcadores ArUco
+(ver Figura~\ref{fig:aruco_marker_id0}) combinan dos
 propiedades útiles a la vez: un contorno cuadrado que permite localizar con
 precisión las esquinas del patrón y un código binario interno que permite
 identificar de forma robusta qué marcador está siendo observado
@@ -751,7 +757,8 @@ de convertir un marcador en otro marcador válido.
 Desde el punto de vista geométrico, la detección del marcador es solo la
 primera mitad del problema. La segunda consiste en estimar la transformación
 rígida entre el patrón y la cámara a partir de correspondencias entre puntos
-conocidos del marcador y sus proyecciones en la imagen. Ese es el rol del problema de Perspectiva por \(n\) Puntos (PnP):
+conocidos del marcador y sus proyecciones en la imagen. Este problema se conoce
+como Perspectiva por \(n\) Puntos (PnP): consiste en
 resolver una transformación cámara--objeto usando la calibración intrínseca de la
 cámara y las esquinas detectadas del marcador \citep{opencv_calib3d}. En otras palabras, el
 detector no se limita a responder ``hay un ArUco''; produce una hipótesis
@@ -856,9 +863,11 @@ r_1 & r_2 & t
 \end{equation}
 
 siendo \(r_1\) y \(r_2\) las dos primeras columnas de la matriz de rotación
-\(R\). Esta expresión muestra que un marcador plano no solo aporta cuatro
-correspondencias puntuales, sino una transformación proyectiva completa entre su
-plano y la imagen. También explica por qué la estimación de pose con blancos
+\(R\). Un marcador plano aporta, así, no solo cuatro correspondencias puntuales
+sino una transformación proyectiva completa entre su plano y la imagen. La
+estimación de pose a partir de superficies planas tiene una complejidad propia y
+fue abordada de forma estable por primera vez mediante el método de Zhang
+\citep{Zhang2000}. Esto explica, además, por qué la estimación con blancos
 planares puede volverse ambigua o numéricamente delicada en configuraciones poco
 favorables, por ejemplo cuando el patrón se observa casi frontalmente y el ruido
 de esquina compite con una proyección muy poco deformada \citep{Schweighofer2006}.
@@ -870,7 +879,7 @@ predichos por el modelo:
 
 \begin{equation}
 (\hat{R},\hat{t}) =
-\arg\min_{R,t}
+\operatorname*{arg\,min}_{R,t}
 \sum_{i=1}^{4}
 \left\|
 p_i - \pi\!\left(K(RP_i + t)\right)
@@ -890,21 +899,14 @@ que minimiza de la manera más consistente el error inducido por ruido,
 cuantización de píxeles y distorsión residual. Por eso, el error de
 reproyección funciona como criterio natural para comparar hipótesis de pose.
 
-Si se linealiza la proyección alrededor de una solución nominal
-\((R_0,t_0)\), pequeñas perturbaciones en la imagen y en la pose quedan
-relacionadas aproximadamente por un Jacobiano de sensibilidad \(J_\pi\):
-
-\begin{equation}
-\delta p \approx J_\pi\,\delta \xi,
-\label{eq:projection_jacobian_linearization}
-\end{equation}
-
-donde \(\delta \xi\) representa una perturbación infinitesimal de la pose en el
-espacio tangente de \(SE(3)\). Esta linealización ayuda a interpretar un hecho
-empírico importante: cuanto más pequeñas aparecen las esquinas del marcador o
-cuanto más cercana está la observación a una configuración proyectiva degenerada,
-mayor es la sensibilidad de la pose estimada frente a pequeños errores de
-localización.
+Esta formulación también ayuda a interpretar un hecho empírico importante sobre
+la sensibilidad del estimador: cuanto más pequeñas aparecen las esquinas del
+marcador en la imagen, o cuanto más cercana está la observación a una
+configuración proyectiva degenerada —por ejemplo, un patrón visto casi de
+frente—, mayor es la sensibilidad de la pose estimada frente a pequeños errores
+en la localización de las esquinas. En esas condiciones, variaciones de pocos
+píxeles en las esquinas detectadas pueden traducirse en variaciones grandes de la
+pose recuperada, lo que vuelve crítica la calidad de la detección.
 
 En conjunto, estos conceptos separan la base geométrica del problema de su
 realización experimental. La metodología siguiente toma esta formulación y la
@@ -1013,11 +1015,17 @@ cinemática es
 \label{eq:marine_kinematics}
 \end{equation}
 
-donde \(J(\eta)\) transforma velocidades expresadas en el cuerpo en derivadas
-de posición y orientación respecto del marco inercial. Esta ecuación resume una
-idea importante: la pose de la plataforma no cambia de manera arbitraria, sino
-como resultado de un acoplamiento entre traslaciones, rotaciones y la
-orientación instantánea del casco.
+donde \(J(\eta)\) transforma velocidades expresadas en el marco de coordenadas
+del cuerpo de la plataforma (la embarcación) en derivadas de posición y
+orientación respecto de un marco inercial fijo. Conviene aclarar que este marco
+inercial es una referencia global externa —en una simulación, el origen
+arbitrario \((0,0,0)\) del mundo— y no debe confundirse con el marco de la
+cámara que se introduce más adelante para la estimación visual: en esta
+subsección las formulaciones son generales y recién en la metodología se las
+instancia en los marcos de referencia concretos del entorno. Esta ecuación
+resume una idea importante: la pose de la plataforma no cambia de manera
+arbitraria, sino como resultado de un acoplamiento entre traslaciones,
+rotaciones y la orientación instantánea del casco.
 
 En un modelo dinámico completo, además, ese movimiento surge del equilibrio
 entre inercia, amortiguamiento, gravedad, flotación y excitación externa. Una
@@ -1028,13 +1036,20 @@ M \dot{\nu} + C(\nu)\nu + D(\nu)\nu + g(\eta) = \tau + \tau_w,
 \label{eq:marine_dynamics}
 \end{equation}
 
-donde \(M\) representa la inercia, \(C(\nu)\nu\) los términos de Coriolis,
-\(D(\nu)\nu\) el amortiguamiento hidrodinámico, \(g(\eta)\) las fuerzas
-restauradoras asociadas a gravedad y flotación, \(\tau\) posibles acciones de
-control y \(\tau_w\) la excitación inducida por el mar. El objetivo de este
-trabajo no es resolver este modelo con fidelidad hidrodinámica completa, sino
-usar esta formulación para entender qué parte del movimiento conviene retener
-cuando el interés principal es describir la oscilación local de una plataforma.
+donde \(M\) representa la matriz de inercia (incluida la masa añadida),
+\(C(\nu)\nu\) los términos de Coriolis y centrípetos, \(D(\nu)\nu\) el
+amortiguamiento hidrodinámico, \(g(\eta)\) las fuerzas restauradoras asociadas a
+gravedad y flotación, \(\tau\) posibles acciones de control y \(\tau_w\) la
+excitación inducida por el mar. Las formas explícitas de \(M\), \(C\), \(D\) y
+\(g\) son estándar en la literatura de dinámica marina y pueden consultarse en
+\citet{Fossen1995}; no las reproducimos aquí porque el objetivo de este trabajo
+no es simular la hidrodinámica del casco con fidelidad, sino sintetizar
+cinemáticamente la oscilación local de la plataforma. Por eso retenemos
+\eqref{eq:marine_dynamics} únicamente como marco conceptual —para identificar qué
+parte del movimiento conviene conservar— y, en lo que sigue, prescindimos del
+balance de fuerzas: el movimiento de la cubierta se prescribe directamente a
+partir de la elevación de la superficie libre, sin resolver \(M\), \(C\), \(D\)
+ni \(g\).
 
 Para conectar el oleaje con la postura de la cubierta, resulta útil introducir
 la elevación de la superficie libre \(\zeta(x,y,t)\), medida respecto del nivel
@@ -1137,12 +1152,20 @@ sinusoidal:
 \label{eq:sinusoidal_wave_model}
 \end{equation}
 
-donde \(A\) es la amplitud, \((k_x,k_y)\) fija la dirección espacial de
-propagación, \(\omega\) es la frecuencia angular y \(\delta\) el desfase
-inicial. Esta expresión es útil porque permite describir de manera simple una
-ola periódica y, al mismo tiempo, deja claro de qué parámetros depende la
-respuesta de la plataforma: cuánto sube y baja, con qué rapidez oscila y cómo
-se distribuye la pendiente de la superficie.
+donde \(A\) es la amplitud, \(\omega\) es la frecuencia angular, \(\delta\) el
+desfase inicial y \((k_x,k_y)\) es el vector de número de onda, que fija la
+dirección espacial de propagación y la longitud de onda. Este \((k_x,k_y)\) no
+debe confundirse con los coeficientes \(\kappa_\phi\) y \(\kappa_\theta\)
+introducidos en \eqref{eq:reduced_marine_state}: aquéllos escalan cuánto acompaña
+la plataforma la pendiente local de la superficie, mientras que \((k_x,k_y)\)
+describe la geometría de la onda. La conexión entre ambos es directa: derivando
+\eqref{eq:sinusoidal_wave_model} respecto de \(x\) e \(y\) se obtiene la pendiente
+de la superficie, proporcional a \((k_x,k_y)\), que es justamente la cantidad que
+\(\kappa_\phi\) y \(\kappa_\theta\) convierten en \emph{roll} y \emph{pitch}. Esta
+expresión es útil porque permite describir de manera simple una ola periódica y,
+al mismo tiempo, deja claro de qué parámetros depende la respuesta de la
+plataforma: cuánto sube y baja, con qué rapidez oscila y cómo se distribuye la
+pendiente de la superficie.
 
 Cuando se desea representar un mar menos regular, la misma idea puede
 extenderse a una superposición de armónicos:
@@ -1185,25 +1208,26 @@ irregular representada como combinación de varias componentes.}
 \end{figure}
 
 La Figura~\ref{fig:wave_regular_irregular} contrasta ambos perfiles de
-superficie libre. El recorte a \emph{heave}, \emph{roll} y \emph{pitch} fija,
-entonces, qué parte del movimiento queremos sintetizar y por qué esa parte es suficiente para una
-primera validación de percepción visual. Sin embargo, todavía queda abierta una
-pregunta clave: qué dispositivo experimental puede materializar ese movimiento
+superficie libre. La selección de \emph{heave}, \emph{roll} y \emph{pitch} como
+grados de libertad retenidos define qué parte del movimiento se busca sintetizar;
+estas tres componentes concentran el efecto del oleaje sobre la observación
+visual y resultan suficientes para una primera validación del estimador de pose.
+Resta especificar qué dispositivo experimental puede materializar ese movimiento
 de manera repetible y, al mismo tiempo, ser observado por una cámara con una
-geometría controlada. Esa es la función que en nuestro entorno cumple el
+geometría controlada. En el entorno propuesto, esa función la cumple el
 cuadrúpedo instrumentado.
 
 \subsubsection{Plataforma robótica e instrumentación visual}
 
 La plataforma elegida para materializar ese movimiento es un robot cuadrúpedo
-Unitree Go2. La decisión no se tomó para reutilizar un robot de locomoción en
-su uso más habitual, sino para explotarlo de otro modo: como una estructura
-articulada capaz de modificar la postura de su torso mientras mantiene los
-apoyos en el suelo. En lugar de modelar una embarcación completa, aprovechamos
-esa capacidad para pedir inclinaciones y desplazamientos verticales del cuerpo y
-usar el torso como plataforma marina sintética. La ventaja adicional es
-experimental: el mismo robot existe en simulación y en laboratorio, de modo que
-la transición entre ambos entornos conserva la lógica general del sistema.
+Unitree Go2, utilizado como una estructura articulada capaz de modificar la
+postura de su torso mientras mantiene los apoyos en el suelo. Esta capacidad
+permite comandar inclinaciones y desplazamientos verticales del cuerpo y usar el
+torso como plataforma marina sintética, sin necesidad de modelar una embarcación
+completa. Una ventaja adicional es experimental: implementamos una versión
+simulada del mismo robot, lo que permite validar la generación de movimiento en
+simulación y luego trasladarla al laboratorio conservando la lógica general del
+sistema.
 
 Sobre el torso montamos una tabla rígida con un marcador fiducial. En términos
 generales, un marcador fiducial es un patrón visual diseñado para introducir en
@@ -1299,15 +1323,74 @@ sobre el torso en \({}^{b}r_{h_i} \approx (\pm 0{,}1934,\; \pm 0{,}0465,\; 0)~
 pata delantera/trasera e izquierda/derecha. La
 Figura~\ref{fig:go2_leg_kinematics} resume esta cadena.
 
-% TODO(figura): reemplazar el placeholder por un diagrama de una pata del Go2 con
-% las tres juntas (HAA, HFE, KFE), sus ejes de rotación y las longitudes d, l_1, l_2.
-\figureplaceholder{fig:go2_leg_kinematics}{Diagrama cinemático de una pata del
-Go2: abducción de cadera (\(q_{i,1}\), eje \(x\)), muslo (\(q_{i,2}\), eje
-\(y\)) y rodilla (\(q_{i,3}\), eje \(y\)), con las longitudes \(d\), \(l_1\) y
-\(l_2\).}{Cadena cinemática de una pata del Go2 y sus tres juntas. La abducción de
-cadera gira alrededor del eje \(x\) del cuerpo; el muslo y la rodilla giran
-alrededor del eje \(y\). Las longitudes corresponden a la descripción \texttt{URDF}
-utilizada en la simulación \citep{UnitreeGo2ROS2}.}
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{0.46\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.82, line join=round,
+  joint/.style={circle,draw=black,fill=white,line width=0.6pt,inner sep=1.5pt},
+  foot/.style={circle,draw=black,fill=black,inner sep=1.7pt},
+  link/.style={blue!58!black,line width=1.5pt}]
+  % torso
+  \fill[black!12,draw=black!45] (-1.8,3.9) rectangle (0.05,4.4);
+  \node[black!55] at (-0.88,4.15) {\scriptsize torso};
+  \coordinate (H) at (0,3.9);
+  \coordinate (A) at (0.21,3.34);
+  \coordinate (F) at (1.24,0.30);
+  \draw[gray,dashed] (H) -- (0,0.25);
+  \draw[link] (H) -- (A) -- (F);
+  \node[joint] at (H) {};
+  \node[joint] at (A) {};
+  \node[foot]  at (F) {};
+  \draw[-latex,red!72!black,line width=0.8pt] (0,3.0) arc[start angle=-90,end angle=-70,radius=0.9];
+  \node[red!72!black] at (0.34,2.78) {\scriptsize \(q_{i,1}\)};
+  \node[black,right] at (0.30,3.96) {\scriptsize HAA};
+  \node at (0.42,3.62) {\scriptsize \(d\)};
+  \node[black!60,rotate=-71] at (0.88,1.95) {\scriptsize \(l_1{+}l_2\)};
+  \draw[-latex,black!70] (-1.7,0.25) -- (-1.15,0.25) node[right]{\scriptsize \(y\)};
+  \draw[-latex,black!70] (-1.7,0.25) -- (-1.7,0.8) node[above]{\scriptsize \(z\)};
+\end{tikzpicture}\\[3pt]
+{\footnotesize (a) Plano frontal \(y\)--\(z\)}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.46\textwidth}
+\centering
+\begin{tikzpicture}[scale=0.82, line join=round,
+  joint/.style={circle,draw=black,fill=white,line width=0.6pt,inner sep=1.5pt},
+  foot/.style={circle,draw=black,fill=black,inner sep=1.7pt},
+  link/.style={blue!58!black,line width=1.5pt}]
+  \coordinate (T) at (0,4.0);
+  \coordinate (K) at (0.95,2.355);
+  \coordinate (F) at (0.62,0.49);
+  \draw[gray,dashed] (T) -- (0,2.6);
+  \draw[gray,dashed] (K) -- (1.25,1.835);
+  \draw[link] (T) -- (K) -- (F);
+  \node[joint] at (T) {};
+  \node[joint] at (K) {};
+  \node[foot]  at (F) {};
+  \draw[-latex,red!72!black,line width=0.8pt] (0,3.2) arc[start angle=-90,end angle=-60,radius=0.8];
+  \node[red!72!black] at (0.36,3.04) {\scriptsize \(q_{i,2}\)};
+  \draw[-latex,red!72!black,line width=0.8pt] (1.30,1.749) arc[start angle=-60,end angle=-100,radius=0.7];
+  \node[red!72!black] at (1.20,1.28) {\scriptsize \(q_{i,3}\)};
+  \node[black!60,rotate=-60] at (0.36,3.34) {\scriptsize \(l_1\)};
+  \node[black!60,rotate=-80] at (0.96,1.46) {\scriptsize \(l_2\)};
+  \node[black,right=2pt] at (T) {\scriptsize HFE};
+  \node[black,right=2pt] at (K) {\scriptsize KFE};
+  \node[black,below=2pt] at (F) {\scriptsize pie};
+  \draw[-latex,black!70] (-0.7,0.4) -- (-0.15,0.4) node[right]{\scriptsize \(x\)};
+  \draw[-latex,black!70] (-0.7,0.4) -- (-0.7,0.95) node[above]{\scriptsize \(z\)};
+\end{tikzpicture}\\[3pt]
+{\footnotesize (b) Plano sagital \(x\)--\(z\)}
+\end{minipage}
+\caption{Cadena cinemática de una pata del Go2 y sus tres juntas. (a) En el plano
+frontal, la abducción de cadera (HAA) \(q_{i,1}\) gira la pata alrededor del eje
+\(x\) del cuerpo, con un desplazamiento lateral \(d\) entre el eje de abducción y
+el plano de la pata. (b) En el plano sagital, la flexión de cadera o muslo
+(HFE) \(q_{i,2}\) y la flexión de rodilla (KFE) \(q_{i,3}\) giran alrededor del
+eje \(y\) y forman una cadena de dos eslabones de longitudes \(l_1\) y \(l_2\).
+Los valores \(d=0{,}0955\)~m y \(l_1=l_2=0{,}213\)~m corresponden a la
+descripción \texttt{URDF} utilizada en la simulación \citep{UnitreeGo2ROS2}.}
+\label{fig:go2_leg_kinematics}
+\end{figure}
 
 \paragraph{Cinemática directa de una pata.}
 Con esta convención, la posición del pie \(i\) puede escribirse en forma cerrada.
@@ -1465,14 +1548,45 @@ p_{\text{CoM}}^{xy} \in \mathcal{P}_s,
 
 como se ilustra en la Figura~\ref{fig:support_polygon}.
 
-% TODO(figura): reemplazar el placeholder por un esquema del polígono de soporte
-% (envolvente convexa de los cuatro pies) con la proyección del CoM en su interior.
-\figureplaceholder{fig:support_polygon}{Vista superior de los cuatro pies
-apoyados, su envolvente convexa \(\mathcal{P}_s\) (polígono de soporte) y la
-proyección horizontal del centro de masa \(p_{\text{CoM}}^{xy}\) en su
-interior.}{Polígono de soporte del Go2 en apoyo cuadrúpedo. El equilibrio estático
-simple requiere que la proyección horizontal del centro de masa permanezca dentro
-de la envolvente convexa de los cuatro pies.}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=1.0, line join=round,
+  foot/.style={circle,draw=black,fill=blue!55!black,inner sep=1.9pt}]
+  \coordinate (FL) at (1.6,0.9);
+  \coordinate (FR) at (1.6,-0.9);
+  \coordinate (RL) at (-1.6,0.9);
+  \coordinate (RR) at (-1.6,-0.9);
+  % support polygon
+  \fill[blue!10] (FL)--(FR)--(RR)--(RL)--cycle;
+  \draw[blue!55!black,thick] (FL)--(FR)--(RR)--(RL)--cycle;
+  % torso
+  \fill[black!12,draw=black!45,rounded corners=3pt] (-1.05,-0.5) rectangle (1.05,0.5);
+  \node[black!55] at (-0.5,0.0) {\scriptsize torso};
+  % feet
+  \node[foot] at (FL) {}; \node[foot] at (FR) {};
+  \node[foot] at (RL) {}; \node[foot] at (RR) {};
+  \node[above right=0pt] at (FL) {\scriptsize FL};
+  \node[below right=0pt] at (FR) {\scriptsize FR};
+  \node[above left=0pt]  at (RL) {\scriptsize RL};
+  \node[below left=0pt]  at (RR) {\scriptsize RR};
+  % CoM projection
+  \fill[red!75!black] (0.28,0.05) circle (2pt);
+  \draw[red!75!black,line width=0.7pt] (0.10,0.05)--(0.46,0.05);
+  \draw[red!75!black,line width=0.7pt] (0.28,-0.13)--(0.28,0.23);
+  \node[red!75!black,above] at (0.28,0.52) {\scriptsize \(p_{\text{CoM}}^{xy}\)};
+  % polygon label
+  \node[blue!55!black] at (0,1.16) {\scriptsize \(\mathcal{P}_s\)};
+  % axes
+  \draw[-latex,black!70] (-2.5,-1.45) -- (-1.95,-1.45) node[right]{\scriptsize \(x\)};
+  \draw[-latex,black!70] (-2.5,-1.45) -- (-2.5,-0.9) node[above]{\scriptsize \(y\)};
+\end{tikzpicture}
+\caption{Polígono de soporte del Go2 en apoyo cuadrúpedo, en vista superior. Los
+cuatro pies (FL, FR, RL, RR) definen una envolvente convexa \(\mathcal{P}_s\). El
+equilibrio estático simple requiere que la proyección horizontal del centro de
+masa \(p_{\text{CoM}}^{xy}\) permanezca dentro de esa región; esto acota las
+amplitudes admisibles de \emph{roll}, \emph{pitch} y \emph{heave}.}
+\label{fig:support_polygon}
+\end{figure}
 
 Aunque en la simulación no se resuelve explícitamente un problema de estabilidad
 con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
