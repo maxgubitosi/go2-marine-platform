@@ -1240,15 +1240,15 @@ partir de ese patrón.
 
 \subsubsection{Control postural del Go2 y marcos de referencia}
 
-Una vez definido el movimiento que queremos emular, aparece la pregunta central
-de la plataforma experimental: \emph{¿cómo convertir ese movimiento deseado en
-una postura físicamente consistente del robot?} La respuesta se apoya en la
-cinemática y en la dinámica de un cuadrúpedo en contacto con el suelo. Intuitivamente, el Go2 puede pensarse como un torso rígido sostenido por cuatro patas
-articuladas. Si las patas cambian su configuración mientras los apoyos se
-mantienen, el torso puede inclinarse o subir y bajar sin necesidad de
-desplazarse horizontalmente. Esa es, precisamente, la propiedad que explotamos
-en este problema: no se usa al cuadrúpedo como vehículo de locomoción, sino como una
-estructura reconfigurable capaz de materializar un movimiento postural
+Definido el movimiento que se busca emular, el problema central de la plataforma
+experimental es convertir esa consigna de movimiento en una postura físicamente
+consistente del robot. Esta conversión se apoya en la cinemática y en la dinámica
+de un cuadrúpedo en contacto con el suelo. El Go2 puede describirse como un torso
+rígido sostenido por cuatro patas articuladas: cuando las patas reconfiguran sus
+ángulos articulares mientras los pies permanecen apoyados, el torso se inclina o
+sube y baja sin desplazarse horizontalmente. Esta es la propiedad que se explota
+en este trabajo, donde el cuadrúpedo no opera como vehículo de locomoción sino
+como una estructura reconfigurable que materializa un movimiento postural
 controlado.
 
 En este contexto, la Figura~\ref{fig:theory_motion_components} muestra cómo se
@@ -1268,23 +1268,97 @@ consigna postural del sistema.}
 \label{fig:theory_motion_components}
 \end{figure}
 
-Desde el punto de vista del modelado, un cuadrúpedo es un sistema multicuerpo
-con base flotante y restricciones de contacto. Si \(q\) reúne la pose del torso
-y todos los ángulos articulares, una forma compacta de sus ecuaciones de
-movimiento es
+\paragraph{Estructura articular del Go2.}
+Antes de formular el control postural conviene precisar la estructura mecánica
+del robot, porque es sobre ella que se resuelve la cinemática. El Go2 dispone de
+doce actuadores rotativos organizados en cuatro patas idénticas con tres juntas
+cada una \citep{unitree_go2,UnitreeGo2ROS2}. En cada pata \(i \in \{1,2,3,4\}\) se
+distinguen:
+
+\begin{itemize}[noitemsep,topsep=2pt]
+  \item la \emph{abducción/aducción de cadera} (HAA), de ángulo \(q_{i,1}\), que
+  gira la pata alrededor de un eje aproximadamente paralelo al eje longitudinal
+  \(x\) del cuerpo y la separa o acerca lateralmente;
+  \item la \emph{flexión/extensión de cadera} (HFE), o junta del muslo, de ángulo
+  \(q_{i,2}\), que gira alrededor del eje transversal \(y\);
+  \item la \emph{flexión de rodilla} (KFE), o junta de la pantorrilla, de ángulo
+  \(q_{i,3}\), también alrededor del eje \(y\).
+\end{itemize}
+
+El vector articular de la pata es
+\(q_i = [\,q_{i,1}\;\; q_{i,2}\;\; q_{i,3}\,]^\top\), y la configuración articular
+completa del robot reúne las cuatro patas en
+\(q_a = [\,q_1^\top\;\; q_2^\top\;\; q_3^\top\;\; q_4^\top\,]^\top \in
+\mathbb{R}^{12}\). Los parámetros geométricos relevantes, tomados de la
+descripción \texttt{URDF} del Go2 empleada en la simulación
+\citep{UnitreeGo2ROS2}, son el desplazamiento lateral de la abducción
+\(d = 0{,}0955~\text{m}\), la longitud del muslo \(l_1 = 0{,}213~\text{m}\) y la
+de la pantorrilla \(l_2 = 0{,}213~\text{m}\); la cadera de cada pata se monta
+sobre el torso en \({}^{b}r_{h_i} \approx (\pm 0{,}1934,\; \pm 0{,}0465,\; 0)~
+\text{m}\) respecto del centro del cuerpo, con los signos correspondientes a la
+pata delantera/trasera e izquierda/derecha. La
+Figura~\ref{fig:go2_leg_kinematics} resume esta cadena.
+
+% TODO(figura): reemplazar el placeholder por un diagrama de una pata del Go2 con
+% las tres juntas (HAA, HFE, KFE), sus ejes de rotación y las longitudes d, l_1, l_2.
+\figureplaceholder{fig:go2_leg_kinematics}{Diagrama cinemático de una pata del
+Go2: abducción de cadera (\(q_{i,1}\), eje \(x\)), muslo (\(q_{i,2}\), eje
+\(y\)) y rodilla (\(q_{i,3}\), eje \(y\)), con las longitudes \(d\), \(l_1\) y
+\(l_2\).}{Cadena cinemática de una pata del Go2 y sus tres juntas. La abducción de
+cadera gira alrededor del eje \(x\) del cuerpo; el muslo y la rodilla giran
+alrededor del eje \(y\). Las longitudes corresponden a la descripción \texttt{URDF}
+utilizada en la simulación \citep{UnitreeGo2ROS2}.}
+
+\paragraph{Cinemática directa de una pata.}
+Con esta convención, la posición del pie \(i\) puede escribirse en forma cerrada.
+Ubicando el origen en el eje de la cadera y abreviando \(c_k = \cos q_{i,k}\),
+\(s_k = \sin q_{i,k}\), \(s_{23} = \sin(q_{i,2}+q_{i,3})\) y
+\(c_{23} = \cos(q_{i,2}+q_{i,3})\), la cinemática directa de la pata expresada en
+el marco del cuerpo es
 
 \begin{equation}
-M(q)\ddot{q} + h(q,\dot{q}) = S^\top \tau + J_c(q)^\top \lambda,
+{}^{b}\!p_{f_i}(q_i) =
+{}^{b}r_{h_i} +
+\begin{bmatrix}
+-\,(l_1 s_2 + l_2 s_{23}) \\[2pt]
+\;\; d\, c_1 + (l_1 c_2 + l_2 c_{23})\, s_1 \\[2pt]
+\;\; d\, s_1 - (l_1 c_2 + l_2 c_{23})\, c_1
+\end{bmatrix},
+\qquad i \in \{1,2,3,4\}.
+\label{eq:leg_forward_kinematics}
+\end{equation}
+
+El primer término sitúa la cadera sobre el torso; el segundo describe, en el
+plano sagital, la cadena muslo--pantorrilla, y la abducción \(q_{i,1}\) la inclina
+lateralmente. Esta expresión hace explícito el mapeo \({}^{b}\!p_{f_i}(q_i)\) que
+en el resto de la sección aparece de forma compacta.
+
+Desde el punto de vista del modelado, un cuadrúpedo es un sistema multicuerpo
+con base flotante y restricciones de contacto. Si
+\(\bar q = ({}^{w}x_b,\, q_a)\) reúne la pose del torso \({}^{w}x_b\) y la
+configuración articular \(q_a \in \mathbb{R}^{12}\) definida arriba, una forma
+compacta de sus ecuaciones de movimiento es
+
+\begin{equation}
+M(\bar q)\,\ddot{\bar q} + h(\bar q,\dot{\bar q}) = S^\top \tau + J_c(\bar q)^\top \lambda,
 \label{eq:quadruped_dynamics}
 \end{equation}
 
-donde \(M(q)\) es la matriz de inercia, \(h(q,\dot{q})\) agrupa términos de
-gravedad, Coriolis y otros efectos no lineales, \(\tau\) es el vector de
-torques articulares, \(S\) selecciona las coordenadas actuadas, \(J_c(q)\) es
-el Jacobiano de contacto y \(\lambda\) representa las fuerzas de reacción en los
-pies \citep{Bellicoso2017,Fahmi2019}. Esta ecuación deja en evidencia una idea
-importante: la postura del torso no depende solamente de los motores, sino
-también de cómo el robot intercambia fuerzas con el suelo.
+donde \(M(\bar q)\) es la matriz de inercia del sistema completo (torso más
+patas), \(h(\bar q,\dot{\bar q})\) agrupa los términos de gravedad, Coriolis y
+demás efectos no lineales, \(\tau\) es el vector de torques articulares, \(S\)
+selecciona las coordenadas actuadas, \(J_c(\bar q)\) es el Jacobiano de contacto
+y \(\lambda\) las fuerzas de reacción en los pies
+\citep{Bellicoso2017,Fahmi2019,Lee2013Cheetah}. No desarrollamos aquí la forma
+explícita de \(M\), \(h\), \(J_c\) ni el reparto de fuerzas \(\lambda\): tanto la
+construcción del Jacobiano de contacto como la resolución de
+\eqref{eq:quadruped_dynamics} son problemas de control de cuerpo completo que el
+robot resuelve internamente, y cuyo tratamiento detallado se encuentra en la
+bibliografía citada. Lo relevante para este trabajo es la idea que la ecuación
+deja en evidencia: la postura del torso no depende solamente de los motores, sino
+también de cómo el robot intercambia fuerzas con el suelo. Esa es, justamente, la
+razón por la que más adelante se adopta un régimen reducido en el que dichas
+fuerzas de contacto no se modelan de forma explícita.
 
 Cuando un pie permanece apoyado sin deslizar, su velocidad relativa al suelo
 debe anularse. Esa condición de contacto puede expresarse como
@@ -1302,11 +1376,17 @@ J_c(q)\ddot{q} + \dot{J}_c(q,\dot{q})\dot{q} = 0.
 \end{equation}
 
 En un problema de locomoción completa estas restricciones conviven con cambios
-de apoyo, despegues y redistribución dinámica de cargas. En nuestro caso, en cambio, la situación es bastante más simple: el
-entorno utiliza al Go2 en un régimen postural, con movimiento suave y sin
-perseguir desplazamientos sobre el plano
-(Figura~\ref{fig:go2_postural_control_scheme}). Eso permite adoptar una lectura cuasiestática y concentrarnos en cómo una
-consigna de pose del cuerpo se transforma en una nueva geometría de patas.
+de apoyo, despegues y redistribución dinámica de cargas. El entorno propuesto, en
+cambio, utiliza al Go2 en un régimen postural: movimiento lento, suave y sin
+desplazamiento sobre el plano (Figura~\ref{fig:go2_postural_control_scheme}). En
+este régimen las cuatro patas se mantienen apoyadas y las velocidades y
+aceleraciones son lo bastante pequeñas como para que los términos inerciales y de
+contacto de \eqref{eq:quadruped_dynamics} resulten despreciables frente a la
+geometría; lo denominamos \emph{régimen cuasiestático}, en el sentido de que en
+cada instante el robot puede tratarse como si estuviera en equilibrio estático.
+Esto permite dejar de lado la dinámica de fuerzas y concentrarse en cómo una
+consigna de pose del cuerpo se traduce en una nueva configuración articular de
+las patas.
 
 \begin{figure}[H]
 \centering
@@ -1332,34 +1412,45 @@ en el mundo puede escribirse como
 
 donde \( {}^{w}\!p_b \) y \( {}^{w}\!R_b \) son la posición y orientación del
 torso, \(q_i\) es el vector articular de la pata \(i\), y
-\({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el marco del
-cuerpo. Esta relación resume una idea clave: la postura del torso no se controla
+\({}^{b}\!p_{f_i}(q_i)\) es la posición del pie expresada en el marco del cuerpo,
+dada explícitamente por la cinemática directa de pata
+\eqref{eq:leg_forward_kinematics}. Esta relación resume una idea clave: la postura del torso no se controla
 de forma aislada, sino a través de la geometría conjunta del cuerpo y de las
 cuatro patas. En otras palabras, ordenar un \emph{roll} o un \emph{pitch} del torso equivale a
 pedir una nueva organización espacial de los cuatro apoyos relativos al cuerpo.
 
-En un régimen de apoyo cuasiestático o de apoyo controlado, si asumimos que los
-puntos de contacto se mantienen aproximadamente fijos en el mundo, entonces una
-pose deseada del torso determina de manera unívoca qué posiciones deberían
-adoptar los pies en el marco del cuerpo:
+En el régimen cuasiestático, si los puntos de contacto se mantienen
+aproximadamente fijos en el mundo, entonces una pose deseada del torso determina
+de manera unívoca qué posiciones deberían adoptar los pies expresadas en el marco
+del cuerpo:
 
 \begin{equation}
 {}^{b}\!p_{f_i}^{\star} =
-({}^{w}\!R_b^{\star})^\top
-\left({}^{w}\!p_{f_i} - {}^{w}\!p_b^{\star}\right).
+({}^{w}\!R_b^{\star})^{\!\top}
+\left({}^{w}\!p_{f_i} - {}^{w}\!p_b^{\star}\right),
+\qquad \forall\, i \in \{1,2,3,4\},
 \label{eq:desired_foot_positions}
 \end{equation}
 
+donde el superíndice \((\cdot)^{\star}\) denota la consigna \emph{deseada}:
+\({}^{w}\!p_b^{\star}\) es la posición objetivo del torso y
+\({}^{w}\!R_b^{\star}\) su orientación objetivo. En
+\eqref{eq:desired_foot_positions} intervienen tanto la traslación como la
+\emph{orientación} del cuerpo: es precisamente la rotación
+\({}^{w}\!R_b^{\star}\) la que, al inclinar el torso, modifica la posición que
+cada pie fijo en el mundo ocupa visto desde el cuerpo. Por eso ordenar un
+\emph{roll} o un \emph{pitch} del torso equivale a pedir una nueva distribución de
+los cuatro apoyos relativos al cuerpo, y no solo un corrimiento vertical.
+
 Esta ecuación es la base cinemática del control postural empleado en robots
-cuadrúpedos: en lugar de mandar directamente una embarcación virtual, se manda
-una pose del cuerpo y se reconfiguran las patas para realizarla de manera
-coherente \citep{Bellicoso2017,Fahmi2019}. Esa misma idea es la que hace
-posible utilizar al Go2 como plataforma marina sintética. En nuestro entorno
-la entrada física relevante no es una secuencia de torques individuales, sino
-una consigna postural del torso con \(x=y=0\), \emph{yaw} nulo y variaciones en
-altura, \emph{roll} y \emph{pitch}. Conceptualmente, esa consigna no describe directamente la
-postura articular de las patas, sino la pose deseada del cuerpo que el sistema de
-control debe realizar.
+cuadrúpedos: en lugar de comandar individualmente cada actuador, se comanda una
+pose del cuerpo y se reconfiguran las patas para realizarla de manera coherente
+\citep{Bellicoso2017,Fahmi2019}. Esa misma idea es la que permite utilizar al Go2
+como plataforma marina sintética. En el entorno propuesto la entrada física
+relevante no es una secuencia de torques individuales, sino una consigna postural
+del torso con \(x=y=0\), \emph{yaw} nulo y variaciones en altura, \emph{roll} y
+\emph{pitch}. Esa consigna no describe directamente la postura articular de las
+patas, sino la pose deseada del cuerpo que el sistema de control debe realizar.
 
 También resulta útil introducir una noción elemental de estabilidad. Si los
 cuatro pies apoyados definen en el plano una envolvente convexa
@@ -1368,22 +1459,34 @@ cuatro pies apoyados definen en el plano una envolvente convexa
 un equilibrio estático simple:
 
 \begin{equation}
-p_{\text{CoM}}^{xy} \in \mathcal{P}_s.
+p_{\text{CoM}}^{xy} \in \mathcal{P}_s,
 \label{eq:support_polygon_condition}
 \end{equation}
 
-Aunque en la simulación no resolvemos explícitamente un problema de estabilidad
-con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
-de \emph{roll}, \emph{pitch} y \emph{heave} deben permanecer acotadas. Si la consigna postural fuera
-excesiva, el robot dejaría de comportarse como una plataforma controlada y
-aparecerían limitaciones mecánicas o configuraciones poco realistas para el
-objetivo del entorno.
+como se ilustra en la Figura~\ref{fig:support_polygon}.
 
-Además, alrededor de una postura nominal puede obtenerse una lectura física muy
-intuitiva mediante una linealización de primer orden. Si \(\delta p_b\) es una
-pequeña traslación del torso y \(\delta \omega\) una pequeña rotación, la
-variación requerida en la posición del pie \(i\) expresada en el cuerpo se
-aproxima por
+% TODO(figura): reemplazar el placeholder por un esquema del polígono de soporte
+% (envolvente convexa de los cuatro pies) con la proyección del CoM en su interior.
+\figureplaceholder{fig:support_polygon}{Vista superior de los cuatro pies
+apoyados, su envolvente convexa \(\mathcal{P}_s\) (polígono de soporte) y la
+proyección horizontal del centro de masa \(p_{\text{CoM}}^{xy}\) en su
+interior.}{Polígono de soporte del Go2 en apoyo cuadrúpedo. El equilibrio estático
+simple requiere que la proyección horizontal del centro de masa permanezca dentro
+de la envolvente convexa de los cuatro pies.}
+
+Aunque en la simulación no se resuelve explícitamente un problema de estabilidad
+con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
+de \emph{roll}, \emph{pitch} y \emph{heave} deben permanecer acotadas. Si la
+consigna postural fuera excesiva, el robot dejaría de comportarse como una
+plataforma controlada y aparecerían limitaciones mecánicas o configuraciones poco
+realistas para el objetivo del entorno.
+
+Además, alrededor de una postura nominal puede obtenerse una lectura física
+mediante una linealización de primer orden. Si \(\delta p_b\) es una pequeña
+traslación del torso y \(\delta \omega\) una pequeña rotación (representada por su
+vector de rotación instantánea), la variación de la posición del pie \(i\)
+\emph{expresada en el marco del cuerpo} —no la del pie en el mundo, que permanece
+fijo— se aproxima por
 
 \begin{equation}
 \delta {}^{b}\!p_{f_i}
@@ -1393,41 +1496,144 @@ aproxima por
 \label{eq:body_variation_to_feet}
 \end{equation}
 
-donde \( {}^{b}\!p_{f_i,0} \) es la posición nominal del pie. Esta expresión
-permite interpretar directamente el efecto de cada grado de libertad: un cambio
-simétrico de altura afecta a las cuatro patas de manera parecida y genera
-\emph{heave}; una diferencia entre patas izquierdas y derechas induce \emph{roll}; y una
-diferencia entre patas delanteras y traseras induce \emph{pitch}. En otras palabras, la
-dinámica marina reducida se traduce en una redistribución geométrica de apoyo.
-De este modo, cada componente del oleaje sintético puede asociarse con una
-modificación física concreta del robot.
+donde \(\times\) denota el producto vectorial y \({}^{b}\!p_{f_i,0}\) es la
+posición nominal del pie en el cuerpo (el subíndice \(0\) indica el punto de
+linealización, no es un índice de pata). Conviene subrayar la interpretación,
+porque es sutil: como los pies permanecen apoyados y fijos en el mundo, lo que
+cambia físicamente no es la ubicación de los pies, sino la \emph{configuración
+articular} que el robot adopta para sostener el nuevo torso. Leída a través de la
+cinemática inversa de pata, \eqref{eq:body_variation_to_feet} indica cómo deben
+actuarse las juntas: un descenso o ascenso simétrico del torso (\(\delta p_b\)
+vertical) flexiona o extiende de forma coordinada el muslo (\(q_{i,2}\)) y la
+rodilla (\(q_{i,3}\)) de las cuatro patas y produce \emph{heave}; una rotación
+\(\delta\omega\) que levanta un costado respecto del otro exige configuraciones
+articulares distintas entre las patas izquierdas y derechas e induce \emph{roll};
+y una rotación que separa la parte delantera de la trasera induce \emph{pitch}. De
+este modo, cada componente del oleaje sintético se asocia con un patrón concreto
+de actuación articular, sin que los pies se desplacen sobre el suelo.
 
-Para llevar esa consigna al espacio articular, cada pata satisface una relación
-de cinemática diferencial del tipo
+Para llevar esa consigna al espacio articular hay que resolver, para cada pata,
+el problema inverso de \eqref{eq:leg_forward_kinematics}: dados los ángulos
+\(q_i\) que producen una posición de pie objetivo. Conviene presentarlo en sus
+dos formas habituales: la diferencial, a través del Jacobiano de pata, y la
+cerrada, mediante una solución analítica.
+
+\paragraph{Jacobiano de pata.}
+Derivando la cinemática directa \eqref{eq:leg_forward_kinematics} respecto de
+\(q_i\) se obtiene la relación de cinemática diferencial
 
 \begin{equation}
 \delta {}^{b}\!p_{f_i} = J_i(q_i)\,\delta q_i,
+\qquad
+J_i(q_i) = \frac{\partial\, {}^{b}\!p_{f_i}}{\partial q_i} \in \mathbb{R}^{3\times 3},
 \label{eq:leg_jacobian}
 \end{equation}
 
-de modo que, cuando el Jacobiano \(J_i\) es invertible o admite una
-pseudoinversa adecuada, puede obtenerse
+cuya forma explícita, con \(A = l_1 c_2 + l_2 c_{23}\) y
+\(B = l_1 s_2 + l_2 s_{23}\), es
 
 \begin{equation}
-\delta q_i = J_i^{\dagger}(q_i)\,\delta {}^{b}\!p_{f_i}.
+J_i(q_i) =
+\begin{bmatrix}
+0 & -A & -l_2 c_{23} \\[2pt]
+A\,c_1 - d\,s_1 & -B\,s_1 & -l_2 s_{23}\,s_1 \\[2pt]
+A\,s_1 + d\,c_1 & \;\;B\,c_1 & \;\;l_2 s_{23}\,c_1
+\end{bmatrix}.
+\label{eq:leg_jacobian_explicit}
+\end{equation}
+
+Como \(J_i\) es cuadrada de \(3\times 3\), cuando es no singular puede invertirse
+directamente para obtener la corrección articular asociada a una corrección
+deseada del pie,
+
+\begin{equation}
+\delta q_i = J_i(q_i)^{-1}\,\delta {}^{b}\!p_{f_i},
 \label{eq:leg_inverse_differential_kinematics}
 \end{equation}
 
-Este paso no solo conecta la pose deseada del torso con los doce actuadores del
-Go2, sino que explica por qué el robot puede generar inclinaciones observables
-sin necesidad de desplazarse en el plano. Esta propiedad es
-fundamental: buscamos una plataforma que perturbe de forma controlada la
-geometría vista por la cámara, no un sistema de navegación horizontal completo.
-En términos de interpretación, el Jacobiano de cada pata traduce una pequeña
-corrección en la ubicación deseada del pie en una pequeña corrección de hombro,
-muslo y rodilla. Ese puente entre espacio cartesiano y espacio articular es lo
-que vuelve realizable una consigna postural del torso como la que adopta el
-entorno.
+y cerca de configuraciones singulares (pata estirada, \(q_{i,3}\to 0\)) se
+sustituye la inversa por la pseudoinversa amortiguada
+\(J_i^{\dagger}\) \citep{Siciliano2009,Lee2013Cheetah}. Cada columna de
+\eqref{eq:leg_jacobian_explicit} indica cómo una junta —abducción de cadera,
+muslo y rodilla, en ese orden— desplaza el pie en el cuerpo; el Jacobiano es, por
+lo tanto, el puente entre el espacio cartesiano del pie y el espacio articular de
+la pata, y es el mismo objeto que aparece, agregado para las cuatro patas, en el
+Jacobiano de contacto \(J_c\) de \eqref{eq:quadruped_dynamics}.
+
+\paragraph{Cinemática inversa analítica.}
+Para una pose completa, y no solo una corrección infinitesimal, la pata de tres
+juntas admite además una solución cerrada que es la que efectivamente computa el
+\emph{stack} de simulación \citep{UnitreeGo2ROS2,CHAMP}. Sea
+\(\tilde p_i = {}^{b}\!p_{f_i}^{\star} - {}^{b}r_{h_i} = (p_x, p_y, p_z)\) la
+posición de pie objetivo expresada en el marco de la cadera. La abducción se
+resuelve a partir de la proyección sobre el plano frontal \(y\)--\(z\),
+
+\begin{equation}
+A = \sqrt{p_y^2 + p_z^2 - d^2},
+\qquad
+q_{i,1} = \operatorname{atan2}(p_z, p_y) + \operatorname{atan2}(A, d),
+\label{eq:ik_hip}
+\end{equation}
+
+y, una vez fijada la abducción, el muslo y la rodilla resultan de un problema
+plano de dos eslabones resuelto por el teorema del coseno
+\citep{Siciliano2009,CHAMP}. Con el alcance en el plano sagital
+\(L = \sqrt{p_x^2 + A^2}\),
+
+\begin{equation}
+q_{i,3} = -\arccos\!\left(\frac{L^2 - l_1^2 - l_2^2}{2\,l_1 l_2}\right),
+\qquad
+q_{i,2} = \operatorname{atan2}(p_x, A) -
+\operatorname{atan2}\!\big(l_2 \sin q_{i,3},\; l_1 + l_2 \cos q_{i,3}\big),
+\label{eq:ik_thigh_knee}
+\end{equation}
+
+salvo los signos que dependen del lado de la pata (a través de \(d\)) y de la
+convención de flexión de la rodilla. Las ecuaciones
+\eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} hacen explícito que cada componente
+de la consigna postural se traduce en valores concretos de las tres juntas
+—abducción de cadera \(q_{i,1}\), muslo \(q_{i,2}\) y rodilla \(q_{i,3}\)— sin que
+ello implique desplazamiento del pie sobre el plano: la plataforma perturba de
+forma controlada la geometría que observa la cámara, no opera como un sistema de
+navegación horizontal.
+
+\paragraph{Resolución en la práctica.}
+En el entorno propuesto no se comandan directamente los doce ángulos ni los
+torques de \eqref{eq:quadruped_dynamics}. Se envía una consigna de pose del torso
+(altura, \emph{roll} y \emph{pitch}) al controlador de alto nivel del robot, que
+internamente recorre la cadena descrita: convierte la pose deseada en posiciones
+de pie en el cuerpo \eqref{eq:desired_foot_positions}, resuelve la cinemática
+inversa por pata \eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} y sigue las
+referencias articulares con sus lazos de control. En simulación esa lógica
+proviene del \emph{stack} abierto de Go2 sobre {ROS}~2
+\citep{UnitreeGo2ROS2}, construido sobre el \emph{framework} cuadrúpedo {CHAMP}
+\citep{CHAMP}, que implementa exactamente la cinemática directa e inversa de pata
+de esta sección. Esta arquitectura sigue el paradigma de control de pata basado
+en el Jacobiano popularizado por el MIT Cheetah \citep{Lee2013Cheetah}, en el que
+la cinemática directa y el Jacobiano de pata mapean la consigna cartesiana del pie
+al espacio articular y los lazos de impedancia/PD generan los torques
+(Figura~\ref{fig:leg_control_chain}); la principal diferencia con el Go2 es
+mecánica —el Cheetah emplea una pata pantográfica y el Go2 una cadena serial—,
+pero la estructura de control es la misma. Sobre el robot real, el controlador
+embarcado de Unitree cierra el lazo postural con capas adicionales de equilibrio y
+compensación de contacto —en parte basadas en modelos aprendidos— que no
+modelamos de forma explícita y que absorben los efectos no capturados por \(M\),
+\(C\), \(D\) y \(g\). Por eso, para los fines de este trabajo, alcanza con
+caracterizar la cadena cinemática que vincula la consigna de pose con la
+configuración articular, y verificar empíricamente la fidelidad del seguimiento
+(Sección~\ref{sec:experimentacion}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/diagrams/mit_cheetah_leg_control.png}
+\caption{Cadena de control de una pata basada en el Jacobiano, que el
+\emph{stack} de simulación adopta: el generador de consignas fija la posición de
+pie deseada \([p_x, p_y]\), la cinemática directa y el Jacobiano de pata la
+vinculan con el espacio articular, y un lazo de impedancia/PD genera los torques;
+el Jacobiano de contacto \(J_c(q)\) introduce la fuerza externa de apoyo
+\(F_{\text{ext}}\). Adaptado de \citet{Lee2013Cheetah}.}
+\label{fig:leg_control_chain}
+\end{figure}
 
 También conviene distinguir los marcos de referencia que reaparecen a lo largo
 de todo el \textit{pipeline}. El marco \texttt{world} \(\{w\}\) funciona como
@@ -1435,15 +1641,17 @@ referencia global de Gazebo. El marco \texttt{base\_footprint} \(\{bf\}\)
 resume la referencia del robot sobre el plano de apoyo y puede pensarse como la
 ``sombra'' del cuadrúpedo sobre el suelo. El marco \texttt{base\_link}
 \(\{bl\}\), en cambio, está asociado al torso y es el que transporta
-efectivamente el marcador. Sobre esa base se define el marco del ArUco
+efectivamente el marcador; es exactamente el mismo marco del cuerpo \(\{b\}\)
+empleado en las ecuaciones de cinemática de esta sección, de modo que
+\(\{b\} \equiv \{bl\}\). Sobre esa base se define el marco del ArUco
 \(\{a\}\), rígidamente unido a la tabla montada sobre el torso. Para la cámara,
 en cambio, conviene distinguir una cadena propia de marcos; sin embargo, la
 observación visual y la pose publicada por el detector quedan finalmente
 expresadas en el marco óptico \(\{c\}\).
-En la notación cinemática de las ecuaciones anteriores, este torso coincide con
-el marco del cuerpo del robot; aquí adoptamos los nombres ROS porque son los que
-reaparecen después en TF y en el postproceso. Esta organización se resume en la
-Figura~\ref{fig:theory_frames_overview}.
+Adoptamos los nombres {ROS} (\texttt{base\_link}, \texttt{base\_footprint})
+porque son los que reaparecen después en {TF} y en el postproceso, y los usamos
+de forma intercambiable con la notación cinemática \(\{b\}\) introducida antes.
+Esta organización se resume en la Figura~\ref{fig:theory_frames_overview}.
 
 \begin{figure}[H]
 \centering
@@ -2104,7 +2312,7 @@ materializan el contraste entre objetivo, actuación y respuesta.
 
 
 
-\section{Experimentación y resultados}
+\section{Experimentación y resultados} \label{sec:experimentacion}
 
 Una vez definido el \textit{pipeline} y explicitados los criterios metodológicos, la
 evidencia se presenta como una progresión desde el caso más controlado hasta el
