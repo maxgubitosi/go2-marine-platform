@@ -654,9 +654,7 @@ sensado, estimación y evaluación. En este trabajo esa infraestructura está da
 por ROS2 y Gazebo Classic. ROS2 funciona como \emph{middleware} del sistema: en
 lugar de concebir el experimento como un programa monolítico, lo organizamos
 como un grafo de procesos especializados que intercambian información mediante
-publicación y suscripción tipada \citep{ros2_basic_concepts}.
-% TODO(figura, sugerencia tutor #5): agregar un diagrama del grafo de nodos/tópicos
-% (conexión y comunicación entre nodos) y referenciarlo desde aquí. Pendiente fase de gráficos. Esta decisión no
+publicación y suscripción tipada \citep{ros2_basic_concepts}. Esta decisión no
 es un detalle de implementación. Es la que permite desacoplar la generación del
 movimiento, la fuente de imagen, la estimación visual y el análisis posterior,
 sin perder coherencia entre ellas.
@@ -694,9 +692,7 @@ cámara o desde un marco global sin mezclar descripciones incompatibles.
 Gazebo Classic aporta la otra mitad del ecosistema: el entorno de simulación
 física y sensorial. Conceptualmente, Gazebo integra la evolución dinámica del
 mundo con la generación de sensores, el renderizado y la interfaz de
-visualización \citep{gazebo_classic_architecture}.
-% TODO(figura, sugerencia tutor #6): agregar una captura de la interfaz de Gazebo
-% con la escena del Go2. Pendiente fase de gráficos. Para este trabajo eso resulta
+visualización \citep{gazebo_classic_architecture}. Para este trabajo eso resulta
 especialmente valioso porque la postura del Go2, la imagen observada por la
 cámara y gran parte del \textit{ground truth} provienen de un mismo estado subyacente
 del simulador. No trabajamos, entonces, con una animación separada de los
