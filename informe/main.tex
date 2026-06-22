@@ -1717,8 +1717,12 @@ inversa por pata \eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} y sigue las
 referencias articulares con sus lazos de control. En simulación esa lógica
 proviene del \emph{stack} abierto de Go2 sobre {ROS}~2
 \citep{UnitreeGo2ROS2}, construido sobre el \emph{framework} cuadrúpedo {CHAMP}
-\citep{CHAMP}, que implementa exactamente la cinemática directa e inversa de pata
-de esta sección. Esta arquitectura sigue el paradigma de control de pata basado
+\citep{CHAMP}. En este trabajo utilizamos un \emph{fork} propio de ese
+repositorio, adaptado para integrarse con el generador de movimiento marino, los
+archivos de lanzamiento de Gazebo y el resto del \textit{pipeline} experimental
+\citep{UnitreeGo2ROS2Fork}. Ese \emph{stack} implementa la cinemática directa e
+inversa de pata sobre la que se apoya la consigna postural descrita en esta
+sección. Esta arquitectura sigue el paradigma de control de pata basado
 en el Jacobiano popularizado por el MIT Cheetah \citep{Lee2013Cheetah}, en el que
 la cinemática directa y el Jacobiano de pata mapean la consigna cartesiana del pie
 al espacio articular y los lazos de impedancia/PD generan los torques
@@ -2865,24 +2869,21 @@ completa del robot saturaba la PC y degradaba los registros. Aislar cada
 plano permitió obtener tanto evidencia visual del eslabón de percepción
 como métricas dinámicas limpias del eslabón de actuación.
 
-% TODO (figura): los tres cuadros muestran demasiado a la persona y sus pies
-% al costado del Go2. Recortar la mitad superior o aplicar edición con IA
-% para enfocar solo el robot + marcador antes de la entrega final.
 \begin{figure}[H]
 \centering
 \begin{subfigure}{0.32\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t00.png}
+\includegraphics[width=\linewidth,keepaspectratio]{figures/images/lab_aruco_realtime_t00.png}
 \caption{Inicio}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t26.png}
+\includegraphics[width=\linewidth,keepaspectratio]{figures/images/lab_aruco_realtime_t26.png}
 \caption{Mitad}
 \end{subfigure}\hfill
 \begin{subfigure}{0.32\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figures/images/lab_aruco_realtime_t49.png}
+\includegraphics[width=\linewidth,keepaspectratio]{figures/images/lab_aruco_realtime_t49.png}
 \caption{Final}
 \end{subfigure}
 \caption{Detección de ArUco en tiempo real durante la sesión visual del

@@ -37,6 +37,10 @@ output.avi
 !informe/figures/**/*.jpg
 !informe/figures/**/*.jpeg
 !informe/figures/**/*.pdf
+# Backups temporales creados al editar figuras
+informe/figures/**/*.orig.png
+informe/figures/**/*.orig.jpg
+informe/figures/**/*.orig.jpeg
 
 # CSV generados
 *.csv
@@ -44,6 +48,7 @@ output.avi
 # Python venv y datasets
 .venv_plot/
 informe/scripts/.mplconfig/
+informe/scripts/.pydeps/
 marine_robot_dataset/venv/
 marine_robot_dataset/datasets/
 **/__pycache__/
