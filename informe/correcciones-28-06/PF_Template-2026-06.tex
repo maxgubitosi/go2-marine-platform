@@ -1,0 +1,244 @@
+\documentclass[12pt,a4paper]{report}
+
+% --- Paquetes de Idioma y Codificación ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[T1]{fontenc}
+
+% --- Formato de Página y Márgenes ---
+\usepackage[left=3cm,right=3cm,top=2.5cm,bottom=2.5cm,marginparwidth=1.75cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing % Interlineado 1.5
+
+% --- Configuración de Indice y Apendices ---
+\addto\captionsspanish{\renewcommand{\listfigurename}{Lista de Figuras}}
+\addto\captionsspanish{\renewcommand{\listtablename}{Lista de Tablas}}
+\setcounter{tocdepth}{2} % Limita el índice hasta el nivel de \section (Nivel 1) o \subsection (Nivel 2)
+\usepackage{appendix} % Manejo avanzado de Anexos
+\usepackage[nottoc]{tocbibind} % Incluye automáticamente Bibliografía, Índice de Figuras y Tablas en el TOC
+
+% --- Configuración de Bibliografía ---
+% \usepackage[backend=biber,style=apa]{biblatex}
+\usepackage[backend=biber,style=ieee]{biblatex}
+\addbibresource{bibliografia.bib} % Archivo de referencias
+
+% --- Paquetes Generales ---
+\usepackage{amsmath, amsfonts, amssymb} % Matemáticas
+\usepackage{graphicx} % Imágenes
+\usepackage{booktabs} % Tablas
+\usepackage{hyperref} % Enlaces y marcadores
+\usepackage{array} % Mejor manejo de columnas en tablas
+\usepackage{microtype} % Optimiza el espaciado entre letras y evita líneas mal cortadas
+\usepackage[inline]{enumitem} % Formato horizontal a las keywords
+
+% --- Gestión de Código Fuente ---
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\backgroundcolor,   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{purple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+% --- Estilo de títulos --- 
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\thechapter. }{0pt}{\huge} % Para 'report' quita la palabra "Capítulo"
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection. }{0pt}{\large}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection. }{0pt}{\normalsize}
+
+% --- Estilo de Hipervínculos ---
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,          % Enlaces internos en negro
+    citecolor=blue!40!black,   % Citas en azul marino oscuro
+    urlcolor=blue!70!black     % URLs en azul académico
+}
+
+
+% ======================================================
+% COMIENZO DEL DOCUMENTO
+% ======================================================
+
+\begin{document}
+
+\pagenumbering{roman} 
+\renewcommand{\thepage}{\romannumeral\value{page}}
+
+% --- PORTADA ---
+\begin{titlepage}
+
+    \begin{figure}
+    \centering
+    %descargar imagen desde https://images.udesa.edu.ar/sites/default/files/2023-04/logo_azul_vert_hipng.png
+    \includegraphics[width=0.45\linewidth]{logo_azul_vert_hipng.png}
+    \end{figure}
+
+    \centering
+    {\bfseries \Large Universidad de San Andrés \par} \vspace{3mm}
+    {\Large Departamento de Ingeniería \par} \vspace{3mm}
+    {\Large Ingeniería en Inteligencia Artificial \par} \vspace{5mm}
+
+    \noindent\rule{\textwidth}{1pt}\par \vspace{5mm}
+    {\LARGE Trabajo de Graduación  \par} \vspace{10mm}
+    {\bfseries\LARGE Título del trabajo \par} \vspace{5mm} % MODIFICAR
+    \noindent\rule{\textwidth}{1pt}\par \vspace{5mm}
+
+    % Comentar si es la presentación definitiva
+    % {\Large Versión Preliminar  \par}  
+
+    \vfill
+    \begin{flushleft}
+    % Si el PF es grupal comentar
+    % {\Large \textbf{Autor:} Nombre y Apellido \par} \vspace{0mm}
+    % {\Large \textbf{Legajo:} XXXXXXXXX \par} \vspace{5mm}
+    
+    % Si el PF es grupal descomentar
+    {\Large \textbf{Autores y Legajos:} \\ Nombre y Apellido - Legajo \\ Nombre y Apellido - Legajo \par} \vspace{5mm}
+
+    {\Large \textbf{Mentor:} Nombre y Apellido \par} % Incluir Dr., Ing. o Lic. si aplica
+    % Descomentar si hay comentor
+    % \vspace{5mm}
+    {\Large \textbf{Comentor:} Nombre y Apellido \par}
+    \end{flushleft}
+    \vfill
+    % \vspace{15mm}    
+    {\large Victoria, Buenos Aires\par} \vspace{3mm}
+    {\large  Mes año  \par} % Ej: Mayo 2026
+\end{titlepage}
+
+
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+Breve descripción (300-500 palabras) del problema, el enfoque de su trabajo y los principales resultados y conclusiones.
+
+\vspace{2cm} % Separación formal respecto al texto del abstract
+\noindent\textbf{Palabras clave:} 
+\begin{itemize*}[label={}, afterlabel={}, itemjoin={; }]
+    \item Aprendizaje automático
+    \item Visión artificial
+    \item Optimización de procesos
+    \item Ingeniería de software
+\end{itemize*}
+\newpage
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+El resumen en inglés. No tiene que tener nada distinto al resumen en español.
+
+\vspace{2cm}
+\noindent\textbf{Keywords:} 
+\begin{itemize*}[label={}, afterlabel={}, itemjoin={; }]
+    \item Machine learning
+    \item Computer vision
+    \item Process optimization
+    \item Software engineering
+\end{itemize*}
+\newpage
+
+\chapter*{Agradecimientos}
+\addcontentsline{toc}{chapter}{Agradecimientos}
+\newpage
+
+% --- Índice y listas de tablas y figuras ---
+\newpage
+\tableofcontents % Índice general
+\newpage
+\listoftables
+\newpage
+\listoffigures
+
+% --- Símbolos y Abreviaciones ---
+\newpage
+\chapter*{Lista de Símbolos y Abreviaciones}
+\addcontentsline{toc}{chapter}{Lista de Símbolos y Abreviaciones}
+
+\begin{spacing}{1.2}
+\noindent
+\begin{tabular}{@{} p{2.5cm} l @{}}
+    \textbf{ML}   & Machine Learning (Aprendizaje Automático) \\
+    \textbf{IA}   & Inteligencia Artificial \\
+    \textbf{DL}   & Deep Learning (Aprendizaje Profundo) \\
+    \textbf{CNN}  & Convolutional Neural Network (Red Neuronal Convolucional) \\
+\end{tabular}
+\end{spacing}
+
+
+% --- CONTENIDO ---
+\newpage\pagenumbering{arabic}
+
+\chapter{Introducción}
+\label{ch:Introducción}
+Explicación del porqué de la investigación. ¿Cuál es el problema real o la brecha de conocimiento que justifica este trabajo? ¿Por qué es relevante en el contexto actual?
+Contexto y motivación, objetivos, estado del arte, organización, contribuciones.
+
+\section{Estado del arte}
+Revisión bibliográfica de las investigaciones previas. Se deben citar los trabajos clave utilizando el comando \texttt{\textbackslash cite\{key\}}, si se quiere nombrar a los autores se puede usar \texttt{\textbackslash textcite\{key\}}. Veamos un ejemplo a continuación.
+
+Uno de los hitos más significativos en el área del aprendizaje profundo ha sido la introducción de las redes residuales. Según plantean \textcite{he2016deep}, la implementación de conexiones de identidad permite el entrenamiento de arquitecturas extremadamente profundas, mitigando el problema del desvanecimiento del gradiente. Este enfoque no solo optimizó la precisión en tareas de clasificación, sino que redefinió el estado del arte en la visión por computadora moderna \cite{he2016deep}.
+
+\chapter{Desarrollo del trabajo}
+\label{ch:Desarrollo}
+Presentación del marco teórico, metodología y resultados de su trabajo. Pueden usar la cantidad de capítulos que necesiten.
+Veamos un ejemplo del uso de figuras:
+
+\section{Metodología}
+% --- Ejemplo de cómo incluir una Figura ---
+Se plantea el flujo metodológico general detallado en la Figura \ref{fig:metodologia} y Tabla \ref{tab:tabla_random}.
+
+\begin{figure}[htbp]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{ruta_de_tu_imagen.png} 
+    \rule{6cm}{4cm} % Esto genera un recuadro negro de ejemplo (borrar al usar una imagen)
+    \caption{Diagrama de bloques de la metodología propuesta.}
+    \label{fig:metodologia}
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\caption{Ejemplo de tabla básica.}
+\label{tab:tabla_random}
+\begin{tabular}{|c|c|c|}
+\hline
+Columna 1 & Columna 2 & Columna 3 \\ \hline
+Dato A1 & Dato B1 & Dato C1 \\ \hline
+Dato A2 & Dato B2 & Dato C2 \\ \hline
+\end{tabular}
+\end{table}
+
+% --- BIBLIOGRAFIA ---
+\chapter{Bibliografía}
+\printbibliography[heading=none]
+
+% --- ANEXOS / APÉNDICES ---
+\newpage
+\appendix
+\clearpage
+% \addappheadtotoc
+% \appendixpage
+
+\chapter{Primer Anexo}
+\label{anexoA}
+
+\chapter{Segundo Anexo}
+\label{anexoB}
+
+\end{document} 

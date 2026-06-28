@@ -1,60 +1,97 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[left=3cm,right=3cm,top=2cm,bottom=2cm,marginparwidth=1.75cm]{geometry}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+% =====================================================================
+%  Informe PF -- adaptado al template institucional (Matias Perlin, 2026).
+%  Clase 'report' (capitulos numerados), front matter institucional,
+%  bibliografia biblatex/IEEE. Compilar con XeLaTeX + Biber (usa fontspec).
+% =====================================================================
+\documentclass[12pt,a4paper]{report}
+
+% --- Idioma y codificacion (XeLaTeX: fontspec gestiona la codificacion) ---
 \usepackage[spanish,es-tabla]{babel}
+\usepackage{fontspec}          % fuente por defecto Latin Modern (igual que el template)
+
+% --- Formato de pagina y margenes (segun template) ---
+\usepackage[left=3cm,right=3cm,top=2.5cm,bottom=2.5cm,marginparwidth=1.75cm]{geometry}
 \usepackage[nodisplayskipstretch]{setspace}
-\onehalfspacing
-\usepackage{multicol}
-\usepackage{adjustbox}
-\usepackage{tikz}
-\usepackage{multirow,array}
-\usepackage{ragged2e}
-\usepackage{enumitem}
+\onehalfspacing                % Interlineado 1.5
+
+% --- Indice, listas y anexos (segun template) ---
+\setcounter{tocdepth}{2}       % Indice hasta \subsection (nivel 2)
+\usepackage{appendix}
+\usepackage[nottoc]{tocbibind} % Bibliografia/listas en el TOC
+\addto\captionsspanish{%
+  \renewcommand{\contentsname}{Índice general}%
+  \renewcommand{\listfigurename}{Lista de Figuras}%
+  \renewcommand{\listtablename}{Lista de Tablas}%
+}
+
+% --- Bibliografia (IEEE, biber) ---
+\usepackage[backend=biber,style=ieee,natbib=true]{biblatex}
+\addbibresource{bibliography.bib}
+
+% --- Matematica ---
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{mathtools}
+\usepackage{upgreek}
+
+% --- Figuras, tablas y flotantes ---
+\usepackage{graphicx}
 \usepackage{float}
 \floatstyle{plaintop}
 \restylefloat{table}
-\usepackage{dcolumn}
-\usepackage{amsmath}
-\usepackage{mathtools}
-\usepackage{graphicx}
-\usepackage{pdflscape}
 \usepackage[labelfont=bf]{caption}
 \usepackage{subcaption}
 \usepackage{booktabs}
-\usepackage[hidelinks]{hyperref}
-\hypersetup{breaklinks=true}
-% Permite cortar \path/\url en más puntos (p. ej. tópicos largos en tablas).
-\usepackage{xurl}
-\usepackage[hang,flushmargin]{footmisc} 
-\usepackage{wrapfig, framed}
-\usepackage[section]{placeins}
+\usepackage{multirow,array}
+\usepackage{dcolumn}
+\usepackage{arydshln}
 \usepackage{threeparttable}
+\usepackage{adjustbox}
+\usepackage{wrapfig,framed}
+\usepackage{multicol}
+\usepackage{ragged2e}
 \usepackage{lscape}
-\usepackage{sectsty}
-\usepackage{tikz}
-\usepackage{lipsum}
-% \usepackage{subfig}
-\usepackage{pdfpages}
 \usepackage{pdflscape}
+\usepackage{pdfpages}
+\usepackage[section]{placeins}
+\usepackage{tikz}
+
+% --- Texto, listas y utilidades ---
+\usepackage[inline]{enumitem}
+\usepackage{microtype}
+\usepackage{soul}
+\usepackage{xcolor}
+\usepackage{comment}
+\usepackage{verbatim}
+\usepackage{endnotes}
+\usepackage[hang,flushmargin]{footmisc}
 \usepackage{etoolbox}
 \AtBeginEnvironment{quote}{\singlespacing\small}
 \newcommand\fnote[1]{\captionsetup{font=footnotesize}\caption*{#1}}
 \sloppy
-\usepackage{comment}
-\usepackage{txfonts}
-\usepackage{verbatim}
-\usepackage{endnotes}
-\usepackage{upgreek}
-\usepackage{arydshln}
-\usepackage{soul}
-\usepackage{xcolor}
-\usepackage{fontspec}
-\usepackage[backend=biber,style=ieee,natbib=true]{biblatex}
-\addbibresource{bibliography.bib}
-% Evita el aviso de todonotes (margen para notas al margen / \todo).
+
+% --- Estilo de titulos (segun template: "1. Titulo", sin la palabra "Capitulo") ---
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\thechapter. }{0pt}{\huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection. }{0pt}{\large}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection. }{0pt}{\normalsize}
+
+% --- Hipervinculos (segun template) ---
+\usepackage{hyperref}
+\hypersetup{
+    breaklinks=true,
+    colorlinks=true,
+    linkcolor=black,            % enlaces internos en negro
+    citecolor=blue!40!black,    % citas en azul marino
+    urlcolor=blue!70!black       % URLs en azul academico
+}
+\usepackage{xurl}              % permite cortar URLs/paths largos
+
+% --- Notas al margen / \todo ---
 \setlength{\marginparwidth}{2cm}
 \usepackage[colorinlistoftodos]{todonotes}
+
+% --- Comandos propios (placeholders de trabajo) ---
 \newcommand{\figureplaceholder}[3]{
 \begin{figure}[H]
 \centering
@@ -82,60 +119,60 @@
 }
 
 % Correcciones pendientes para la próxima pasada:
-% - Confirmar con Juan/Gastón la distinción mentor/comentor antes de modificar la portada.
+% - Confirmar con Juan/Gastón la distinción mentor/comentor en la portada
+%   (hoy figuran ambos como "Mentores"; el template permite separar Mentor/Comentor).
 % - Figura de marcos TF2: si sigue viéndose chica en PDF, regenerar o recortar
-%   figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf desde el SVG para quitar margen interno.
-% - Figuras de laboratorio 29--32: ubicar el script/datos fuente y regenerar los PNG con ejes,
-%   ticks y leyendas más grandes. LaTeX no puede agrandar tipografías ya rasterizadas.
-% - Redactar Abstract si se decide agregar version en ingles.
+%   figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf desde el SVG.
+% - Figuras de laboratorio: regenerar los PNG con ejes, ticks y leyendas más grandes
+%   (LaTeX no puede agrandar tipografías ya rasterizadas).
+% - Revisar el Abstract (traducción del Resumen) y redactar Agradecimientos.
 % - Reemplazar o justificar los placeholders de figuras pendientes antes de la versión final.
-
-\setcounter{tocdepth}{2}
-\addto\captionsspanish{\renewcommand{\contentsname}{Índice}}
-\let\sectionwithoutpagebreak\section
-\renewcommand{\section}{\clearpage\sectionwithoutpagebreak}
 
 \begin{document}
 
+
+% ======================================================
+% PORTADA (formato del template institucional)
+% ======================================================
 \begin{titlepage}
-    \begin{figure}
+
+    \begin{figure}[h]
     \centering
     \includegraphics[width=0.42\linewidth]{figures/setup/logoudesa.jpg}
     \end{figure}
 
     \centering
-    {\bfseries \Large Universidad de San Andrés \par}
-    \vspace{5mm}
-    {\Large Departamento Ingeniería \par}
-    \vspace{5mm}
-    {\Large Ingeniería en Inteligencia Artificial \par}
-    \vspace{10mm}
+    {\bfseries \Large Universidad de San Andrés \par} \vspace{3mm}
+    {\Large Departamento de Ingeniería \par} \vspace{3mm}
+    {\Large Ingeniería en Inteligencia Artificial \par} \vspace{5mm}
 
-    {\LARGE Trabajo de grado \par}
-    \vspace{10mm}
+    \noindent\rule{\textwidth}{1pt}\par \vspace{5mm}
+    {\LARGE Trabajo de Graduación \par} \vspace{10mm}
+    {\bfseries\LARGE Entorno de simulación para dinámica simplificada de plataformas marinas mediante un robot cuadrúpedo \par} \vspace{5mm}
+    \noindent\rule{\textwidth}{1pt}\par \vspace{5mm}
 
+    \vfill
+    \begin{flushleft}
+    {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par} \vspace{5mm}
 
-    {\bfseries\LARGE Entorno de simulación para dinámica simplificada de plataformas marinas mediante un robot cuadrúpedo \par}
+    % El template distingue Mentor/Comentor; mantenemos ambos como mentores
+    % hasta confirmar la distincion con Juan/Gaston (ver nota en el preambulo).
+    {\Large \textbf{Mentores:} Juan Ignacio Giribet, Gastón Castro \par}
+    \end{flushleft}
     \vfill
 
-    {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par}
-    \vspace{5mm}
-
-    {\Large \textbf{Mentores:} Juan Ignacio Giribet, Gastón Castro \par}
-    \vspace{15mm}
-    {\large Victoria, Buenos Aires\par}
-    \vspace{5mm}
+    {\large Victoria, Buenos Aires\par} \vspace{3mm}
     {\large Abril 2026 \par}
 \end{titlepage}
 \clearpage
 
-\tableofcontents
-\thispagestyle{empty}
-\clearpage
+\pagenumbering{roman}
 
-\section*{Resumen}
-\addcontentsline{toc}{section}{Resumen}
-
+% ======================================================
+% RESUMEN
+% ======================================================
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
 Este trabajo propone una alternativa de ensayo segura y reproducible para
 estudiar estimación de pose visual en el contexto de aterrizaje de drones sobre
 plataformas marinas en movimiento. En lugar de comenzar con pruebas directas
@@ -167,11 +204,87 @@ experimental útil de una plataforma marina oscilante y que el entorno propuesto
 permite estudiar percepción, movimiento y evaluación de forma progresiva,
 medible y reproducible.
 
+\vspace{2cm}
+\noindent\textbf{Palabras clave:}
+\begin{itemize*}[label={}, afterlabel={}, itemjoin={; }]
+    \item Estimación de pose
+    \item Plataformas marinas
+    \item Robot cuadrúpedo
+    \item Simulación robótica
+    \item Marcadores fiduciales
+    \item ROS 2
+\end{itemize*}
+\newpage
 
+% ======================================================
+% ABSTRACT  (traduccion del resumen -- revisar)
+% ======================================================
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+This work proposes a safe and reproducible testing alternative for studying visual pose estimation in the context of drone landing on moving marine platforms. Instead of starting with direct tests on a vessel or with complete landing maneuvers, a Unitree Go2 quadruped robot is used as an experimental platform to reproduce, under controlled conditions, a simplified marine-platform dynamics. In this way, the effects of the target surface's motion on visual perception are isolated, and a preliminary validation stage is obtained without compromising the integrity of the robotic systems involved.
 
-\section{Motivación} \label{sec:motivacion}
+The first part of the work is carried out in a robotics simulation environment. There, a platform-motion generator, a fiducial pattern observed from a fixed camera or from a camera onboard a simulated drone, and an offline evaluation against a reconstructible reference from the simulator are integrated. Pose estimation is formulated from the Perspective-\(n\)-Point (PnP) method, which recovers the relative pose of the visual pattern from its known geometry and the camera calibration. In the simulation tests, the system reproduces the global dynamics of the marker and preserves a consistent estimate of the main components of the motion under different observation configurations.
 
-\subsection{Aterrizaje sobre plataformas marinas en movimiento}
+The second part transfers the experimental logic to the real Go2. In the laboratory, it is verified that the postural setpoint reaches the robot without appreciable degradation and that the physical response preserves a measurable relationship with the expected motion, although it introduces delay and attenuation inherent to the system. Overall, the results show that the Go2 works as a useful experimental approximation of an oscillating marine platform and that the proposed environment allows perception, motion, and evaluation to be studied progressively, measurably, and reproducibly.
+
+\vspace{2cm}
+\noindent\textbf{Keywords:}
+\begin{itemize*}[label={}, afterlabel={}, itemjoin={; }]
+    \item Pose estimation
+    \item Marine platforms
+    \item Quadruped robot
+    \item Robotics simulation
+    \item Fiducial markers
+    \item ROS 2
+\end{itemize*}
+\newpage
+
+% ======================================================
+% AGRADECIMIENTOS
+% ======================================================
+\chapter*{Agradecimientos}
+\addcontentsline{toc}{chapter}{Agradecimientos}
+% TODO: redactar agradecimientos.
+\newpage
+
+% --- Indice y listas de tablas y figuras ---
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\listoftables
+\newpage
+\listoffigures
+
+% ======================================================
+% LISTA DE SIMBOLOS Y ABREVIACIONES
+% ======================================================
+\newpage
+\chapter*{Lista de Símbolos y Abreviaciones}
+\addcontentsline{toc}{chapter}{Lista de Símbolos y Abreviaciones}
+
+\begin{spacing}{1.2}
+\noindent
+\begin{tabular}{@{} p{2.5cm} l @{}}
+    \textbf{ArUco} & Marcadores fiduciales cuadrados para estimación de pose \\
+    \textbf{CSV}   & Comma-Separated Values (valores separados por comas) \\
+    \textbf{IMU}   & Inertial Measurement Unit (unidad de medición inercial) \\
+    \textbf{PnP}   & Perspective-\(n\)-Point (perspectiva por \(n\) puntos) \\
+    \textbf{ROS 2} & Robot Operating System 2 \\
+    \textbf{SIL}   & Software-in-the-Loop \\
+    \textbf{TF}    & Transform (árbol de marcos de referencia en ROS) \\
+    \textbf{UAV}   & Unmanned Aerial Vehicle (vehículo aéreo no tripulado) \\
+    \textbf{URDF}  & Unified Robot Description Format \\
+\end{tabular}
+\end{spacing}
+
+% --- CONTENIDO ---
+\newpage
+\pagenumbering{arabic}
+
+\chapter{Motivación} \label{sec:motivacion}
+
+\section{Aterrizaje sobre plataformas marinas en movimiento}
 
 El aterrizaje de vehículos aéreos no tripulados sobre plataformas en movimiento
 es un problema exigente incluso en escenarios terrestres controlados. Cuando el
@@ -195,7 +308,7 @@ vía para tareas logísticas livianas entre embarcaciones o plataformas, siempre
 que la relación geométrica entre el vehículo y la superficie objetivo pudiera
 medirse de forma confiable.
 
-\subsection{Necesidad de validación segura y reproducible}
+\section{Necesidad de validación segura y reproducible}
 
 Esta dificultad técnica se combina con un problema metodológico. Las
 pruebas directas sobre sistemas físicos reales son costosas, difíciles de
@@ -233,7 +346,7 @@ llegar a las pruebas físicas con hipótesis y métricas mejor definidas.
 En este sentido, el problema no es solo de control o de visión, sino también de
 validación experimental.
 
-\subsection{Conveniencia de un enfoque progresivo}
+\section{Conveniencia de un enfoque progresivo}
 
 La literatura sobre aterrizaje autónomo en plataformas móviles muestra que el
 problema suele abordarse como una cadena completa que combina percepción,
@@ -264,9 +377,9 @@ un escenario desafiante, sino que organiza de manera medible y repetible el
 camino hacia experimentos futuros sobre sistemas físicos reales y,
 eventualmente, hacia sistemas de aterrizaje con mayor autonomía.
 
-\section{Introducción} \label{intro}
+\chapter{Introducción} \label{intro}
 
-\subsection{Objetivo y alcance del trabajo}
+\section{Objetivo y alcance del trabajo}
 
 El objetivo general de este trabajo es construir un entorno experimental que permita
 estudiar y, en etapas posteriores, probar aterrizaje de drones sobre
@@ -294,7 +407,7 @@ misma lógica de movimiento conserva sentido físico en el Go2 real y si puede
 observarse con un montaje visual controlado, aun sin disponer del tipo de
 referencia verdadera que ofrece Gazebo.
 
-\subsection{Plataforma experimental propuesta}
+\section{Plataforma experimental propuesta}
 
 La idea central del enfoque consiste en utilizar el Unitree Go2, un robot
 cuadrúpedo comercial con torso actuado y control postural, como plataforma
@@ -412,7 +525,7 @@ el torso y cámara mantenida en posición fija.}
 \label{fig:intro_framework_overview}
 \end{figure}
 
-\subsection{\textit{Pipeline} de percepción y evaluación}
+\section{\textit{Pipeline} de percepción y evaluación}
 
 La Figura~\ref{fig:intro_framework_overview} resume visualmente el recorrido
 metodológico de simulación a laboratorio que organiza este trabajo.
@@ -444,7 +557,7 @@ entre simulación y laboratorio convierte al entorno en algo más que una
 herramienta de \textit{software}: lo acerca a una metodología de validación para futuros
 ensayos sobre \textit{hardware}.
 
-\subsection{Aportes y organización del trabajo}
+\section{Aportes y organización del trabajo}
 
 En este marco, el aporte de este trabajo puede entenderse en cuatro planos. En
 primer lugar, desarrollamos un entorno de simulación que reutiliza un
@@ -475,9 +588,9 @@ plataformas marinas.
 
 
 
-\section{Estado del arte} \label{sec:estado_arte}
+\chapter{Estado del arte} \label{sec:estado_arte}
 
-\subsection{Aterrizaje autónomo sobre plataformas móviles}
+\section{Aterrizaje autónomo sobre plataformas móviles}
 
 El aterrizaje autónomo de vehículos aéreos no tripulados sobre plataformas
 móviles combina percepción, estimación de movimiento y control en la fase más
@@ -512,7 +625,7 @@ menor, sino como una etapa explícita antes de los ensayos físicos. Aun así, e
 estos antecedentes el escenario móvil suele ser terrestre o genérico; la
 dinámica marina aparece solo de forma indirecta, si aparece.
 
-\subsection{Operación marina y cubiertas oscilantes}
+\section{Operación marina y cubiertas oscilantes}
 
 Cuando la plataforma objetivo se ubica en un entorno marítimo, el problema
 cambia cualitativamente. Ya no alcanza con seguir una traslación horizontal: la
@@ -546,7 +659,7 @@ la percepción visual. Para un entorno centrado en visión, esa diferencia
 ayuda a delimitar el alcance: interesa validar cuándo la pose puede recuperarse
 desde imagen, no solo resolver el aterrizaje por cualquier medio disponible.
 
-\subsection{Estimación de pose con marcadores fiduciales}
+\section{Estimación de pose con marcadores fiduciales}
 
 Una parte importante de los sistemas de aterrizaje visual se apoya en
 marcadores artificiales, porque introducen en la escena un patrón de geometría
@@ -577,7 +690,7 @@ ordenar el estado del arte: algunos antecedentes evalúan el éxito del
 aterrizaje completo, otros la detección del patrón, y otros la exactitud de la
 pose estimada. Esas métricas no son equivalentes.
 
-\subsection{Simulación, SIL y validación previa al ensayo real}
+\section{Simulación, SIL y validación previa al ensayo real}
 
 La simulación ocupa un lugar creciente en la literatura porque permite
 desacoplar subproblemas, repetir condiciones y reducir el riesgo de ensayos
@@ -599,7 +712,7 @@ trabajos reportan métricas finales de aterrizaje o éxito de misión, pero no
 siempre aíslan la exactitud geométrica del estimador de pose frente a una
 referencia limpia y repetible.
 
-\subsection{Síntesis crítica y ubicación de este trabajo}
+\section{Síntesis crítica y ubicación de este trabajo}
 
 Los trabajos anteriormente mencionados permiten separar tres familias de aportes. Una primera
 familia resuelve el aterrizaje completo sobre plataformas móviles y evalúa el
@@ -624,9 +737,9 @@ para estimar su pose. El objetivo es determinar si la pose visual de una
 plataforma oscilante puede estimarse, registrarse y compararse de manera
 reproducible antes de avanzar hacia ensayos de mayor riesgo.
 
-\section{Marco teórico} \label{mt}
+\chapter{Marco teórico} \label{mt}
 
-\subsection{Introducción conceptual}
+\section{Introducción conceptual}
 
 El marco teórico reúne los conceptos generales requeridos para el desarrollo
 técnico del modelo propuesto. La separación es deliberada: aquí se
@@ -646,7 +759,7 @@ un patrón fiducial y, a partir de sus esquinas, permite recuperar una pose
 relativa mediante métodos PnP. Las subsecciones siguientes desarrollan esos
 fundamentos sin fijar todavía una implementación particular.
 
-\subsection{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
+\section{Ecosistema experimental: ROS2, Gazebo y registro reproducible}
 
 El entorno no se apoya solamente en un modelo físico o en un detector visual,
 también necesita una infraestructura de \textit{software} capaz de coordinar control,
@@ -711,7 +824,7 @@ constituyen la base que vuelve trazable y repetible el problema que queremos
 estudiar.
 
 
-\subsection{Dinámica marina y movimiento de plataforma}
+\section{Dinámica marina y movimiento de plataforma}
 
 La dinámica marina suele describir el movimiento de una embarcación mediante
 seis grados de libertad: tres traslacionales, asociados a \emph{surge},
@@ -731,7 +844,7 @@ implementación concreta, conviene tener presente la relación entre el oleaje, 
 postura de la plataforma y la observación visual. El recorte metodológico y su
 realización sobre el cuadrúpedo se definen en el capítulo siguiente.
 
-\subsection{Marcadores fiduciales y estimación de pose}
+\section{Marcadores fiduciales y estimación de pose}
 
 La estimación visual de pose aborda el problema de recuperar, a partir de una
 imagen, la posición y orientación relativa de un objeto respecto de una cámara.
@@ -910,7 +1023,7 @@ integra con el modelo de movimiento, los marcos de referencia y las fuentes de
 imagen necesarias para evaluar la estimación de pose en el entorno propuesto.
 
 
-\section{Metodología y modelado propuesto} \label{sec:metodologia}
+\chapter{Metodología y modelado propuesto} \label{sec:metodologia}
 
 En este capítulo formulamos el aporte metodológico del trabajo: usar un robot
 cuadrúpedo como plataforma marina sintética para generar, observar y evaluar
@@ -921,7 +1034,7 @@ evaluable. Primero definimos el modelo reducido de plataforma y su realización
 sobre el Go2; luego describimos dos etapas complementarias, simulación y
 laboratorio.
 
-\subsection{Modelado propuesto: plataforma marina sintética con Go2}
+\section{Modelado propuesto: plataforma marina sintética con Go2}
 
 El modelado propuesto parte de una simplificación deliberada: no se busca
 reproducir una embarcación completa, sino sintetizar las componentes de
@@ -931,7 +1044,7 @@ controlado, donde el torso actúa como soporte móvil del marcador y las señale
 de \emph{roll}, \emph{pitch} y \emph{heave} definen la plataforma marina
 sintética.
 
-\subsubsection{Modelo reducido de movimiento de plataforma marina}
+\subsection{Modelo reducido de movimiento de plataforma marina}
 
 El punto de partida del problema es físico antes que computacional. Una
 plataforma apoyada sobre el mar no responde al paso de una ola únicamente
@@ -1213,7 +1326,7 @@ de manera repetible y, al mismo tiempo, ser observado por una cámara con una
 geometría controlada. En el entorno propuesto, esa función la cumple el
 cuadrúpedo instrumentado.
 
-\subsubsection{Plataforma robótica e instrumentación visual}
+\subsection{Plataforma robótica e instrumentación visual}
 
 La plataforma elegida para materializar ese movimiento es un robot cuadrúpedo
 Unitree Go2, utilizado como una estructura articulada capaz de modificar la
@@ -1258,7 +1371,7 @@ es que el sistema queda organizado como una cadena en la que una plataforma
 postural genera un patrón observable y una cámara recupera una pose relativa a
 partir de ese patrón.
 
-\subsubsection{Control postural del Go2 y marcos de referencia}
+\subsection{Control postural del Go2 y marcos de referencia}
 
 Definido el movimiento que se busca emular, el problema central de la plataforma
 experimental es convertir esa consigna de movimiento en una postura físicamente
@@ -1326,25 +1439,36 @@ Figura~\ref{fig:go2_leg_kinematics} resume esta cadena.
 \begin{tikzpicture}[scale=0.82, line join=round,
   joint/.style={circle,draw=black,fill=white,line width=0.6pt,inner sep=1.5pt},
   foot/.style={circle,draw=black,fill=black,inner sep=1.7pt},
-  link/.style={blue!58!black,line width=1.5pt}]
+  link/.style={blue!58!black,line width=1.5pt},
+  doff/.style={violet!75!black,line width=1.6pt}]
   % torso
   \fill[black!12,draw=black!45] (-1.8,3.9) rectangle (0.05,4.4);
   \node[black!55] at (-0.88,4.15) {\scriptsize torso};
   \coordinate (H) at (0,3.9);
-  \coordinate (A) at (0.21,3.34);
-  \coordinate (F) at (1.24,0.30);
-  \draw[gray,dashed] (H) -- (0,0.25);
-  \draw[link] (H) -- (A) -- (F);
+  \coordinate (A) at (0.556,4.125);
+  \coordinate (F) at (1.756,1.158);
+  % eje de abducción (vertical del cuerpo) y vertical local en A
+  \draw[gray,dashed] (H) -- (0,0.4);
+  \draw[gray,dashed] (A) -- (0.556,2.7);
+  % hipotenusa HAA -> pie (triángulo rectángulo)
+  \draw[black!30,dotted] (H) -- (F);
+  % desplazamiento lateral d, perpendicular al plano de la pata
+  \draw[doff] (H) -- (A);
+  % pata (muslo + pantorrilla)
+  \draw[link] (A) -- (F);
+  % marca de ángulo recto en A
+  \draw[black!55,line width=0.5pt] (0.389,4.0575) -- (0.4565,3.8905) -- (0.6235,3.958);
   \node[joint] at (H) {};
   \node[joint] at (A) {};
   \node[foot]  at (F) {};
-  \draw[-latex,red!72!black,line width=0.8pt] (0,3.0) arc[start angle=-90,end angle=-70,radius=0.9];
-  \node[red!72!black] at (0.34,2.78) {\scriptsize \(q_{i,1}\)};
-  \node[black,right] at (0.30,3.96) {\scriptsize HAA};
-  \node at (0.42,3.62) {\scriptsize \(d\)};
-  \node[black!60,rotate=-71] at (0.88,1.95) {\scriptsize \(l_1{+}l_2\)};
-  \draw[-latex,black!70] (-1.7,0.25) -- (-1.15,0.25) node[right]{\scriptsize \(y\)};
-  \draw[-latex,black!70] (-1.7,0.25) -- (-1.7,0.8) node[above]{\scriptsize \(z\)};
+  % ángulo de abducción q_{i,1}
+  \draw[-latex,red!72!black,line width=0.8pt] ([shift=(-90:0.9)]A) arc[start angle=-90,end angle=-68,radius=0.9];
+  \node[red!72!black] at (1.0,3.36) {\scriptsize \(q_{i,1}\)};
+  \node[black] at (-0.34,3.66) {\scriptsize HAA};
+  \node[violet!75!black] at (0.24,4.34) {\scriptsize \(d\)};
+  \node[black!60,rotate=-68] at (1.46,2.45) {\scriptsize \(l_1{+}l_2\)};
+  \draw[-latex,black!70] (-1.7,0.4) -- (-1.15,0.4) node[right]{\scriptsize \(y\)};
+  \draw[-latex,black!70] (-1.7,0.4) -- (-1.7,0.95) node[above]{\scriptsize \(z\)};
 \end{tikzpicture}\\[3pt]
 {\footnotesize (a) Plano frontal \(y\)--\(z\)}
 \end{minipage}\hfill
@@ -1810,7 +1934,7 @@ de percepción se apoya en la misma organización geométrica.
 
 
 
-\subsection{Metodología en simulación}
+\section{Metodología en simulación}
 
 La simulación fue el primer entorno de validación del modelo propuesto porque nos
 permitió controlar la escena, repetir corridas bajo condiciones comparables y
@@ -1828,7 +1952,7 @@ varias veces sin repetir la ejecución completa. Dentro de esa estructura, la
 cámara fija se utilizó como caso base y la cámara embarcada en el dron simulado
 como extensión más exigente del mismo \textit{pipeline}.
 
-\subsubsection{Generación del movimiento marino}
+\subsection{Generación del movimiento marino}
 
 En simulación no modelamos un casco marino completo ni resolvemos su dinámica
 hidrodinámica detallada. Operativamente, el sistema sintetiza directamente
@@ -2049,7 +2173,7 @@ sentido, cumplió un rol de apoyo en el desarrollo: permitió inspeccionar el
 \textit{pipeline} en estados controlados antes de exigirle seguimiento continuo sobre
 secuencias periódicas de un minuto.
 
-\subsubsection{Control postural del Go2 en simulación}
+\subsection{Control postural del Go2 en simulación}
 
 El generador de movimiento marino no mueve directamente un objeto externo en
 Gazebo, sino que prescribe una pose deseada del cuerpo del Go2. Esa consigna
@@ -2084,7 +2208,7 @@ referencia. De este modo, la pose verdadera del marcador no se toma como un
 dato trivial del simulador, sino como una cantidad reconstruida de forma
 consistente con el resto del \textit{pipeline}.
 
-\subsubsection{Estimación visual en simulación}
+\subsection{Estimación visual en simulación}
 
 Como parte del modelado propuesto, el entorno contempla dos fuentes de
 imagen complementarias. Operativamente, la primera es una cámara fija nadir,
@@ -2176,7 +2300,7 @@ para la estimación de pose del ArUco en tiempo real.}
 \label{fig:method_camera_sources}
 \end{figure}
 
-\subsubsection{Registro y evaluación \textit{offline}}
+\subsection{Registro y evaluación \textit{offline}}
 
 La etapa de simulación se cerró siempre con el registro de la corrida durante
 aproximadamente un minuto. Ese registro incluye, según el escenario, la imagen
@@ -2237,7 +2361,7 @@ contrastándola con la estimación visual.}
 \label{fig:method_pipeline}
 \end{figure}
 
-\subsection{Metodología en laboratorio}
+\section{Metodología en laboratorio}
 
 Una vez estabilizado el \textit{pipeline} en simulación, trasladamos parte de la
 metodología al laboratorio para estudiar el pasaje desde un entorno controlado
@@ -2250,7 +2374,7 @@ en posición aproximadamente fija. Este pasaje implicó cambios prácticos en el
 montaje, en las condiciones de medición y en el tipo de comparación que podía
 realizarse respecto de la simulación.
 
-\subsubsection{Dificultades del pasaje de simulación a laboratorio}
+\subsection{Dificultades del pasaje de simulación a laboratorio}
 
 El pasaje de simulación a laboratorio no consistió en trasladar sin cambios un
 \textit{pipeline} ya resuelto, sino en adaptar cada una de sus partes a un entorno donde
@@ -2301,7 +2425,7 @@ Repetibilidad & Alta, con corridas equivalentes y registros comparables & Depend
 \end{tabular}
 \end{table}
 
-\subsubsection{Reproducción del movimiento en el Go2 real}
+\subsection{Reproducción del movimiento en el Go2 real}
 
 Sobre ese trasfondo, la transición al laboratorio se apoyó en la misma lógica
 conceptual usada en simulación: en lugar de definir trayectorias arbitrarias del
@@ -2337,7 +2461,7 @@ Las diferencias pasaron entonces a concentrarse en la respuesta física del
 robot, en el canal de comando realmente disponible y en las incertidumbres
 propias del montaje real.
 
-\subsubsection{Estimación visual con cámara en configuración cuasi fija}
+\subsection{Estimación visual con cámara en configuración cuasi fija}
 
 Para observar visualmente el movimiento del robot en laboratorio, se montó un
 marcador ArUco adherido sobre el torso del cuadrúpedo. Esta decisión buscó
@@ -2384,7 +2508,7 @@ posición aproximadamente fija.}
 \label{fig:method_lab_setup}
 \end{figure}
 
-\subsubsection{Comparación entre movimiento esperado, comando y respuesta del robot}
+\subsection{Comparación entre movimiento esperado, comando y respuesta del robot}
 
 El contraste principal de esta etapa se planteó entre el movimiento objetivo,
 el comando efectivamente transmitido y las señales internas publicadas por el
@@ -2426,7 +2550,7 @@ materializan el contraste entre objetivo, actuación y respuesta.
 
 
 
-\section{Experimentación y resultados} \label{sec:experimentacion}
+\chapter{Experimentación y resultados} \label{sec:experimentacion}
 
 Una vez definido el \textit{pipeline} y explicitados los criterios metodológicos, la
 evidencia se presenta como una progresión desde el caso más controlado hasta el
@@ -2436,7 +2560,7 @@ aislamiento. Luego se presenta el laboratorio, donde el foco deja de estar en
 el error frente a \textit{ground truth} y pasa a la correspondencia entre movimiento
 esperado, comando enviado y respuesta del robot.
 
-\subsection{Experimentos en simulación}
+\section{Experimentos en simulación}
 
 Las pruebas en simulación constituyen el núcleo cuantitativo más sólido del
 trabajo, porque permiten contrastar la pose estimada visualmente con la pose de
@@ -2448,7 +2572,7 @@ observación más exigente. Todas las corridas se registraron durante
 aproximadamente un minuto y se reevaluaron \textit{offline} con el mismo
 criterio.
 
-\subsubsection{Diseño experimental y corridas seleccionadas}
+\subsection{Diseño experimental y corridas seleccionadas}
 
 Con el fin de aislar el efecto de la fuente de imagen, todas las corridas de
 esta subsección comparten la misma consigna de movimiento marino sinusoidal y
@@ -2489,7 +2613,7 @@ a los registros listados en la Tabla~\ref{tab:appendix_rosbags} (abril de
 diferencias reportadas más adelante no provienen de cambios en el postproceso ni
 de una mezcla de configuraciones distintas del escenario.
 
-\subsubsection{Métricas y criterio de lectura}
+\subsection{Métricas y criterio de lectura}
 
 La evaluación se apoya en un conjunto acotado de métricas que dialogan de forma
 directa con el movimiento marino que se quiso sintetizar. En esta campaña se
@@ -2528,7 +2652,7 @@ comparación entre escenarios: el caso base con cámara fija no compite en peso
 con el dron, sino que ofrece una base de lectura sobre la cual interpretar por
 qué el escenario con sensor móvil resulta más exigente.
 
-\subsubsection{Caso base: cámara fija}
+\subsection{Caso base: cámara fija}
 
 El caso de cámara fija funciona como caso base metodológico del entorno. Al
 mantener el sensor en una posición fija respecto del mundo, la
@@ -2617,7 +2741,7 @@ sino una deriva del error de estimación. Precisamente por eso el caso base
 resulta útil: instala una referencia visual limpia y, al mismo tiempo, permite
 identificar limitaciones del \textit{pipeline} antes de agregar la dinámica del dron.
 
-\subsubsection{Caso fuerte: cámara embarcada en el dron}
+\subsection{Caso fuerte: cámara embarcada en el dron}
 
 El escenario con dron concentra el principal interés del capítulo, porque
 introduce una geometría de observación más cercana al problema que motiva el
@@ -2735,7 +2859,7 @@ cambio, mantiene una dispersión angular intermedia y a la vez reduce de forma
 marcada el error posicional global, lo que muestra que la repetibilidad del
 escenario es razonable pero sensible a la geometría efectiva de cada corrida.
 
-\subsubsection{Síntesis de la evidencia en simulación}
+\subsection{Síntesis de la evidencia en simulación}
 
 La evidencia de simulación aporta dos conclusiones centrales al argumento
 general del trabajo. En primer lugar, la campaña final confirma que el \textit{pipeline}
@@ -2765,7 +2889,7 @@ Precisamente por eso la simulación cumple su función metodológica: permite
 aislar estas limitaciones con \textit{ground truth} antes de trasladar la discusión a un
 entorno físico.
 
-\subsection{Experimentos en laboratorio}
+\section{Experimentos en laboratorio}
 \label{sec:lab_results_anchor}
 
 La validación en laboratorio no replica el mismo esquema de lectura que la
@@ -2778,7 +2902,7 @@ cuasi fija descripto en la metodología. El análisis que sigue se apoya en esto
 registros para caracterizar cuantitativamente la respuesta del sistema en
 condiciones físicas reales.
 
-\subsubsection{Presentación del material experimental}
+\subsection{Presentación del material experimental}
 
 Para llegar a los registros que sostienen este análisis fue necesario descartar
 una versión anterior del experimento. Un ensayo preliminar con consigna de mayor
@@ -2841,7 +2965,7 @@ por decisión metodológica, justamente para aislar la dinámica del robot de la
 carga computacional del \textit{pipeline} visual. El montaje puede verse en la
 Figura~\ref{fig:method_lab_setup}.
 
-\subsubsection{Pipeline visual sobre el robot real}
+\subsection{Pipeline visual sobre el robot real}
 \label{sec:lab_aruco_realtime}
 
 R4 y R5 no son las únicas corridas de la campaña: hubo además sesiones
@@ -2894,7 +3018,7 @@ simulador marino.}
 \label{fig:lab_aruco_realtime}
 \end{figure}
 
-\subsubsection{Fidelidad del camino de comando}
+\subsection{Fidelidad del camino de comando}
 
 Antes de discutir la respuesta física del robot, verificamos en el ensayo R4
 si la consigna generada por el simulador marino llega al Go2 sin degradarse.
@@ -2930,7 +3054,7 @@ redundante frente a la Tabla~\ref{tab:lab_command_fidelity}. La diferencia
 entre objetivo y respuesta debe buscarse, entonces, en la dinámica física del
 robot y no en una mala transferencia de la consigna.
 
-\subsubsection{Comparación entre movimiento objetivo y respuesta del robot}
+\subsection{Comparación entre movimiento objetivo y respuesta del robot}
 
 Una vez validado el camino de comando, el segundo bloque se concentra en la
 respuesta real del robot. La señal esperada muestra en el ensayo R4 un
@@ -3105,7 +3229,7 @@ Por eso, esta corrida no puede leerse como una validación de \emph{heave} oscil
 sino como una validación fuerte de \emph{roll} y \emph{pitch} con observación complementaria
 de la altura del tronco.
 
-\subsubsection{Lectura conjunta con la simulación}
+\subsection{Lectura conjunta con la simulación}
 
 Antes de establecer la conexión entre ambos entornos conviene enunciar
 explícitamente su asimetría. La simulación respondió a una pregunta de
@@ -3148,7 +3272,7 @@ marina real. Ese cierre conjunto, con el \textit{pipeline} visual activo y el ro
 moviéndose en el laboratorio, constituye el paso de validación pendiente y se
 identifica como la dirección más directa de trabajo futuro.
 
-\subsubsection{Síntesis de la validación experimental}
+\subsection{Síntesis de la validación experimental}
 
 Los experimentos de esta sección evalúan el entorno desde dos ángulos
 distintos y, tomados en conjunto, sostienen una afirmación moderada pero
@@ -3176,7 +3300,7 @@ como la dirección más concreta de trabajo futuro.
 
 
 
-\section{Conclusiones}
+\chapter{Conclusiones}
 
 El objetivo general de este trabajo se cumplió: se construyó un entorno
 experimental que permite sintetizar movimiento marino sobre un robot
@@ -3235,7 +3359,7 @@ ambiciosas.
 
 
 
-\section{Trabajo futuro}
+\chapter{Trabajo futuro}
 
 La línea inmediata de trabajo futuro es cerrar la validación conjunta en
 laboratorio: ejecutar el robot real con movimiento postural, el \textit{pipeline} visual
@@ -3287,9 +3411,12 @@ lógica que guió esta tesis: aumentar complejidad de manera gradual, conservar
 trazabilidad experimental y usar la simulación como herramienta para llegar a
 ensayos reales con hipótesis más claras.
 
+\chapter{Bibliografía}
+\printbibliography[heading=none]
+
 \appendix
 
-\section{Identificadores de registros y archivos de datos}
+\chapter{Identificadores de registros y archivos de datos}
 \label{sec:appendix_data}
 
 Este apéndice concentra \textbf{nombres de archivo} y \textbf{rutas relativas al
@@ -3339,7 +3466,5 @@ del publicador de imagen en el repositorio.
 %     \input{regressions/heterogeneity}
 % \end{landscape}
 
-\section{Bibliografía}
-\printbibliography[heading=none]
 
 \end{document}
