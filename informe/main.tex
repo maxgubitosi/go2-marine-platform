@@ -119,8 +119,6 @@
 }
 
 % Correcciones pendientes para la próxima pasada:
-% - Confirmar con Juan/Gastón la distinción mentor/comentor en la portada
-%   (hoy figuran ambos como "Mentores"; el template permite separar Mentor/Comentor).
 % - Figura de marcos TF2: si sigue viéndose chica en PDF, regenerar o recortar
 %   figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf desde el SVG.
 % - Figuras de laboratorio: regenerar los PNG con ejes, ticks y leyendas más grandes
@@ -155,9 +153,9 @@
     \begin{flushleft}
     {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par} \vspace{5mm}
 
-    % El template distingue Mentor/Comentor; mantenemos ambos como mentores
-    % hasta confirmar la distincion con Juan/Gaston (ver nota en el preambulo).
-    {\Large \textbf{Mentores:} Juan Ignacio Giribet, Gastón Castro \par}
+    {\Large \textbf{Mentor:} Juan Ignacio Giribet \par}
+    \vspace{2mm}
+    {\Large \textbf{Comentor:} Gastón Castro \par}
     \end{flushleft}
     \vfill
 
@@ -1552,7 +1550,14 @@ patas), \(h(\bar q,\dot{\bar q})\) agrupa los términos de gravedad, Coriolis y
 demás efectos no lineales, \(\tau\) es el vector de torques articulares, \(S\)
 selecciona las coordenadas actuadas, \(J_c(\bar q)\) es el Jacobiano de contacto
 y \(\lambda\) las fuerzas de reacción en los pies
-\citep{Bellicoso2017,Fahmi2019,Lee2013Cheetah}. No desarrollamos aquí la forma
+\citep{Bellicoso2017,Fahmi2019,Lee2013Cheetah}. Esta forma de base flotante con
+restricciones de contacto es el modelo estándar que adoptan los controladores de
+locomoción dinámica más citados para cuadrúpedos de esta clase. Un ejemplo
+ampliamente referenciado es el esquema de control predictivo por modelo (MPC) y
+control de impulso de cuerpo completo (WBIC) del Mini-Cheetah \citep{Kim2019WBIC},
+mecánicamente análogo al Go2 aunque sin parámetros geométricos específicos para él.
+Lo tomamos como punto de partida y, en lo que sigue, lo reducimos de forma
+deliberada al régimen que efectivamente utiliza la plataforma. No desarrollamos aquí la forma
 explícita de \(M\), \(h\), \(J_c\) ni el reparto de fuerzas \(\lambda\): tanto la
 construcción del Jacobiano de contacto como la resolución de
 \eqref{eq:quadruped_dynamics} son problemas de control de cuerpo completo que el
@@ -1579,8 +1584,10 @@ J_c(q)\ddot{q} + \dot{J}_c(q,\dot{q})\dot{q} = 0.
 \end{equation}
 
 En un problema de locomoción completa estas restricciones conviven con cambios
-de apoyo, despegues y redistribución dinámica de cargas. El entorno propuesto, en
-cambio, utiliza al Go2 en un régimen postural: movimiento lento, suave y sin
+de apoyo, despegues y redistribución dinámica de cargas, que los controladores de
+locomoción dinámica antes citados resuelven en línea optimizando fuerzas de
+contacto y torques. El entorno propuesto, en cambio, no aborda ese problema de
+fuerzas y utiliza al Go2 en un régimen postural: movimiento lento, suave y sin
 desplazamiento sobre el plano (Figura~\ref{fig:go2_postural_control_scheme}). En
 este régimen las cuatro patas se mantienen apoyadas y las velocidades y
 aceleraciones son lo bastante pequeñas como para que los términos inerciales y de
