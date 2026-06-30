@@ -42,6 +42,7 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{multirow,array}
+\usepackage{longtable}         % listas de simbolos que pueden partir entre paginas
 \usepackage{dcolumn}
 \usepackage{arydshln}
 \usepackage{threeparttable}
@@ -261,19 +262,175 @@ The second part transfers the experimental logic to the real Go2. In the laborat
 \chapter*{Lista de Símbolos y Abreviaciones}
 \addcontentsline{toc}{chapter}{Lista de Símbolos y Abreviaciones}
 
-\begin{spacing}{1.2}
+\begin{spacing}{1.15}
+
+\noindent{\large\textbf{Símbolos}}
+\smallskip
+
+\setlength{\LTpre}{2pt}\setlength{\LTpost}{2pt}
+\begin{longtable}{@{} p{3.1cm} p{11.3cm} @{}}
+
+\multicolumn{2}{@{}l@{}}{\textit{Estimación visual de pose y modelo de cámara}}\\[2pt]
+\(L\)            & Longitud del lado del marcador ArUco \\
+\(P_i\)          & Vértices del marcador / punto 3D conocido en el marco del objeto, \(i=1,\dots,4\) \\
+\(X_i,Y_i,Z_i\)  & Coordenadas 3D del punto \(P_i\) en el marco del objeto \\
+\(p_i\)          & Proyección homogénea \([u_i\;\,v_i\;\,1]^\top\) del punto \(i\) en la imagen \\
+\(u_i,v_i\)      & Coordenadas en píxeles de la proyección del punto \(i\) \\
+\(s_i\)          & Factor de escala proyectiva del punto \(i\) \\
+\(K\)            & Matriz de parámetros intrínsecos de la cámara \\
+\(f_x,f_y\)      & Distancias focales (en píxeles) \\
+\(c_x,c_y\)      & Coordenadas del punto principal de la imagen \\
+\(R,t\)          & Rotación y traslación de la transformación rígida marcador--cámara \\
+\(\hat R,\hat t\)& Estimaciones de \(R\) y \(t\) que minimizan el error de reproyección \\
+\(H\)            & Homografía entre el plano del marcador y la imagen \\
+\(r_1,r_2\)      & Primeras dos columnas de la matriz de rotación \(R\) \\
+\(\pi(\cdot)\)   & Proyección perspectiva en coordenadas de imagen \\
+\(n\)            & Número de correspondencias 2D--3D (Perspectiva por \(n\) Puntos) \\
+\addlinespace[4pt]
+
+\multicolumn{2}{@{}l@{}}{\textit{Modelo de movimiento marino}}\\[2pt]
+\(\eta\)         & Vector de pose de la plataforma, \([x\;y\;z\;\phi\;\theta\;\psi]^\top\) \\
+\(\nu\)          & Velocidades lineales y angulares en el marco del cuerpo, \([u\;v\;w\;p\;q\;r]^\top\) \\
+\(x,y,z\)        & Posición de la plataforma respecto del marco inercial \\
+\(\phi,\theta,\psi\) & Ángulos de \emph{roll}, \emph{pitch} y \emph{yaw} \\
+\(u,v,w\)        & Velocidades lineales (\emph{surge}, \emph{sway}, \emph{heave}) en el marco del cuerpo \\
+\(p,q,r\)        & Velocidades angulares (\emph{roll}, \emph{pitch}, \emph{yaw}) en el marco del cuerpo \\
+\(J(\eta)\)      & Matriz que transforma velocidades del cuerpo en derivadas de la pose \\
+\(M\)            & Matriz de inercia (incluida la masa añadida) \\
+\(C(\nu)\)       & Matriz de Coriolis y términos centrípetos \\
+\(D(\nu)\)       & Matriz de amortiguamiento hidrodinámico \\
+\(g(\eta)\)      & Fuerzas restauradoras (gravedad y flotación) \\
+\(\tau\)         & Acciones de control (fuerzas/momentos generalizados) \\
+\(\tau_w\)       & Excitación inducida por el oleaje \\
+\(\zeta(x,y,t)\) & Elevación de la superficie libre respecto del nivel medio del mar \\
+\(x_p,y_p\)      & Posición horizontal de referencia de la plataforma \\
+\(\eta_r\)       & Estado reducido retenido, \([z\;\phi\;\theta]^\top\) \\
+\(\kappa_\phi,\kappa_\theta\) & Coeficientes de acoplamiento pendiente local\,\(\to\)\,inclinación (\emph{roll}/\emph{pitch}) \\
+\(\zeta_{\text{proa}}\), etc. & Elevación local del agua bajo proa, popa, babor y estribor \\
+\(L_p\)          & Longitud característica en la dirección proa--popa \\
+\(B_p\)          & Manga efectiva en la dirección babor--estribor \\
+\(A\)            & Amplitud de la onda \\
+\(\omega\)       & Frecuencia angular (pulsación) de la onda \\
+\(\delta\)       & Desfase inicial de la onda \\
+\(k_x,k_y\)      & Componentes del vector de número de onda \\
+\(N\)            & Número de armónicos \\
+\(A_n,\omega_n,\delta_n\) & Amplitud, frecuencia y fase del armónico \(n\) \\
+\(k_{x,n},k_{y,n}\) & Número de onda del armónico \(n\) \\
+\addlinespace[4pt]
+
+\multicolumn{2}{@{}l@{}}{\textit{Cinemática y control postural del Go2}}\\[2pt]
+\(i\)            & Índice de pata, \(i\in\{1,2,3,4\}\) \\
+\(q_{i,1},q_{i,2},q_{i,3}\) & Ángulos de abducción de cadera (HAA), muslo (HFE) y rodilla (KFE) de la pata \(i\) \\
+\(q_i\)          & Vector articular de la pata \(i\), \([q_{i,1}\;q_{i,2}\;q_{i,3}]^\top\) \\
+\(q_a\)          & Configuración articular completa del robot, \(q_a\in\mathbb{R}^{12}\) \\
+\(\bar q\)       & Coordenadas generalizadas, \(({}^{w}x_b,\,q_a)\) (pose del torso + articulaciones) \\
+\(d\)            & Desplazamiento lateral de la abducción (\(0{,}0955\) m) \\
+\(l_1,l_2\)      & Longitudes del muslo y de la pantorrilla (\(0{,}213\) m) \\
+\(c_k,s_k\)      & Abreviaturas \(\cos q_{i,k}\) y \(\sin q_{i,k}\) \\
+\(s_{23},c_{23}\)& \(\sin(q_{i,2}+q_{i,3})\) y \(\cos(q_{i,2}+q_{i,3})\) \\
+\({}^{b}p_{f_i}(q_i)\) & Posición del pie \(i\) en el marco del cuerpo (cinemática directa) \\
+\(M(\bar q)\)    & Matriz de inercia del sistema completo (torso + patas) \\
+\(h(\bar q,\dot{\bar q})\) & Términos de gravedad, Coriolis y demás efectos no lineales \\
+\(S\)            & Matriz de selección de las coordenadas actuadas \\
+\(\tau\)         & Vector de torques articulares \\
+\(J_c(\bar q)\)  & Jacobiano de contacto \\
+\(\lambda\)      & Fuerzas de reacción en los pies \\
+\(\mathcal{P}_s\)& Polígono de soporte (envolvente convexa de los apoyos) \\
+\(p_{\text{CoM}}^{xy}\) & Proyección horizontal del centro de masa \\
+\(\delta p_b\)   & Pequeña traslación del torso (linealización) \\
+\(\delta\omega\) & Pequeña rotación del torso (vector de rotación instantánea) \\
+\({}^{b}p_{f_i,0}\) & Posición nominal del pie \(i\) en el cuerpo (punto de linealización) \\
+\(J_i(q_i)\)     & Jacobiano de la pata \(i\), \(J_i\in\mathbb{R}^{3\times 3}\) \\
+\(J_i^{\dagger}\)& Pseudoinversa amortiguada del Jacobiano de pata \\
+\(A,B\)          & Abreviaturas \(A=l_1c_2+l_2c_{23}\) (alcance sagital) y \(B=l_1s_2+l_2s_{23}\) \\
+\(\delta q_i\)   & Corrección articular de la pata \(i\) \\
+\(\tilde p_i\)   & Posición de pie objetivo en el marco de la cadera, \((p_x,p_y,p_z)\) \\
+\(p_x,p_y,p_z\)  & Componentes de \(\tilde p_i\) \\
+\(L\)            & Alcance de la pata en el plano sagital, \(L=\sqrt{p_x^2+A^2}\) \\
+\(F_{\text{ext}}\) & Fuerza externa de apoyo (cadena de control de pata) \\
+\addlinespace[4pt]
+
+\multicolumn{2}{@{}l@{}}{\textit{Marcos de referencia y transformaciones}}\\[2pt]
+\(\{w\}\)        & Marco global (\texttt{world}) de Gazebo \\
+\(\{bf\}\)       & Marco \texttt{base\_footprint} (referencia sobre el plano de apoyo) \\
+\(\{bl\}\equiv\{b\}\) & Marco \texttt{base\_link} / del torso (transporta el marcador) \\
+\(\{a\}\)        & Marco del marcador ArUco \\
+\(\{c\}\)        & Marco óptico de la cámara \\
+\(\{f_i\}\)      & Marco del punto de contacto del pie \(i\) \\
+\({}^{w}p_b,{}^{w}R_b\) & Posición y orientación del torso en el mundo \\
+\({}^{w}p_{f_i}\) & Posición del pie \(i\) en el mundo \\
+\({}^{b}r_{h_i}\) & Posición de la cadera de la pata \(i\) en el cuerpo \\
+\({}^{b}p_{f_i}^{\star},{}^{w}p_b^{\star},{}^{w}R_b^{\star}\) & Consignas deseadas de pie y de pose del torso \\
+\({}^{w}x_b\)    & Pose del torso en el mundo \\
+\({}^{c}T_a\)    & Transformación homogénea del marcador respecto de la cámara \\
+\({}^{c}T_w\), etc. & Eslabones de la cadena \({}^{c}T_w\,{}^{w}T_{bf}\,{}^{bf}T_{bl}\,{}^{bl}T_a\) (cámara--marcador) \\
+\addlinespace[4pt]
+
+\multicolumn{2}{@{}l@{}}{\textit{Señales de consigna y métricas de evaluación}}\\[2pt]
+\(r(t),p(t),h(t)\) & Consignas sinusoidales de \emph{roll}, \emph{pitch} y \emph{heave} \\
+\(A_r,A_p,A_h\)  & Amplitudes máximas de \emph{roll}, \emph{pitch} y \emph{heave} \\
+\(f\)            & Frecuencia base del oleaje; \(\omega=2\pi f\) la pulsación asociada \\
+\(\kappa_p,\kappa_h\) & Desacoples temporales de \emph{pitch} y \emph{heave} \\
+\(\alpha\)       & Coeficiente de suavizado exponencial \\
+\(x_k\)          & Valor objetivo en el instante discreto \(k\) \\
+\(\tilde x_k\)   & Señal suavizada en el instante \(k\) (\(\tilde h_k\) para \emph{heave}) \\
+\(k\)            & Índice de instante discreto \\
+\(\Delta X,\Delta Y,\Delta Z\) & Errores de posición por eje (marco cámara) \\
+\(\Delta\,\mathit{roll}\), etc. & Errores angulares por eje (\emph{roll}, \emph{pitch}, \emph{yaw}) \\
+\(\Delta\,\mathit{heave}=\Delta Z\) & Error de \emph{heave} \\
+\(\|\Delta pos\|\) & Error euclidiano de posición \\
+\(\overline{|\Delta\,\cdot\,|}\) & Error absoluto medio de la magnitud indicada \\
+\(\mu\)          & Media \\
+\(P95\)          & Percentil 95 \\
+\(g_i\)          & Ganancia dinámica efectiva del eje \(i\) \\
+\(\tau_i\)       & Retardo dinámico del eje \(i\) \\
+\(b_i\)          & Sesgo de medición del eje \(i\) \\
+\(\theta_{\mathrm{real},i},\theta_{\mathrm{cmd},i}\) & Actitud real y comandada del eje \(i\) \\
+\addlinespace[4pt]
+
+\multicolumn{2}{@{}l@{}}{\textit{Operadores y notación}}\\[2pt]
+\({}^{a}(\cdot)\) & Superíndice izquierdo: marco en el que se expresa la cantidad \\
+\({}^{a}T_b,{}^{a}R_b\) & Transformación homogénea y matriz de rotación del marco \(b\) al \(a\) \\
+\((\cdot)^{\star}\) & Consigna deseada / objetivo \\
+\(\hat{(\cdot)}\) & Cantidad estimada \\
+\(\tilde{(\cdot)}\) & Cantidad suavizada \\
+\(\dot{(\cdot)},\ddot{(\cdot)}\) & Primera y segunda derivada temporal \\
+\(\bar{(\cdot)}\) & Coordenadas generalizadas / valor agregado \\
+\((\cdot)^\top\) & Transpuesta \\
+\((\cdot)^{-1},(\cdot)^{\dagger}\) & Inversa y pseudoinversa \\
+\(\|\cdot\|_2\)  & Norma euclidiana \\
+\(\times\)       & Producto vectorial \\
+\(\operatorname{atan2}(\cdot,\cdot)\) & Arcotangente de dos argumentos \\
+\(\mathbb{R}^{n}\) & Espacio de vectores reales de dimensión \(n\) \\
+
+\end{longtable}
+
+\medskip
+\noindent{\large\textbf{Abreviaciones}}
+\smallskip
+
 \noindent
-\begin{tabular}{@{} p{2.5cm} l @{}}
+\begin{longtable}{@{} p{2.5cm} p{11.9cm} @{}}
     \textbf{ArUco} & Marcadores fiduciales cuadrados para estimación de pose \\
+    \textbf{CHAMP} & \textit{Framework} de control para robots cuadrúpedos \\
+    \textbf{CoM}   & Center of Mass (centro de masa) \\
     \textbf{CSV}   & Comma-Separated Values (valores separados por comas) \\
+    \textbf{EPnP}  & Efficient Perspective-\(n\)-Point (solución eficiente de PnP) \\
+    \textbf{HAA}   & Hip Abduction/Adduction (abducción/aducción de cadera) \\
+    \textbf{HFE}   & Hip Flexion/Extension (flexión/extensión de cadera, muslo) \\
     \textbf{IMU}   & Inertial Measurement Unit (unidad de medición inercial) \\
+    \textbf{KFE}   & Knee Flexion/Extension (flexión de rodilla, pantorrilla) \\
+    \textbf{MPC}   & Model Predictive Control (control predictivo por modelo) \\
+    \textbf{PD}    & Proportional-Derivative (control proporcional-derivativo) \\
     \textbf{PnP}   & Perspective-\(n\)-Point (perspectiva por \(n\) puntos) \\
+    \textbf{RMS}   & Root Mean Square (valor cuadrático medio) \\
     \textbf{ROS 2} & Robot Operating System 2 \\
     \textbf{SIL}   & Software-in-the-Loop \\
     \textbf{TF}    & Transform (árbol de marcos de referencia en ROS) \\
     \textbf{UAV}   & Unmanned Aerial Vehicle (vehículo aéreo no tripulado) \\
     \textbf{URDF}  & Unified Robot Description Format \\
-\end{tabular}
+    \textbf{WBIC}  & Whole-Body Impulse Control (control de impulso de cuerpo completo) \\
+\end{longtable}
 \end{spacing}
 
 % --- CONTENIDO ---
