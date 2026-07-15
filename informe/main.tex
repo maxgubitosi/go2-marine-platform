@@ -1166,8 +1166,8 @@ reproyección funciona como criterio natural para comparar hipótesis de pose.
 Esta formulación también ayuda a interpretar un hecho empírico importante sobre
 la sensibilidad del estimador: cuanto más pequeñas aparecen las esquinas del
 marcador en la imagen, o cuanto más cercana está la observación a una
-configuración proyectiva degenerada —por ejemplo, un patrón visto casi de
-frente—, mayor es la sensibilidad de la pose estimada frente a pequeños errores
+configuración proyectiva degenerada (por ejemplo, un patrón visto casi de
+frente), mayor es la sensibilidad de la pose estimada frente a pequeños errores
 en la localización de las esquinas. En esas condiciones, variaciones de pocos
 píxeles en las esquinas detectadas pueden traducirse en variaciones grandes de la
 pose recuperada, lo que vuelve crítica la calidad de la detección.
@@ -1282,8 +1282,8 @@ cinemática es
 donde \(J(\eta)\) transforma velocidades expresadas en el marco de coordenadas
 del cuerpo de la plataforma (la embarcación) en derivadas de posición y
 orientación respecto de un marco inercial fijo. Conviene aclarar que este marco
-inercial es una referencia global externa —en una simulación, el origen
-arbitrario \((0,0,0)\) del mundo— y no debe confundirse con el marco de la
+inercial es una referencia global externa (en una simulación, el origen
+arbitrario \((0,0,0)\) del mundo) y no debe confundirse con el marco de la
 cámara que se introduce más adelante para la estimación visual: en esta
 subsección las formulaciones son generales y recién en la metodología se las
 instancia en los marcos de referencia concretos del entorno. Esta ecuación
@@ -1309,8 +1309,8 @@ excitación inducida por el mar. Las formas explícitas de \(M\), \(C\), \(D\) y
 \citet{Fossen1995}; no las reproducimos aquí porque el objetivo de este trabajo
 no es simular la hidrodinámica del casco con fidelidad, sino sintetizar
 cinemáticamente la oscilación local de la plataforma. Por eso retenemos
-\eqref{eq:marine_dynamics} únicamente como marco conceptual —para identificar qué
-parte del movimiento conviene conservar— y, en lo que sigue, prescindimos del
+\eqref{eq:marine_dynamics} únicamente como marco conceptual (para identificar qué
+parte del movimiento conviene conservar) y, en lo que sigue, prescindimos del
 balance de fuerzas: el movimiento de la cubierta se prescribe directamente a
 partir de la elevación de la superficie libre, sin resolver \(M\), \(C\), \(D\)
 ni \(g\).
@@ -1762,12 +1762,12 @@ consigna de pose del cuerpo se traduce en una nueva configuración articular de
 las patas.
 
 Estas restricciones admiten, además, una lectura en términos de grados de
-libertad. De las dieciocho coordenadas de \(\bar q\) —seis de la base flotante
-y doce articulares—, los cuatro contactos puntuales sin deslizamiento remueven
+libertad. De las dieciocho coordenadas de \(\bar q\) (seis de la base flotante
+y doce articulares), los cuatro contactos puntuales sin deslizamiento remueven
 doce, de modo que quedan exactamente seis: la pose del torso. En apoyo
 cuadrúpedo, el Go2 conserva así los mismos seis grados de libertad de la
 formulación marina \eqref{eq:marine_kinematics}, de los cuales el entorno
-comanda tres —\emph{heave}, \emph{roll} y \emph{pitch}— y mantiene fijos los
+comanda tres (\emph{heave}, \emph{roll} y \emph{pitch}) y mantiene fijos los
 restantes.
 
 \begin{figure}[H]
@@ -1904,8 +1904,8 @@ Además, alrededor de una postura nominal puede obtenerse una lectura física
 mediante una linealización de primer orden. Si \(\delta p_b\) es una pequeña
 traslación del torso y \(\delta \omega\) una pequeña rotación (representada por su
 vector de rotación instantánea), la variación de la posición del pie \(i\)
-\emph{expresada en el marco del cuerpo} —no la del pie en el mundo, que permanece
-fijo— se aproxima por
+\emph{expresada en el marco del cuerpo} (no la del pie en el mundo, que permanece
+fijo) se aproxima por
 
 \begin{equation}
 \delta {}^{b}\!p_{f_i}
@@ -1974,10 +1974,10 @@ y cerca de configuraciones singulares (pata estirada, \(q_{i,3}\to 0\)) se
 sustituye la inversa por la pseudoinversa amortiguada
 \(J_i^{\dagger}\) \citep{Siciliano2009,Lee2013Cheetah}. El determinante admite
 la forma compacta \(\det J_i = l_1 l_2\, s_3\,(l_1 c_2 + l_2 c_{23})\), cuyo
-anulamiento —pata estirada o extensión efectiva \(l_1 c_2 + l_2 c_{23}\)
-nula— localiza dichas singularidades. Cada columna de
-\eqref{eq:leg_jacobian_explicit} indica cómo una junta —abducción de cadera,
-muslo y rodilla, en ese orden— desplaza el pie en el cuerpo; el Jacobiano es, por
+anulamiento (pata estirada o extensión efectiva \(l_1 c_2 + l_2 c_{23}\)
+nula) localiza dichas singularidades. Cada columna de
+\eqref{eq:leg_jacobian_explicit} indica cómo una junta (abducción de cadera,
+muslo y rodilla, en ese orden) desplaza el pie en el cuerpo; el Jacobiano es, por
 lo tanto, el puente entre el espacio cartesiano del pie y el espacio articular de
 la pata, y es el mismo objeto que aparece, agregado para las cuatro patas, en el
 Jacobiano de contacto \(J_c\) de \eqref{eq:quadruped_dynamics}.
@@ -2018,7 +2018,7 @@ pie; los signos adoptados seleccionan la única rama compatible con los límites
 articulares y la flexión natural de la rodilla del Go2. Las ecuaciones
 \eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} hacen explícito que cada componente
 de la consigna postural se traduce en valores concretos de las tres juntas
-—abducción de cadera \(q_{i,1}\), muslo \(q_{i,2}\) y rodilla \(q_{i,3}\)— sin que
+(abducción de cadera \(q_{i,1}\), muslo \(q_{i,2}\) y rodilla \(q_{i,3}\)) sin que
 ello implique desplazamiento del pie sobre el plano: la plataforma perturba de
 forma controlada la geometría que observa la cámara, no opera como un sistema de
 navegación horizontal.
@@ -2047,13 +2047,13 @@ en el Jacobiano popularizado por el MIT Cheetah \citep{Lee2013Cheetah}, en el qu
 la cinemática directa y el Jacobiano de pata mapean la consigna cartesiana del pie
 al espacio articular y los lazos de impedancia/PD generan los torques
 (Figura~\ref{fig:leg_control_chain}); la principal diferencia con el Go2 es
-mecánica —el Cheetah emplea una pata pantográfica y el Go2 una cadena serial—,
+mecánica (el Cheetah emplea una pata pantográfica y el Go2 una cadena serial),
 pero la estructura de control es la misma. Sobre el robot real, la interfaz de
 bajo nivel de los actuadores expone esa misma estructura
 proporcional--derivativa por motor; las capas que median entre la consigna de
 pose y esas referencias pertenecen al controlador embarcado de Unitree, que
-cierra el lazo postural con equilibrio y compensación de contacto —en parte
-basados en modelos aprendidos— que no modelamos de forma explícita y que
+cierra el lazo postural con equilibrio y compensación de contacto (en parte
+basados en modelos aprendidos) que no modelamos de forma explícita y que
 absorben los efectos no capturados por \(M\), \(C\), \(D\) y \(g\). Por eso, para los fines de este trabajo, alcanza con
 caracterizar la cadena cinemática que vincula la consigna de pose con la
 configuración articular, y verificar empíricamente la fidelidad del seguimiento
@@ -2360,7 +2360,7 @@ funciona como puente entre una señal objetivo ideal y una consigna más cercana
 a un movimiento físicamente ejecutable por el robot. A \(20\)~Hz, con las
 amplitudes y frecuencias de la Tabla~\ref{tab:method_marine_params}, el
 incremento de consigna entre muestras consecutivas queda por debajo de
-\(5\)~mm y de medio grado —y el suavizado lo reduce adicionalmente—, de modo
+\(5\)~mm y de medio grado (y el suavizado lo reduce adicionalmente), de modo
 que el error de seguimiento articular no se acumula: el robot transita una
 sucesión de posturas consistentes, condición operativa del régimen
 cuasiestático de la Sección~\ref{sec:control_postural}.
@@ -3033,8 +3033,8 @@ sistemático en \(Y\), de signo negativo, que alcanza
 \(-0{,}322\) m en \(R1\), \(-0{,}297\) m en \(R2\) y \(-0{,}151\) m en \(R3\).
 La hipótesis más probable para este desplazamiento sistemático en \(Y\) no es
 un sesgo del estimador visual, sino un movimiento físico real del robot. Al
-recibir comandos de \emph{roll} y \emph{pitch}, el controlador de estabilidad del Go2 —tanto
-en simulación como en el robot real— ajusta la posición horizontal del torso
+recibir comandos de \emph{roll} y \emph{pitch}, el controlador de estabilidad del Go2 (tanto
+en simulación como en el robot real) ajusta la posición horizontal del torso
 para mantener el centro de masa dentro del polígono de soporte, lo que genera
 un pequeño desplazamiento lateral (\emph{sway}) no incluido en la consigna.
 Este efecto fue observable también en los ensayos de laboratorio, donde el
