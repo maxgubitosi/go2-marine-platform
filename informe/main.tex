@@ -1527,6 +1527,7 @@ postural genera un patrón observable y una cámara recupera una pose relativa a
 partir de ese patrón.
 
 \subsection{Control postural del Go2 y marcos de referencia}
+\label{sec:control_postural}
 
 Definido el movimiento que se busca emular, el problema central de la plataforma
 experimental es convertir esa consigna de movimiento en una postura físicamente
@@ -1751,9 +1752,23 @@ aceleraciones son lo bastante pequeñas como para que los términos inerciales y
 contacto de \eqref{eq:quadruped_dynamics} resulten despreciables frente a la
 geometría; lo denominamos \emph{régimen cuasiestático}, en el sentido de que en
 cada instante el robot puede tratarse como si estuviera en equilibrio estático.
+Para dimensionar ese desprecio: con la amplitud vertical de \(0{,}10\)~m y la
+frecuencia efectiva de \emph{heave} de \(0{,}15\)~Hz empleadas en la campaña
+(Tabla~\ref{tab:method_marine_params}), la aceleración máxima de la consigna
+resulta del orden de \(0{,}09~\text{m/s}^2\), inferior al 1\% de la
+aceleración gravitatoria.
 Esto permite dejar de lado la dinámica de fuerzas y concentrarse en cómo una
 consigna de pose del cuerpo se traduce en una nueva configuración articular de
 las patas.
+
+Estas restricciones admiten, además, una lectura en términos de grados de
+libertad. De las dieciocho coordenadas de \(\bar q\) —seis de la base flotante
+y doce articulares—, los cuatro contactos puntuales sin deslizamiento remueven
+doce, de modo que quedan exactamente seis: la pose del torso. En apoyo
+cuadrúpedo, el Go2 conserva así los mismos seis grados de libertad de la
+formulación marina \eqref{eq:marine_kinematics}, de los cuales el entorno
+comanda tres —\emph{heave}, \emph{roll} y \emph{pitch}— y mantiene fijos los
+restantes.
 
 \begin{figure}[H]
 \centering
@@ -1877,7 +1892,13 @@ con fuerzas de contacto, esta condición ayuda a entender por qué las amplitude
 de \emph{roll}, \emph{pitch} y \emph{heave} deben permanecer acotadas. Si la
 consigna postural fuera excesiva, el robot dejaría de comportarse como una
 plataforma controlada y aparecerían limitaciones mecánicas o configuraciones poco
-realistas para el objetivo del entorno.
+realistas para el objetivo del entorno. El contacto es, además, unilateral: el
+suelo solo puede empujar, de modo que un pie se despega únicamente si su fuerza
+normal requerida se anula. Mientras la proyección del centro de masa permanece
+lejos de los bordes de \(\mathcal{P}_s\), cada pie conserva una precarga del
+orden de la cuarta parte del peso del robot, frente a la cual las perturbaciones
+de un seguimiento postural lento resultan pequeñas; las amplitudes empleadas en
+este trabajo se eligieron para preservar ese margen.
 
 Además, alrededor de una postura nominal puede obtenerse una lectura física
 mediante una linealización de primer orden. Si \(\delta p_b\) es una pequeña
@@ -1951,7 +1972,10 @@ deseada del pie,
 
 y cerca de configuraciones singulares (pata estirada, \(q_{i,3}\to 0\)) se
 sustituye la inversa por la pseudoinversa amortiguada
-\(J_i^{\dagger}\) \citep{Siciliano2009,Lee2013Cheetah}. Cada columna de
+\(J_i^{\dagger}\) \citep{Siciliano2009,Lee2013Cheetah}. El determinante admite
+la forma compacta \(\det J_i = l_1 l_2\, s_3\,(l_1 c_2 + l_2 c_{23})\), cuyo
+anulamiento —pata estirada o extensión efectiva \(l_1 c_2 + l_2 c_{23}\)
+nula— localiza dichas singularidades. Cada columna de
 \eqref{eq:leg_jacobian_explicit} indica cómo una junta —abducción de cadera,
 muslo y rodilla, en ese orden— desplaza el pie en el cuerpo; el Jacobiano es, por
 lo tanto, el puente entre el espacio cartesiano del pie y el espacio articular de
@@ -1987,7 +2011,11 @@ q_{i,2} = \operatorname{atan2}(p_x, A) -
 \end{equation}
 
 salvo los signos que dependen del lado de la pata (a través de \(d\)) y de la
-convención de flexión de la rodilla. Las ecuaciones
+convención de flexión de la rodilla. La raíz cuadrada de \eqref{eq:ik_hip} y el
+arcocoseno de \eqref{eq:ik_thigh_knee} admiten dos ramas cada uno, de modo que
+existen hasta cuatro soluciones articulares por pata para una misma posición de
+pie; los signos adoptados seleccionan la única rama compatible con los límites
+articulares y la flexión natural de la rodilla del Go2. Las ecuaciones
 \eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} hacen explícito que cada componente
 de la consigna postural se traduce en valores concretos de las tres juntas
 —abducción de cadera \(q_{i,1}\), muslo \(q_{i,2}\) y rodilla \(q_{i,3}\)— sin que
@@ -2002,7 +2030,11 @@ torques de \eqref{eq:quadruped_dynamics}. Se envía una consigna de pose del tor
 internamente recorre la cadena descrita: convierte la pose deseada en posiciones
 de pie en el cuerpo \eqref{eq:desired_foot_positions}, resuelve la cinemática
 inversa por pata \eqref{eq:ik_hip}--\eqref{eq:ik_thigh_knee} y sigue las
-referencias articulares con sus lazos de control. En simulación esa lógica
+referencias articulares con sus lazos de control. Dichos lazos siguen la ley
+proporcional--derivativa estándar,
+\(\tau = K_p\,(q_a^\star - q_a) + K_d\,(\dot q_a^\star - \dot q_a)\), que
+confiere a cada junta el comportamiento de un resorte--amortiguador virtual en
+torno a su referencia. En simulación esa lógica
 proviene del \emph{stack} abierto de Go2 sobre {ROS}~2
 \citep{UnitreeGo2ROS2}, construido sobre el \emph{framework} cuadrúpedo {CHAMP}
 \citep{CHAMP}. En este trabajo utilizamos un \emph{fork} propio de ese
@@ -2016,11 +2048,13 @@ la cinemática directa y el Jacobiano de pata mapean la consigna cartesiana del 
 al espacio articular y los lazos de impedancia/PD generan los torques
 (Figura~\ref{fig:leg_control_chain}); la principal diferencia con el Go2 es
 mecánica —el Cheetah emplea una pata pantográfica y el Go2 una cadena serial—,
-pero la estructura de control es la misma. Sobre el robot real, el controlador
-embarcado de Unitree cierra el lazo postural con capas adicionales de equilibrio y
-compensación de contacto —en parte basadas en modelos aprendidos— que no
-modelamos de forma explícita y que absorben los efectos no capturados por \(M\),
-\(C\), \(D\) y \(g\). Por eso, para los fines de este trabajo, alcanza con
+pero la estructura de control es la misma. Sobre el robot real, la interfaz de
+bajo nivel de los actuadores expone esa misma estructura
+proporcional--derivativa por motor; las capas que median entre la consigna de
+pose y esas referencias pertenecen al controlador embarcado de Unitree, que
+cierra el lazo postural con equilibrio y compensación de contacto —en parte
+basados en modelos aprendidos— que no modelamos de forma explícita y que
+absorben los efectos no capturados por \(M\), \(C\), \(D\) y \(g\). Por eso, para los fines de este trabajo, alcanza con
 caracterizar la cadena cinemática que vincula la consigna de pose con la
 configuración articular, y verificar empíricamente la fidelidad del seguimiento
 (Sección~\ref{sec:experimentacion}).
@@ -2165,7 +2199,12 @@ decisión que modifica la dificultad del escenario visual. Aumentar la frecuenci
 acelera la variación temporal del marcador; aumentar las amplitudes agranda las
 excursiones angulares y verticales; modificar los desfases cambia la relación
 temporal entre ejes; y variar el suavizado altera cuán brusca o cuán continua
-resulta la señal final.
+resulta la señal final. El criterio para fijar estos valores fue mantener la
+consigna dentro del régimen postural de la
+Sección~\ref{sec:control_postural}: al conservar \(x=y=0\) y \emph{yaw} nulo,
+la proyección del centro de masa se mantiene próxima al centro del polígono de
+soporte aun en las excursiones máximas, y las amplitudes angulares y verticales
+se limitan a valores realizables por el espacio de trabajo articular del Go2.
 
 Las señales usadas en simulación y en la evaluación \textit{offline} se listan
 de forma canónica en la Tabla~\ref{tab:ros_interfaces_sim}; las del montaje en
@@ -2318,7 +2357,13 @@ ayuda a evitar transiciones poco plausibles en Gazebo y reduce movimientos
 demasiado bruscos que podrían introducir artefactos innecesarios en la
 evaluación visual. Metodológicamente, este parámetro fue importante porque
 funciona como puente entre una señal objetivo ideal y una consigna más cercana
-a un movimiento físicamente ejecutable por el robot.
+a un movimiento físicamente ejecutable por el robot. A \(20\)~Hz, con las
+amplitudes y frecuencias de la Tabla~\ref{tab:method_marine_params}, el
+incremento de consigna entre muestras consecutivas queda por debajo de
+\(5\)~mm y de medio grado —y el suavizado lo reduce adicionalmente—, de modo
+que el error de seguimiento articular no se acumula: el robot transita una
+sucesión de posturas consistentes, condición operativa del régimen
+cuasiestático de la Sección~\ref{sec:control_postural}.
 
 Luego del suavizado, la posición deseada se fija como
 \((0, 0, \tilde{h}_k)\), de manera que el único desplazamiento lineal es la
