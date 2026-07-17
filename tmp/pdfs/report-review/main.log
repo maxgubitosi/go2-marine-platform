@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 17:26
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 17:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1708,12 +1708,12 @@ LaTeX Info: Redefining \% on input line 1.
 \openout10 = `main.lof'.
 
  [11]
-Underfull \hbox (badness 1221) in paragraph at lines 293--294
+Underfull \hbox (badness 1221) in paragraph at lines 309--310
 []|\TU/lmr/m/n/12 Velocidades lineales y angulares en el marco del cuerpo,
  []
 
 
-Underfull \hbox (badness 2065) in paragraph at lines 308--309
+Underfull \hbox (badness 2065) in paragraph at lines 324--325
 []|\TU/lmr/m/n/12 Coeficientes de acoplamiento pendiente local$\OMS/cmsy/m/n/12
  !$\TU/lmr/m/n/12 inclinación
  []
@@ -1750,7 +1750,7 @@ File: figures/images/aruco_id0_dict_6x6_250.png Graphic file (type bmp)
  [16] [17] [18]
 Capítulo 5.
 
-Underfull \hbox (badness 2012) in paragraph at lines 1181--1181
+Underfull \hbox (badness 2012) in paragraph at lines 1197--1197
 |[]\TU/lmr/bx/n/24.88 Metodología y modelado pro-
  []
 
@@ -1761,12 +1761,12 @@ File: figures/diagrams/platform_corner_heights/platform_corner_heights.pdf Grap
 hic file (type pdf)
 <use figures/diagrams/platform_corner_heights/platform_corner_heights.pdf>
  [22]
-Overfull \hbox (18.72745pt too wide) in paragraph at lines 1457--1458
+Overfull \hbox (18.72745pt too wide) in paragraph at lines 1473--1474
  [][] 
  []
 
 
-Overfull \hbox (18.72745pt too wide) in paragraph at lines 1466--1467
+Overfull \hbox (18.72745pt too wide) in paragraph at lines 1482--1483
  [][] 
  []
 
@@ -1777,7 +1777,7 @@ File: figures/diagrams/translations_rotations.png Graphic file (type bmp)
 File: figures/images/fig_go2_postures.jpeg Graphic file (type bmp)
 <figures/images/fig_go2_postures.jpeg>
  [28] [29] [30] [31]
-Overfull \hbox (16.96407pt too wide) detected at line 2011
+Overfull \hbox (16.96407pt too wide) detected at line 2027
 [][][]\OML/cmm/m/it/12 q[] \OT1/cmr/m/n/12 = \OMS/cmsy/m/n/12 ^^@ []  [] \OML/c
 mm/m/it/12 ;  q[] \OT1/cmr/m/n/12 = [](\OML/cmm/m/it/12 p[]; A\OT1/cmr/m/n/12 )
  \OMS/cmsy/m/n/12 ^^@ []  []\OML/cmm/m/it/12 l[] [] q[];  l[] \OT1/cmr/m/n/12 +
@@ -1828,129 +1828,129 @@ File: figures/images/fig_lab_setup_montaje.jpeg Graphic file (type bmp)
  [51] [52]
 Capítulo 6.
 
-Underfull \hbox (badness 10000) in paragraph at lines 2809--2809
+Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 []|\TU/lmr/m/n/12 Caso base
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2809--2809
+Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 []|\TU/lmr/m/n/12 Configuración
  []
 
 
-Underfull \hbox (badness 4229) in paragraph at lines 2809--2809
+Underfull \hbox (badness 4229) in paragraph at lines 2825--2825
 \TU/lmr/m/n/12 sinusoidal de
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2810--2810
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2826
 []|\TU/lmr/m/n/12 Cámara em-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2810--2810
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2826
 \TU/lmr/m/n/12 barcada en
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2810--2810
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2826
 []|\TU/lmr/m/n/12 Configuración
  []
 
 
-Underfull \hbox (badness 4229) in paragraph at lines 2810--2810
+Underfull \hbox (badness 4229) in paragraph at lines 2826--2826
 \TU/lmr/m/n/12 sinusoidal de
  []
 
 
-Underfull \hbox (badness 7685) in paragraph at lines 2810--2811
+Underfull \hbox (badness 7685) in paragraph at lines 2826--2827
 \TU/lmr/m/n/12 parable del escenario
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2811--2811
+Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
 []|\TU/lmr/m/n/12 Cámara em-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2811--2811
+Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
 \TU/lmr/m/n/12 barcada en
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2811--2811
+Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
 []|\TU/lmr/m/n/12 Configuración
  []
 
 
-Underfull \hbox (badness 4229) in paragraph at lines 2811--2811
+Underfull \hbox (badness 4229) in paragraph at lines 2827--2827
 \TU/lmr/m/n/12 sinusoidal de
  []
 
 
-Underfull \hbox (badness 7777) in paragraph at lines 2811--2812
+Underfull \hbox (badness 7777) in paragraph at lines 2827--2828
 []|\TU/lmr/m/n/12 Corrida principal del
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2812--2812
+Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
 []|\TU/lmr/m/n/12 Cámara em-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2812--2812
+Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
 \TU/lmr/m/n/12 barcada en
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2812--2812
+Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
 []|\TU/lmr/m/n/12 Configuración
  []
 
 
-Underfull \hbox (badness 4229) in paragraph at lines 2812--2812
+Underfull \hbox (badness 4229) in paragraph at lines 2828--2828
 \TU/lmr/m/n/12 sinusoidal de
  []
 
 
-Underfull \hbox (badness 4303) in paragraph at lines 2812--2813
+Underfull \hbox (badness 4303) in paragraph at lines 2828--2829
 \TU/lmr/m/n/12 parable del dron. Se
  []
 
 [53
 
 ]
-Underfull \hbox (badness 1173) in paragraph at lines 2849--2850
+Underfull \hbox (badness 1173) in paragraph at lines 2865--2866
 \TU/lmr/m/n/12 dad de muestras.
  []
 
 
-Underfull \hbox (badness 1533) in paragraph at lines 2849--2850
+Underfull \hbox (badness 1533) in paragraph at lines 2865--2866
 \TU/lmr/m/n/12 El error de \TU/lmr/m/it/12 hea-
  []
 
 
-Underfull \hbox (badness 6995) in paragraph at lines 2849--2850
+Underfull \hbox (badness 6995) in paragraph at lines 2865--2866
 \TU/lmr/m/n/12 te más acotado
  []
 
 
-Underfull \hbox (badness 1448) in paragraph at lines 2850--2851
+Underfull \hbox (badness 1448) in paragraph at lines 2866--2867
 []|\TU/lmr/m/n/12 Corrida principal.
  []
 
 
-Underfull \hbox (badness 5878) in paragraph at lines 2850--2851
+Underfull \hbox (badness 5878) in paragraph at lines 2866--2867
 \TU/lmr/m/n/12 gular del grupo
  []
 
 
-Underfull \hbox (badness 1838) in paragraph at lines 2851--2852
+Underfull \hbox (badness 1838) in paragraph at lines 2867--2868
 \TU/lmr/m/n/12 cional global del
  []
 
 
-Underfull \hbox (badness 2409) in paragraph at lines 2851--2852
+Underfull \hbox (badness 2409) in paragraph at lines 2867--2868
 \TU/lmr/m/n/12 peño angular in-
  []
 
@@ -1976,7 +1976,7 @@ File: figures/results/sim_drone_error_hist.png Graphic file (type bmp)
 File: figures/results/sim_drone_runs_comparison.png Graphic file (type bmp)
 <figures/results/sim_drone_runs_comparison.png>
  [60] [61] [62] [63]
-Underfull \hbox (badness 3657) in paragraph at lines 3160--3160
+Underfull \hbox (badness 3657) in paragraph at lines 3176--3176
 []|\TU/lmr/m/n/12 Comando de acti-
  []
 
@@ -1996,7 +1996,7 @@ File: figures/images/strong_15_10_plot_03_lag_correlation.png Graphic file (typ
 e bmp)
 <figures/images/strong_15_10_plot_03_lag_correlation.png>
  [68]
-Underfull \hbox (badness 10000) in paragraph at lines 3376--3376
+Underfull \hbox (badness 10000) in paragraph at lines 3392--3392
 []|\TU/lmr/m/n/12 Ganancia dinámica
  []
 
@@ -2019,7 +2019,7 @@ Capítulo 9.
 [77
 
 ] [78]
-Underfull \hbox (badness 4193) in paragraph at lines 3624--3624
+Underfull \hbox (badness 4193) in paragraph at lines 3640--3640
 []\TU/lmr/m/n/12 K. D. Nguyen y T.[]T. Nguyen, “Vision-Based Software-in-the-Lo
 op-
  []
@@ -2027,47 +2027,47 @@ op-
 [79] [80]
 Apéndice A.
 
-Underfull \hbox (badness 5036) in paragraph at lines 3652--3652
+Underfull \hbox (badness 5036) in paragraph at lines 3668--3668
 []|\TU/lmr/m/n/10 Laboratorio (réplica
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 3653--3653
+Underfull \hbox (badness 1910) in paragraph at lines 3669--3669
 []|\TU/lmr/m/n/10 Laboratorio (corrida
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3654--3654
+Underfull \hbox (badness 10000) in paragraph at lines 3670--3670
 []|\TU/lmr/m/n/10 Laboratorio (mov.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3655--3656
+Underfull \hbox (badness 10000) in paragraph at lines 3671--3672
 []|\TU/lmr/m/n/10 20-03-2026;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3655--3656
+Underfull \hbox (badness 10000) in paragraph at lines 3671--3672
 \OMS/cmsy/m/n/10 ^^X \OT1/cmr/m/n/10 119[]55$ \TU/lmr/m/n/10 s; sin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3657--3658
+Underfull \hbox (badness 10000) in paragraph at lines 3673--3674
 \TU/lmr/m/n/10 con \TU/lmtt/m/n/10 /aruco/pose\TU/lmr/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3657--3658
+Underfull \hbox (badness 10000) in paragraph at lines 3673--3674
 \TU/lmr/m/n/10 y
  []
 
 
-Overfull \hbox (31.5754pt too wide) in paragraph at lines 3657--3658
+Overfull \hbox (31.5754pt too wide) in paragraph at lines 3673--3674
 \TU/lmtt/m/n/10 /stereo_camera/image_raw| 
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 3658--3659
+Underfull \hbox (badness 3780) in paragraph at lines 3674--3675
 \TU/lmr/m/n/10 solo \TU/lmtt/m/n/10 metadata.yaml
  []
 
@@ -2104,4 +2104,4 @@ Here is how much of TeX's memory you used:
  88i,14n,94p,1001b,6838s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (98 pages, 2068752 bytes).
+fs/report-review/main.xdv (98 pages, 2079580 bytes).
