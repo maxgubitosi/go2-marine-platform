@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 16:17
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 16:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1606,11 +1606,10 @@ File: figures/setup/logoudesa.jpg Graphic file (type bmp)
 <figures/setup/logoudesa.jpg>
  [1
 
-] [2]
+]
 LaTeX Font Info:    Trying to load font information for U+msa on input line 190
 .
-
-(/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
 (/usr/local/texlive/2026/texmf-dist/tex/latex/microtype/mt-msa.cfg
@@ -2089,19 +2088,19 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: CB04B4F1BA5A1D51E7CE50D8FCE20B1D;14026.
+(rerunfilecheck)             Checksum: 3CD6EE9296AAD24BB92FD75F255DF310;14026.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 41113 strings out of 468168
- 827638 string characters out of 5432815
- 1770530 words of memory out of 5000000
- 69115 multiletter control sequences out of 15000+600000
+ 41115 strings out of 468168
+ 827704 string characters out of 5432815
+ 1770529 words of memory out of 5000000
+ 69117 multiletter control sequences out of 15000+600000
  636676 words of font info for 104 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  88i,14n,94p,1001b,6838s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (99 pages, 2069160 bytes).
+fs/report-review/main.xdv (98 pages, 2068668 bytes).
