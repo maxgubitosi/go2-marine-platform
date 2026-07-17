@@ -59,7 +59,7 @@
 <text x="735.0" y="342.0" class="label" text-anchor="end">babor</text>
 <circle cx="987.5" cy="490.0" r="11.5" fill="#ffffff" stroke="#111827" stroke-width="3.0" opacity="1.0"/>
 <circle cx="987.5" cy="490.0" r="5.0" fill="#111827" stroke="none" stroke-width="1.0" opacity="1.0"/>
-<text x="1020.0" y="528.0" class="label" text-anchor="start">estribor</text>
+<text x="1045.0" y="610.0" class="label" text-anchor="start">estribor</text>
 <line x1="405" y1="452" x2="405" y2="365" stroke="#dc2626" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-heave)" opacity="0.92"/>
 <line x1="405" y1="452" x2="405" y2="540" stroke="#dc2626" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow-heave)" opacity="0.92"/>
 <polygon points="405.0,348.0 389.0,377.0 421.0,377.0" fill="#dc2626" stroke="#dc2626" stroke-width="0.0" stroke-linejoin="round"/>
@@ -70,5 +70,5 @@
 <text x="905.0" y="374.0" class="motion" text-anchor="middle" fill="#d97706">pitch</text>
 <path d="M794,358 C846,424 919,466 980,490" fill="none" stroke="#0f766e" stroke-width="7.0" stroke-linecap="round" marker-end="url(#arrow-roll)" opacity="0.92"/>
 <polygon points="1000.0,499.0 963.0,489.0 988.0,463.0" fill="#0f766e" stroke="#0f766e" stroke-width="0.0" stroke-linejoin="round"/>
-<text x="906.0" y="486.0" class="motion" text-anchor="middle" fill="#0f766e">roll</text>
+<text x="810.0" y="475.0" class="motion" text-anchor="middle" fill="#0f766e">roll</text>
 </svg>

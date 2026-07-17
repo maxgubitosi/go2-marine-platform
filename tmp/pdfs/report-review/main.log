@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 16:32
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 17:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1757,8 +1757,9 @@ Underfull \hbox (badness 2012) in paragraph at lines 1181--1181
 [19
 
 ] [20] [21]
-File: figures/images/fig_wave_platform_diagram.jpeg Graphic file (type bmp)
-<figures/images/fig_wave_platform_diagram.jpeg>
+File: figures/diagrams/platform_corner_heights/platform_corner_heights.pdf Grap
+hic file (type pdf)
+<use figures/diagrams/platform_corner_heights/platform_corner_heights.pdf>
  [22]
 Overfull \hbox (18.72745pt too wide) in paragraph at lines 1457--1458
  [][] 
@@ -2094,13 +2095,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 41115 strings out of 468168
- 827704 string characters out of 5432815
+ 41118 strings out of 468168
+ 827981 string characters out of 5432815
  1770529 words of memory out of 5000000
- 69117 multiletter control sequences out of 15000+600000
+ 69119 multiletter control sequences out of 15000+600000
  636676 words of font info for 104 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  88i,14n,94p,1001b,6838s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (98 pages, 2068668 bytes).
+fs/report-review/main.xdv (98 pages, 2068752 bytes).

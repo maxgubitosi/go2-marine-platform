@@ -212,7 +212,7 @@ def build_svg() -> str:
         ("proa", proa, (proa[0], 524.0), (1248.0, 302.0), "start"),
         ("popa", popa, (popa[0], 642.0), (628.0, 530.0), "end"),
         ("babor", babor, (babor[0], 592.0), (735.0, 342.0), "end"),
-        ("estribor", estribor, (estribor[0], 538.0), (1020.0, 528.0), "start"),
+        ("estribor", estribor, (estribor[0], 538.0), (1045.0, 610.0), "start"),
     ]
 
     for _name, deck_pt, water_pt, _label_pos, _anchor in samples:
@@ -268,7 +268,7 @@ def build_svg() -> str:
         )
     )
     parts.append(_polygon([(1000.0, 499.0), (963.0, 489.0), (988.0, 463.0)], fill=COLORS["roll"], stroke=COLORS["roll"], stroke_width=0.0))
-    parts.append(_text(906.0, 486.0, "roll", klass="motion", fill=COLORS["roll"]))
+    parts.append(_text(810.0, 475.0, "roll", klass="motion", fill=COLORS["roll"]))
 
     parts.append("</svg>")
     return "\n".join(parts)

@@ -1,12 +1,9 @@
-             Universidad de San Andrés
-
-                Departamento de Ingeniería
-
-             Ingeniería en Inteligencia Artificial
+            Universidad de San Andrés
+               Departamento de Ingeniería
+            Ingeniería en Inteligencia Artificial
 
 
-
-                Trabajo de Graduación
+               Trabajo de Graduación
 
    Entorno de simulación para dinámica
    simplificada de plataformas marinas
@@ -18,17 +15,14 @@
 Autores y Legajos:
 Máximo Gubitosi - 33725
 Jack Spolski - 34318
-
 Mentor: Juan Ignacio Giribet
 Comentor: Gastón Castro
-Victoria, Buenos Aires
-
-     Abril 2026
 
 
 
 
-          2
+                   Victoria, Buenos Aires
+                          Abril 2026
 Resumen
     Este trabajo propone una alternativa de ensayo segura y reproducible para es-
 tudiar estimación de pose visual en el contexto de aterrizaje de drones sobre plata-
@@ -60,8 +54,8 @@ movimiento y evaluación de forma progresiva, medible y reproducible.
 
 
 
-Palabras clave: Estimación de pose;Plataformas marinas;Robot cuadrúpedo;Simu-
-lación robótica;Marcadores fiduciales;ROS 2
+Palabras clave: Estimación de pose; Plataformas marinas; Robot cuadrúpedo;
+Simulación robótica; Marcadores fiduciales; ROS 2
 
 
 
@@ -97,8 +91,8 @@ and reproducibly.
 
 
 
-Keywords: Pose estimation;Marine platforms;Quadruped robot;Robotics simula-
-tion;Fiducial markers;ROS 2
+Keywords: Pose estimation; Marine platforms; Quadruped robot; Robotics simu-
+lation; Fiducial markers; ROS 2
 
 
 
@@ -1584,20 +1578,19 @@ de cada pata se monta sobre el torso en b rhi ≈ (±0,1934, ±0,0465, 0) m resp
 del centro del cuerpo, con los signos correspondientes a la pata delantera/trasera e
 izquierda/derecha. La Figura 5.5 resume esta cadena.
 
-                         d                                                HFE
+                                                                            HFE
+                          d
                 torso
-                   HAA                                                 l1
-                                                                       qi,2
-                             qi,1
-
-                                                                                   KFE
-                                l 1+
-                                    l2
-                                                                              l2qi,3
+                HAA                                              qi,2        l1
+                   qi,1
+                                                                                  KFE
+                              l 1+
+                                l2                                                 qi,3
+                                                                        l2
                                                                   z
             z
-                                                                      x
-                 y                                                        pie
+                                                                        x
+                 y                                                          pie
 
 
            (a) Plano frontal y–z                               (b) Plano sagital x–z
@@ -1614,18 +1607,19 @@ la descripción URDF utilizada en la simulación [1].
 Cinemática directa de una pata. Con esta convención, la posición del pie
 i puede escribirse en forma cerrada. Ubicando el origen en el eje de la cadera y
 abreviando ck = cos qi,k , sk = sin qi,k , s23 = sin(qi,2 + qi,3 ) y c23 = cos(qi,2 + qi,3 ), la
-cinemática directa de la pata expresada en el marco del cuerpo es
 
                                               26
-                                                                  
-                                        − (l1 s2 + l2 s23 )
-                                                                   
+cinemática directa de la pata expresada en el marco del cuerpo es
+                                                                
+                                      − (l1 s2 + l2 s23 )
+                                                              
            b
             pfi (qi ) = b rhi + 
-                                 d c 1 + (l 1 c 2 + l 2 c 23 ) s 1
-                                                                    ,
-                                                                         i ∈ {1, 2, 3, 4}.   (5.7)
-                                     d s1 − (l1 c2 + l2 c23 ) c1
+                                 d c 1 + (l  c
+                                             1 2 + l  c
+                                                     2 23 ) s  
+                                                              1 ,     i ∈ {1, 2, 3, 4}.   (5.7)
+                                   d s1 − (l1 c2 + l2 c23 ) c1
     El primer término sitúa la cadera sobre el torso, mientras que el segundo des-
 cribe, en el plano sagital, la cadena muslo–pantorrilla y la abducción qi,1 la inclina
 lateralmente. Esta expresión hace explícito el mapeo bpfi (qi ) que en el resto de la
@@ -1636,11 +1630,11 @@ w
   xb y la configuración articular qa ∈ R12 definida arriba, una forma compacta de sus
 ecuaciones de movimiento es
 
-                              M (q̄) q̄¨ + h(q̄, ˙q̄) = S ⊤ τ + Jc (q̄)⊤ λ,                   (5.8)
+                                                 ˙ = S ⊤ τ + Jc (q̄)⊤ λ,
+                             M (q̄) q̄¨ + h(q̄, q̄)                                        (5.8)
 
     donde M (q̄) es la matriz de inercia del sistema completo (torso más patas),
-       ˙ agrupa los términos de gravedad, Coriolis y demás efectos no lineales, τ es
-h(q̄, q̄)
+h(q̄, ˙q̄) agrupa los términos de gravedad, Coriolis y demás efectos no lineales, τ es
 el vector de torques articulares, S selecciona las coordenadas actuadas, Jc (q̄) es el
 Jacobiano de contacto y λ las fuerzas de reacción en los pies [2, 30, 31]. Esta forma
 de base flotante con restricciones de contacto es el modelo estándar que adoptan
@@ -1661,13 +1655,13 @@ fuerzas de contacto no se modelan de forma explícita.
     Cuando un pie permanece apoyado sin deslizar, su velocidad relativa al suelo
 debe anularse. Esa condición de contacto puede expresarse como
 
-                                              Jc (q)q̇ = 0,                                   (5.9)
-
-   y, en aceleración, como
+                                            Jc (q)q̇ = 0,                                  (5.9)
 
 
-                                                    27
-                               Jc (q)q̈ + J˙c (q, q̇)q̇ = 0.                   (5.10)
+                                                 27
+   y, en aceleración, como
+
+                               Jc (q)q̈ + J˙c (q, q̇)q̇ = 0.                   (5.10)
 
     En un problema de locomoción completa estas restricciones conviven con cambios
 de apoyo, despegues y redistribución dinámica de cargas, que los controladores de
@@ -1752,13 +1746,13 @@ sostener un equilibrio estático simple:
    como se ilustra en la Figura 5.7.
 
                                  RL              Ps     FL
-                                                 pxy
-                                                  CoM
+
 
 
                                          torso
 
-                             y
+                             y                   pxy
+                                                  CoM
                                  RR                     FR
                                    x
 
@@ -1770,6 +1764,7 @@ estático simple requiere que la proyección horizontal del centro de masa pxy
 manezca dentro de esa región. Esto acota las amplitudes admisibles de roll, pitch y
 heave.
 
+
     Aunque en la simulación no se resuelve explícitamente un problema de estabili-
 dad con fuerzas de contacto, esta condición ayuda a entender por qué las amplitudes
 de roll, pitch y heave deben permanecer acotadas. Si la consigna postural fuera exce-
@@ -1779,10 +1774,11 @@ El contacto es, además, unilateral: el suelo solo puede empujar, de modo que un
 pie se despega únicamente si su fuerza normal requerida se anula. Mientras la pro-
 yección del centro de masa permanece lejos de los bordes de Ps , cada pie conserva
 una precarga del orden de la cuarta parte del peso del robot, frente a la cual las
-perturbaciones de un seguimiento postural lento resultan pequeñas. Las amplitudes
+
 
                                             30
-empleadas en este trabajo se eligieron para preservar ese margen.
+perturbaciones de un seguimiento postural lento resultan pequeñas. Las amplitudes
+empleadas en este trabajo se eligieron para preservar ese margen.
     Además, alrededor de una postura nominal puede obtenerse una lectura física
 mediante una linealización de primer orden. Si δpb es una pequeña traslación del tor-
 so y δω una pequeña rotación (representada por su vector de rotación instantánea),
@@ -1818,13 +1814,12 @@ tiene la relación de cinemática diferencial
    cuya forma explícita, con A = l1 c2 + l2 c23 y B = l1 s2 + l2 s23 , es
                                                                                 
                                            0            −A          −l2 c23
-                                                              
-                      Ji (qi ) =                              
-                                 A c1 − d s1 −B s1 −l2 s23 s1  .                   (5.16)
+                                                                     
+                      Ji (qi ) =  A c   − d s   −B s   −l   s    s   .             (5.16)
+                                      1       1      1    2   23   1 
                                       A s1 + d c 1       B c1        l2 s23 c1
    Como Ji es cuadrada de 3×3, cuando es no singular puede invertirse directamente
 para obtener la corrección articular asociada a una corrección deseada del pie,
-
 
 
                                                  31

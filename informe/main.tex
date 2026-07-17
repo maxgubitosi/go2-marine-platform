@@ -1379,7 +1379,7 @@ locales del agua medidas en zonas representativas de la cubierta.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{figures/images/fig_wave_platform_diagram.jpeg}
+\includegraphics[width=0.82\textwidth]{figures/diagrams/platform_corner_heights/platform_corner_heights.pdf}
 \caption{Esquema del efecto del oleaje sobre una embarcación: se identifican
 las cuatro zonas representativas de la cubierta (proa, popa, babor y
 estribor) y se sugiere cómo las diferencias de altura del agua bajo esos
@@ -1619,10 +1619,10 @@ Figura~\ref{fig:go2_leg_kinematics} resume esta cadena.
   \node[foot]  at (F) {};
   % ángulo de abducción q_{i,1}
   \draw[-latex,red!72!black,line width=0.8pt] ([shift=(-90:0.9)]A) arc[start angle=-90,end angle=-68,radius=0.9];
-  \node[red!72!black] at (1.0,3.36) {\scriptsize \(q_{i,1}\)};
-  \node[black] at (-0.34,3.66) {\scriptsize HAA};
-  \node[violet!75!black] at (0.24,4.34) {\scriptsize \(d\)};
-  \node[black!60,rotate=-68] at (1.46,2.45) {\scriptsize \(l_1{+}l_2\)};
+  \node[red!72!black,anchor=east] at (0.38,3.22) {\scriptsize \(q_{i,1}\)};
+  \node[black,anchor=east] at (-0.14,3.65) {\scriptsize HAA};
+  \node[violet!75!black] at (0.28,4.48) {\scriptsize \(d\)};
+  \node[black!60,rotate=-68] at (1.70,2.48) {\scriptsize \(l_1{+}l_2\)};
   \draw[-latex,black!70] (-1.7,0.4) -- (-1.15,0.4) node[right]{\scriptsize \(y\)};
   \draw[-latex,black!70] (-1.7,0.4) -- (-1.7,0.95) node[above]{\scriptsize \(z\)};
 \end{tikzpicture}\\[3pt]
@@ -1644,13 +1644,13 @@ Figura~\ref{fig:go2_leg_kinematics} resume esta cadena.
   \node[joint] at (K) {};
   \node[foot]  at (F) {};
   \draw[-latex,red!72!black,line width=0.8pt] (0,3.2) arc[start angle=-90,end angle=-60,radius=0.8];
-  \node[red!72!black] at (0.36,3.04) {\scriptsize \(q_{i,2}\)};
+  \node[red!72!black,anchor=east] at (-0.10,3.18) {\scriptsize \(q_{i,2}\)};
   \draw[-latex,red!72!black,line width=0.8pt] (1.30,1.749) arc[start angle=-60,end angle=-100,radius=0.7];
-  \node[red!72!black] at (1.20,1.28) {\scriptsize \(q_{i,3}\)};
-  \node[black!60,rotate=-60] at (0.36,3.34) {\scriptsize \(l_1\)};
-  \node[black!60,rotate=-80] at (0.96,1.46) {\scriptsize \(l_2\)};
-  \node[black,right=2pt] at (T) {\scriptsize HFE};
-  \node[black,right=2pt] at (K) {\scriptsize KFE};
+  \node[red!72!black,anchor=west] at (1.48,1.64) {\scriptsize \(q_{i,3}\)};
+  \node[black!60,rotate=-60] at (0.82,3.30) {\scriptsize \(l_1\)};
+  \node[black!60,rotate=-80] at (0.32,1.44) {\scriptsize \(l_2\)};
+  \node[black,above right=2pt] at (T) {\scriptsize HFE};
+  \node[black,right=4pt] at (K) {\scriptsize KFE};
   \node[black,below=2pt] at (F) {\scriptsize pie};
   \draw[-latex,black!70] (-0.7,0.4) -- (-0.15,0.4) node[right]{\scriptsize \(x\)};
   \draw[-latex,black!70] (-0.7,0.4) -- (-0.7,0.95) node[above]{\scriptsize \(z\)};
@@ -1872,9 +1872,9 @@ como se ilustra en la Figura~\ref{fig:support_polygon}.
   \fill[red!75!black] (0.28,0.05) circle (2pt);
   \draw[red!75!black,line width=0.7pt] (0.10,0.05)--(0.46,0.05);
   \draw[red!75!black,line width=0.7pt] (0.28,-0.13)--(0.28,0.23);
-  \node[red!75!black,above] at (0.28,0.52) {\scriptsize \(p_{\text{CoM}}^{xy}\)};
+  \node[red!75!black] at (0.28,-0.28) {\scriptsize \(p_{\text{CoM}}^{xy}\)};
   % polygon label
-  \node[blue!55!black] at (0,1.16) {\scriptsize \(\mathcal{P}_s\)};
+  \node[blue!55!black] at (0,1.22) {\scriptsize \(\mathcal{P}_s\)};
   % axes
   \draw[-latex,black!70] (-2.5,-1.45) -- (-1.95,-1.45) node[right]{\scriptsize \(x\)};
   \draw[-latex,black!70] (-2.5,-1.45) -- (-2.5,-0.9) node[above]{\scriptsize \(y\)};

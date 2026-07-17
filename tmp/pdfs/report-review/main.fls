@@ -481,9 +481,9 @@ INPUT ./figures/images/go2_aruco_lab.png
 INPUT ./figures/images/aruco_id0_dict_6x6_250.png
 INPUT ./figures/images/aruco_id0_dict_6x6_250.png
 INPUT ./figures/images/aruco_id0_dict_6x6_250.png
-INPUT ./figures/images/fig_wave_platform_diagram.jpeg
-INPUT ./figures/images/fig_wave_platform_diagram.jpeg
-INPUT ./figures/images/fig_wave_platform_diagram.jpeg
+INPUT ./figures/diagrams/platform_corner_heights/platform_corner_heights.pdf
+INPUT ./figures/diagrams/platform_corner_heights/platform_corner_heights.pdf
+INPUT ./figures/diagrams/platform_corner_heights/platform_corner_heights.pdf
 INPUT ./figures/diagrams/translations_rotations.png
 INPUT ./figures/diagrams/translations_rotations.png
 INPUT ./figures/diagrams/translations_rotations.png
