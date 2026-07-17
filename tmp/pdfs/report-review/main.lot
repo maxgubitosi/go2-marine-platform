@@ -1,0 +1,21 @@
+\babel@toc {spanish}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Parámetros de referencia del simulador marino y función metodológica de cada uno.}}{36}{table.5.1}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Señales principales en simulación y evaluación \textit {offline}, descriptas por su rol experimental.}}{37}{table.5.2}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces Señales principales en laboratorio para comparar comando y estado del Go2 real.}}{37}{table.5.3}%
+\contentsline {table}{\numberline {5.4}{\ignorespaces Cambios metodológicos principales al pasar de simulación a laboratorio.}}{48}{table.5.4}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {6.1}{\ignorespaces Corridas seleccionadas para estructurar el capítulo experimental en simulación. La campaña final instala un caso base con cámara fija y luego profundiza el escenario con dron mediante tres repeticiones comparables.}}{54}{table.6.1}%
+\contentsline {table}{\numberline {6.2}{\ignorespaces Resumen cuantitativo de las tres corridas del escenario con dron, calculado a partir de la evaluación \textit {offline} contra \textit {ground truth} reconstruido en el marco de la cámara. La tabla prioriza el error absoluto medio en \emph {roll}, \emph {pitch} y \emph {heave}.}}{55}{table.6.2}%
+\contentsline {table}{\numberline {6.3}{\ignorespaces Señales principales utilizadas en el ensayo R4 de laboratorio físico. La tabla resume la disponibilidad efectiva de referencia, actuación y estado. Los identificadores técnicos completos quedan concentrados en la Tabla~\ref {tab:ros_interfaces_lab}. Las tasas se calculan sobre la duración total del registro (\(\sim 59{,}66\)~s).}}{64}{table.6.3}%
+\contentsline {table}{\numberline {6.4}{\ignorespaces Fidelidad del comando enviado al Go2 en el ensayo R4. La correlación compara la señal esperada con el comando transmitido. Los desfases se reportan en valor absoluto.}}{65}{table.6.4}%
+\contentsline {table}{\numberline {6.5}{\ignorespaces Comparación de métricas dinámicas entre el ensayo principal R4 y el ensayo de control R5.}}{69}{table.6.5}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Registros ROS~2 (\texttt {rosbags}) mencionados en la experimentación.}}{81}{table.Alph1.1}%
