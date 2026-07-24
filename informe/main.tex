@@ -153,9 +153,9 @@
     \begin{flushleft}
     {\Large \textbf{Autores y Legajos:} \\ Máximo Gubitosi - 33725 \\ Jack Spolski - 34318 \par} \vspace{4mm}
 
-    {\Large \textbf{Mentor:} Gastón Castro \par}
+    {\Large \textbf{Mentor:} Dr. Gastón Castro \par}
     \vspace{1mm}
-    {\Large \textbf{Comentor:} Juan Ignacio Giribet \par}
+    {\Large \textbf{Comentor:} Dr. Juan Ignacio Giribet \par}
     \end{flushleft}
     \vfill
 
@@ -251,7 +251,7 @@ adaptada a un grupo reducido de tres estudiantes y dictada por ambos. Nuestro
 mentor, Gastón Castro, nos guió durante todo el proceso, y nuestro comentor
 impulsó la idea que dio origen a este trabajo y acompañó su desarrollo.
 
-Agradecemos al LIDAR por brindarnos el espacio, el equipamiento y la asistencia
+Agradecemos al LINAR por brindarnos el espacio, el equipamiento y la asistencia
 necesarios para desarrollar la etapa experimental. El acceso a una computadora
 con Linux, a cámaras y, especialmente, al robot Unitree Go2 fue fundamental para
 llevar adelante el trabajo. Su ayuda nos permitió conectarnos al robot,
@@ -453,9 +453,11 @@ durante el desarrollo de este proyecto.
 \newpage
 \pagenumbering{arabic}
 
-\chapter{Motivación} \label{sec:motivacion}
+\chapter{Introducción} \label{intro}
 
-\section{Aterrizaje sobre plataformas marinas en movimiento}
+\section{Motivación} \label{sec:motivacion}
+
+\subsection{Aterrizaje sobre plataformas marinas en movimiento}
 
 El aterrizaje de vehículos aéreos no tripulados sobre plataformas en movimiento
 es un problema exigente incluso en escenarios terrestres controlados. Cuando el
@@ -479,7 +481,7 @@ vía para tareas logísticas livianas entre embarcaciones o plataformas, siempre
 que la relación geométrica entre el vehículo y la superficie objetivo pudiera
 medirse de forma confiable.
 
-\section{Necesidad de validación segura y reproducible}
+\subsection{Necesidad de validación segura y reproducible}
 
 Esta dificultad técnica se combina con un problema metodológico. Las
 pruebas directas sobre sistemas físicos reales son costosas, difíciles de
@@ -517,7 +519,7 @@ llegar a las pruebas físicas con hipótesis y métricas mejor definidas.
 En este sentido, el problema no es solo de control o de visión, sino también de
 validación experimental.
 
-\section{Conveniencia de un enfoque progresivo}
+\subsection{Conveniencia de un enfoque progresivo}
 
 La literatura sobre aterrizaje autónomo en plataformas móviles muestra que el
 problema suele abordarse como una cadena completa que combina percepción,
@@ -547,8 +549,6 @@ la aplicación final. Su fortaleza es ofrecer un entorno que no solo reproduce
 un escenario desafiante, sino que organiza de manera medible y repetible el
 camino hacia experimentos futuros sobre sistemas físicos reales y,
 eventualmente, hacia sistemas de aterrizaje con mayor autonomía.
-
-\chapter{Introducción} \label{intro}
 
 \section{Objetivo y alcance del trabajo}
 
@@ -744,7 +744,7 @@ aterrizaje autónomo, pero sí construyen una base experimental y metodológica
 para estudiar ese problema con menor riesgo y mayor trazabilidad.
 
 Las dos preguntas de validación recién formuladas también organizan el recorrido
-del documento. El Capítulo~\ref{sec:estado_arte} revisa antecedentes de
+del documento. La Sección~\ref{sec:estado_arte} revisa antecedentes de
 aterrizaje sobre plataformas móviles, operación marina, marcadores fiduciales y
 validación en simulación. El Capítulo~\ref{mt} presenta el marco teórico y los
 conceptos necesarios para entender el ecosistema experimental, la dinámica
@@ -759,9 +759,9 @@ plataformas marinas.
 
 
 
-\chapter{Estado del arte} \label{sec:estado_arte}
+\section{Estado del arte} \label{sec:estado_arte}
 
-\section{Aterrizaje autónomo sobre plataformas móviles}
+\subsection{Aterrizaje autónomo sobre plataformas móviles}
 
 El aterrizaje autónomo de vehículos aéreos no tripulados sobre plataformas
 móviles combina percepción, estimación de movimiento y control en la fase más
@@ -796,7 +796,7 @@ menor, sino como una etapa explícita antes de los ensayos físicos. Aun así, e
 estos antecedentes el escenario móvil suele ser terrestre o genérico. La
 dinámica marina aparece solo de forma indirecta, si aparece.
 
-\section{Operación marina y cubiertas oscilantes}
+\subsection{Operación marina y cubiertas oscilantes}
 
 Cuando la plataforma objetivo se ubica en un entorno marítimo, el problema
 cambia cualitativamente. Ya no alcanza con seguir una traslación horizontal: la
@@ -830,7 +830,7 @@ la percepción visual. Para un entorno centrado en visión, esa diferencia
 ayuda a delimitar el alcance: interesa validar cuándo la pose puede recuperarse
 desde imagen, no solo resolver el aterrizaje por cualquier medio disponible.
 
-\section{Estimación de pose con marcadores fiduciales}
+\subsection{Estimación de pose con marcadores fiduciales}
 
 Una parte importante de los sistemas de aterrizaje visual se apoya en
 marcadores artificiales, porque introducen en la escena un patrón de geometría
@@ -861,7 +861,7 @@ ordenar el estado del arte: algunos antecedentes evalúan el éxito del
 aterrizaje completo, otros la detección del patrón, y otros la exactitud de la
 pose estimada. Esas métricas no son equivalentes.
 
-\section{Simulación, SIL y validación previa al ensayo real}
+\subsection{Simulación, SIL y validación previa al ensayo real}
 
 La simulación ocupa un lugar creciente en la literatura porque permite
 desacoplar subproblemas, repetir condiciones y reducir el riesgo de ensayos
@@ -883,7 +883,7 @@ trabajos reportan métricas finales de aterrizaje o éxito de misión, pero no
 siempre aíslan la exactitud geométrica del estimador de pose frente a una
 referencia limpia y repetible.
 
-\section{Síntesis crítica y ubicación de este trabajo}
+\subsection{Síntesis crítica y ubicación de este trabajo}
 
 Los trabajos anteriormente mencionados permiten separar tres familias de aportes. Una primera
 familia resuelve el aterrizaje completo sobre plataformas móviles y evalúa el

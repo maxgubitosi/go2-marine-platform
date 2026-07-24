@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  17 JUL 2026 17:57
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 15:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1725,42 +1725,34 @@ Capítulo 1.
 [1
 
 ] [2] [3]
-Capítulo 2.
-[4
-
-]
 File: figures/images/esquema-go2-aruco-dron.png Graphic file (type bmp)
 <figures/images/esquema-go2-aruco-dron.png>
- [5]
+ [4] [5]
 File: figures/images/fig_sim_fixed_camera_cropped.png Graphic file (type bmp)
 <figures/images/fig_sim_fixed_camera_cropped.png>
 File: figures/images/go2_aruco_lab.png Graphic file (type bmp)
 <figures/images/go2_aruco_lab.png>
- [6] [7] [8]
-Capítulo 3.
-[9
+ [6] [7] [8] [9] [10] [11]
+Capítulo 2.
+[12
 
-] [10] [11] [12]
-Capítulo 4.
-[13
-
-] [14] [15]
+] [13] [14]
 File: figures/images/aruco_id0_dict_6x6_250.png Graphic file (type bmp)
 <figures/images/aruco_id0_dict_6x6_250.png>
- [16] [17] [18]
-Capítulo 5.
+ [15] [16] [17]
+Capítulo 3.
 
 Underfull \hbox (badness 2012) in paragraph at lines 1197--1197
 |[]\TU/lmr/bx/n/24.88 Metodología y modelado pro-
  []
 
-[19
+[18
 
-] [20] [21]
+] [19] [20]
 File: figures/diagrams/platform_corner_heights/platform_corner_heights.pdf Grap
 hic file (type pdf)
 <use figures/diagrams/platform_corner_heights/platform_corner_heights.pdf>
- [22]
+ [21]
 Overfull \hbox (18.72745pt too wide) in paragraph at lines 1473--1474
  [][] 
  []
@@ -1770,13 +1762,13 @@ Overfull \hbox (18.72745pt too wide) in paragraph at lines 1482--1483
  [][] 
  []
 
-[23] [24]
+[22] [23]
 File: figures/diagrams/translations_rotations.png Graphic file (type bmp)
 <figures/diagrams/translations_rotations.png>
- [25] [26] [27]
+ [24] [25] [26]
 File: figures/images/fig_go2_postures.jpeg Graphic file (type bmp)
 <figures/images/fig_go2_postures.jpeg>
- [28] [29] [30] [31]
+ [27] [28] [29] [30]
 Overfull \hbox (16.96407pt too wide) detected at line 2027
 [][][]\OML/cmm/m/it/12 q[] \OT1/cmr/m/n/12 = \OMS/cmsy/m/n/12 ^^@ []  [] \OML/c
 mm/m/it/12 ;  q[] \OT1/cmr/m/n/12 = [](\OML/cmm/m/it/12 p[]; A\OT1/cmr/m/n/12 )
@@ -1784,20 +1776,20 @@ mm/m/it/12 ;  q[] \OT1/cmr/m/n/12 = [](\OML/cmm/m/it/12 p[]; A\OT1/cmr/m/n/12 )
  \OML/cmm/m/it/12 l[] [] q[][];
  []
 
-[32]
+[31]
 File: figures/diagrams/mit_cheetah_leg_control.png Graphic file (type bmp)
 <figures/diagrams/mit_cheetah_leg_control.png>
- [33]
+ [32]
 File: figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf Graphic file (
 type pdf)
 <use figures/diagrams/ros2_ecosystem_graph/tf2_frames_graph.pdf>
- [34] [35] [36] [37]
+ [33] [34] [35] [36]
 File: figures/images/fig_method_motion_components.png Graphic file (type bmp)
 <figures/images/fig_method_motion_components.png>
- [38]
+ [37]
 File: figures/images/fig_method_wave_patterns.png Graphic file (type bmp)
 <figures/images/fig_method_wave_patterns.png>
- [39] [40] [41]
+ [38] [39] [40]
 \methodvisualsetupheight=\skip111
 File: figures/setup/unitree-aruco.png Graphic file (type bmp)
 <figures/setup/unitree-aruco.png>
@@ -1805,28 +1797,28 @@ File: figures/setup/drone-unitree-aruco.png Graphic file (type bmp)
 <figures/setup/drone-unitree-aruco.png>
 File: figures/diagrams/ternas.png Graphic file (type bmp)
 <figures/diagrams/ternas.png>
- [42]
+ [41]
 File: figures/images/aruco_detection_frame.png Graphic file (type bmp)
 <figures/images/aruco_detection_frame.png>
- [43]
+ [42]
 File: figures/images/fig_sim_fixed_camera_raw.png Graphic file (type bmp)
 <figures/images/fig_sim_fixed_camera_raw.png>
 File: figures/images/fig_sim_sjtu_drone_raw.png Graphic file (type bmp)
 <figures/images/fig_sim_sjtu_drone_raw.png>
- [44]
+ [43]
 File: figures/diagrams/method_pipeline/method_pipeline.pdf Graphic file (type p
 df)
 <use figures/diagrams/method_pipeline/method_pipeline.pdf>
- [45] [46]
-[47] [48]
+ [44] [45]
+[46] [47]
 File: figures/images/fig_lab_camera_marker_geometry.jpeg Graphic file (type bmp
 )
 <figures/images/fig_lab_camera_marker_geometry.jpeg>
- [49] [50]
+ [48] [49]
 File: figures/images/fig_lab_setup_montaje.jpeg Graphic file (type bmp)
 <figures/images/fig_lab_setup_montaje.jpeg>
- [51] [52]
-Capítulo 6.
+ [50] [51]
+Capítulo 4.
 
 Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 []|\TU/lmr/m/n/12 Caso base
@@ -1917,7 +1909,7 @@ Underfull \hbox (badness 4303) in paragraph at lines 2828--2829
 \TU/lmr/m/n/12 parable del dron. Se
  []
 
-[53
+[52
 
 ]
 Underfull \hbox (badness 1173) in paragraph at lines 2865--2866
@@ -1954,48 +1946,48 @@ Underfull \hbox (badness 2409) in paragraph at lines 2867--2868
 \TU/lmr/m/n/12 peño angular in-
  []
 
-[54]
+[53]
 File: figures/results/sim_fixed_position_vs_gt.png Graphic file (type bmp)
 <figures/results/sim_fixed_position_vs_gt.png>
- [55]
+ [54]
 File: figures/results/sim_fixed_error_hist.png Graphic file (type bmp)
 <figures/results/sim_fixed_error_hist.png>
- [56]
+ [55]
 File: figures/results/sim_fixed_angle_error_hist_raw.png Graphic file (type bmp
 )
 <figures/results/sim_fixed_angle_error_hist_raw.png>
- [57]
+ [56]
 File: figures/results/sim_drone_position_vs_gt.png Graphic file (type bmp)
 <figures/results/sim_drone_position_vs_gt.png>
- [58]
+ [57]
 File: figures/results/sim_drone_orientation_vs_gt.png Graphic file (type bmp)
 <figures/results/sim_drone_orientation_vs_gt.png>
- [59]
+ [58]
 File: figures/results/sim_drone_error_hist.png Graphic file (type bmp)
 <figures/results/sim_drone_error_hist.png>
 File: figures/results/sim_drone_runs_comparison.png Graphic file (type bmp)
 <figures/results/sim_drone_runs_comparison.png>
- [60] [61] [62] [63]
+ [59] [60] [61] [62]
 Underfull \hbox (badness 3657) in paragraph at lines 3176--3176
 []|\TU/lmr/m/n/12 Comando de acti-
  []
 
-[64]
+[63]
 File: figures/images/lab_aruco_realtime_t00.png Graphic file (type bmp)
 <figures/images/lab_aruco_realtime_t00.png>
 File: figures/images/lab_aruco_realtime_t26.png Graphic file (type bmp)
 <figures/images/lab_aruco_realtime_t26.png>
 File: figures/images/lab_aruco_realtime_t49.png Graphic file (type bmp)
 <figures/images/lab_aruco_realtime_t49.png>
- [65]
+ [64]
 File: figures/images/strong_15_10_plot_01_timeseries_cmd_vs_real.png Graphic fi
 le (type bmp)
 <figures/images/strong_15_10_plot_01_timeseries_cmd_vs_real.png>
- [66] [67]
+ [65] [66]
 File: figures/images/strong_15_10_plot_03_lag_correlation.png Graphic file (typ
 e bmp)
 <figures/images/strong_15_10_plot_03_lag_correlation.png>
- [68]
+ [67]
 Underfull \hbox (badness 10000) in paragraph at lines 3392--3392
 []|\TU/lmr/m/n/12 Ganancia dinámica
  []
@@ -2003,28 +1995,28 @@ Underfull \hbox (badness 10000) in paragraph at lines 3392--3392
 File: figures/images/nominal_10_8_plot_01_timeseries_cmd_vs_real.png Graphic fi
 le (type bmp)
 <figures/images/nominal_10_8_plot_01_timeseries_cmd_vs_real.png>
-[69]
+[68]
 File: figures/results/lab_error_hist.png Graphic file (type bmp)
 <figures/results/lab_error_hist.png>
- [70] [71] [72]
+ [69] [70] [71]
+Capítulo 5.
+[72
+
+] [73]
+Capítulo 6.
+[74
+
+] [75]
 Capítulo 7.
-[73
+[76
 
-] [74]
-Capítulo 8.
-[75
-
-] [76]
-Capítulo 9.
-[77
-
-] [78]
+] [77]
 Underfull \hbox (badness 4193) in paragraph at lines 3640--3640
 []\TU/lmr/m/n/12 K. D. Nguyen y T.[]T. Nguyen, “Vision-Based Software-in-the-Lo
 op-
  []
 
-[79] [80]
+[78] [79]
 Apéndice A.
 
 Underfull \hbox (badness 5036) in paragraph at lines 3668--3668
@@ -2071,9 +2063,9 @@ Underfull \hbox (badness 3780) in paragraph at lines 3674--3675
 \TU/lmr/m/n/10 solo \TU/lmtt/m/n/10 metadata.yaml
  []
 
-[81
+[80
 
-] [82]
+] [81]
 (/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/
 main.aux
 LaTeX Info: Redefining \sptext on input line 13.
@@ -2089,19 +2081,19 @@ L3 programming layer <2026-01-19>
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 3CD6EE9296AAD24BB92FD75F255DF310;14026.
+(rerunfilecheck)             Checksum: CC8CF6B355BF2E1CB7FF7469AC9BEEA6;14104.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
  41118 strings out of 468168
- 827981 string characters out of 5432815
- 1770529 words of memory out of 5000000
+ 827985 string characters out of 5432815
+ 1770537 words of memory out of 5000000
  69119 multiletter control sequences out of 15000+600000
  636676 words of font info for 104 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 88i,14n,94p,1001b,6838s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 88i,14n,94p,1001b,6836s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (98 pages, 2079580 bytes).
+fs/report-review/main.xdv (97 pages, 2080668 bytes).
