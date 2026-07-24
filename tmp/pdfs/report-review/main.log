@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 15:32
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 15:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1968,7 +1968,7 @@ File: figures/results/sim_drone_error_hist.png Graphic file (type bmp)
 File: figures/results/sim_drone_runs_comparison.png Graphic file (type bmp)
 <figures/results/sim_drone_runs_comparison.png>
  [59] [60] [61] [62]
-Underfull \hbox (badness 3657) in paragraph at lines 3176--3176
+Underfull \hbox (badness 3657) in paragraph at lines 3177--3177
 []|\TU/lmr/m/n/12 Comando de acti-
  []
 
@@ -1988,7 +1988,7 @@ File: figures/images/strong_15_10_plot_03_lag_correlation.png Graphic file (typ
 e bmp)
 <figures/images/strong_15_10_plot_03_lag_correlation.png>
  [67]
-Underfull \hbox (badness 10000) in paragraph at lines 3392--3392
+Underfull \hbox (badness 10000) in paragraph at lines 3393--3393
 []|\TU/lmr/m/n/12 Ganancia dinámica
  []
 
@@ -2011,7 +2011,7 @@ Capítulo 7.
 [76
 
 ] [77]
-Underfull \hbox (badness 4193) in paragraph at lines 3640--3640
+Underfull \hbox (badness 4193) in paragraph at lines 3641--3641
 []\TU/lmr/m/n/12 K. D. Nguyen y T.[]T. Nguyen, “Vision-Based Software-in-the-Lo
 op-
  []
@@ -2019,47 +2019,47 @@ op-
 [78] [79]
 Apéndice A.
 
-Underfull \hbox (badness 5036) in paragraph at lines 3668--3668
+Underfull \hbox (badness 5036) in paragraph at lines 3669--3669
 []|\TU/lmr/m/n/10 Laboratorio (réplica
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 3669--3669
+Underfull \hbox (badness 1910) in paragraph at lines 3670--3670
 []|\TU/lmr/m/n/10 Laboratorio (corrida
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3670--3670
+Underfull \hbox (badness 10000) in paragraph at lines 3671--3671
 []|\TU/lmr/m/n/10 Laboratorio (mov.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3672
+Underfull \hbox (badness 10000) in paragraph at lines 3672--3673
 []|\TU/lmr/m/n/10 20-03-2026;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3672
+Underfull \hbox (badness 10000) in paragraph at lines 3672--3673
 \OMS/cmsy/m/n/10 ^^X \OT1/cmr/m/n/10 119[]55$ \TU/lmr/m/n/10 s; sin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3673--3674
+Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
 \TU/lmr/m/n/10 con \TU/lmtt/m/n/10 /aruco/pose\TU/lmr/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3673--3674
+Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
 \TU/lmr/m/n/10 y
  []
 
 
-Overfull \hbox (31.5754pt too wide) in paragraph at lines 3673--3674
+Overfull \hbox (31.5754pt too wide) in paragraph at lines 3674--3675
 \TU/lmtt/m/n/10 /stereo_camera/image_raw| 
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 3674--3675
+Underfull \hbox (badness 3780) in paragraph at lines 3675--3676
 \TU/lmr/m/n/10 solo \TU/lmtt/m/n/10 metadata.yaml
  []
 
