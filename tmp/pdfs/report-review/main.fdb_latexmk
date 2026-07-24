@@ -1,24 +1,24 @@
 # Fdb version 4
-["biber /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main"] 1784313277.37307 "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bcf" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bbl" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main" 1784918514.50614 0
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bcf" 1784918495.95443 113186 1399ae271092b90dd281581762cedb59 "xelatex"
+["biber /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main"] 1784313277.37307 "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bcf" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bbl" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main" 1784919633.27532 0
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bcf" 1784919613.83543 113186 1399ae271092b90dd281581762cedb59 "xelatex"
   "bibliography.bib" 1782688872.33583 13600 059bc3ab3c4cffd3b30f9f92c5347763 ""
   (generated)
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bbl"
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1784918496.06744 "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.pdf" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main" 1784918514.50853 0
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" 1784918495.95617 2080668 1ff8dbb2dba392c1cbbf1396d45688e7 "xelatex"
+["xdvipdfmx"] 1784919613.95876 "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.pdf" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main" 1784919633.27778 0
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" 1784919613.83694 2080552 70ae1a5bc3157232c2fe9607bee66e77 "xelatex"
   (generated)
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.pdf"
   (rewritten before read)
-["xelatex"] 1784918493.04682 "main.tex" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" "main" 1784918514.50624 0
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.aux" 1784918495.93891 56710 7dbbf18d9d4acc4453379599313318b6 "xelatex"
+["xelatex"] 1784919610.02862 "main.tex" "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.xdv" "main" 1784919633.27543 0
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.aux" 1784919613.81792 56710 7dbbf18d9d4acc4453379599313318b6 "xelatex"
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bbl" 1784313303.36298 60034 eb25b4e55525d86bf283aa487bb01f66 "biber /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main"
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.lof" 1784918495.95605 14792 c94d8f2b4df33edd1dfbea89ca039720 "xelatex"
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.lot" 1784918495.95601 2429 6820671bda484d43419846ee7d58c8e9 "xelatex"
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.out" 1784918495.95103 14104 cc8cf6b355bf2e1cb7ff7469ac9beea6 "xelatex"
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.run.xml" 1784918495.95562 2473 f8af5e15fd95f8a23f21a53bdf422633 "xelatex"
-  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.toc" 1784918495.95576 6317 528967861f47c0feeb4ac3a659f7e01a "xelatex"
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.lof" 1784919613.83683 14792 c94d8f2b4df33edd1dfbea89ca039720 "xelatex"
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.lot" 1784919613.83681 2429 6820671bda484d43419846ee7d58c8e9 "xelatex"
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.out" 1784919613.83176 14104 cc8cf6b355bf2e1cb7ff7469ac9beea6 "xelatex"
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.run.xml" 1784919613.83661 2473 f8af5e15fd95f8a23f21a53bdf422633 "xelatex"
+  "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.toc" 1784919613.83674 6317 528967861f47c0feeb4ac3a659f7e01a "xelatex"
   "/usr/local/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm" 1136768653 1528 f853c4d1b4e0550255e02831fdc8496f ""
   "/usr/local/texlive/2026/texmf-dist/fonts/tfm/jknappen/ec/ectt1000.tfm" 1136768653 1536 06717a2b50de47d4087ac0e6cd759455 ""
@@ -283,7 +283,7 @@
   "figures/setup/drone-unitree-aruco.png" 1778006434.4997 45175 ca3dd7b288f915ea1f5af69dcb3aed59 ""
   "figures/setup/logoudesa.jpg" 1778006434.50762 1669453 3591b3434c83fa9da1f8f11c6947ea17 ""
   "figures/setup/unitree-aruco.png" 1778006434.50792 8776 e4966a5a595af0ad7f11b109bfc69b99 ""
-  "main.tex" 1784918486.29548 209358 850d44df85a16a69fa45704855e4c262 ""
+  "main.tex" 1784919602.31484 209388 ee7934f1c94b244296cd4a882a63f160 ""
   (generated)
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.aux"
   "/Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pdfs/report-review/main.bcf"

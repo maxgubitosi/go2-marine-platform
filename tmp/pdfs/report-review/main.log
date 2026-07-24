@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 15:41
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 16:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1821,11 +1821,6 @@ File: figures/images/fig_lab_setup_montaje.jpeg Graphic file (type bmp)
 Capítulo 4.
 
 Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
-[]|\TU/lmr/m/n/12 Caso base
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2825--2825
 []|\TU/lmr/m/n/12 Configuración
  []
 
@@ -1835,13 +1830,13 @@ Underfull \hbox (badness 4229) in paragraph at lines 2825--2825
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2826--2826
-[]|\TU/lmr/m/n/12 Cámara em-
+Underfull \hbox (badness 2368) in paragraph at lines 2825--2826
+[]|\TU/lmr/m/n/12 Instalar el caso me-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2826--2826
-\TU/lmr/m/n/12 barcada en
+Underfull \hbox (badness 5490) in paragraph at lines 2825--2826
+\TU/lmr/m/n/12 todológicamente más
  []
 
 
@@ -1855,18 +1850,18 @@ Underfull \hbox (badness 4229) in paragraph at lines 2826--2826
  []
 
 
-Underfull \hbox (badness 7685) in paragraph at lines 2826--2827
-\TU/lmr/m/n/12 parable del escenario
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2827
+[]|\TU/lmr/m/n/12 Primera repetición
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
-[]|\TU/lmr/m/n/12 Cámara em-
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2827
+\TU/lmr/m/n/12 comparable del es-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2827--2827
-\TU/lmr/m/n/12 barcada en
+Underfull \hbox (badness 10000) in paragraph at lines 2826--2827
+\TU/lmr/m/n/12 cenario fuerte, con
  []
 
 
@@ -1880,18 +1875,8 @@ Underfull \hbox (badness 4229) in paragraph at lines 2827--2827
  []
 
 
-Underfull \hbox (badness 7777) in paragraph at lines 2827--2828
-[]|\TU/lmr/m/n/12 Corrida principal del
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
-[]|\TU/lmr/m/n/12 Cámara em-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2828--2828
-\TU/lmr/m/n/12 barcada en
+Underfull \hbox (badness 7740) in paragraph at lines 2827--2828
+\TU/lmr/m/n/12 dron. Se usa para
  []
 
 
@@ -1905,13 +1890,23 @@ Underfull \hbox (badness 4229) in paragraph at lines 2828--2828
  []
 
 
-Underfull \hbox (badness 4303) in paragraph at lines 2828--2829
-\TU/lmr/m/n/12 parable del dron. Se
+Underfull \hbox (badness 10000) in paragraph at lines 2828--2829
+[]|\TU/lmr/m/n/12 Tercera repetición
+ []
+
+
+Underfull \hbox (badness 1275) in paragraph at lines 2828--2829
+\TU/lmr/m/n/12 comparable del dron.
+ []
+
+
+Underfull \hbox (badness 1215) in paragraph at lines 2828--2829
+\TU/lmr/m/n/12 Se usa para discutir
  []
 
 [52
 
-]
+] [53]
 Underfull \hbox (badness 1173) in paragraph at lines 2865--2866
 \TU/lmr/m/n/12 dad de muestras.
  []
@@ -1946,10 +1941,9 @@ Underfull \hbox (badness 2409) in paragraph at lines 2867--2868
 \TU/lmr/m/n/12 peño angular in-
  []
 
-[53]
 File: figures/results/sim_fixed_position_vs_gt.png Graphic file (type bmp)
 <figures/results/sim_fixed_position_vs_gt.png>
- [54]
+[54]
 File: figures/results/sim_fixed_error_hist.png Graphic file (type bmp)
 <figures/results/sim_fixed_error_hist.png>
  [55]
@@ -2096,4 +2090,4 @@ Here is how much of TeX's memory you used:
  88i,14n,94p,1001b,6836s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (97 pages, 2080668 bytes).
+fs/report-review/main.xdv (97 pages, 2080552 bytes).
