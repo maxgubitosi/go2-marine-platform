@@ -540,6 +540,13 @@ INPUT ./figures/images/fig_lab_camera_marker_geometry.jpeg
 INPUT ./figures/images/fig_lab_setup_montaje.jpeg
 INPUT ./figures/images/fig_lab_setup_montaje.jpeg
 INPUT ./figures/images/fig_lab_setup_montaje.jpeg
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/amsfonts/euler/eurm10.tfm
+INPUT /usr/local/texlive/2026/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
 INPUT ./figures/results/sim_fixed_position_vs_gt.png
 INPUT ./figures/results/sim_fixed_position_vs_gt.png
 INPUT ./figures/results/sim_fixed_position_vs_gt.png

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 16:00
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.3.18)  24 JUL 2026 16:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1907,43 +1907,9 @@ Underfull \hbox (badness 1215) in paragraph at lines 2828--2829
 [52
 
 ] [53]
-Underfull \hbox (badness 1173) in paragraph at lines 2865--2866
-\TU/lmr/m/n/12 dad de muestras.
- []
-
-
-Underfull \hbox (badness 1533) in paragraph at lines 2865--2866
-\TU/lmr/m/n/12 El error de \TU/lmr/m/it/12 hea-
- []
-
-
-Underfull \hbox (badness 6995) in paragraph at lines 2865--2866
-\TU/lmr/m/n/12 te más acotado
- []
-
-
-Underfull \hbox (badness 1448) in paragraph at lines 2866--2867
-[]|\TU/lmr/m/n/12 Corrida principal.
- []
-
-
-Underfull \hbox (badness 5878) in paragraph at lines 2866--2867
-\TU/lmr/m/n/12 gular del grupo
- []
-
-
-Underfull \hbox (badness 1838) in paragraph at lines 2867--2868
-\TU/lmr/m/n/12 cional global del
- []
-
-
-Underfull \hbox (badness 2409) in paragraph at lines 2867--2868
-\TU/lmr/m/n/12 peño angular in-
- []
-
 File: figures/results/sim_fixed_position_vs_gt.png Graphic file (type bmp)
 <figures/results/sim_fixed_position_vs_gt.png>
-[54]
+ [54]
 File: figures/results/sim_fixed_error_hist.png Graphic file (type bmp)
 <figures/results/sim_fixed_error_hist.png>
  [55]
@@ -1962,7 +1928,7 @@ File: figures/results/sim_drone_error_hist.png Graphic file (type bmp)
 File: figures/results/sim_drone_runs_comparison.png Graphic file (type bmp)
 <figures/results/sim_drone_runs_comparison.png>
  [59] [60] [61] [62]
-Underfull \hbox (badness 3657) in paragraph at lines 3177--3177
+Underfull \hbox (badness 3657) in paragraph at lines 3179--3179
 []|\TU/lmr/m/n/12 Comando de acti-
  []
 
@@ -1982,7 +1948,7 @@ File: figures/images/strong_15_10_plot_03_lag_correlation.png Graphic file (typ
 e bmp)
 <figures/images/strong_15_10_plot_03_lag_correlation.png>
  [67]
-Underfull \hbox (badness 10000) in paragraph at lines 3393--3393
+Underfull \hbox (badness 10000) in paragraph at lines 3395--3395
 []|\TU/lmr/m/n/12 Ganancia dinámica
  []
 
@@ -2005,7 +1971,7 @@ Capítulo 7.
 [76
 
 ] [77]
-Underfull \hbox (badness 4193) in paragraph at lines 3641--3641
+Underfull \hbox (badness 4193) in paragraph at lines 3643--3643
 []\TU/lmr/m/n/12 K. D. Nguyen y T.[]T. Nguyen, “Vision-Based Software-in-the-Lo
 op-
  []
@@ -2013,47 +1979,47 @@ op-
 [78] [79]
 Apéndice A.
 
-Underfull \hbox (badness 5036) in paragraph at lines 3669--3669
+Underfull \hbox (badness 5036) in paragraph at lines 3671--3671
 []|\TU/lmr/m/n/10 Laboratorio (réplica
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 3670--3670
+Underfull \hbox (badness 1910) in paragraph at lines 3672--3672
 []|\TU/lmr/m/n/10 Laboratorio (corrida
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3671--3671
+Underfull \hbox (badness 10000) in paragraph at lines 3673--3673
 []|\TU/lmr/m/n/10 Laboratorio (mov.
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3672--3673
+Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
 []|\TU/lmr/m/n/10 20-03-2026;
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3672--3673
+Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
 \OMS/cmsy/m/n/10 ^^X \OT1/cmr/m/n/10 119[]55$ \TU/lmr/m/n/10 s; sin
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
+Underfull \hbox (badness 10000) in paragraph at lines 3676--3677
 \TU/lmr/m/n/10 con \TU/lmtt/m/n/10 /aruco/pose\TU/lmr/m/n/10 ,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3674--3675
+Underfull \hbox (badness 10000) in paragraph at lines 3676--3677
 \TU/lmr/m/n/10 y
  []
 
 
-Overfull \hbox (31.5754pt too wide) in paragraph at lines 3674--3675
+Overfull \hbox (31.5754pt too wide) in paragraph at lines 3676--3677
 \TU/lmtt/m/n/10 /stereo_camera/image_raw| 
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 3675--3676
+Underfull \hbox (badness 3780) in paragraph at lines 3677--3678
 \TU/lmr/m/n/10 solo \TU/lmtt/m/n/10 metadata.yaml
  []
 
@@ -2081,13 +2047,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 41118 strings out of 468168
- 827985 string characters out of 5432815
+ 41132 strings out of 468168
+ 828280 string characters out of 5432815
  1770537 words of memory out of 5000000
- 69119 multiletter control sequences out of 15000+600000
- 636676 words of font info for 104 fonts, out of 8000000 for 9000
+ 69133 multiletter control sequences out of 15000+600000
+ 638507 words of font info for 111 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  88i,14n,94p,1001b,6836s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on /Users/maxi/Downloads/Completas/PF/go2-marine-platform/tmp/pd
-fs/report-review/main.xdv (97 pages, 2080552 bytes).
+fs/report-review/main.xdv (97 pages, 2080364 bytes).

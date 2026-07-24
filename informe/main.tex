@@ -2858,9 +2858,11 @@ contra \textit{ground truth} reconstruido en el marco de la cámara. La tabla pr
 absoluto medio en \emph{roll}, \emph{pitch} y \emph{heave}.}
 \label{tab:sim_drone_quant_structure}
 \begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{p{0.10\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.15\textwidth}p{0.15\textwidth}p{0.14\textwidth}p{0.22\textwidth}}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{>{\centering\arraybackslash}p{0.08\textwidth}>{\centering\arraybackslash}p{0.10\textwidth}>{\centering\arraybackslash}p{0.11\textwidth}>{\centering\arraybackslash}p{0.10\textwidth}>{\centering\arraybackslash}p{0.10\textwidth}>{\centering\arraybackslash}p{0.09\textwidth}>{\raggedright\arraybackslash}p{0.38\textwidth}}
 \toprule
-Corrida & Muestras & Detección & \(\overline{|\Delta \mathit{roll}|}\) & \(\overline{|\Delta \mathit{pitch}|}\) & \(\overline{|\Delta Z|}\) & Observación sintética \\
+{\footnotesize Corrida} & {\footnotesize Muestras} & {\footnotesize Detección} & \(\overline{|\Delta \mathit{roll}|}\) & \(\overline{|\Delta \mathit{pitch}|}\) & \(\overline{|\Delta Z|}\) & Observación sintética \\
 \midrule
 R1 & 306 & 5,30 Hz & 2,69$^\circ$ & 1,98$^\circ$ & 0,020 m & Mayor disponibilidad de muestras. El error de \emph{heave} queda levemente más acotado que en las otras repeticiones. \\
 R2 & 264 & 4,60 Hz & 3,02$^\circ$ & 2,21$^\circ$ & 0,023 m & Corrida principal. Concentra la mayor dispersión angular del grupo y por eso resulta una referencia exigente. \\
