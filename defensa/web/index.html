@@ -1,0 +1,1189 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defensa PF · Plataforma marina sintética con Go2</title>
+<link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="deck">
+
+<!-- ============================================================
+     BLOQUE 0 · PORTADA
+     ============================================================ -->
+<section class="slide" data-block="-1" data-title="Portada">
+  <div class="slide-inner cover center" style="gap:1.6rem;">
+    <div class="eyebrow" style="justify-content:center;">Proyecto Final · Universidad de San Andrés</div>
+    <h1 class="title" style="max-width:20ch;">Una plataforma marina <span style="color:var(--sea)">sintética</span> para validar percepción visual</h1>
+    <p class="lead" style="max-width:52ch;text-align:center;margin:0 auto;">
+      Un robot cuadrúpedo Unitree Go2 emula el oleaje de una cubierta marina
+      para estudiar, de forma segura y reproducible, la estimación de pose
+      visual en el aterrizaje de drones.
+    </p>
+    <div class="row wrap" style="justify-content:center;gap:2.4rem;margin-top:1.4rem;">
+      <div style="text-align:center;">
+        <div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Autores</div>
+        <div style="font-weight:680;font-size:1.15rem;margin-top:.2rem;">Máximo Gubitosi · Jack Spolski</div>
+      </div>
+      <div style="width:1px;height:38px;background:var(--line);"></div>
+      <div style="text-align:center;">
+        <div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Mentores</div>
+        <div style="font-weight:680;font-size:1.15rem;margin-top:.2rem;">Gastón Castro · Juan I. Giribet</div>
+      </div>
+    </div>
+    <div class="row" style="justify-content:center;gap:.6rem;margin-top:1rem;">
+      <span class="pill">Ingeniería · 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BLOQUE 1 · CONTEXTO  (público general)
+     ============================================================ -->
+
+<!-- S2 -->
+<section class="slide" data-block="0" data-title="¿Por qué aterrizar drones sobre barcos?">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">El escenario</div>
+      <h2 class="head">Un barco puede ser la <span class="accent">base móvil</span> de un dron</h2>
+      <p class="lead">
+        Despegar, recuperar y relanzar un dron desde una embarcación amplía el
+        alcance de las misiones y acerca el vehículo al área de interés.
+      </p>
+    </header>
+    <div class="s-body">
+    <div class="cards">
+      <div class="card">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        </div>
+        <h3>Búsqueda y rescate</h3>
+        <p>Cobertura rápida de zonas costeras y de mar abierto donde cada minuto cuenta.</p>
+      </div>
+      <div class="card">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg>
+        </div>
+        <h3>Inspección offshore</h3>
+        <p>Revisión de plataformas y estructuras marinas sin exponer operarios.</p>
+      </div>
+      <div class="card">
+        <div class="ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        </div>
+        <h3>Monitoreo marítimo</h3>
+        <p>Vigilancia ambiental y de tráfico con vuelos recurrentes desde la embarcación.</p>
+      </div>
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- S3 -->
+<section class="slide" data-block="0" data-title="El problema: la cubierta nunca está quieta">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">El problema</div>
+    </header>
+    <div class="s-body">
+    <div class="split narrow-media">
+      <div class="col">
+        <h2 class="head">La cubierta <span class="accent">nunca</span> está quieta</h2>
+        <p class="lead" style="margin-bottom:1.4rem;">
+          El oleaje mueve la plataforma de forma continua. El dron necesita saber,
+          cuadro a cuadro, dónde está y cómo está inclinada.
+        </p>
+        <ul class="marks">
+          <li><strong>Roll</strong> — balanceo lateral</li>
+          <li><strong>Pitch</strong> — cabeceo longitudinal</li>
+          <li><strong>Heave</strong> — ascenso y descenso vertical</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="wave-scene" data-anim>
+          <svg viewBox="0 0 420 320" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Plataforma oscilando sobre el oleaje">
+            <defs>
+              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8fd0e0"/>
+                <stop offset="1" stop-color="#3f9fbf"/>
+              </linearGradient>
+            </defs>
+            <!-- heave arrow -->
+            <g class="heave-ind" stroke="#ef6a4c" stroke-width="2" fill="none">
+              <line x1="40" y1="120" x2="40" y2="210"/>
+              <path d="M40 120 l-5 8 h10 z" fill="#ef6a4c" stroke="none"/>
+              <path d="M40 210 l-5 -8 h10 z" fill="#ef6a4c" stroke="none"/>
+            </g>
+            <text x="52" y="168" fill="#ef6a4c" font-size="15" font-weight="700" font-family="sans-serif">heave</text>
+            <!-- platform -->
+            <g class="platform">
+              <rect x="-70" y="-14" width="140" height="20" rx="3" fill="#26506b"/>
+              <rect x="-70" y="-18" width="140" height="6" rx="2" fill="#0f2a43"/>
+              <circle cx="-52" cy="-4" r="4" fill="#9db8c9"/>
+              <circle cx="52" cy="-4" r="4" fill="#9db8c9"/>
+            </g>
+            <!-- waves (path extra ancho para que el drift no muestre el borde) -->
+            <g class="waves">
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#sea)" opacity=".9"/>
+              <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- S4 -->
+<section class="slide" data-block="0" data-title="¿Por qué no probar directo en el mar?">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">La motivación metodológica</div>
+      <h2 class="head">Probar en el mar es <span class="accent">caro, lento y riesgoso</span></h2>
+      <p class="lead">
+        Un error de estimación puede terminar en colisión o en la pérdida del vehículo.
+        Hay que validar antes, de forma segura, repetible y medible.
+      </p>
+    </header>
+    <div class="s-body">
+    <div class="cards">
+      <div class="card">
+        <span class="pill" style="align-self:flex-start;background:#f3e6d6;color:#a06a1f;border-color:#e6cfa8;">Alternativa 1</span>
+        <h3>Banco mecánico a medida</h3>
+        <p>Más realismo físico, pero el esfuerzo se va al diseño mecánico y la calibración, no al problema.</p>
+      </div>
+      <div class="card">
+        <span class="pill coral" style="align-self:flex-start;">Alternativa 2</span>
+        <h3>Ensayo real directo</h3>
+        <p>Factible, pero costoso y arriesgado; el mar introduce variabilidad difícil de repetir.</p>
+      </div>
+      <div class="card accent">
+        <span class="pill" style="align-self:flex-start;background:var(--foam);color:var(--sea);border-color:var(--foam-line);">Nuestro camino</span>
+        <h3>Simulación → laboratorio</h3>
+        <p>Iterar rápido, explorar fallas sin riesgo y llegar a las pruebas físicas con métricas claras.</p>
+      </div>
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- ============================================================
+     BLOQUE 2 · PROBLEMA Y OBJETIVOS
+     ============================================================ -->
+
+<!-- S5 -->
+<section class="slide" data-block="1" data-title="Estado del arte en una lámina">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Dónde nos paramos</div>
+      <h2 class="head">El problema es una <span class="accent">cadena</span>; nosotros trabajamos un eslabón</h2>
+    </header>
+    <div class="s-body">
+    <div class="cards">
+      <div class="card">
+        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v6m0 0 3-2m-3 2L9 6M4 14l8 8 8-8-8-4-8 4z"/></svg></div>
+        <h3>Aterrizaje sobre plataformas móviles</h3>
+        <p>Percepción, estimación, seguimiento y control como cadena completa.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/></svg></div>
+        <h3>Marcadores fiduciales</h3>
+        <p>ArUco + PnP recuperan la pose relativa a partir de geometría conocida.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H4z"/><path d="M2 20h20M9 9l2 2 3-4"/></svg></div>
+        <h3>Validación en simulación (SIL)</h3>
+        <p>Etapa decisiva antes del ensayo real, sobre todo con oscilación marina.</p>
+      </div>
+    </div>
+    <div class="row mt-l">
+      <span class="pill coral">La validación experimental previa al ensayo real es el eslabón que abordamos</span>
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- S6 — BISAGRA -->
+<section class="slide" data-block="1" data-title="La idea: un cuadrúpedo como barco sintético">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">La idea central</div>
+      <h2 class="head">Un robot cuadrúpedo como <span class="accent">barco sintético</span></h2>
+    </header>
+    <div class="s-body">
+    <div class="bisagra">
+      <figure class="bisagra-item">
+        <div class="wave-scene" data-anim style="max-width:360px;">
+          <svg viewBox="20 60 380 210" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <g class="platform">
+              <rect x="-70" y="-14" width="140" height="20" rx="3" fill="#26506b"/>
+              <rect x="-70" y="-18" width="140" height="6" rx="2" fill="#0f2a43"/>
+            </g>
+            <g class="waves">
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V320 H-220 Z" fill="#5cb3cc" opacity=".85"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption>Plataforma marina · roll · pitch · heave</figcaption>
+      </figure>
+      <div class="bisagra-eq" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 9h14M5 15h14"/></svg>
+      </div>
+      <figure class="bisagra-item">
+        <div class="media portrait md">
+          <video data-autoplay loop muted playsinline src="assets/media/lab_03_posturas_primerplano.mp4"></video>
+        </div>
+        <figcaption>Go2 real reproduciendo el mismo movimiento</figcaption>
+      </figure>
+    </div>
+    <p class="lead center" style="max-width:66ch;margin:1rem auto 0;">
+      Usamos el torso actuado del Go2 en vez de modelar una embarcación. Y como el mismo
+      robot existe en simulación <em>y</em> en el laboratorio, hay
+      <strong>continuidad total</strong> entre ambos mundos.
+    </p>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- S7 -->
+<section class="slide" data-block="1" data-title="Objetivo y dos preguntas de validación">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Objetivo y alcance</div>
+      <h2 class="head">Construir el entorno y responder <span class="accent">dos preguntas</span></h2>
+      <p class="lead" style="max-width:64ch;">
+        No resolvemos el aterrizaje completo: construimos la capa habilitante — sintetizar
+        movimiento marino, observarlo y medir la estimación.
+      </p>
+    </header>
+    <div class="s-body">
+    <div class="cards two">
+      <div class="card" style="border-top:4px solid var(--sea);">
+        <span class="pill" style="align-self:flex-start;">Simulación</span>
+        <h3>¿El pipeline visual mide bien la pose?</h3>
+        <p>Pregunta de <strong>percepción</strong>. Con ground truth reconstruible del simulador como referencia.</p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--coral);">
+        <span class="pill coral" style="align-self:flex-start;">Laboratorio</span>
+        <h3>¿El robot real reproduce el movimiento?</h3>
+        <p>Pregunta de <strong>dinámica</strong>. Comparando consigna, comando enviado y respuesta física del Go2.</p>
+      </div>
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- ============================================================
+     BLOQUES 3-5 · placeholders (se completan en la próxima iteración)
+     ============================================================ -->
+<section class="slide" data-block="2" data-title="Arquitectura del entorno">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · El entorno</div>
+      <h2 class="head">Un <span class="accent">pipeline</span> de punta a punta, todo registrado</h2>
+    </header>
+    <div class="s-body">
+      <div class="pipeline" data-anim>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-6 10-6 10 6 10 6M2 12c2 2 5 3 10 3s8-1 10-3"/></svg></div>
+          <div class="lbl">Movimiento marino</div>
+          <div class="sub">roll · pitch · heave</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="9" rx="1.5"/><path d="M5 17v3M15 17v3M17 11h3v4h-3"/></svg></div>
+          <div class="lbl">Go2</div>
+          <div class="sub">control postural</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h4l1.5-2h7L17 7h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+          <div class="lbl">Cámara</div>
+          <div class="sub">fija · dron</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode accent">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7.5" y="7.5" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/></svg></div>
+          <div class="lbl">ArUco + PnP</div>
+          <div class="sub">pose relativa</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+          <div class="lbl">Registro</div>
+          <div class="sub">rosbag</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg></div>
+          <div class="lbl">Evaluación</div>
+          <div class="sub">offline vs GT</div>
+        </div>
+      </div>
+      <div class="row wrap mt-l" style="justify-content:center;gap:.7rem;">
+        <span class="pill">ROS2</span>
+        <span class="pill">Gazebo</span>
+        <span class="pill">Estimación en tiempo real + evaluación reproducible</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Generación del movimiento marino">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Movimiento</div>
+      <h2 class="head">Sintetizar el <span class="accent">oleaje</span> como consigna postural</h2>
+    </header>
+    <div class="s-body">
+      <div class="split media-left">
+        <figure class="media contain plot">
+          <img src="assets/img/method_wave_patterns.png" alt="Patrones de oleaje sinusoidal e irregular">
+        </figure>
+        <div class="col stack">
+          <ul class="marks">
+            <li>Superposición de componentes sinusoidales por eje (roll, pitch, heave)</li>
+            <li>Opción de oleaje regular o patrón irregular más realista</li>
+            <li>Se publica como consigna de actitud del torso a frecuencia fija</li>
+          </ul>
+          <div class="params mt-s">
+            <div class="param"><span class="v">0,10 Hz</span><span class="k">frecuencia dominante</span></div>
+            <div class="param"><span class="v">±10–20°</span><span class="k">amplitud angular</span></div>
+            <div class="param"><span class="v">20 Hz</span><span class="k">publicación</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Control postural: del comando a las patas">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Movimiento del robot</div>
+      <h2 class="head">Del comando del torso a las <span class="accent">12 articulaciones</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <div class="col stack">
+          <div class="flowline">
+            <span class="fl-step">Pose deseada del torso<small>roll · pitch · heave</small></span>
+            <span class="fl-arrow">→</span>
+            <span class="fl-step">Cinemática inversa<small>analítica, por pata</small></span>
+            <span class="fl-arrow">→</span>
+            <span class="fl-step accent">12 ángulos<small>articulares</small></span>
+          </div>
+          <p class="lead" style="max-width:42ch;">
+            Cada pata resuelve su geometría de forma independiente: dada la inclinación
+            del torso, calculamos los ángulos que la mantienen apoyada.
+          </p>
+          <span class="pill">Despeje completo en el backup</span>
+        </div>
+        <figure class="media contain plot">
+          <img src="assets/img/postural_control_scheme.png" alt="Esquema de control postural del Go2">
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Estimación visual: ArUco + PnP">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Percepción</div>
+      <h2 class="head">Estimar la pose con un <span class="accent">marcador fiducial</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="flowline" style="justify-content:center;margin-bottom:1.6rem;">
+        <span class="fl-step">Marcador ArUco<small>geometría conocida</small></span>
+        <span class="fl-arrow">→</span>
+        <span class="fl-step">Esquinas + calibración<small>solvePnP</small></span>
+        <span class="fl-arrow">→</span>
+        <span class="fl-step accent">Pose 6-DoF<small>posición + orientación</small></span>
+      </div>
+      <div class="split">
+        <div class="col stack">
+          <p class="lead" style="max-width:46ch;">
+            El patrón se detecta cuadro a cuadro; a partir de sus esquinas y la
+            calibración de la cámara, PnP recupera la pose relativa completa del marcador.
+          </p>
+          <div class="row wrap"><span class="pill">DICT_6X6_250</span><span class="pill">OpenCV solvePnP</span><span class="pill">geometría en backup</span></div>
+        </div>
+        <div class="col">
+          <div class="imgrow" style="max-height:44vh;">
+            <figure class="media contain"><img src="assets/img/aruco_marker.png" alt="Marcador ArUco"></figure>
+            <figure class="media"><img src="assets/img/aruco_detection_frame.png" alt="Detección con ejes sobre el marcador"></figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Registro y evaluación offline">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Evaluación</div>
+      <h2 class="head">Medir contra una <span class="accent">referencia verdadera</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="flowline" style="justify-content:center;margin-bottom:1.8rem;">
+        <span class="fl-step">Corrida registrada<small>rosbag</small></span>
+        <span class="fl-arrow">→</span>
+        <span class="fl-step">Ground truth<small>reconstruido del simulador</small></span>
+        <span class="fl-arrow">→</span>
+        <span class="fl-step">Comparación<small>cuadro a cuadro</small></span>
+        <span class="fl-arrow">→</span>
+        <span class="fl-step accent">Métricas<small>Δroll · Δpitch · ΔZ</small></span>
+      </div>
+      <div class="cards two">
+        <div class="card">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2a10 10 0 1 0 10 10h-10z"/><path d="M12 2v10l7-3"/></svg></div>
+          <h3>No solo detectar: medir</h3>
+          <p>La estimación en vivo no alcanza; el valor del entorno es cuantificar su calidad con trazabilidad.</p>
+        </div>
+        <div class="card accent">
+          <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <h3>Reproducible</h3>
+          <p>Mismo criterio offline para todas las corridas: comparar escenarios y diagnosticar degradaciones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Escenarios de observación">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Escenarios</div>
+      <h2 class="head">Dos formas de <span class="accent">observar</span> el mismo movimiento</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <figure class="col">
+          <div class="media"><img src="assets/img/sim_contexto_go2.png" alt="Cámara fija observando el Go2 con ArUco"></div>
+          <figcaption><strong style="color:var(--sea)">Caso base — cámara fija.</strong> Sensor quieto: la pregunta más limpia del entorno.</figcaption>
+        </figure>
+        <figure class="col">
+          <div class="media"><img src="assets/img/sim_contexto_dron.png" alt="Dron con cámara inferior observando el Go2"></div>
+          <figcaption><strong style="color:var(--coral)">Caso fuerte — cámara en el dron.</strong> Sensor volando: geometría de observación exigente.</figcaption>
+        </figure>
+      </div>
+      <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
+        Diseño deliberado: separar cuánto pesa el <em>pipeline</em> visual de cuánto pesa el movimiento del sensor.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="2" data-title="Del simulador al robot real">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Metodología · Del sim al lab</div>
+      <h2 class="head">Qué cambia al <span class="accent">salir de Gazebo</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split media-left">
+        <table class="dtable">
+          <thead><tr><th></th><th>Simulación</th><th>Laboratorio</th></tr></thead>
+          <tbody>
+            <tr><td>Referencia</td><td class="num">ground truth exacto</td><td>no hay GT directo</td></tr>
+            <tr><td>Cámara</td><td class="num">ideal, calibrada</td><td>webcam en trípode</td></tr>
+            <tr><td>Comando</td><td class="num">se ejecuta perfecto</td><td>API + control interno</td></tr>
+          </tbody>
+        </table>
+        <figure class="col vwrap">
+          <div class="media portrait md"><img src="assets/img/lab_go2_aruco_tripode_a.jpg" alt="Montaje del laboratorio con Go2, ArUco y trípode"></div>
+        </figure>
+      </div>
+      <div class="row mt-m" style="justify-content:center;">
+        <span class="pill coral">Decisión clave: evaluamos movimiento y visión por separado para no saturar el cómputo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="3" data-title="Campaña experimental (simulación)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">Una campaña para <span class="accent">descartar la suerte</span></h2>
+    </header>
+    <div class="s-body">
+      <table class="dtable">
+        <thead><tr><th>Corrida</th><th>Fuente de imagen</th><th>Duración</th><th>Propósito</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td><strong>Caso base</strong></td><td class="num">cámara fija</td><td class="num">57,5 s</td><td>Referencia limpia del pipeline</td></tr>
+          <tr><td>R1</td><td class="num">cámara en dron</td><td class="num">57,7 s</td><td>Repetición comparable</td></tr>
+          <tr><td>R2</td><td class="num">cámara en dron</td><td class="num">57,4 s</td><td>Corrida principal (series y detalle)</td></tr>
+          <tr><td>R3</td><td class="num">cámara en dron</td><td class="num">57,7 s</td><td>Variabilidad entre ejecuciones</td></tr>
+        </tbody>
+      </table>
+      <p class="lead mt-m" style="max-width:66ch;">
+        Misma consigna, mismo postproceso: 3 corridas comparables con dron para que la
+        lectura <strong>no dependa de una corrida con suerte</strong>.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="El pipeline en acción (video sim)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">El <span class="accent">pipeline</span> en acción</h2>
+    </header>
+    <div class="s-body">
+      <div class="split media-left">
+        <figure class="media" style="background:#111;">
+          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion.mp4"></video>
+        </figure>
+        <div class="col stack">
+          <ul class="marks">
+            <li>El marcador sube, baja y se inclina siguiendo la consigna de oleaje</li>
+            <li>Los ejes dibujados son la <strong>pose estimada en tiempo real</strong></li>
+            <li>Detección estable cuadro a cuadro sobre la cámara fija</li>
+          </ul>
+          <span class="pill">Cámara fija · Gazebo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Caso base: cámara fija">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">Caso base: la estimación <span class="accent">sigue al marcador</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split narrow-media">
+        <div class="col stack">
+          <div class="hero-num">5,8 <span class="unit">cm</span></div>
+          <p class="hero-label">error medio de posición contra ground truth</p>
+          <p class="lead mt-s" style="max-width:34ch;">
+            Recupera la dinámica global del marcador; la componente de <strong>heave</strong>
+            se lee con claridad. Es la referencia limpia del entorno.
+          </p>
+        </div>
+        <figure class="media contain plot">
+          <img src="assets/img/sim_fixed_position_vs_gt.png" alt="Posición estimada vs ground truth, cámara fija">
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Caso fuerte: cámara en el dron">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">Caso fuerte: ahora el <span class="accent">sensor vuela</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <figure class="col">
+          <div class="media" style="background:#111;">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
+          </div>
+          <figcaption>Detección desde la cámara inferior del dron.</figcaption>
+        </figure>
+        <div class="col stack">
+          <figure class="media contain plot"><img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron"></figure>
+          <p class="lead" style="max-width:40ch;">
+            Con el sensor también en movimiento, las señales de <strong>roll, pitch y heave</strong>
+            siguen al ground truth.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Caso fuerte: números y repetibilidad">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">Tres corridas, mismo <span class="accent">orden de magnitud</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="statband" style="margin-bottom:1.2rem;">
+        <div class="stat"><span class="v">2–3<span class="u">°</span></span><span class="k">error medio en roll y pitch</span></div>
+        <div class="stat"><span class="v">2–2,4<span class="u">cm</span></span><span class="k">error medio en heave</span></div>
+        <div class="stat sea"><span class="v">×3</span><span class="k">repeticiones comparables (R1–R3)</span></div>
+      </div>
+      <div class="result-plot">
+        <img src="assets/img/sim_drone_runs_comparison.png" alt="Comparación de las tres corridas del dron">
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Qué aprendimos de la simulación">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Simulación</div>
+      <h2 class="head">Qué aprendimos —y qué <span class="accent">admitimos</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="cards two">
+        <div class="card" style="border-top:4px solid var(--ok);">
+          <span class="pill" style="align-self:flex-start;background:#d9f0e4;color:#1f7a52;border-color:#b6e2cc;">Lo que funciona</span>
+          <ul class="marks mt-s">
+            <li class="ok">El pipeline sigue la dinámica global del movimiento</li>
+            <li class="ok">Medible contra una referencia reconstruible</li>
+            <li class="ok">Repetible entre corridas equivalentes</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top:4px solid var(--warn);">
+          <span class="pill" style="align-self:flex-start;background:#f6e8d3;color:#a06a1f;border-color:#ecd5ac;">Los límites</span>
+          <ul class="marks mt-s">
+            <li class="warn">El <strong>heave</strong> es el eje posicional más sensible</li>
+            <li class="warn">Sesgo sistemático en Y: limitación geométrica, no movimiento real</li>
+            <li class="warn">Parte del desvío viene de desfases temporales no compensados</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
+        Para eso sirve la simulación: <strong>aislar estas limitaciones con ground truth</strong> antes del mundo físico.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Lo que la simulación no anticipó">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Del simulador al laboratorio</div>
+      <h2 class="head">Lo que la simulación <span class="accent">no anticipó</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="obst">
+        <div class="obst-head"><span class="a">Con qué chocamos</span><span></span><span class="b">Cómo lo resolvimos</span></div>
+
+        <div class="orow">
+          <div class="oprob">
+            <h3>Conectarnos al robot</h3>
+            <p>Salir de Gazebo cambió por completo la interfaz de control disponible.</p>
+          </div>
+          <div class="oarrow">→</div>
+          <div class="ofix">
+            <p>Refactor de la capa de comunicación: la <strong>consigna de oleaje se conservó</strong>, el camino hasta las patas se reescribió.</p>
+          </div>
+        </div>
+
+        <div class="orow">
+          <div class="oprob">
+            <h3>El guardrail de marcha</h3>
+            <p>Cada tanto el Go2 <strong>trota en el lugar</strong> para reasegurar su estabilidad, y abandona la postura pedida. Es un reflejo del control interno, no de nuestro código.</p>
+          </div>
+          <div class="oarrow">→</div>
+          <div class="ofix">
+            <p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina — lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p>
+          </div>
+        </div>
+
+        <div class="orow key">
+          <div class="oprob">
+            <h3>Sin acceso al firmware</h3>
+            <p>El robot se mueve <em>trabado</em>: sigue la forma de la consigna, pero no con la amplitud ni en el instante que pedimos.</p>
+          </div>
+          <div class="oarrow">→</div>
+          <div class="ofix">
+            <p>No podíamos corregir la dinámica: <strong>la medimos</strong>. De ahí salen el retardo τ y la ganancia g.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-m" style="justify-content:center;">
+        <span class="pill coral">Las dos últimas explican los números que vienen</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="El montaje real (laboratorio)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">El mismo concepto, con <span class="accent">hardware real</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split narrow-media">
+        <div class="col vwrap">
+          <div class="media portrait md">
+            <video data-autoplay loop muted playsinline src="assets/media/lab_08_setup_completo.mp4"></video>
+          </div>
+        </div>
+        <div class="col stack">
+          <ul class="marks">
+            <li>Cámara cenital sobre <strong>trípode</strong> observando al robot</li>
+            <li>Marcador <strong>ArUco</strong> montado en el lomo del Go2</li>
+            <li>Consigna de oleaje enviada por la <strong>API</strong> del robot</li>
+          </ul>
+          <span class="pill">Go2 real · webcam · ROS2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="El barco sintético existe (video)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">El <span class="accent">barco sintético</span> existe</h2>
+    </header>
+    <div class="s-body">
+      <div class="split" style="grid-template-columns:1.15fr .85fr;align-items:center;">
+        <div class="col vwrap">
+          <div class="media portrait" style="max-height:60vh;">
+            <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
+          </div>
+        </div>
+        <div class="col stack">
+          <p class="lead" style="max-width:34ch;font-size:clamp(1.2rem,2vw,1.7rem);color:var(--ink);">
+            La consigna de oleaje moviendo un <strong>robot real</strong>.
+          </p>
+          <p class="lead" style="max-width:36ch;">
+            El operador envía el comando; el Go2 ejecuta las posturas marinas. Este es
+            el resultado central del laboratorio en una sola imagen.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="¿Llega el comando intacto?">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">¿Llega el comando intacto? <span class="accent">Sí.</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split narrow-media">
+        <div class="col stack">
+          <div class="hero-num" style="color:var(--sea)">&gt;0,9999</div>
+          <p class="hero-label">correlación entre consigna esperada y comando enviado</p>
+          <p class="lead mt-s" style="max-width:34ch;">
+            Primer eslabón validado: nada se pierde ni se deforma en el camino de
+            software hasta la <strong>capa de actuación</strong> del robot.
+          </p>
+        </div>
+        <figure class="media contain plot"><img src="assets/img/lab_api_fidelity.png" alt="Fidelidad del comando: consigna vs comando enviado"></figure>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Comando vs respuesta física">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">El robot sigue la <span class="accent">forma</span> del movimiento</h2>
+    </header>
+    <div class="s-body">
+      <div class="result-plot" style="margin-bottom:1rem;">
+        <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
+      </div>
+      <p class="lead center" style="max-width:70ch;margin-left:auto;margin-right:auto;">
+        Reproduce la forma de la dinámica solicitada —se ve a ojo en las series— pero con
+        <strong>retardo</strong> y una <strong>amplitud efectiva menor</strong>. No es una falla del pipeline:
+        es el movimiento <em>trabado</em> del robot, el mismo que no pudimos corregir sin acceso al firmware.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="Cuantificando: retardo y ganancia">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">Un error dinámico <span class="accent">parametrizable</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="split narrow-media">
+        <div class="col stack">
+          <div class="statband" style="flex-direction:column;gap:1rem;">
+            <div class="stat sea"><span class="v">0,45–0,95<span class="u">s</span></span><span class="k">retardo dinámico (τ)</span></div>
+            <div class="stat"><span class="v">≈0,62</span><span class="k">ganancia efectiva (g)</span></div>
+            <div class="stat sea"><span class="v">&gt;0,95</span><span class="k">correlación (r)</span></div>
+          </div>
+          <div class="eqn mt-s">θ<sub>real</sub>(t) ≈ g·θ<sub>cmd</sub>(t<span class="muted">−τ</span>) + b</div>
+        </div>
+        <figure class="col stack">
+          <figure class="media contain plot"><img src="assets/img/lab_lag_correlation.png" alt="Curvas de correlación vs retardo aplicado"></figure>
+          <p class="small muted">El desacople es fase + escala, no deformación. Patrón replicado a dos amplitudes (R4 y R5).</p>
+          <p class="small" style="color:var(--ink);">Nuestra hipótesis: el patrón es consistente con un <strong>control interno que no podemos modificar</strong>. Al no poder removerlo, lo caracterizamos.</p>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="3" data-title="El pipeline visual también corre en el lab">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Resultados · Laboratorio</div>
+      <h2 class="head">La <span class="accent">percepción</span> también corre en el lab</h2>
+    </header>
+    <div class="s-body">
+      <div class="split" style="grid-template-columns:1.4fr .6fr;">
+        <div class="col">
+          <div class="imgrow" style="grid-template-columns:1fr 1fr 1fr;">
+            <figure class="media"><img src="assets/img/lab_aruco_t00.png" alt="Detección ArUco t=0s"></figure>
+            <figure class="media"><img src="assets/img/lab_aruco_t26.png" alt="Detección ArUco t=26s"></figure>
+            <figure class="media"><img src="assets/img/lab_aruco_t49.png" alt="Detección ArUco t=49s"></figure>
+          </div>
+          <p class="lead mt-m" style="max-width:52ch;">
+            La detección ArUco funciona sobre el robot real con la cámara del montaje.
+            Se evaluó <strong>por separado</strong> del movimiento, para no saturar el cómputo.
+          </p>
+        </div>
+        <div class="col vwrap">
+          <div class="media portrait md">
+            <video data-autoplay loop muted playsinline src="assets/media/lab_07_aruco_deteccion_pantalla.mp4"></video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-title="Lectura conjunta: dos piezas">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Cierre · Síntesis</div>
+      <h2 class="head">Dos piezas de una <span class="accent">misma validación</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="cards two">
+        <div class="card" style="border-top:4px solid var(--sea);">
+          <span class="pill" style="align-self:flex-start;">Simulación · percepción</span>
+          <p style="font-size:1.05rem;color:var(--ink);">Si el robot se moviera perfecto, ¿mide bien la visión?</p>
+          <div class="row wrap" style="gap:.5rem;"><span class="pill">5,8 cm fija</span><span class="pill">2–3° · 2–2,4 cm dron</span></div>
+        </div>
+        <div class="card" style="border-top:4px solid var(--coral);">
+          <span class="pill coral" style="align-self:flex-start;">Laboratorio · dinámica</span>
+          <p style="font-size:1.05rem;color:var(--ink);">¿El robot real sigue la consigna de movimiento?</p>
+          <div class="row wrap" style="gap:.5rem;"><span class="pill coral">r &gt; 0,95</span><span class="pill coral">τ, g medibles</span></div>
+        </div>
+      </div>
+      <div class="missing-piece">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8v8m-4-4h8"/><circle cx="12" cy="12" r="9"/></svg>
+        <span>Pieza faltante — <strong>ambos a la vez</strong>: visión activa mientras el robot se mueve. Mismo régimen en los dos entornos (0,10 Hz · ±10–20°).</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="4" data-title="Conclusiones">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Cierre · Conclusiones</div>
+      <h2 class="head">Los tres eslabones son <span class="accent">viables</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="chain">
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>simulador marino</strong> genera movimiento representativo</span>
+        </div>
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>robot real</strong> lo reproduce de forma consistente</span>
+        </div>
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>pipeline visual</strong> mide su pose cuando las condiciones lo permiten</span>
+        </div>
+      </div>
+      <p class="lead center mt-l" style="max-width:60ch;margin-left:auto;margin-right:auto;">
+        No un sistema de aterrizaje: una <strong>base de investigación</strong> para estudiar ese
+        problema de forma progresiva, medible y reproducible.
+      </p>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="4" data-title="Trabajo futuro">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Cierre · Trabajo futuro</div>
+      <h2 class="head">Cerrar la pieza faltante, <span class="accent">paso a paso</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="roadmap">
+        <div class="rstep next">
+          <div class="num">1</div>
+          <div class="rbody"><h3>Validación conjunta</h3><p>Visión activa <em>mientras</em> el robot se mueve, en una misma corrida con registro sincronizado.</p></div>
+        </div>
+        <div class="rstep">
+          <div class="num">2</div>
+          <div class="rbody"><h3>Ground truth externo</h3><p>OptiTrack en el laboratorio para una referencia de pose independiente del robot.</p></div>
+        </div>
+        <div class="rstep">
+          <div class="num">3</div>
+          <div class="rbody"><h3>Movimiento más rico</h3><p>Heave dinámico, yaw / surge / sway y oleaje irregular calibrado.</p></div>
+        </div>
+        <div class="rstep">
+          <div class="num">4</div>
+          <div class="rbody"><h3>Aproximaciones de aterrizaje</h3><p>Que un dron observe el Go2, estime su pose y ensaye aproximaciones repetibles.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" data-block="4" data-title="Cierre y preguntas">
+  <div class="slide-inner cover">
+    <div class="split" style="align-items:center;">
+      <div class="col stack">
+        <div class="eyebrow">Proyecto Final · Universidad de San Andrés</div>
+        <h1 class="title" style="font-size:clamp(2.6rem,6vw,4.4rem);">¡Gracias!<br><span style="color:var(--sea)">¿Preguntas?</span></h1>
+        <p class="lead" style="max-width:40ch;">
+          Una plataforma marina sintética con el Go2 para validar percepción visual,
+          de forma segura y reproducible.
+        </p>
+        <div class="row wrap" style="gap:2rem;margin-top:.6rem;">
+          <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Autores</div><div style="font-weight:680;">Máximo Gubitosi · Jack Spolski</div></div>
+          <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Mentores</div><div style="font-weight:680;">Gastón Castro · Juan I. Giribet</div></div>
+        </div>
+      </div>
+      <figure class="col vwrap">
+        <div class="media portrait md"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
+        <figcaption>Go2 con marcador ArUco — montaje de laboratorio.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     BACKUP · material de respaldo para preguntas
+     ============================================================ -->
+
+<section class="slide" data-block="4" data-backup="1" data-title="Estructura articular del Go2">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Estructura articular del Go2</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <figure class="media contain plot"><img src="assets/img/bk_unitree_diagram.png" alt="Diagrama articular del Unitree Go2"></figure>
+        <div class="col stack">
+          <ul class="marks">
+            <li>4 patas × 3 articulaciones = <strong>12 grados de libertad</strong></li>
+            <li>Cada pata: cadera (abducción), muslo y rodilla</li>
+            <li>El torso se reorienta manteniendo las 4 patas apoyadas</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="2" data-title="Cinemática inversa de pata">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Cinemática inversa de pata</h2>
+    </header>
+    <div class="s-body">
+      <div class="split media-left">
+        <figure class="media contain plot"><img src="assets/img/bk_leg_control.png" alt="Esquema de control de pata"></figure>
+        <div class="col stack">
+          <p class="lead" style="max-width:42ch;">
+            Dada la pose deseada del torso, cada pie debe mantenerse en su punto de apoyo.
+            Se resuelve la <strong>IK analítica</strong> pata por pata.
+          </p>
+          <div class="eqn">FK: p<sub>pie</sub> = f(θ<sub>1</sub>, θ<sub>2</sub>, θ<sub>3</sub>) &nbsp;→&nbsp; IK: θ = f⁻¹(p<sub>pie</sub>)</div>
+          <p class="small muted">Jacobiano de pata y despeje completo en el informe (§5.1.3).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="3" data-title="Marcos de referencia y transformaciones">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Marcos de referencia (TF2)</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <figure class="media contain plot"><img src="assets/img/bk_translations_rotations.png" alt="Traslaciones y rotaciones entre marcos"></figure>
+        <figure class="media contain plot"><img src="assets/img/bk_tf2_frames.png" alt="Árbol de marcos TF2"></figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="4" data-title="Grafo del sistema ROS2">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Grafo del sistema ROS2</h2>
+    </header>
+    <div class="s-body">
+      <div class="result-plot"><img src="assets/img/bk_ros2_graph.png" alt="Grafo de nodos y tópicos ROS2"></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="5" data-title="Histogramas de error (simulación)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Histogramas de error — simulación</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <figure class="col"><div class="media contain plot"><img src="assets/img/bk_sim_fixed_error_hist.png" alt="Histograma de error, cámara fija"></div><figcaption>Cámara fija.</figcaption></figure>
+        <figure class="col"><div class="media contain plot"><img src="assets/img/bk_sim_drone_error_hist.png" alt="Histograma de error, dron"></div><figcaption>Cámara en dron.</figcaption></figure>
+      </div>
+      <p class="small muted center mt-s" style="margin-left:auto;margin-right:auto;">Parte del desplazamiento respecto de cero proviene de desfases temporales no compensados.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="6" data-title="Sesgo sistemático en Y (dron)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">El sesgo sistemático en <span class="accent">Y</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="cards two">
+        <div class="card">
+          <h3>Qué se observa</h3>
+          <p>En el escenario con dron, un corrimiento constante en el eje Y que no corresponde a movimiento real de la plataforma.</p>
+        </div>
+        <div class="card accent">
+          <h3>Interpretación</h3>
+          <p>Limitación de la cadena geométrica de estimación y evaluación (calibración + transformación), no una falla del movimiento. Candidato directo de refinamiento.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="7" data-title="Dos amplitudes: R4 y R5">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Patrón replicado a dos amplitudes</h2>
+    </header>
+    <div class="s-body">
+      <div class="split media-left">
+        <figure class="media contain plot"><img src="assets/img/bk_r5_timeseries.png" alt="Series R5, amplitud nominal"></figure>
+        <div class="col stack">
+          <p class="lead" style="max-width:42ch;">
+            El mismo comportamiento —seguimiento con retardo y ganancia— aparece en
+            <strong>R4</strong> (±15°/10°) y <strong>R5</strong> (±10°/8°).
+          </p>
+          <div class="eqn">ganancia por eje: <span class="muted">roll</span> ≈0,73 · <span class="muted">pitch</span> ≈0,60</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="8" data-title="Identificadores de registros">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo</div>
+      <h2 class="head">Trazabilidad de los datos</h2>
+    </header>
+    <div class="s-body">
+      <table class="dtable">
+        <thead><tr><th>Registro</th><th>Escenario</th><th>Uso</th></tr></thead>
+        <tbody>
+          <tr><td class="num">marine_sim…155332</td><td>cámara fija (sim)</td><td>caso base</td></tr>
+          <tr><td class="num">sjtu_drone…160419</td><td>cámara en dron (sim)</td><td>R1–R3</td></tr>
+          <tr><td class="num">lab…133022</td><td>laboratorio real</td><td>pipeline + comando</td></tr>
+        </tbody>
+      </table>
+      <p class="small muted mt-m">Todas las corridas quedan registradas como rosbag y se reevalúan con el mismo criterio offline (Apéndice A del informe).</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="9" data-title="El guardrail de gait: qué observamos">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo · Limitaciones del robot</div>
+      <h2 class="head">El guardrail de <span class="accent">gait</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="hyp">
+        <div class="hyp-item sym">
+          <span class="k">Síntoma</span>
+          <span class="v">Cada tanto el Go2 <strong>trota en el lugar</strong>: da pasos sobre el mismo punto para reasegurar su estabilidad y, mientras lo hace, abandona la inclinación pedida.</span>
+        </div>
+        <div class="hyp-item hip">
+          <span class="k">Interpretación</span>
+          <span class="v">Es un <strong>guardrail del control interno</strong>: el robot prioriza no perder el equilibrio por sobre sostener la consigna de actitud. No es un problema del comando —llega intacto—, es una decisión del firmware.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Evidencia</span>
+          <span class="v">Registrado como rosbag: <span class="num">lab_real_20260320_112522_trote_robot_full</span> (~59,7 s).</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Mitigación</span>
+          <span class="v">Barrido de frecuencias de consigna: <strong>a menor frecuencia los episodios de trote se espacian</strong>. No desaparecen — se vuelven poco frecuentes.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Consecuencia</span>
+          <span class="v">Por eso se ensayó a <strong>0,10 Hz</strong>: maximiza el tiempo de postura sostenida entre episodios. Queda como <strong>restricción del banco</strong>, no como resultado del trabajo.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="10" data-title="Movimiento trabado y acceso al firmware">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">Respaldo · Limitaciones del robot</div>
+      <h2 class="head">Por qué no se mueve <span class="accent">como le pedimos</span></h2>
+    </header>
+    <div class="s-body">
+      <div class="hyp">
+        <div class="hyp-item sym">
+          <span class="k">Síntoma</span>
+          <span class="v">El robot sigue la <strong>forma</strong> de la consigna (r &gt; 0,95) pero con retardo (τ = 0,45–0,95 s) y amplitud reducida (g ≈ 0,62). El movimiento se percibe <em>trabado</em>.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Descartado</span>
+          <span class="v">No es el camino de comando: la fidelidad entre consigna y comando enviado es <strong>&gt; 0,9999</strong>. Lo que sale de nuestro software llega intacto.</span>
+        </div>
+        <div class="hyp-item hip">
+          <span class="k">Hipótesis</span>
+          <span class="v">El desacople se introduce en el <strong>control interno del Go2</strong>, al que no tenemos acceso directo. El patrón —fase + escala, sin deformación— es el de un sistema con lazo propio, no el de un error aleatorio.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Verificación</span>
+          <span class="v">Ground truth externo (OptiTrack) para separar la respuesta física real de las señales internas del robot, y barrido de frecuencia para reconstruir la respuesta del lazo.</span>
+        </div>
+      </div>
+      <p class="lead center mt-m" style="max-width:66ch;margin-left:auto;margin-right:auto;">
+        Al no poder removerla, la limitación se volvió <strong>parte del modelo</strong>: θ<sub>real</sub>(t) ≈ g·θ<sub>cmd</sub>(t−τ) + b.
+      </p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- Chrome -->
+<button id="prev" class="navarrow" aria-label="Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button>
+<button id="next" class="navarrow" aria-label="Siguiente"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button>
+
+<div id="hud">
+  <span class="block-name"></span>
+  <span class="within"><span class="wtxt"></span><span class="dots"></span></span>
+  <span class="sep"></span>
+  <span class="counter"><span class="cur">1</span> / <span class="tot">30</span></span>
+</div>
+
+<div id="hint">
+  <span><kbd>→</kbd> avanzar</span><span><kbd>O</kbd> índice</span><span><kbd>B</kbd> backup</span><span><kbd>F</kbd> pantalla completa</span>
+</div>
+
+<div id="overview">
+  <h2>Índice de la presentación</h2>
+  <div id="ov-grid"></div>
+</div>
+
+<script src="js/deck.js"></script>
+</body>
+</html>

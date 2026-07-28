@@ -88,3 +88,12 @@ informe/refs/lab_bundle_for_informe/
 # que ya se incorporaron al informe con nombres descriptivos en
 # informe/figures/images/, p.ej. fig_wave_platform_diagram.jpeg).
 informe/figures/images/jack-1705/
+
+# Defensa oral: material fuente crudo del celular (.MOV 4K / .HEIC), ~348 MB.
+# NO se versiona: ya está derivado a formato web en defensa/web/assets/, que sí
+# va al repo. Los originales se respaldan por fuera (ver defensa/backlog.md).
+defensa/media/
+
+# ...pero la presentación necesita SUS assets, que las reglas globales de
+# *.mp4 / *.png / *.jpg de más arriba excluirían.
+!defensa/web/assets/**
