@@ -97,3 +97,7 @@ defensa/media/
 # ...pero la presentación necesita SUS assets, que las reglas globales de
 # *.mp4 / *.png / *.jpg de más arriba excluirían.
 !defensa/web/assets/**
+
+# Directorio de trabajo temporal: PDFs compilados para revisión y artefactos
+# de LaTeX. No versionar — se regeneran compilando informe/main.tex.
+tmp/
