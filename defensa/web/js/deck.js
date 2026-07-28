@@ -1,5 +1,5 @@
 /* ============================================================
-   Motor de presentación — navegación por teclado, progreso por
+   Motor de presentación · navegación por teclado, progreso por
    bloques, overview, autoplay de video por slide. Sin dependencias.
    ============================================================ */
 (function () {

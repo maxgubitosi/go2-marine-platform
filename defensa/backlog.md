@@ -16,7 +16,7 @@ Cosas pendientes que no bloquean el armado de la presentación pero hay que reso
 - la falta de acceso al firmware (movimiento "trabado" → τ y g),
 - el problema de conexión que forzó el refactor del código.
 
-**Riesgo:** la defensa (S21, B9, B10) muestra material que el jurado no leyó en el informe. Pregunta previsible: *"¿por qué esto no está en el informe?"*
+**Riesgo:** la defensa (S22, B9, B10) muestra material que el jurado no leyó en el informe. Pregunta previsible: *"¿por qué esto no está en el informe?"*
 
 **Opciones cuando se retome:**
 - (a) Agregar un párrafo a §5.3.1 si el informe todavía se puede editar → resuelve el problema de raíz.
@@ -34,24 +34,38 @@ B9 ahora dice que se ensayó a 0,10 Hz porque a menor frecuencia los episodios d
 
 ### 3. Video del robot en trote / moviéndose "trabado"
 
-Sería el activo más fuerte de S21: convierte una tabla en evidencia. Ninguno de los 8 clips de laboratorio curados en `defensa/media/videos_lab/` lo muestra — todos son posturas que salen bien. Existe el rosbag `lab_real_20260320_112522_trote_robot_full` (~59,7 s), pero no un video.
+Sería el activo más fuerte de S22: convierte una tabla en evidencia. Ninguno de los 8 clips de laboratorio curados en `defensa/media/videos_lab/` lo muestra — todos son posturas que salen bien. Existe el rosbag `lab_real_20260320_112522_trote_robot_full` (~59,7 s), pero no un video.
 
-### 4. Export a PDF de respaldo
+### 4. Video en tercera persona del Go2 moviéndose en simulación
+
+Pedido para S7, para que la mitad "simulación" de la bisagra tenga la misma fuerza visual que el video de laboratorio. **No existe en el repo** (verificado el 28-07-2026, barrido completo de `*.mp4/.mov/.webm/.gif`):
+
+- los cuatro `defensa/media/videos_sim/` son **feeds de sensor**: cámara fija (escena oscura, sólo se ve el ArUco) y cámara inferior del dron (que es exactamente el ángulo cenital que el usuario descartó),
+- `docs/media/Screencast...webm` es también la vista de detección, y encima 259x243,
+- lo único en tercera persona es estático: `docs/media/gazebo_go2.png` (captura de la GUI de Gazebo, con todo el chrome de la interfaz, robot parado, sin marcador) y `defensa/media/fotos_sim/03_contexto_dron_go2_aruco.png` / `04_contexto_go2_aruco.png` (ángulo oblicuo correcto, pero fotos fijas de 259x243).
+
+**Para conseguirlo hay que volver a correr la simulación y grabar la pantalla de Gazebo** desde una cámara oblicua. Un replay de rosbag no sirve: los bags guardan los tópicos de cámara, no la escena.
+
+**Mitigado a medias (28-07-2026):** S6 ya muestra la simulación con un recorte fijo de `gazebo_go2.png` sin el chrome de la GUI (`defensa/web/assets/img/sim_gazebo_go2.png`, generado con `defensa/scripts/crop_gazebo_go2.py`). Alcanza para que la simulación no aparezca recién en S17, pero sigue siendo una foto: el video se mantiene pedido para S7.
+
+**Si se vuelve a correr la simulación, aprovechar para sacar capturas en tercera persona a resolución decente** (28-07-2026). Todo el material de escena que hay es chico: el panel derecho de S14 sale de `sim_contexto_dron.png` (702x454) y el izquierdo del cuadro crudo `fotos_sim/01_frame_camara_fija_raw.png` (640x480, del que sólo sirve el centro porque el resto es fondo vacío). Ninguno da para proyectar a tamaño grande. No hay originales mejores en el repo (verificado el 28-07-2026 sobre `defensa/media/`, `docs/media/` e `informe/figures/`). Es la misma sesión de captura que resolvería el video, así que conviene hacer todo junto.
+
+### 5. Export a PDF de respaldo
 
 Por si el día de la defensa falla la web (proyector, navegador, resolución). La presentación ya es self-contained y funciona offline, pero el PDF es el paracaídas.
 
-### 5. Video del Go2 con heave
+### 6. Video del Go2 con heave
 
-Mejoraría S23. No bloquea — el heave está cubierto por la simulación.
+Mejoraría S24. No bloquea — el heave está cubierto por la simulación.
 
 ---
 
 ## 🟢 Baja
 
-### 6. Reparto de la exposición entre Máximo y Jack
+### 7. Reparto de la exposición entre Máximo y Jack
 
-Definido sólo parcialmente: Jack cubre movimiento del robot (envío de comandos, control postural, y ahora también el bloque de obstáculos S21). El resto se define sobre la marcha. El plan tiene una propuesta tentativa en la tabla de arriba de `plan_presentacion.md` — **no está anclada**.
+Definido sólo parcialmente: Jack cubre movimiento del robot (envío de comandos, control postural, y ahora también el bloque de obstáculos S22). El resto se define sobre la marcha. El plan tiene una propuesta tentativa en la tabla de arriba de `plan_presentacion.md` — **no está anclada**.
 
-### 7. Foto de los dos autores con el robot
+### 8. Foto de los dos autores con el robot
 
-Confirmado que no existe. S31 usa la vista cenital como fallback y funciona bien. Si sale una foto antes de agosto, es una mejora obvia del cierre.
+Confirmado que no existe. S32 usa la vista cenital como fallback y funciona bien. Si sale una foto antes de agosto, es una mejora obvia del cierre.

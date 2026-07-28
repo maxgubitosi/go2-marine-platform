@@ -16,28 +16,59 @@
      BLOQUE 0 · PORTADA
      ============================================================ -->
 <section class="slide" data-block="-1" data-title="Portada">
-  <div class="slide-inner cover center" style="gap:1.6rem;">
-    <div class="eyebrow" style="justify-content:center;">Proyecto Final · Universidad de San Andrés</div>
-    <h1 class="title" style="max-width:20ch;">Una plataforma marina <span style="color:var(--sea)">sintética</span> para validar percepción visual</h1>
-    <p class="lead" style="max-width:52ch;text-align:center;margin:0 auto;">
-      Un robot cuadrúpedo Unitree Go2 emula el oleaje de una cubierta marina
-      para estudiar, de forma segura y reproducible, la estimación de pose
-      visual en el aterrizaje de drones.
-    </p>
-    <div class="row wrap" style="justify-content:center;gap:2.4rem;margin-top:1.4rem;">
-      <div style="text-align:center;">
-        <div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Autores</div>
-        <div style="font-weight:680;font-size:1.15rem;margin-top:.2rem;">Máximo Gubitosi · Jack Spolski</div>
-      </div>
-      <div style="width:1px;height:38px;background:var(--line);"></div>
-      <div style="text-align:center;">
-        <div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Mentores</div>
-        <div style="font-weight:680;font-size:1.15rem;margin-top:.2rem;">Gastón Castro · Juan I. Giribet</div>
+  <div class="slide-inner cover">
+    <div class="cover-main">
+      <div class="eyebrow">Trabajo de Graduación · 2026</div>
+      <h1 class="title cover-title">Simulación de dinámica de plataforma marina mediante un <span class="sea">robot cuadrúpedo</span></h1>
+      <div class="cover-people">
+        <div>
+          <div class="cover-role">Autores</div>
+          <div class="cover-names">Máximo Gubitosi<br>Jack Spolski</div>
+        </div>
+        <div class="cover-sep"></div>
+        <div>
+          <div class="cover-role">Mentores</div>
+          <div class="cover-names">Gastón Castro<br>Juan Ignacio Giribet</div>
+        </div>
       </div>
     </div>
-    <div class="row" style="justify-content:center;gap:.6rem;margin-top:1rem;">
-      <span class="pill">Ingeniería · 2026</span>
+    <div class="cover-sea wave-scene" data-anim aria-hidden="true">
+      <svg viewBox="0 142 900 98" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="seaC" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#3fa3c0"/><stop offset="1" stop-color="#1d6f8c"/>
+          </linearGradient>
+        </defs>
+        <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".5"/>
+        <g transform="translate(660 198) scale(.7)">
+          <g class="vessel">
+            <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+            <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+            <rect x="16" y="-22" width="60" height="5" rx="1.5" fill="#dbe7ee"/>
+            <rect x="41" y="-22" width="10" height="5" fill="#ef6a4c"/>
+            <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+            <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+            <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+            <g fill="#9db8c9">
+              <rect x="-56" y="-34" width="5" height="5" rx="1"/>
+              <rect x="-47" y="-34" width="5" height="5" rx="1"/>
+              <rect x="-38" y="-34" width="5" height="5" rx="1"/>
+            </g>
+          </g>
+        </g>
+        <g class="waves">
+          <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#seaC)" opacity=".92"/>
+          <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
+        </g>
+      </svg>
     </div>
+    <footer class="cover-foot">
+      <img src="assets/img/logo_udesa.png" alt="Universidad de San Andrés" class="brand-logo">
+      <div>
+        <div class="brand-carrera">Ingeniería en Inteligencia Artificial</div>
+        <div class="brand-dept">Departamento de Ingeniería · Universidad de San Andrés</div>
+      </div>
+    </footer>
   </div>
 </section>
 
@@ -89,52 +120,127 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">El problema</div>
+      <h2 class="head">La cubierta <span class="accent">nunca</span> está quieta</h2>
+      <p class="lead" style="max-width:70ch;">
+        El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
+        El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
+      </p>
     </header>
     <div class="s-body">
-    <div class="split narrow-media">
-      <div class="col">
-        <h2 class="head">La cubierta <span class="accent">nunca</span> está quieta</h2>
-        <p class="lead" style="margin-bottom:1.4rem;">
-          El oleaje mueve la plataforma de forma continua. El dron necesita saber,
-          cuadro a cuadro, dónde está y cómo está inclinada.
-        </p>
-        <ul class="marks">
-          <li><strong>Roll</strong> — balanceo lateral</li>
-          <li><strong>Pitch</strong> — cabeceo longitudinal</li>
-          <li><strong>Heave</strong> — ascenso y descenso vertical</li>
-        </ul>
-      </div>
-      <div class="col">
+    <div class="scenerow">
+
+      <figure>
         <div class="wave-scene" data-anim>
-          <svg viewBox="0 0 420 320" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Plataforma oscilando sobre el oleaje">
+          <svg viewBox="0 88 420 232" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Buque de perfil: cabecea y sube sobre el oleaje">
             <defs>
-              <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="seaA" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#8fd0e0"/>
                 <stop offset="1" stop-color="#3f9fbf"/>
               </linearGradient>
             </defs>
-            <!-- heave arrow -->
-            <g class="heave-ind" stroke="#ef6a4c" stroke-width="2" fill="none">
-              <line x1="40" y1="120" x2="40" y2="210"/>
-              <path d="M40 120 l-5 8 h10 z" fill="#ef6a4c" stroke="none"/>
-              <path d="M40 210 l-5 -8 h10 z" fill="#ef6a4c" stroke="none"/>
+
+            <!-- indicador de heave: nivel medio de cubierta + flecha vertical -->
+            <g class="ind">
+              <line x1="26" y1="180" x2="116" y2="180" stroke-width="1.4" stroke-dasharray="5 5" opacity=".5"/>
+              <line x1="40" y1="166" x2="40" y2="194" stroke-width="1.8"/>
+              <path d="M40 162 l-5 8 h10 z" class="fill"/>
+              <path d="M40 198 l-5 -8 h10 z" class="fill"/>
+              <text x="52" y="156">heave</text>
             </g>
-            <text x="52" y="168" fill="#ef6a4c" font-size="15" font-weight="700" font-family="sans-serif">heave</text>
-            <!-- platform -->
-            <g class="platform">
-              <rect x="-70" y="-14" width="140" height="20" rx="3" fill="#26506b"/>
-              <rect x="-70" y="-18" width="140" height="6" rx="2" fill="#0f2a43"/>
-              <circle cx="-52" cy="-4" r="4" fill="#9db8c9"/>
-              <circle cx="52" cy="-4" r="4" fill="#9db8c9"/>
+
+            <!-- indicador de pitch: arco de giro delante de la proa -->
+            <g class="ind">
+              <path d="M311.1 113.1 A 132 132 0 0 1 341.3 184.2" fill="none" stroke-width="1.8"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(311.1 113.1) rotate(-40)"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(341.3 184.2) rotate(174)"/>
+              <text x="305" y="106" text-anchor="end">pitch</text>
             </g>
-            <!-- waves (path extra ancho para que el drift no muestre el borde) -->
+
+            <!-- mar de fondo (por detrás del buque) -->
+            <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".55"/>
+
+            <!-- buque de perfil: cabecea y sube/baja con la ola -->
+            <g transform="translate(210 198) scale(1.15)">
+              <g class="vessel">
+                <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+                <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+                <rect x="16" y="-22" width="60" height="5" rx="1.5" fill="#dbe7ee"/>
+                <rect x="41" y="-22" width="10" height="5" fill="#ef6a4c"/>
+                <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+                <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+                <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+                <g fill="#9db8c9">
+                  <rect x="-56" y="-34" width="5" height="5" rx="1"/>
+                  <rect x="-47" y="-34" width="5" height="5" rx="1"/>
+                  <rect x="-38" y="-34" width="5" height="5" rx="1"/>
+                </g>
+              </g>
+            </g>
+
+            <!-- mar de frente: tapa la obra viva y hace que el buque flote -->
             <g class="waves">
-              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#sea)" opacity=".9"/>
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#seaA)" opacity=".92"/>
               <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
             </g>
           </svg>
         </div>
-      </div>
+        <figcaption><strong>Vista de perfil.</strong> <span class="dof">Pitch</span>: cabeceo longitudinal. <span class="dof">Heave</span>: ascenso y descenso vertical.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="wave-scene" data-anim>
+          <svg viewBox="0 88 420 232" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Buque visto de proa: se balancea de lado a lado">
+            <defs>
+              <linearGradient id="seaB" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8fd0e0"/>
+                <stop offset="1" stop-color="#3f9fbf"/>
+              </linearGradient>
+            </defs>
+
+            <!-- indicador de roll: arco de giro sobre la superestructura -->
+            <g class="ind">
+              <path d="M161.8 129.2 A 84 84 0 0 1 258.2 129.2" fill="none" stroke-width="1.8"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(161.8 129.2) rotate(235)"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(258.2 129.2) rotate(125)"/>
+              <text x="210" y="107" text-anchor="middle">roll</text>
+            </g>
+
+            <!-- mar de fondo (por detrás del buque) -->
+            <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".55"/>
+
+            <!-- buque de proa: se balancea de lado a lado sobre la línea de flotación -->
+            <g transform="translate(210 198) scale(1.15)">
+              <g class="vessel-bow">
+                <!-- casco en V; la mitad de babor va sombreada para que la roda
+                     central lea como la arista que mira al observador -->
+                <path d="M-50 -12 L50 -12 L42 8 Q30 24 10 26 L-10 26 Q-30 24 -42 8 Z" fill="#2d5b78"/>
+                <path d="M-50 -12 L0 -12 L0 26 L-10 26 Q-30 24 -42 8 Z" fill="#1d4059"/>
+                <rect x="-50" y="-17" width="100" height="6" rx="2" fill="#0f2a43"/>
+                <rect x="-30" y="-44" width="60" height="27" rx="2" fill="#1d4059"/>
+                <rect x="-18" y="-56" width="36" height="13" rx="2" fill="#26506b"/>
+                <g fill="#9db8c9">
+                  <rect x="-24" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="-13" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="-2" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="9" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="20" y="-40" width="6" height="6" rx="1"/>
+                </g>
+                <!-- cubierta de proa por delante del puente: helipuerto y marcador -->
+                <rect x="-44" y="-24" width="88" height="7" rx="2" fill="#dbe7ee"/>
+                <rect x="-5" y="-24" width="10" height="7" fill="#ef6a4c"/>
+              </g>
+            </g>
+
+            <!-- mar de frente: tapa la obra viva y hace que el buque flote -->
+            <g class="waves">
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#seaB)" opacity=".92"/>
+              <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption><strong>Vista de proa.</strong> <span class="dof">Roll</span>: balanceo lateral.</figcaption>
+      </figure>
+
     </div>
     </div><!-- /s-body -->
   </div>
@@ -182,7 +288,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Dónde nos paramos</div>
-      <h2 class="head">El problema es una <span class="accent">cadena</span>; nosotros trabajamos un eslabón</h2>
+      <h2 class="head">Tres líneas de trabajo que el proyecto <span class="accent">combina</span></h2>
     </header>
     <div class="s-body">
     <div class="cards">
@@ -203,13 +309,51 @@
       </div>
     </div>
     <div class="row mt-l">
-      <span class="pill coral">La validación experimental previa al ensayo real es el eslabón que abordamos</span>
+      <span class="pill coral">Nuestro aporte: generar el movimiento, observarlo y medirlo, en simulación y en el robot real</span>
     </div>
     </div><!-- /s-body -->
   </div>
 </section>
 
-<!-- S6 — BISAGRA -->
+<!-- S6 · EL INSTRUMENTO (presenta el robot antes de la bisagra) -->
+<section class="slide" data-block="1" data-title="El instrumento: un cuadrúpedo comercial">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow">El instrumento</div>
+      <h2 class="head">Un cuadrúpedo comercial con el <span class="accent">torso comandable</span></h2>
+      <p class="lead">
+        El Unitree Go2 tiene doce articulaciones, tres por pata. No nos interesa que camine:
+        nos interesa que sostenga la inclinación que le pedimos.
+      </p>
+    </header>
+    <div class="s-body">
+      <div class="split media-left instr-split">
+        <figure>
+          <div class="media contain plot">
+            <img src="assets/img/go2_postures_trim.jpg" alt="El Unitree Go2 en tres posturas distintas del torso">
+          </div>
+          <figcaption>Las cuatro patas siguen apoyadas y lo que cambia es la actitud del torso</figcaption>
+        </figure>
+        <div class="col stack">
+          <div class="flowline">
+            <span class="fl-step">18 coordenadas<small>6 del cuerpo + 12 articulares</small></span>
+            <span class="fl-arrow">−12</span>
+            <span class="fl-step accent">Quedan 6<small>la pose del torso</small></span>
+          </div>
+          <span class="pill coral instr-claim">Los mismos seis con los que se describe una embarcación</span>
+          <figure class="instr-sim">
+            <div class="media contain plot">
+              <img src="assets/img/sim_gazebo_go2.png" alt="El modelo del Go2 dentro del simulador Gazebo">
+            </div>
+            <figcaption>Y existe dos veces: el modelo en Gazebo y la unidad física del laboratorio</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S7 · BISAGRA -->
 <section class="slide" data-block="1" data-title="La idea: un cuadrúpedo como barco sintético">
   <div class="slide-inner">
     <header class="s-head">
@@ -219,16 +363,60 @@
     <div class="s-body">
     <div class="bisagra">
       <figure class="bisagra-item">
-        <div class="wave-scene" data-anim style="max-width:360px;">
-          <svg viewBox="20 60 380 210" width="100%" xmlns="http://www.w3.org/2000/svg">
-            <g class="platform">
-              <rect x="-70" y="-14" width="140" height="20" rx="3" fill="#26506b"/>
-              <rect x="-70" y="-18" width="140" height="6" rx="2" fill="#0f2a43"/>
-            </g>
-            <g class="waves">
-              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V320 H-220 Z" fill="#5cb3cc" opacity=".85"/>
-            </g>
-          </svg>
+        <div class="bisagra-col">
+          <!-- de perfil: pitch + heave -->
+          <div class="wave-scene" data-anim>
+            <svg viewBox="95 120 240 130" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Un buque cabecea sobre el oleaje">
+              <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".5"/>
+              <g transform="translate(210 198)">
+                <g class="vessel">
+                  <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+                  <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+                  <rect x="16" y="-22" width="60" height="5" rx="1.5" fill="#dbe7ee"/>
+                  <rect x="41" y="-22" width="10" height="5" fill="#ef6a4c"/>
+                  <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+                  <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+                  <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+                  <g fill="#9db8c9">
+                    <rect x="-56" y="-34" width="5" height="5" rx="1"/>
+                    <rect x="-47" y="-34" width="5" height="5" rx="1"/>
+                    <rect x="-38" y="-34" width="5" height="5" rx="1"/>
+                  </g>
+                </g>
+              </g>
+              <g class="waves">
+                <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#5cb3cc" opacity=".9"/>
+              </g>
+            </svg>
+          </div>
+          <!-- de proa: roll. Mismo buque de S3 pero sin las flechas:
+               acá la escena ilustra, no define los términos. -->
+          <div class="wave-scene" data-anim>
+            <svg viewBox="95 120 240 130" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="El mismo buque visto de proa se balancea de lado a lado">
+              <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".5"/>
+              <g transform="translate(210 198) scale(1.15)">
+                <g class="vessel-bow">
+                  <path d="M-50 -12 L50 -12 L42 8 Q30 24 10 26 L-10 26 Q-30 24 -42 8 Z" fill="#2d5b78"/>
+                  <path d="M-50 -12 L0 -12 L0 26 L-10 26 Q-30 24 -42 8 Z" fill="#1d4059"/>
+                  <rect x="-50" y="-17" width="100" height="6" rx="2" fill="#0f2a43"/>
+                  <rect x="-30" y="-44" width="60" height="27" rx="2" fill="#1d4059"/>
+                  <rect x="-18" y="-56" width="36" height="13" rx="2" fill="#26506b"/>
+                  <g fill="#9db8c9">
+                    <rect x="-24" y="-40" width="6" height="6" rx="1"/>
+                    <rect x="-13" y="-40" width="6" height="6" rx="1"/>
+                    <rect x="-2" y="-40" width="6" height="6" rx="1"/>
+                    <rect x="9" y="-40" width="6" height="6" rx="1"/>
+                    <rect x="20" y="-40" width="6" height="6" rx="1"/>
+                  </g>
+                  <rect x="-44" y="-24" width="88" height="7" rx="2" fill="#dbe7ee"/>
+                  <rect x="-5" y="-24" width="10" height="7" fill="#ef6a4c"/>
+                </g>
+              </g>
+              <g class="waves">
+                <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#5cb3cc" opacity=".9"/>
+              </g>
+            </svg>
+          </div>
         </div>
         <figcaption>Plataforma marina · roll · pitch · heave</figcaption>
       </figure>
@@ -258,7 +446,7 @@
       <div class="eyebrow">Objetivo y alcance</div>
       <h2 class="head">Construir el entorno y responder <span class="accent">dos preguntas</span></h2>
       <p class="lead" style="max-width:64ch;">
-        No resolvemos el aterrizaje completo: construimos la capa habilitante — sintetizar
+        No resolvemos el aterrizaje completo: construimos la capa habilitante: sintetizar
         movimiento marino, observarlo y medir la estimación.
       </p>
     </header>
@@ -460,18 +648,18 @@
       <h2 class="head">Dos formas de <span class="accent">observar</span> el mismo movimiento</h2>
     </header>
     <div class="s-body">
-      <div class="split">
+      <div class="split escenarios">
         <figure class="col">
-          <div class="media"><img src="assets/img/sim_contexto_go2.png" alt="Cámara fija observando el Go2 con ArUco"></div>
-          <figcaption><strong style="color:var(--sea)">Caso base — cámara fija.</strong> Sensor quieto: la pregunta más limpia del entorno.</figcaption>
+          <div class="media"><img src="assets/img/sim_escenario_fija.png" alt="Cuadro crudo de la cámara fija: el marcador ArUco sobre el Go2"></div>
+          <figcaption><strong style="color:var(--sea)">Caso base: cámara fija.</strong> Sensor quieto: la pregunta más limpia del entorno.</figcaption>
         </figure>
         <figure class="col">
-          <div class="media"><img src="assets/img/sim_contexto_dron.png" alt="Dron con cámara inferior observando el Go2"></div>
-          <figcaption><strong style="color:var(--coral)">Caso fuerte — cámara en el dron.</strong> Sensor volando: geometría de observación exigente.</figcaption>
+          <div class="media"><img src="assets/img/sim_escenario_dron.png" alt="Dron con cámara inferior observando el Go2"></div>
+          <figcaption><strong style="color:var(--coral)">Caso fuerte: cámara en el dron.</strong> Sensor volando: la geometría más exigente.</figcaption>
         </figure>
       </div>
       <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
-        Diseño deliberado: separar cuánto pesa el <em>pipeline</em> visual de cuánto pesa el movimiento del sensor.
+        Diseño deliberado: separar cuánto pesa el <em>pipeline</em> visual de cuánto pesa el movimiento del&nbsp;sensor.
       </p>
     </div>
   </div>
@@ -492,9 +680,19 @@
             <tr><td>Comando</td><td class="num">se ejecuta perfecto</td><td>API + control interno</td></tr>
           </tbody>
         </table>
-        <figure class="col vwrap">
-          <div class="media portrait md"><img src="assets/img/lab_go2_aruco_tripode_a.jpg" alt="Montaje del laboratorio con Go2, ArUco y trípode"></div>
-        </figure>
+        <div class="simreal">
+          <figure>
+            <div class="media"><img src="assets/img/sim_setup_gazebo.png" alt="El Go2 con el marcador ArUco dentro de Gazebo"></div>
+            <figcaption>El montaje en Gazebo</figcaption>
+          </figure>
+          <div class="simreal-arrow" aria-hidden="true">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
+          </div>
+          <figure>
+            <div class="media"><img src="assets/img/lab_go2_aruco_tripode_a.jpg" alt="Montaje del laboratorio con Go2, ArUco y trípode"></div>
+            <figcaption>Y en el laboratorio</figcaption>
+          </figure>
+        </div>
       </div>
       <div class="row mt-m" style="justify-content:center;">
         <span class="pill coral">Decisión clave: evaluamos movimiento y visión por separado para no saturar el cómputo</span>
@@ -619,7 +817,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Qué aprendimos —y qué <span class="accent">admitimos</span></h2>
+      <h2 class="head">Qué aprendimos y qué <span class="accent">admitimos</span></h2>
     </header>
     <div class="s-body">
       <div class="cards two">
@@ -674,7 +872,7 @@
           </div>
           <div class="oarrow">→</div>
           <div class="ofix">
-            <p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina — lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p>
+            <p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina: lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p>
           </div>
         </div>
 
@@ -779,7 +977,7 @@
         <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
       </div>
       <p class="lead center" style="max-width:70ch;margin-left:auto;margin-right:auto;">
-        Reproduce la forma de la dinámica solicitada —se ve a ojo en las series— pero con
+        Reproduce la forma de la dinámica solicitada (se ve a ojo en las series), pero con
         <strong>retardo</strong> y una <strong>amplitud efectiva menor</strong>. No es una falla del pipeline:
         es el movimiento <em>trabado</em> del robot, el mismo que no pudimos corregir sin acceso al firmware.
       </p>
@@ -861,7 +1059,7 @@
       </div>
       <div class="missing-piece">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8v8m-4-4h8"/><circle cx="12" cy="12" r="9"/></svg>
-        <span>Pieza faltante — <strong>ambos a la vez</strong>: visión activa mientras el robot se mueve. Mismo régimen en los dos entornos (0,10 Hz · ±10–20°).</span>
+        <span>Pieza faltante: <strong>ambos a la vez</strong>. Visión activa mientras el robot se mueve. Mismo régimen en los dos entornos (0,10 Hz · ±10–20°).</span>
       </div>
     </div>
   </div>
@@ -939,7 +1137,7 @@
       </div>
       <figure class="col vwrap">
         <div class="media portrait md"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
-        <figcaption>Go2 con marcador ArUco — montaje de laboratorio.</figcaption>
+        <figcaption>Go2 con marcador ArUco en el montaje de laboratorio.</figcaption>
       </figure>
     </div>
   </div>
@@ -1023,7 +1221,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Respaldo</div>
-      <h2 class="head">Histogramas de error — simulación</h2>
+      <h2 class="head">Histogramas de error en simulación</h2>
     </header>
     <div class="s-body">
       <div class="split">
@@ -1067,7 +1265,7 @@
         <figure class="media contain plot"><img src="assets/img/bk_r5_timeseries.png" alt="Series R5, amplitud nominal"></figure>
         <div class="col stack">
           <p class="lead" style="max-width:42ch;">
-            El mismo comportamiento —seguimiento con retardo y ganancia— aparece en
+            El mismo comportamiento (seguimiento con retardo y ganancia) aparece en
             <strong>R4</strong> (±15°/10°) y <strong>R5</strong> (±10°/8°).
           </p>
           <div class="eqn">ganancia por eje: <span class="muted">roll</span> ≈0,73 · <span class="muted">pitch</span> ≈0,60</div>
@@ -1111,7 +1309,7 @@
         </div>
         <div class="hyp-item hip">
           <span class="k">Interpretación</span>
-          <span class="v">Es un <strong>guardrail del control interno</strong>: el robot prioriza no perder el equilibrio por sobre sostener la consigna de actitud. No es un problema del comando —llega intacto—, es una decisión del firmware.</span>
+          <span class="v">Es un <strong>guardrail del control interno</strong>: el robot prioriza no perder el equilibrio por sobre sostener la consigna de actitud. No es un problema del comando, que llega intacto, sino una decisión del firmware.</span>
         </div>
         <div class="hyp-item">
           <span class="k">Evidencia</span>
@@ -1119,7 +1317,7 @@
         </div>
         <div class="hyp-item">
           <span class="k">Mitigación</span>
-          <span class="v">Barrido de frecuencias de consigna: <strong>a menor frecuencia los episodios de trote se espacian</strong>. No desaparecen — se vuelven poco frecuentes.</span>
+          <span class="v">Barrido de frecuencias de consigna: <strong>a menor frecuencia los episodios de trote se espacian</strong>. No desaparecen: se vuelven poco frecuentes.</span>
         </div>
         <div class="hyp-item">
           <span class="k">Consecuencia</span>
@@ -1148,7 +1346,7 @@
         </div>
         <div class="hyp-item hip">
           <span class="k">Hipótesis</span>
-          <span class="v">El desacople se introduce en el <strong>control interno del Go2</strong>, al que no tenemos acceso directo. El patrón —fase + escala, sin deformación— es el de un sistema con lazo propio, no el de un error aleatorio.</span>
+          <span class="v">El desacople se introduce en el <strong>control interno del Go2</strong>, al que no tenemos acceso directo. El patrón (fase + escala, sin deformación) es el de un sistema con lazo propio, no el de un error aleatorio.</span>
         </div>
         <div class="hyp-item">
           <span class="k">Verificación</span>
