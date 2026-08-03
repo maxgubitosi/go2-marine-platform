@@ -120,7 +120,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">El problema</div>
-      <h2 class="head">La cubierta <span class="accent">nunca</span> está quieta</h2>
+      <h2 class="head">Roll, pitch y heave: los tres grados que mueven la cubierta</h2>
       <p class="lead" style="max-width:70ch;">
         El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
         El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
@@ -251,7 +251,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">La motivación metodológica</div>
-      <h2 class="head">Probar en el mar es <span class="accent">caro, lento y riesgoso</span></h2>
+      <h2 class="head">Por qué la validación no arranca en el mar</h2>
       <p class="lead">
         Un error de estimación puede terminar en colisión o en la pérdida del vehículo.
         Hay que validar antes, de forma segura, repetible y medible.
@@ -288,7 +288,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Dónde nos paramos</div>
-      <h2 class="head">Tres líneas de trabajo que el proyecto <span class="accent">combina</span></h2>
+      <h2 class="head">Estado del arte: tres líneas que este trabajo combina</h2>
     </header>
     <div class="s-body">
     <div class="cards">
@@ -320,7 +320,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">El instrumento</div>
-      <h2 class="head">Un cuadrúpedo comercial con el <span class="accent">torso comandable</span></h2>
+      <h2 class="head">El Unitree Go2: doce articulaciones y un torso comandable</h2>
       <p class="lead">
         El Unitree Go2 tiene doce articulaciones, tres por pata. No nos interesa que camine:
         nos interesa que sostenga la inclinación que le pedimos.
@@ -444,7 +444,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Objetivo y alcance</div>
-      <h2 class="head">Construir el entorno y responder <span class="accent">dos preguntas</span></h2>
+      <h2 class="head">Objetivo, alcance y las dos preguntas de validación</h2>
       <p class="lead" style="max-width:64ch;">
         No resolvemos el aterrizaje completo: construimos la capa habilitante: sintetizar
         movimiento marino, observarlo y medir la estimación.
@@ -474,7 +474,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · El entorno</div>
-      <h2 class="head">Un <span class="accent">pipeline</span> de punta a punta, todo registrado</h2>
+      <h2 class="head">Arquitectura del entorno: ROS2, Gazebo y registro en rosbag</h2>
     </header>
     <div class="s-body">
       <div class="pipeline" data-anim>
@@ -517,7 +517,6 @@
       <div class="row wrap mt-l" style="justify-content:center;gap:.7rem;">
         <span class="pill">ROS2</span>
         <span class="pill">Gazebo</span>
-        <span class="pill">Estimación en tiempo real + evaluación reproducible</span>
       </div>
     </div>
   </div>
@@ -526,7 +525,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · Movimiento</div>
-      <h2 class="head">Modelo reducido: la cubierta sigue la <span class="accent">pendiente local</span> de la superficie libre</h2>
+      <h2 class="head">Modelo reducido: la cubierta sigue la pendiente local del oleaje</h2>
     </header>
     <div class="s-body">
       <div class="split modelo-mar">
@@ -782,7 +781,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · Consigna</div>
-      <h2 class="head">Tres senoidales <span class="accent">desacopladas</span>, con los parámetros del ensayo de referencia</h2>
+      <h2 class="head">Consigna sinusoidal: parámetros del ensayo de referencia</h2>
     </header>
     <div class="s-body">
       <div class="split consigna">
@@ -1380,7 +1379,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · Evaluación</div>
-      <h2 class="head">El ground truth es una <span class="accent">cadena de transformaciones</span> reconstruida del simulador</h2>
+      <h2 class="head">El ground truth es una cadena de transformaciones reconstruida del simulador</h2>
     </header>
     <div class="s-body">
       <div class="eval-hero">
@@ -1469,17 +1468,17 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · Escenarios</div>
-      <h2 class="head">Dos formas de <span class="accent">observar</span> el mismo movimiento</h2>
+      <h2 class="head">Dos configuraciones de observación: cámara fija y cámara en vuelo</h2>
     </header>
     <div class="s-body">
       <div class="split escenarios">
         <figure class="col">
           <div class="media"><img src="assets/img/sim_escenario_fija.png" alt="Cuadro crudo de la cámara fija: el marcador ArUco sobre el Go2"></div>
-          <figcaption><strong style="color:var(--sea)">Caso base: cámara fija.</strong> Sensor quieto: la pregunta más limpia del entorno.</figcaption>
+          <figcaption><strong style="color:var(--sea)">Caso base: cámara fija.</strong> El sensor no se mueve: aísla el error del pipeline visual.</figcaption>
         </figure>
         <figure class="col">
           <div class="media"><img src="assets/img/sim_escenario_dron.png" alt="Dron con cámara inferior observando el Go2"></div>
-          <figcaption><strong style="color:var(--coral)">Caso fuerte: cámara en el dron.</strong> Sensor volando: la geometría más exigente.</figcaption>
+          <figcaption><strong style="color:var(--coral)">Caso fuerte: cámara en el dron.</strong> El sensor se mueve: suma la geometría de observación al error.</figcaption>
         </figure>
       </div>
       <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
@@ -1492,7 +1491,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Metodología · Del sim al lab</div>
-      <h2 class="head">Qué cambia al <span class="accent">salir de Gazebo</span></h2>
+      <h2 class="head">Del simulador al laboratorio: qué cambia en la medición</h2>
     </header>
     <div class="s-body">
       <div class="split media-left">
@@ -1519,7 +1518,7 @@
         </div>
       </div>
       <div class="row mt-m" style="justify-content:center;">
-        <span class="pill coral">Decisión clave: evaluamos movimiento y visión por separado para no saturar el cómputo</span>
+        <span class="pill coral">Movimiento y visión se evalúan por separado, para no saturar el cómputo</span>
       </div>
     </div>
   </div>
@@ -1529,7 +1528,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Una campaña para <span class="accent">descartar la suerte</span></h2>
+      <h2 class="head">Campaña de simulación: escenarios, corridas y criterio de comparación</h2>
     </header>
     <div class="s-body">
       <table class="dtable">
@@ -1552,7 +1551,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">El <span class="accent">pipeline</span> en acción</h2>
+      <h2 class="head">Detección del marcador cuadro a cuadro</h2>
     </header>
     <div class="s-body">
       <div class="split media-left">
@@ -1574,8 +1573,8 @@
 <section class="slide" data-block="3" data-title="Caso base: cámara fija">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Caso base: la estimación <span class="accent">sigue al marcador</span></h2>
+      <div class="eyebrow">Resultados · Cámara fija</div>
+      <h2 class="head">Caso base: error de posición y de actitud</h2>
     </header>
     <div class="s-body">
       <div class="split narrow-media">
@@ -1597,8 +1596,8 @@
 <section class="slide" data-block="3" data-title="Caso fuerte: cámara en el dron">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Caso fuerte: ahora el <span class="accent">sensor vuela</span></h2>
+      <div class="eyebrow">Resultados · Cámara en el dron</div>
+      <h2 class="head">Caso fuerte: degradación con el sensor en movimiento</h2>
     </header>
     <div class="s-body">
       <div class="split">
@@ -1623,7 +1622,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Tres corridas, mismo <span class="accent">orden de magnitud</span></h2>
+      <h2 class="head">Repetibilidad: tres corridas del mismo escenario</h2>
     </header>
     <div class="s-body">
       <div class="statband" style="margin-bottom:1.2rem;">
@@ -1637,11 +1636,11 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="Qué aprendimos de la simulación">
+<section class="slide" data-block="3" data-title="Alcance y limitaciones (simulación)">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
-      <h2 class="head">Qué aprendimos y qué <span class="accent">admitimos</span></h2>
+      <h2 class="head">Alcance y limitaciones de la validación en simulación</h2>
     </header>
     <div class="s-body">
       <div class="cards two">
@@ -1672,7 +1671,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Del simulador al laboratorio</div>
-      <h2 class="head">Lo que la simulación <span class="accent">no anticipó</span></h2>
+      <h2 class="head">Tres obstáculos del pasaje al robot real, y qué se hizo con cada uno</h2>
     </header>
     <div class="s-body">
       <div class="obst">
@@ -1713,7 +1712,6 @@
       </div>
 
       <div class="row mt-m" style="justify-content:center;">
-        <span class="pill coral">Las dos últimas explican los números que vienen</span>
       </div>
     </div>
   </div>
@@ -1722,7 +1720,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">El mismo concepto, con <span class="accent">hardware real</span></h2>
+      <h2 class="head">Montaje de laboratorio: Go2, marcador y cámara en trípode</h2>
     </header>
     <div class="s-body">
       <div class="split narrow-media">
@@ -1743,11 +1741,11 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="El barco sintético existe (video)">
+<section class="slide" data-block="3" data-title="El torso sigue la consigna (video)">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">El <span class="accent">barco sintético</span> existe</h2>
+      <h2 class="head">El torso del Go2 sigue la consigna marina comandada</h2>
     </header>
     <div class="s-body">
       <div class="split" style="grid-template-columns:1.15fr .85fr;align-items:center;">
@@ -1769,11 +1767,11 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="¿Llega el comando intacto?">
+<section class="slide" data-block="3" data-title="Fidelidad del comando">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">¿Llega el comando intacto? <span class="accent">Sí.</span></h2>
+      <h2 class="head">Fidelidad del comando: qué le llega efectivamente a la API</h2>
     </header>
     <div class="s-body">
       <div class="split narrow-media">
@@ -1794,7 +1792,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">El robot sigue la <span class="accent">forma</span> del movimiento</h2>
+      <h2 class="head">Seguimiento: la actitud medida contra la consigna</h2>
     </header>
     <div class="s-body">
       <div class="result-plot" style="margin-bottom:1rem;">
@@ -1812,7 +1810,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">Un error dinámico <span class="accent">parametrizable</span></h2>
+      <h2 class="head">Caracterización dinámica: retardo <span class="accent">τ</span> y ganancia <span class="accent">g</span></h2>
     </header>
     <div class="s-body">
       <div class="split narrow-media">
@@ -1837,7 +1835,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">La <span class="accent">percepción</span> también corre en el lab</h2>
+      <h2 class="head">Detección visual sobre el robot real</h2>
     </header>
     <div class="s-body">
       <div class="split" style="grid-template-columns:1.4fr .6fr;">
@@ -1866,7 +1864,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Cierre · Síntesis</div>
-      <h2 class="head">Dos piezas de una <span class="accent">misma validación</span></h2>
+      <h2 class="head">Lectura conjunta de simulación y laboratorio</h2>
     </header>
     <div class="s-body">
       <div class="cards two">
@@ -1892,7 +1890,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Cierre · Conclusiones</div>
-      <h2 class="head">Los tres eslabones son <span class="accent">viables</span></h2>
+      <h2 class="head">Conclusiones: generar, observar y medir</h2>
     </header>
     <div class="s-body">
       <div class="chain">
@@ -1920,7 +1918,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Cierre · Trabajo futuro</div>
-      <h2 class="head">Cerrar la pieza faltante, <span class="accent">paso a paso</span></h2>
+      <h2 class="head">Trabajo futuro: del entorno al aterrizaje</h2>
     </header>
     <div class="s-body">
       <div class="roadmap">
@@ -2061,7 +2059,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Respaldo</div>
-      <h2 class="head">El sesgo sistemático en <span class="accent">Y</span></h2>
+      <h2 class="head">El sesgo sistemático en Y</h2>
     </header>
     <div class="s-body">
       <div class="cards two">
@@ -2123,7 +2121,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Respaldo · Limitaciones del robot</div>
-      <h2 class="head">El guardrail de <span class="accent">gait</span></h2>
+      <h2 class="head">El guardrail de gait</h2>
     </header>
     <div class="s-body">
       <div class="hyp">
@@ -2156,7 +2154,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Respaldo · Limitaciones del robot</div>
-      <h2 class="head">Por qué no se mueve <span class="accent">como le pedimos</span></h2>
+      <h2 class="head">Por qué no se mueve como le pedimos</h2>
     </header>
     <div class="s-body">
       <div class="hyp">

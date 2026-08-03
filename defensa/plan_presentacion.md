@@ -15,6 +15,12 @@
 | Laboratorio (obstáculos + resultados) | 23–29 | Jack |
 | Lectura conjunta y cierre | 30–33 | Máximo (o ambos) |
 
+> **Pasada global de titulares (28-07-2026).** Se reescribieron 26 de los 33 titulares para que digan lo que la lámina muestra en vez de funcionar como titular de revista, y se sacó la palabra en turquesa de todos salvo cinco, donde marca un término técnico que la lámina introduce. Fuera también las preguntas retóricas autocontestadas, los pares por antítesis y los pills de remate vagos.
+>
+> **Criterio para los titulares que se agreguen de acá en más:** que nombren el contenido o el hallazgo, no que lo anuncien. *"Caracterización dinámica: retardo τ y ganancia g"* sirve; *"Un error dinámico parametrizable"* no. Ver la memoria `registro-academico-no-gpteado`.
+>
+> **Ojo con el largo:** el titular entra en dos líneas a 1280x720. Si pasa de ~70 caracteres empuja el cuerpo y desborda. Si hace falta más precisión, la configuración del ensayo va en el eyebrow (así se resolvió en S19 y S20), no en el titular.
+
 Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · resultados ~12 min · cierre ~3 min.
 
 ---
@@ -133,7 +139,7 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se ve:** cifras héroe: **2–3° en roll/pitch · 2–2,4 cm en heave** + `sim_drone_runs_comparison.png` (las 3 corridas superpuestas).
 - **Se dice:** las tres repeticiones conservan el mismo orden de magnitud → el resultado no es una corrida aislada.
 
-**S22 · Qué aprendimos de la simulación (y sus límites)**
+**S22 · Alcance y limitaciones de la validación en simulación**
 - **Se ve:** 2 columnas: ✅ el pipeline sigue la dinámica global, medible contra referencia / ⚠️ heave es el eje más sensible, sesgo sistemático en Y (limitación de la cadena geométrica, no movimiento real).
 - **Se dice:** admitir limitaciones con precisión — para eso sirve la simulación: aislarlas con ground truth antes del mundo físico.
 
@@ -148,15 +154,15 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se ve:** video `videos_lab/08` (setup completo: trípode + cámara cenital + Go2 con ArUco haciendo posturas) o fotos `fotos_lab/04`–`06`.
 - **Se dice:** mismo concepto que en Gazebo, con hardware real: webcam en trípode, marcador en el lomo, consigna marina por la API del Go2.
 
-**S25 · El barco sintético existe (video estrella)** ⭐
+**S25 · El torso del Go2 sigue la consigna marina (video estrella)** ⭐
 - **Se ve:** video `videos_lab/02` (operador comanda → Go2 ejecuta posturas marinas, 34 s, recortado a ~15 s) a pantalla completa.
 - **Se dice:** esto es el resultado central del lab en una imagen: la consigna de oleaje moviendo un robot real.
 
-**S26 · ¿Llega el comando intacto? Sí.**
+**S26 · Fidelidad del comando: qué le llega a la API**
 - **Se ve:** `lab_plot_02_api_fidelity.png` + cifra héroe: **correlación > 0,9999** entre consigna esperada y comando enviado.
 - **Se dice:** primer eslabón validado: nada se pierde ni deforma en el camino de software hasta la API del robot.
 
-**S27 · Comando vs respuesta física**
+**S27 · Seguimiento: actitud medida contra consigna**
 - **Se ve:** `strong_15_10_plot_01_timeseries_cmd_vs_real.png` (R4: series roll y pitch, esperado vs real).
 - **Se dice:** el robot reproduce la FORMA del movimiento — se ve a ojo en las series — pero con retardo y menor amplitud. Eso es física, no falla.
 
