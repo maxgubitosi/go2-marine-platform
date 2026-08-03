@@ -794,6 +794,25 @@ ul.marks li.warn::before{ background: var(--warn); }
   color: var(--ink-faint); white-space: nowrap;
 }
 
+/* ===================== Slides de metodología con ecuaciones ===================== */
+
+/* Todas arrancan las dos columnas a la misma altura: con fórmulas de alturas
+   distintas a cada lado, centrar deja los bloques flotando desparejos. */
+.consigna, .postural, .percepcion, .eval { align-items: start; }
+
+/* Tabla de parámetros del ensayo. Es el machete: los valores que hay que poder
+   decir de memoria si el jurado pregunta con qué se corrió. */
+.params-tbl { font-size: .84rem; }
+.params-tbl td:first-child { color: var(--sea); font-weight: 600; white-space: nowrap; }
+
+/* Las figuras acompañan a la ecuación, no al revés. */
+.postural .media img, .consigna .media img { max-height: 24vh; width: auto; margin-inline: auto; }
+.pnp-fig img { max-height: 20vh; width: auto; margin-inline: auto; }
+
+/* La cadena de transformaciones va sola arriba porque es larga y define todo lo
+   que se dice debajo. */
+.eval-hero { margin-bottom: 1.4rem; }
+
 /* ===================== Slide del pasaje del sim al lab ===================== */
 
 /* Las dos fotos del montaje van una al lado de la otra con la flecha en el medio.

@@ -1,7 +1,7 @@
 # Plan de la presentación — Defensa oral PF
 
 **Formato:** página web (slides fullscreen, navegación con teclado), fondo claro, mínimo texto.
-**Tiempo:** 30 min de exposición + 20 de preguntas. **Total: 32 slides + 10 de backup.**
+**Tiempo:** 30 min de exposición + 20 de preguntas. **Total: 33 slides + 10 de backup.**
 **Estrategia narrativa:** embudo: arranca general para público no técnico, converge a técnico para el jurado. El momento bisagra es la slide 7 (la idea del "barco sintético"), y la 6 es la que presenta el robot para que esa bisagra no llegue en frío.
 
 **Reparto tentativo** (Jack = movimiento del robot; resto a definir):
@@ -9,11 +9,11 @@
 | Tramo | Slides | Presentador sugerido |
 |---|---|---|
 | Apertura → arquitectura | 1–9 | Máximo |
-| Metodología de movimiento | 10–11 | Jack |
-| Percepción y evaluación | 12–15 | Máximo |
-| Resultados simulación | 16–21 | Máximo |
-| Laboratorio (obstáculos + resultados) | 22–28 | Jack |
-| Lectura conjunta y cierre | 29–32 | Máximo (o ambos) |
+| Modelo marino y movimiento del robot | 10–12 | Jack |
+| Percepción y evaluación | 13–16 | Máximo |
+| Resultados simulación | 17–22 | Máximo |
+| Laboratorio (obstáculos + resultados) | 23–29 | Jack |
+| Lectura conjunta y cierre | 30–33 | Máximo (o ambos) |
 
 Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · resultados ~12 min · cierre ~3 min.
 
@@ -50,9 +50,9 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 **S6 · El instrumento: un cuadrúpedo comercial**
 - **Se ve:** a la izquierda, el render del Go2 en tres posturas distintas del torso (`go2_postures_trim.jpg`), con la caption que aclara que las cuatro patas siguen apoyadas. A la derecha, el conteo de grados de libertad como flowline (**18 coordenadas → −12 → quedan 6**), el pill coral *"los mismos seis con los que se describe una embarcación"*, y la vista del Go2 dentro de Gazebo (`sim_gazebo_go2.png`).
-- **Por qué existe:** sin esta lámina el robot aparecía de la nada en la bisagra y la simulación no se mostraba nunca antes de S17. Las dos cosas rompían la narrativa.
+- **Por qué existe:** sin esta lámina el robot aparecía de la nada en la bisagra y la simulación no se mostraba nunca antes de S18. Las dos cosas rompían la narrativa.
 - **El número viene del informe** (línea ~1780): de las 18 coordenadas (6 de la base flotante + 12 articulares), los cuatro apoyos sin deslizamiento remueven 12 y quedan exactamente 6, la pose del torso. Es la justificación formal de la equivalencia que S7 propone, y conviene tenerla dicha *antes*.
-- **Ojo:** la mecánica articular fina va en S11 y en el backup B1. Acá sólo se cuenta.
+- **Ojo:** la mecánica articular fina va en S12 y en el backup B1. Acá sólo se cuenta.
 - **Se dice:** qué es el Go2, que no nos interesa que camine sino que sostenga una inclinación, y que existe dos veces (modelo en Gazebo y unidad física en el laboratorio). Eso último es lo que habilita el "continuidad total" de S7.
 
 **S7 · LA IDEA: un robot cuadrúpedo como barco sintético** ⭐ *(bisagra de la charla)*
@@ -70,30 +70,42 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se ve:** diagrama de pipeline (`method_pipeline`) rediseñado para la web, con animación de flujo: simulador marino → Go2 → cámara (fija o dron) → detector ArUco → rosbag → evaluación offline.
 - **Se dice:** recorrido de 1 minuto por los bloques; todo corre en ROS2 + Gazebo, todo queda registrado.
 
-**S10 · Generación del movimiento marino** 🦿 *(Jack)*
-- **Se ve:** `fig_method_motion_components` + `fig_method_wave_patterns` (ondas sinusoidal/irregular). Parámetros clave grandes: **0,10 Hz · ±10–20° · 20 Hz de publicación**.
-- **Se dice:** cómo se sintetiza el oleaje (componentes por eje, superposición), por qué esas amplitudes y frecuencias son representativas.
+> **Las cuatro láminas que siguen se reconstruyeron el 28-07-2026** tras el feedback de Gastón Castro: *"tienen que entrar en la matemática y dar detalles técnicos claros"*, *"no pueden ser todos títulos generales y cajitas con flechas conceptuales"*. Antes eran cuatro `flowline` consecutivas con flechas y la matemática derivada al backup. Ahora cada una lleva las ecuaciones del informe, **citadas por su número real** para que el jurado pueda ir a buscarlas al texto.
+>
+> Las fórmulas se generan con `defensa/scripts/render_math.py` y se inyectan con `inline_math.py`. **Si se edita una de estas láminas hay que correr `inline_math.py --strip` primero**, editar, y volver a inyectar. La procedencia de cada fórmula está en `defensa/web/assets/math/PROCEDENCIA.md`.
 
-**S11 · Del comando a las patas: control postural** 🦿 *(Jack)*
-- **Se ve:** `go2_postural_control_scheme.png` + `fig_go2_postures.jpeg` (posturas render). Esquema: pose deseada del torso → cinemática inversa → 12 ángulos articulares.
-- **Se dice:** el modelo principal y el resultado (sin despeje paso a paso): dado roll/pitch/heave del torso, cada pata resuelve su IK analítica. Detalle completo en backup.
+**S10 · Modelo marino reducido**
+- **Se ve:** la ecuación del estado reducido **(9)** como protagonista, completa: heave es la elevación de la superficie libre en el punto de la plataforma, y roll y pitch son sus dos derivadas parciales. Debajo, la tabla de símbolos. A la derecha, el campo de olas sinusoidal **(11)**. Al pie, la dinámica marina **(8)** apagada.
+- **Se dice:** de los seis grados de libertad marinos retenemos tres, que son los que una cámara puede observar sobre un marcador plano.
+- **Lo importante es lo que se declara que NO se hace:** la ecuación (8) se retiene sólo como marco conceptual y no se resuelven M, C, D ni g. El movimiento se sintetiza cinemáticamente, no se simula la hidrodinámica del casco. Decir esto explícito es lo que separa un alcance acotado de un agujero metodológico.
 
-**S12 · Estimación visual: ArUco + PnP**
-- **Se ve:** `aruco_id0_dict_6x6_250.png` + `camera_marker_geometry.png` + frame real con ejes dibujados (`aruco_detection_frame.png`).
-- **Se dice:** qué es un marcador fiducial (última concesión al público general); PnP: esquinas detectadas + geometría conocida + calibración → pose relativa completa.
+**S11 · Consigna sinusoidal y parámetros del ensayo** 🦿 *(Jack)*
+- **Se ve:** las tres consignas `r(t)`, `p(t)`, `h(t)` y la tabla de parámetros del ensayo de referencia. A la derecha, `method_motion_components.png`, que es la misma figura del informe. Al pie, el filtro exponencial.
+- **Esta lámina es el machete:** son los valores que hay que poder decir de memoria si el jurado pregunta con qué se corrió. **f = 0,10 Hz · A_r = ±15° · A_p = ±10° · A_h = ±0,10 m · κ_p = 1,0 · κ_h = 1,5 · desfase π/3 en pitch · α = 0,95.**
+- **Se dice:** por qué el sinusoidal es el caso principal (repetible, cada hiperparámetro con efecto interpretable) y por qué los κ distintos y el desfase evitan que las tres componentes lleguen a sus extremos a la vez.
 
-**S13 · Registro y evaluación offline**
-- **Se ve:** esquema simplificado: rosbag → reconstrucción del ground truth (odometría+IMU+heave) → comparación frame a frame → métricas. Métricas destacadas: Δroll, Δpitch, ΔZ (heave).
-- **Se dice:** la estimación en vivo no alcanza: el valor del entorno es poder MEDIR la calidad contra referencia verdadera, de forma reproducible.
+**S12 · Control postural: restricción de contacto** 🦿 *(Jack)*
+- **Se ve:** la dinámica de base flotante **(14)**, la restricción de contacto **(15)**, el conteo `18 − 12 = 6` con *rank J_c* bajo el 12, la tabla de símbolos, el esquema de control postural y la cinemática inversa diferencial **(23)**.
+- **Cierra el argumento que S6 abre:** en S6 el `18 − 12 = 6` es una cuenta; acá se ve de dónde sale el 12, que es el rango del jacobiano de contacto. Conviene decirlo enlazado.
+- **Se dice:** con las cuatro patas apoyadas, cada una invierte su propio jacobiano para sostener la actitud pedida. El despeje en forma cerrada sigue en el backup B1.
 
-**S14 · Escenarios de observación en simulación**
+**S13 · Estimación visual: ArUco + PnP**
+- **Se ve:** la proyección pinhole **(2)**, los intrínsecos **(3)**, el `argmin` del error de reproyección **(6)** como protagonista, la tabla de símbolos y `camera_marker_geometry.png`.
+- **Se dice:** el problema es sobredeterminado (cuatro correspondencias conocidas para seis incógnitas de pose). PnP no invierte nada: minimiza el error de reproyección. Con el marcador plano las esquinas son coplanares y la solución inicial sale de una homografía (ec. 4 y 5).
+
+**S14 · Registro y evaluación offline**
+- **Se ve:** la cadena de transformaciones **(26)** sola arriba, y debajo la tabla de marcos (c, w, bf, bl, a) con la explicación.
+- **Se dice:** el simulador conoce cada eslabón, así que la pose verdadera se reconstruye sin medirla. De ahí salen Δroll, Δpitch y ΔZ.
+- **Prepara S16:** en laboratorio esta cadena no existe porque no hay simulador que la publique. Esa es la razón de fondo del cambio de criterio de evaluación, y no una limitación de la cámara. Vale decirlo acá para que el pasaje al lab no parezca una excusa.
+
+**S15 · Escenarios de observación en simulación**
 - **Se ve:** lado a lado: el cuadro crudo de la cámara fija (`sim_escenario_fija.png`) vs el dron SJTU con su cámara inferior (`sim_escenario_dron.png`).
 - **Se dice:** caso base (sensor quieto = pregunta limpia) vs caso fuerte (sensor volando = geometría exigente). Diseño deliberado para separar preguntas.
 - **La asimetría es a propósito:** a la izquierda va lo que *ve* el sensor y a la derecha la *geometría* de la escena. Se probó poner los dos feeds crudos (`fotos_sim/01` y `fotos_sim/02`) y son casi idénticos entre sí, así que el contraste que el slide quiere hacer se perdía.
 - **Ojo con las imágenes:** las dos van recortadas a la misma relación 3:2 con `defensa/scripts/crop_escenarios.py`. Los originales tienen relaciones distintas, y en columnas de igual ancho cualquier diferencia hace que una caja salga más alta, desborde el cuerpo del slide y se superponga con el párrafo de cierre. Si se cambia alguna de las dos imágenes, hay que volver a pasarlas por el script.
 - **Resolución:** el recorte de cámara fija queda en 315 px de ancho y se muestra a 494 en 720p (1,56x). Es lo mejor disponible: el original es de 640x480 y casi todo el cuadro es fondo vacío.
 
-**S15 · Del simulador al robot real: qué cambia** 🦿 *(Jack, opcional Máximo)*
+**S16 · Del simulador al robot real: qué cambia** 🦿 *(Jack, opcional Máximo)*
 - **Se ve:** a la izquierda la tabla sim vs lab: ground truth perfecto → no hay · cámara ideal → webcam en trípode · comando directo → API del robot + control interno. A la derecha el mismo montaje dos veces, con una flecha en el medio: el Go2 con el marcador dentro de Gazebo (`sim_setup_gazebo.png`) y la foto del laboratorio con el trípode (`lab_go2_aruco_tripode_a.jpg`).
 - **Se dice:** las dificultades del pasaje y la decisión metodológica clave: en el lab evaluamos movimiento y visión POR SEPARADO (evitar saturación de cómputo que contamine registros). La flecha es el gesto que acompaña todo el bloque: lo que se armó en el simulador es lo que después se montó en el piso del laboratorio.
 - **Ojo con las imágenes:** las dos van en 3:4 para que los paneles midan igual y la flecha se lea como correspondencia. La de Gazebo se recorta a esa relación con `defensa/scripts/crop_setup_sim.py`. La del laboratorio ya está en 3:4, pero **el archivo se ve apaisado si se lo abre a mano**: trae orientación EXIF 6 y es el navegador el que la endereza. No re-exportarla sin conservar ese metadato.
@@ -101,76 +113,76 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 ## Bloque 4a — Resultados: simulación
 
-**S16 · Campaña experimental**
+**S17 · Campaña experimental**
 - **Se ve:** tabla simple: 1 caso base (cámara fija, 57,5 s) + 3 repeticiones con dron (R1–R3, ~57 s c/u). Misma consigna, mismo postproceso.
 - **Se dice:** el diseño busca repetibilidad, no acumulación: 3 corridas comparables para descartar que la lectura dependa de una corrida con suerte.
 
-**S17 · El pipeline en acción (video)**
+**S18 · El pipeline en acción (video)**
 - **Se ve:** video `videos_sim/01` (cámara fija + detección con overlay) a pantalla generosa; miniatura del contexto Gazebo al lado.
 - **Se dice:** narración en vivo sobre el video: el marcador sube, baja y se inclina; los ejes dibujados son la estimación en tiempo real.
 
-**S18 · Caso base (cámara fija): resultados**
+**S19 · Caso base (cámara fija): resultados**
 - **Se ve:** `sim_fixed_position_vs_gt.png` (agrandada para proyector) + cifra héroe: **error medio de posición 5,8 cm**.
 - **Se dice:** la estimación sigue la dinámica del marcador; el heave se recupera con claridad. Esta es la referencia limpia del entorno.
 
-**S19 · Caso fuerte (dron): video + resultados**
+**S20 · Caso fuerte (dron): video + resultados**
 - **Se ve:** video corto `videos_sim/02` (detección desde el dron) y `sim_drone_orientation_vs_gt.png`.
 - **Se dice:** ahora el sensor también se mueve; aun así las series de roll/pitch/heave siguen al ground truth.
 
-**S20 · Caso fuerte: números y repetibilidad**
+**S21 · Caso fuerte: números y repetibilidad**
 - **Se ve:** cifras héroe: **2–3° en roll/pitch · 2–2,4 cm en heave** + `sim_drone_runs_comparison.png` (las 3 corridas superpuestas).
 - **Se dice:** las tres repeticiones conservan el mismo orden de magnitud → el resultado no es una corrida aislada.
 
-**S21 · Qué aprendimos de la simulación (y sus límites)**
+**S22 · Qué aprendimos de la simulación (y sus límites)**
 - **Se ve:** 2 columnas: ✅ el pipeline sigue la dinámica global, medible contra referencia / ⚠️ heave es el eje más sensible, sesgo sistemático en Y (limitación de la cadena geométrica, no movimiento real).
 - **Se dice:** admitir limitaciones con precisión — para eso sirve la simulación: aislarlas con ground truth antes del mundo físico.
 
 ## Bloque 4b — Resultados: laboratorio 🦿 *(Jack)*
 
-**S22 · Lo que la simulación no anticipó** 🧱 *(bisagra sim → lab)*
+**S23 · Lo que la simulación no anticipó** 🧱 *(bisagra sim → lab)*
 - **Se ve:** tres filas obstáculo → adaptación. (1) Conectarnos al robot → refactor de la capa de comunicación. (2) Guardrail de marcha: el Go2 trota en el lugar para reasegurar estabilidad → barrido de frecuencias, a menor frecuencia el trote se espacia (no se elimina). (3) Sin acceso al firmware → no se pudo corregir la dinámica, se la midió (τ, g).
-- **Se dice:** en simulación salió bien; al enchufar el robot real aparecieron tres muros. Las dos últimas limitaciones explican los números de S25–S26. Punto marcado por los mentores (Gastón / Juan) — no es una disculpa, es la justificación de las decisiones de diseño experimental.
+- **Se dice:** en simulación salió bien; al enchufar el robot real aparecieron tres muros. Las dos últimas limitaciones explican los números de S26–S27. Punto marcado por los mentores (Gastón / Juan) — no es una disculpa, es la justificación de las decisiones de diseño experimental.
 - **Backup asociado:** B9 (guardrail de gait) y B10 (movimiento trabado / firmware).
 
-**S23 · El montaje real**
+**S24 · El montaje real**
 - **Se ve:** video `videos_lab/08` (setup completo: trípode + cámara cenital + Go2 con ArUco haciendo posturas) o fotos `fotos_lab/04`–`06`.
 - **Se dice:** mismo concepto que en Gazebo, con hardware real: webcam en trípode, marcador en el lomo, consigna marina por la API del Go2.
 
-**S24 · El barco sintético existe (video estrella)** ⭐
+**S25 · El barco sintético existe (video estrella)** ⭐
 - **Se ve:** video `videos_lab/02` (operador comanda → Go2 ejecuta posturas marinas, 34 s, recortado a ~15 s) a pantalla completa.
 - **Se dice:** esto es el resultado central del lab en una imagen: la consigna de oleaje moviendo un robot real.
 
-**S25 · ¿Llega el comando intacto? Sí.**
+**S26 · ¿Llega el comando intacto? Sí.**
 - **Se ve:** `lab_plot_02_api_fidelity.png` + cifra héroe: **correlación > 0,9999** entre consigna esperada y comando enviado.
 - **Se dice:** primer eslabón validado: nada se pierde ni deforma en el camino de software hasta la API del robot.
 
-**S26 · Comando vs respuesta física**
+**S27 · Comando vs respuesta física**
 - **Se ve:** `strong_15_10_plot_01_timeseries_cmd_vs_real.png` (R4: series roll y pitch, esperado vs real).
 - **Se dice:** el robot reproduce la FORMA del movimiento — se ve a ojo en las series — pero con retardo y menor amplitud. Eso es física, no falla.
 
-**S27 · Cuantificando la dinámica: retardo y ganancia**
+**S28 · Cuantificando la dinámica: retardo y ganancia**
 - **Se ve:** `strong_15_10_plot_03_lag_correlation.png` + cifras héroe: **τ = 0,45–0,95 s · ganancia ≈ 0,62 · r > 0,95**. El modelo afín con retardo: θ_real(t) ≈ g·θ_cmd(t−τ) + b.
 - **Se dice:** el desacople es fase + escala, no deformación → error dinámico *parametrizable*. Patrón replicado a dos amplitudes (R4 y R5).
 
-**S28 · El pipeline visual también corre en el lab**
+**S29 · El pipeline visual también corre en el lab**
 - **Se ve:** frames `lab_aruco_realtime_t00/t26/t49.png` (secuencia) + clip corto de `videos_lab/07` (detección en pantalla en vivo).
-- **Se dice:** la detección ArUco funciona sobre el robot real con la cámara del montaje; se evaluó por separado del movimiento (decisión metodológica de S15).
+- **Se dice:** la detección ArUco funciona sobre el robot real con la cámara del montaje; se evaluó por separado del movimiento (decisión metodológica de S16).
 
 ## Bloque 5 — Cierre
 
-**S29 · Lectura conjunta: dos piezas de una misma validación**
+**S30 · Lectura conjunta: dos piezas de una misma validación**
 - **Se ve:** diagrama de dos piezas de puzzle: SIM = percepción (si el robot se mueve perfecto, la visión mide con cm de error) + LAB = dinámica (el robot real sigue la consigna con retardo/ganancia medibles). Pieza faltante marcada: **ambos a la vez**.
 - **Se dice:** mismo régimen en ambos entornos (0,10 Hz, ±10–20°) — que los dos experimentos sean ejecutables con la misma plataforma ya es un resultado.
 
-**S30 · Conclusiones**
+**S31 · Conclusiones**
 - **Se ve:** 3 eslabones con check: el simulador genera movimiento representativo ✓ · el robot lo reproduce de forma consistente ✓ · el pipeline visual lo mide ✓. Frase: "no un sistema de aterrizaje: una base de investigación".
-- **Se dice:** objetivo cumplido; afirmación moderada pero sólida; límites ya admitidos en S21/S25.
+- **Se dice:** objetivo cumplido; afirmación moderada pero sólida; límites ya admitidos en S22/S26.
 
-**S31 · Trabajo futuro**
+**S32 · Trabajo futuro**
 - **Se ve:** roadmap visual en 4 pasos: validación conjunta (visión + movimiento simultáneos) → ground truth externo (OptiTrack) → heave dinámico + yaw/surge/sway + oleaje irregular → aproximaciones de aterrizaje sobre el Go2.
-- **Se dice:** la línea inmediata es cerrar la pieza faltante de S28; misma lógica de siempre: complejidad gradual con trazabilidad.
+- **Se dice:** la línea inmediata es cerrar la pieza faltante de S29; misma lógica de siempre: complejidad gradual con trazabilidad.
 
-**S32 · Cierre y preguntas**
+**S33 · Cierre y preguntas**
 - **Se ve:** foto del equipo con el robot (pendiente de conseguir; fallback: `fotos_lab/07` + foto de Máximo, o la panorámica del sistema). Agradecimientos. "¿Preguntas?"
 - **Se dice:** agradecimiento breve a mentores y laboratorio.
 
@@ -195,16 +207,16 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 1. **Navegación:** flechas/teclado + barra de progreso con los 5 bloques visibles (el jurado siempre sabe dónde estamos). Tecla `B` salta a backup.
 2. **Videos:** autoplay silencioso al entrar a la slide, loop en clips cortos. Todos convertidos a H.264 MP4, self-contained (funciona sin internet).
-3. **Animaciones propias:** oleaje SVG (S2–S3), pipeline animado (S9), puzzle (S28). Sobrias, sin distraer.
+3. **Animaciones propias:** oleaje SVG (S2–S3), pipeline animado (S9), puzzle (S29). Sobrias, sin distraer.
 4. **Cifras héroe:** los números clave (5,8 cm · 2–3° · 0,9999 · 0,62) en tipografía gigante — legibles desde el fondo del aula.
 5. **Paleta tentativa:** fondo claro casi blanco, tinta azul marino profundo + un acento (a definir: coral/cian), tipografía sans-serif. Identidad "marina" sutil sin caer en cliché náutico.
 6. **Export PDF de respaldo** por si falla todo el día de la defensa.
 
 ## Pendientes de material
 
-- **Video o clip del robot en trote / moviéndose "trabado"** — sería el activo más fuerte para S22. Ninguno de los 8 clips de laboratorio curados lo muestra: todos son posturas que salen bien.
-- Foto de los dos autores con el robot (S32) — **confirmado que no existe**; S32 usa la vista cenital como fallback.
-- Video del Go2 con heave (mejoraría S24; no bloquea).
+- **Video o clip del robot en trote / moviéndose "trabado"** — sería el activo más fuerte para S23. Ninguno de los 8 clips de laboratorio curados lo muestra: todos son posturas que salen bien.
+- Foto de los dos autores con el robot (S33) — **confirmado que no existe**; S33 usa la vista cenital como fallback.
+- Video del Go2 con heave (mejoraría S25; no bloquea).
 - ~~Nombres de mentores~~ — Gastón Castro (mentor) · Juan Ignacio Giribet (comentor). ✅
 
 Ver **`backlog.md`** para lo que queda abierto (informe sin documentar las limitaciones, justificación de los 0,10 Hz, export PDF, reparto).
