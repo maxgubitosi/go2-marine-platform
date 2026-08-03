@@ -736,6 +736,64 @@ ul.marks li.warn::before{ background: var(--warn); }
    lado (que crece con 52vh) y la equivalencia se desbalancea. */
 .bisagra .bisagra-col .wave-scene { width: min(34vw, 46vh, 420px); }
 
+/* ===================== Ecuaciones ===================== */
+
+/* Las fórmulas son SVG pre-renderizados desde el mismo LaTeX que compila el
+   informe (defensa/scripts/render_math.py). Vienen dimensionados en em contra un
+   cuerpo de 12pt, así que el font-size de acá fija la escala de toda la notación
+   del deck de una sola vez y en proporción: una matriz de tres filas sigue
+   midiendo el triple que una fórmula de una línea, como en el texto.
+   El color va por currentColor, que es por lo que el script le saca a dvisvgm
+   el negro fijo. */
+.eq { color: var(--ink); font-size: clamp(.92rem, 1.35vw, 1.25rem); }
+.eq svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
+
+/* La protagonista de la lámina, la que sostiene el argumento. */
+.eq.hero { font-size: clamp(1rem, 1.75vw, 1.6rem); }
+
+/* Fórmula secundaria: la que se menciona al pasar o se descarta a propósito. */
+.eq.mut { color: var(--ink-soft); font-size: clamp(.8rem, 1.1vw, 1rem); }
+
+/* La cita al informe es el punto de toda la operación: le permite al jurado ir a
+   buscar la ecuación al texto que ya leyó. Va como referencia al pie, chica. */
+.eq-ref {
+  display: block; text-align: center; margin-top: .4rem;
+  font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* Bloque de fórmula con su referencia, como unidad. */
+.eq-block { margin: 0; }
+.eq-block + .eq-block { margin-top: 1.1rem; }
+
+/* Tabla de símbolos. Es lo que convierte una fórmula proyectada en algo que se
+   puede seguir desde la butaca, y de paso le sirve de machete al que expone. */
+.symkey { display: grid; grid-template-columns: auto 1fr; gap: .35rem 1rem; font-size: .82rem; }
+.symkey dt { color: var(--sea); font-weight: 600; text-align: right; white-space: nowrap; }
+.symkey dd { margin: 0; color: var(--ink-soft); }
+
+/* ===================== Slide del modelo marino reducido ===================== */
+
+.modelo-mar { align-items: start; }
+/* La figura acompaña a la ecuación del campo de olas, no compite con ella. */
+.modelo-mar .wave-fig { max-height: 22vh; }
+.modelo-mar .wave-fig img { max-height: 22vh; width: auto; margin-inline: auto; }
+.modelo-nota { font-size: .9rem; color: var(--ink-soft); line-height: 1.55; margin: 0; }
+
+/* La franja de lo que se decide no resolver. Va apagada y separada por una
+   línea porque no es parte del método sino la declaración de su alcance, que es
+   justamente lo que un jurado va a querer escuchar explícito. */
+.descartado {
+  display: grid; grid-template-columns: auto 1fr; gap: 1.2rem; align-items: center;
+  margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line);
+}
+.descartado p { margin: 0; font-size: .82rem; color: var(--ink-soft); line-height: 1.5; }
+.descartado strong { color: var(--ink); }
+.eq-ref-inline {
+  font-size: .68rem; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--ink-faint); white-space: nowrap;
+}
+
 /* ===================== Slide del pasaje del sim al lab ===================== */
 
 /* Las dos fotos del montaje van una al lado de la otra con la flecha en el medio.
