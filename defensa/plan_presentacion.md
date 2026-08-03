@@ -1,7 +1,7 @@
 # Plan de la presentación — Defensa oral PF
 
 **Formato:** página web (slides fullscreen, navegación con teclado), fondo claro, mínimo texto.
-**Tiempo:** 30 min de exposición + 20 de preguntas. **Total: 33 slides + 10 de backup.**
+**Tiempo:** 30 min de exposición + 20 de preguntas. **Total: 34 slides + 10 de backup.**
 **Estrategia narrativa:** embudo: arranca general para público no técnico, converge a técnico para el jurado. El momento bisagra es la slide 7 (la idea del "barco sintético"), y la 6 es la que presenta el robot para que esa bisagra no llegue en frío.
 
 **Reparto tentativo** (Jack = movimiento del robot; resto a definir):
@@ -12,8 +12,8 @@
 | Modelo marino y movimiento del robot | 10–12 | Jack |
 | Percepción y evaluación | 13–16 | Máximo |
 | Resultados simulación | 17–22 | Máximo |
-| Laboratorio (obstáculos + resultados) | 23–29 | Jack |
-| Lectura conjunta y cierre | 30–33 | Máximo (o ambos) |
+| Laboratorio (obstáculos + resultados) | 23–30 | Jack |
+| Lectura conjunta y cierre | 31–34 | Máximo (o ambos) |
 
 > **Pasada global de titulares (28-07-2026).** Se reescribieron 26 de los 33 titulares para que digan lo que la lámina muestra en vez de funcionar como titular de revista, y se sacó la palabra en turquesa de todos salvo cinco, donde marca un término técnico que la lámina introduce. Fuera también las preguntas retóricas autocontestadas, los pares por antítesis y los pills de remate vagos.
 >
@@ -127,17 +127,22 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se ve:** video `videos_sim/01` (cámara fija + detección con overlay) a pantalla generosa; miniatura del contexto Gazebo al lado.
 - **Se dice:** narración en vivo sobre el video: el marcador sube, baja y se inclina; los ejes dibujados son la estimación en tiempo real.
 
-**S19 · Caso base (cámara fija): resultados**
-- **Se ve:** `sim_fixed_position_vs_gt.png` (agrandada para proyector) + cifra héroe: **error medio de posición 5,8 cm**.
-- **Se dice:** la estimación sigue la dinámica del marcador; el heave se recupera con claridad. Esta es la referencia limpia del entorno.
+> **Bloque de resultados reconstruido (28-07-2026).** Los números héroe sueltos se reemplazaron por las distribuciones que el informe ya reporta. Tres histogramas (`sim_fixed_error_hist`, `sim_drone_error_hist`, `lab_error_hist`) **ya estaban en el deck pero sólo en las láminas de backup**: se los trajo al frente y se borraron las copias `bk_` duplicadas, que eran byte a byte iguales.
+>
+> **Criterio:** toda cifra va con la condición en la que se midió (corrida, N, amplitud de consigna) y toda figura de distribución lleva un epígrafe que dice cómo leerla, no que la repite.
+
+**S19 · Caso base (cámara fija): error de posición y de actitud**
+- **Se ve:** serie temporal contra referencia y, al lado, la distribución de ΔX, ΔY, ΔZ y del error euclidiano (`sim_fixed_error_hist.png`). Debajo, N = 275 muestras útiles sobre 57,5 s, con tasa de detección de 4,78 Hz.
+- **Lo que hay que decir sí o sí:** los histogramas son **crudos**, sin compensar el desfase temporal entre la estimación visual y el ground truth, que se reconstruye a otra frecuencia y se alinea por marca temporal. Parte del corrimiento respecto de cero es ese retardo entre cadenas, no error geométrico del estimador. Está en la franja al pie y es justo la distinción que un jurado busca.
+- **Se sacó la cifra héroe de 5,8 cm suelta.** Sigue estando en la síntesis de S31, ahí como resumen.
 
 **S20 · Caso fuerte (dron): video + resultados**
-- **Se ve:** video corto `videos_sim/02` (detección desde el dron) y `sim_drone_orientation_vs_gt.png`.
-- **Se dice:** ahora el sensor también se mueve; aun así las series de roll/pitch/heave siguen al ground truth.
+- **Se ve:** video corto `videos_sim/02` (detección desde el dron), la orientación estimada contra ground truth y la distribución de errores crudos (`sim_drone_error_hist.png`).
+- **Se dice:** la nube abre respecto del caso fijo, y eso es el costo de la geometría de observación, no una falla del estimador.
 
 **S21 · Caso fuerte: números y repetibilidad**
-- **Se ve:** cifras héroe: **2–3° en roll/pitch · 2–2,4 cm en heave** + `sim_drone_runs_comparison.png` (las 3 corridas superpuestas).
-- **Se dice:** las tres repeticiones conservan el mismo orden de magnitud → el resultado no es una corrida aislada.
+- **Se ve:** la banda de cifras (2–3° en roll/pitch · 2–2,4 cm en heave) y los diagramas de caja de |Δroll|, |Δpitch| y |Δheave| para R1 a R3.
+- **Cómo leer la figura:** lo que importa no son las medianas sino **que las tres cajas se solapen**. Eso es lo que dice que el resultado no depende de la corrida. Está escrito en el epígrafe.
 
 **S22 · Alcance y limitaciones de la validación en simulación**
 - **Se ve:** 2 columnas: ✅ el pipeline sigue la dinámica global, medible contra referencia / ⚠️ heave es el eje más sensible, sesgo sistemático en Y (limitación de la cadena geométrica, no movimiento real).
@@ -166,29 +171,35 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se ve:** `strong_15_10_plot_01_timeseries_cmd_vs_real.png` (R4: series roll y pitch, esperado vs real).
 - **Se dice:** el robot reproduce la FORMA del movimiento — se ve a ojo en las series — pero con retardo y menor amplitud. Eso es física, no falla.
 
-**S28 · Cuantificando la dinámica: retardo y ganancia**
-- **Se ve:** `strong_15_10_plot_03_lag_correlation.png` + cifras héroe: **τ = 0,45–0,95 s · ganancia ≈ 0,62 · r > 0,95**. El modelo afín con retardo: θ_real(t) ≈ g·θ_cmd(t−τ) + b.
-- **Se dice:** el desacople es fase + escala, no deformación → error dinámico *parametrizable*. Patrón replicado a dos amplitudes (R4 y R5).
+**S28 · Caracterización dinámica: retardo τ y ganancia g**
+- **Se ve:** el modelo de respuesta θ_real(t) ≈ g·θ_cmd(t − τ) + b, renderizado con la misma tipografía que el resto, y la **tabla completa R4 contra R5** del informe: consigna, retardo óptimo, correlación máxima y ganancia, por eje. Al lado, `lab_lag_correlation.png`.
+- **Por qué la tabla y no los rangos:** dos ensayos a amplitudes distintas dando el mismo patrón es lo que convierte esto en caracterización y no en anécdota. Con los rangos sueltos (0,45 a 0,95 s) esa réplica se perdía, que era justamente lo más fuerte del resultado.
+- **Se dice:** la limitación se enuncia como hipótesis con evidencia, no como causa probada. Ver backlog.
 
-**S29 · El pipeline visual también corre en el lab**
+**S29 · Residual de actitud (R5): la forma delata la atenuación**
+- **Se ve:** `lab_error_hist.png` con Δroll y Δpitch, ya compensado el retardo físico de cada eje (0,58 s y 1,16 s). Al lado, media (−0,77° y +0,55°) y dispersión (3,86° y 2,93°).
+- **Es la lámina más fuerte del bloque.** No se limita a mostrar la distribución: explica su forma. Las dos quedan centradas cerca de cero, así que **no hay sesgo sistemático de actitud**, pero la frecuencia se acumula hacia los extremos en vez de alrededor de la media. Esa estructura bimodal es la huella de la atenuación: al restar una sinusoide atenuada de la consigna queda otra sinusoide, y el histograma de una sinusoide se concentra en los picos, no en el centro. Es consistente con la ganancia g ≈ 0,47 de S28.
+- **Si el jurado pregunta una sola cosa del laboratorio, es probable que sea por acá.**
+
+**S30 · El pipeline visual también corre en el lab**
 - **Se ve:** frames `lab_aruco_realtime_t00/t26/t49.png` (secuencia) + clip corto de `videos_lab/07` (detección en pantalla en vivo).
 - **Se dice:** la detección ArUco funciona sobre el robot real con la cámara del montaje; se evaluó por separado del movimiento (decisión metodológica de S16).
 
 ## Bloque 5 — Cierre
 
-**S30 · Lectura conjunta: dos piezas de una misma validación**
+**S31 · Lectura conjunta: dos piezas de una misma validación**
 - **Se ve:** diagrama de dos piezas de puzzle: SIM = percepción (si el robot se mueve perfecto, la visión mide con cm de error) + LAB = dinámica (el robot real sigue la consigna con retardo/ganancia medibles). Pieza faltante marcada: **ambos a la vez**.
 - **Se dice:** mismo régimen en ambos entornos (0,10 Hz, ±10–20°) — que los dos experimentos sean ejecutables con la misma plataforma ya es un resultado.
 
-**S31 · Conclusiones**
+**S32 · Conclusiones**
 - **Se ve:** 3 eslabones con check: el simulador genera movimiento representativo ✓ · el robot lo reproduce de forma consistente ✓ · el pipeline visual lo mide ✓. Frase: "no un sistema de aterrizaje: una base de investigación".
 - **Se dice:** objetivo cumplido; afirmación moderada pero sólida; límites ya admitidos en S22/S26.
 
-**S32 · Trabajo futuro**
+**S33 · Trabajo futuro**
 - **Se ve:** roadmap visual en 4 pasos: validación conjunta (visión + movimiento simultáneos) → ground truth externo (OptiTrack) → heave dinámico + yaw/surge/sway + oleaje irregular → aproximaciones de aterrizaje sobre el Go2.
-- **Se dice:** la línea inmediata es cerrar la pieza faltante de S29; misma lógica de siempre: complejidad gradual con trazabilidad.
+- **Se dice:** la línea inmediata es cerrar la pieza faltante de S30; misma lógica de siempre: complejidad gradual con trazabilidad.
 
-**S33 · Cierre y preguntas**
+**S34 · Cierre y preguntas**
 - **Se ve:** foto del equipo con el robot (pendiente de conseguir; fallback: `fotos_lab/07` + foto de Máximo, o la panorámica del sistema). Agradecimientos. "¿Preguntas?"
 - **Se dice:** agradecimiento breve a mentores y laboratorio.
 
@@ -213,7 +224,7 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 1. **Navegación:** flechas/teclado + barra de progreso con los 5 bloques visibles (el jurado siempre sabe dónde estamos). Tecla `B` salta a backup.
 2. **Videos:** autoplay silencioso al entrar a la slide, loop en clips cortos. Todos convertidos a H.264 MP4, self-contained (funciona sin internet).
-3. **Animaciones propias:** oleaje SVG (S2–S3), pipeline animado (S9), puzzle (S29). Sobrias, sin distraer.
+3. **Animaciones propias:** oleaje SVG (S2–S3), pipeline animado (S9), puzzle (S30). Sobrias, sin distraer.
 4. **Cifras héroe:** los números clave (5,8 cm · 2–3° · 0,9999 · 0,62) en tipografía gigante — legibles desde el fondo del aula.
 5. **Paleta tentativa:** fondo claro casi blanco, tinta azul marino profundo + un acento (a definir: coral/cian), tipografía sans-serif. Identidad "marina" sutil sin caer en cliché náutico.
 6. **Export PDF de respaldo** por si falla todo el día de la defensa.
@@ -221,7 +232,7 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 ## Pendientes de material
 
 - **Video o clip del robot en trote / moviéndose "trabado"** — sería el activo más fuerte para S23. Ninguno de los 8 clips de laboratorio curados lo muestra: todos son posturas que salen bien.
-- Foto de los dos autores con el robot (S33) — **confirmado que no existe**; S33 usa la vista cenital como fallback.
+- Foto de los dos autores con el robot (S34) — **confirmado que no existe**; S34 usa la vista cenital como fallback.
 - Video del Go2 con heave (mejoraría S25; no bloquea).
 - ~~Nombres de mentores~~ — Gastón Castro (mentor) · Juan Ignacio Giribet (comentor). ✅
 

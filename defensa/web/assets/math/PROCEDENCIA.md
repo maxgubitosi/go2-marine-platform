@@ -14,6 +14,7 @@ láminas.
 | `dof_count.svg` | sin numerar | 1748 | `-` |
 | `ema.svg` | sin numerar | 2365 | `-` |
 | `intrinsics.svg` | (3) | 1102 | `eq:camera_intrinsics` |
+| `lab_response.svg` | sin numerar | 3385 | `-` |
 | `leg_ik.svg` | (23) | 1984 | `eq:leg_inverse_differential_kinematics` |
 | `marine_dynamics.svg` | (8) | 1314 | `eq:marine_dynamics` |
 | `marine_kinematics.svg` | (7) | 1293 | `eq:marine_kinematics` |

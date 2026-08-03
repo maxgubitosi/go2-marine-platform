@@ -127,6 +127,13 @@ eq("commands", 2282,
    r"\end{aligned}")
 eq("ema", 2365, r"\tilde{x}_k = \alpha\,\tilde{x}_{k-1} + (1-\alpha)\,x_k")
 
+# --- Resultados de laboratorio ---------------------------------------------
+# El modelo de respuesta con el que se resume la caracterización dinámica. No es
+# una ecuación numerada del informe: es la forma en que el deck resume el
+# desacople medido (fase más escala), consistente con la tabla R4/R5.
+eq("lab_response", 3385,
+   r"\theta_{\text{real}}(t) \approx g\,\theta_{\text{cmd}}(t - \tau) + b")
+
 
 def render(name, latex, workdir):
     """Compila una fórmula y devuelve el SVG como texto."""

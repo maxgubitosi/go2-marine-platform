@@ -68,4 +68,4 @@ Definido sólo parcialmente: Jack cubre movimiento del robot (envío de comandos
 
 ### 8. Foto de los dos autores con el robot
 
-Confirmado que no existe. S33 usa la vista cenital como fallback y funciona bien. Si sale una foto antes de agosto, es una mejora obvia del cierre.
+Confirmado que no existe. S34 usa la vista cenital como fallback y funciona bien. Si sale una foto antes de agosto, es una mejora obvia del cierre.
