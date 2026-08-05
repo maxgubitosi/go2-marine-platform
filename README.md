@@ -22,6 +22,11 @@ Un robot cuadrúpedo Unitree Go2 simula el movimiento de una plataforma marina (
   <em>Detección ArUco en tiempo real desde la cámara del dron</em>
 </p>
 
+> **Defensa oral.** La presentación es una página web y vive en [`defensa/`](defensa/README.md).
+> Se puede ver publicada en
+> <https://maxgubitosi.github.io/go2-marine-platform/defensa/web/>.
+> Cómo verla en local, cómo editarla y qué convenciones tiene: [`defensa/README.md`](defensa/README.md).
+
 ## Descripción
 
 Este proyecto implementa un entorno de simulación que combina:
