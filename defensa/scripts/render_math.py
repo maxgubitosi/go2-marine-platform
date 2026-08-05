@@ -135,6 +135,24 @@ eq("lab_response", 3385,
    r"\theta_{\text{real}}(t) \approx g\,\theta_{\text{cmd}}(t - \tau) + b")
 
 
+def render_png(name, latex, workdir, dst_dir, dpi=600):
+    """Compila la misma fórmula a PNG con fondo transparente.
+
+    Hace falta para la versión PowerPoint/Google Slides, que no acepta SVG. Va a
+    600 dpi para que aguante proyección sin verse pixelada: en la lámina se la
+    reduce, así que lo que sobra es resolución y no tamaño en pantalla.
+    """
+    tex = workdir / f"{name}_png.tex"
+    tex.write_text(PREAMBLE + f"\\[{latex}\\]\n" + r"\end{document}", encoding="utf-8")
+    subprocess.run(["latex", "-interaction=nonstopmode", "-halt-on-error", tex.name],
+                   cwd=workdir, capture_output=True, text=True, check=True)
+    out = dst_dir / f"{name}.png"
+    subprocess.run(["dvipng", "-D", str(dpi), "-T", "tight", "-bg", "Transparent",
+                    "-o", str(out.resolve()), f"{name}_png.dvi"],
+                   cwd=workdir, capture_output=True, text=True, check=True)
+    return out
+
+
 def render(name, latex, workdir):
     """Compila una fórmula y devuelve el SVG como texto."""
     tex = workdir / f"{name}.tex"

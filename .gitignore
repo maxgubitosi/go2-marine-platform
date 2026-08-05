@@ -101,3 +101,14 @@ defensa/media/
 # Directorio de trabajo temporal: PDFs compilados para revisión y artefactos
 # de LaTeX. No versionar — se regeneran compilando informe/main.tex.
 tmp/
+
+# Derivados de la version PowerPoint del deck. Se regeneran enteros con
+#   python3 defensa/scripts/extract_deck.py > defensa/build/deck.json
+#   node defensa/scripts/build_pptx.js
+# El .pptx pesa 14 MB y el repo es publico, asi que no tiene sentido versionarlo.
+defensa/build/
+
+# La regla !defensa/web/assets/** de arriba des-ignora todo lo que hay bajo
+# assets/, incluida la basura de macOS. Se la vuelve a ignorar aca, que al ser
+# la ultima regla que matchea es la que gana.
+defensa/web/assets/**/.DS_Store
