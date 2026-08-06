@@ -289,6 +289,138 @@ figcaption {
 .card.accent { border-color: var(--coral); box-shadow: 0 12px 30px -14px rgba(239,106,76,.4); }
 .card.accent .ico { background: var(--coral-soft); color: var(--coral); }
 
+/* ===================== Decisión metodológica ===================== */
+/* Tres tarjetas iguales sugerian tres opciones igual de validas. Aca la
+   jerarquia es el argumento: lo descartado queda en gris y a un cuerpo mas
+   chico, y la decision se lleva el ancho, el contraste y la marca coral. */
+
+.decision {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+}
+.descartes-kicker, .camino-kicker {
+  font-size: .78rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: .4rem;
+}
+.alt { padding: 0 0 1.5rem; }
+.alt:last-child { padding-bottom: 0; }
+.alt h3 {
+  font-size: 1.06rem; font-weight: 640;
+  color: var(--ink-soft);
+}
+.alt p {
+  margin-top: .3rem;
+  font-size: .93rem; color: var(--ink-faint);
+  max-width: 48ch;
+}
+.camino { border-left: 3px solid var(--coral); padding-left: clamp(1.2rem, 2vw, 1.9rem); }
+.camino .camino-kicker { color: var(--coral); }
+.camino h3 {
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 760; letter-spacing: -.02em;
+  line-height: 1.15;
+}
+.camino h3 .flecha { color: var(--sea); font-weight: 500; }
+.camino > p {
+  margin-top: .7rem;
+  font-size: 1.05rem; color: var(--ink-soft);
+  max-width: 38ch;
+}
+
+/* ===================== Cadena de alcance ===================== */
+/* La cadena de aterrizaje va dibujada entera y continua: el riel coral marca
+   el tramo que cubre el trabajo y el gris, lo que queda afuera. Las etapas no
+   llevan caja ni numero; lo que las ordena es la propia linea. */
+
+.cadena {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  row-gap: .55rem;
+}
+.cadena .rotulo {
+  grid-row: 1;
+  font-size: .74rem; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.cadena .rotulo.izq    { grid-column: 1; }
+.cadena .rotulo.centro { grid-column: 2 / 5; color: var(--coral); }
+.cadena .rotulo.der    { grid-column: 5; }
+
+.etapa { grid-row: 2; }
+/* El riel se dibuja de borde a borde de cada columna, sin gap entre ellas,
+   para que las cinco etapas formen una sola linea sin cortes. */
+.etapa .nodo { position: relative; height: 20px; }
+.etapa .nodo::before {
+  content: ""; position: absolute; top: 9px; left: 0; right: 0;
+  height: 2px; background: var(--line);
+}
+.etapa.dentro .nodo::before { background: var(--coral); height: 3px; top: 8.5px; }
+.etapa .nodo::after {
+  content: ""; position: absolute; top: 4px; left: 0;
+  width: 11px; height: 11px; border-radius: 50%;
+  box-sizing: border-box;
+  background: var(--paper); border: 2px solid var(--line);
+}
+.etapa.dentro .nodo::after { background: var(--coral); border-color: var(--coral); }
+
+.etapa h3, .etapa p { padding-right: 1.7rem; }
+.etapa h3 {
+  margin-top: .75rem;
+  font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em;
+  color: var(--ink);
+}
+.etapa p { margin-top: .3rem; font-size: .9rem; color: var(--ink-soft); }
+.etapa.fuera h3 { color: var(--ink-faint); font-weight: 620; }
+.etapa.fuera p  { color: var(--ink-faint); }
+
+/* Renglon de cierre: el estado del arte comprimido, deliberadamente al pie. */
+.apoyo {
+  margin-top: 2.6rem;
+  font-size: .88rem;
+  color: var(--ink-faint);
+}
+
+/* ===================== Escenas de uso ===================== */
+/* Version sin caja de .cards: la ilustracion hace de bloque y el texto cuelga
+   debajo. Tres tarjetas con borde, sombra e iconito daban aire de plantilla. */
+
+.escenas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.2rem;
+}
+.escena { margin: 0; }
+.escena-art {
+  aspect-ratio: 12 / 7;
+  border-radius: 12px;
+  overflow: hidden;                /* recorta la ilustracion al radio */
+  background: var(--paper-2);
+}
+.escena-art svg { display: block; width: 100%; height: 100%; }
+/* El figcaption global es un epigrafe gris chico; aca el texto es la bajada
+   de la escena, asi que recupera cuerpo y color de texto normal. */
+.escena figcaption {
+  margin-top: 0;
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+.escena h3 {
+  margin-top: 1.05rem;
+  font-size: 1.18rem; font-weight: 720;
+  letter-spacing: -.01em;
+}
+.escena p {
+  margin-top: .35rem;
+  font-size: .97rem; color: var(--ink-soft);
+  max-width: 32ch;
+}
+
 /* ===================== Portada ===================== */
 
 /* El bloque de título absorbe el alto libre y el pie institucional queda
@@ -940,4 +1072,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   .split, .split.media-left, .split.narrow-media { grid-template-columns: 1fr; }
   .scenerow { grid-template-columns: 1fr; }
   .cards, .cards.two { grid-template-columns: 1fr; }
+  .escenas { grid-template-columns: 1fr; }
+  .decision { grid-template-columns: 1fr; }
+  .cadena { grid-template-columns: 1fr; }
 }

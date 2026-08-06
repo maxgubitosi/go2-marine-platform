@@ -35,7 +35,12 @@ pantalla completa.
 | `web/css/style.css` | todo el estilo, con comentarios explicando cada decisión |
 | `web/js/deck.js` | el motor: navegación, progreso, índice, animaciones |
 | `plan_presentacion.md` | qué se ve y qué se dice en cada lámina |
+| `IDENTIDAD.md` | cómo se ve y cómo se escribe: paleta, tipografía, componentes, antipatrones |
 | `backlog.md` | lo que falta resolver antes de agosto |
+
+**Antes de escribir una lámina nueva, leer `IDENTIDAD.md`.** Es lo que evita que
+el deck vuelva a los títulos genéricos y las cajitas conceptuales que Gastón pidió
+sacar.
 
 **El motor deriva todo del orden del DOM**: número de lámina, progreso por bloque
 y el índice salen de dónde está cada `<section>`. Eso quiere decir que **agregar o

@@ -35,24 +35,25 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 ## Bloque 1 — Contexto (público general)
 
-**S2 · ¿Por qué aterrizar drones sobre barcos?**
+**S2 · El barco como base móvil de un dron**
 - **Se ve:** ilustración simple mar + embarcación + dron (animación SVG propia, estilo limpio). Tres íconos: búsqueda y rescate, inspección offshore, monitoreo marítimo.
 - **Se dice:** el valor operativo — el barco como base móvil: más tiempo de misión, menos dependencia de costa.
 
-**S3 · El problema: la cubierta nunca está quieta**
+**S3 · Los tres grados que mueven la cubierta**
 - **Se ve:** dos animaciones SVG del mismo buque, lado a lado. **Vista de perfil** con flechas de *pitch* (arco en la proa) y *heave* (flecha vertical contra una referencia fija de cubierta). **Vista de proa** con el arco de *roll*. Las tres etiquetas van en coral, igual que sus flechas. Sin bullets: los términos viven en las captions.
 - **Ojo:** el *roll* se ilustra de proa, no en vista cenital. Desde arriba lo que se ve girar es el *yaw*, no el balanceo.
 - **Se dice:** el dron necesita saber en cada instante dónde está la cubierta y cómo está inclinada; la percepción visual cambia cuadro a cuadro.
 
-**S4 · ¿Por qué no probar directo en el mar?**
+**S4 · Tres vías de validación**
 - **Se ve:** comparación visual de 3 caminos: banco mecánico a medida (lento/caro) · ensayo real (riesgoso) · **simulación + laboratorio (nuestro camino)**.
 - **Se dice:** un error de estimación = colisión o pérdida del vehículo; necesitamos validar de forma segura, repetible y medible ANTES.
 
 ## Bloque 2 — Problema y objetivos (transición general → técnico)
 
-**S5 · ¿Qué se hizo antes? (estado del arte en 1 lámina)**
-- **Se ve:** 3 tarjetas: aterrizaje autónomo sobre plataformas móviles · marcadores fiduciales (foto de un ArUco) · validación en simulación (SIL). Cita clave: la validación previa al ensayo real es decisiva.
-- **Se dice:** las tres líneas existen por separado en la literatura y este trabajo **las combina**. Nuestro aporte cubre varias etapas, no una sola: **generar** el movimiento, **observarlo** y **medirlo**, en simulación y en el robot real. (Lo que queda afuera se declara explícitamente en S8.)
+**S5 · La cadena de aterrizaje y el tramo que cubre este trabajo**
+- **Se ve:** la cadena completa dibujada de punta a punta sobre un solo riel: dinámica marina real · el torso del Go2 como cubierta · la cámara ve el marcador · pose relativa estimada · control y aterrizaje del dron. El riel va coral en las tres etapas centrales y gris en los dos extremos, que quedan fuera de alcance.
+- **Se dice:** el alcance se explica por posición, no por lista. Aguas arriba no se modela la hidrodinámica del casco (interesa el efecto del oleaje sobre la pose, no su causa) y aguas abajo no se resuelve el aterrizaje. Lo que sí se hace es generar el movimiento, observarlo y medirlo, primero en simulación y después en el robot real.
+- **Ojo:** el estado del arte quedó comprimido en el renglón de cierre (aterrizaje sobre plataformas móviles · marcadores fiduciales · validación en simulación). Si la cátedra lo pide con más entidad, se parte en dos láminas.
 
 **S6 · El instrumento: un cuadrúpedo comercial**
 - **Se ve:** a la izquierda, el render del Go2 en tres posturas distintas del torso (`go2_postures_trim.jpg`), con la caption que aclara que las cuatro patas siguen apoyadas. A la derecha, el conteo de grados de libertad como flowline (**18 coordenadas → −12 → quedan 6**), el pill coral *"los mismos seis con los que se describe una embarcación"*, y la vista del Go2 dentro de Gazebo (`sim_gazebo_go2.png`).
@@ -131,16 +132,16 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 >
 > **Criterio:** toda cifra va con la condición en la que se midió (corrida, N, amplitud de consigna) y toda figura de distribución lleva un epígrafe que dice cómo leerla, no que la repite.
 
-**S19 · Caso base (cámara fija): error de posición y de actitud**
+**S19 · Error de posición y de actitud con cámara fija**
 - **Se ve:** serie temporal contra referencia y, al lado, la distribución de ΔX, ΔY, ΔZ y del error euclidiano (`sim_fixed_error_hist.png`). Debajo, N = 275 muestras útiles sobre 57,5 s, con tasa de detección de 4,78 Hz.
 - **Lo que hay que decir sí o sí:** los histogramas son **crudos**, sin compensar el desfase temporal entre la estimación visual y el ground truth, que se reconstruye a otra frecuencia y se alinea por marca temporal. Parte del corrimiento respecto de cero es ese retardo entre cadenas, no error geométrico del estimador. Está en la franja al pie y es justo la distinción que un jurado busca.
 - **Se sacó la cifra héroe de 5,8 cm suelta.** Sigue estando en la síntesis de S31, ahí como resumen.
 
-**S20 · Caso fuerte (dron): video + resultados**
+**S20 · Degradación del error con el sensor en movimiento**
 - **Se ve:** video corto `videos_sim/02` (detección desde el dron), la orientación estimada contra ground truth y la distribución de errores crudos (`sim_drone_error_hist.png`).
 - **Se dice:** la nube abre respecto del caso fijo, y eso es el costo de la geometría de observación, no una falla del estimador.
 
-**S21 · Caso fuerte: números y repetibilidad**
+**S21 · Repetibilidad entre corridas**
 - **Se ve:** la banda de cifras (2–3° en roll/pitch · 2–2,4 cm en heave) y los diagramas de caja de |Δroll|, |Δpitch| y |Δheave| para R1 a R3.
 - **Cómo leer la figura:** lo que importa no son las medianas sino **que las tres cajas se solapen**. Eso es lo que dice que el resultado no depende de la corrida. Está escrito en el epígrafe.
 
@@ -176,7 +177,7 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Por qué la tabla y no los rangos:** dos ensayos a amplitudes distintas dando el mismo patrón es lo que convierte esto en caracterización y no en anécdota. Con los rangos sueltos (0,45 a 0,95 s) esa réplica se perdía, que era justamente lo más fuerte del resultado.
 - **Se dice:** la limitación se enuncia como hipótesis con evidencia, no como causa probada. Ver backlog.
 
-**S29 · Residual de actitud (R5): la forma delata la atenuación**
+**S29 · La forma bimodal del residual es consecuencia de la atenuación**
 - **Se ve:** `lab_error_hist.png` con Δroll y Δpitch, ya compensado el retardo físico de cada eje (0,58 s y 1,16 s). Al lado, media (−0,77° y +0,55°) y dispersión (3,86° y 2,93°).
 - **Es la lámina más fuerte del bloque.** No se limita a mostrar la distribución: explica su forma. Las dos quedan centradas cerca de cero, así que **no hay sesgo sistemático de actitud**, pero la frecuencia se acumula hacia los extremos en vez de alrededor de la media. Esa estructura bimodal es la huella de la atenuación: al restar una sinusoide atenuada de la consigna queda otra sinusoide, y el histograma de una sinusoide se concentra en los picos, no en el centro. Es consistente con la ganancia g ≈ 0,47 de S28.
 - **Si el jurado pregunta una sola cosa del laboratorio, es probable que sea por acá.**

@@ -77,49 +77,176 @@
      ============================================================ -->
 
 <!-- S2 -->
-<section class="slide" data-block="0" data-title="¿Por qué aterrizar drones sobre barcos?">
+<section class="slide" data-block="0" data-title="El barco como base móvil de un dron">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">El escenario</div>
-      <h2 class="head">Un barco puede ser la <span class="accent">base móvil</span> de un dron</h2>
+      <div class="eyebrow">Contexto · Escenario</div>
+      <h2 class="head">El barco como <span class="accent">base móvil</span> de un dron</h2>
       <p class="lead">
         Despegar, recuperar y relanzar un dron desde una embarcación amplía el
         alcance de las misiones y acerca el vehículo al área de interés.
       </p>
     </header>
     <div class="s-body">
-    <div class="cards">
-      <div class="card">
-        <div class="ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+    <!-- Las tres misiones van ilustradas, no en tarjetas: el barco aparece en
+         las tres escenas, que es justamente lo que dice el titular. -->
+    <div class="escenas">
+
+      <figure class="escena">
+        <div class="escena-art">
+          <svg viewBox="0 0 360 210" role="img" aria-label="Dron barriendo el mar con un haz de búsqueda sobre una balsa, con el barco al fondo">
+            <defs>
+              <linearGradient id="e1sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e6f2f8"/><stop offset="1" stop-color="#fbfdfe"/>
+              </linearGradient>
+              <linearGradient id="e1sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3fa3c0"/><stop offset="1" stop-color="#1d6f8c"/>
+              </linearGradient>
+              <linearGradient id="e1beam" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e8a13c" stop-opacity=".42"/>
+                <stop offset="1" stop-color="#e8a13c" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <rect width="360" height="210" fill="url(#e1sky)"/>
+            <path d="M104 64 L152 150 L52 150 Z" fill="url(#e1beam)"/>
+            <g transform="translate(276 132) scale(.4)">
+              <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+              <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+              <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+              <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+              <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+            </g>
+            <path d="M0 138 q 20 -8 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="url(#e1sea)"/>
+            <g transform="translate(104 140)">
+              <ellipse cx="0" cy="3" rx="14" ry="4.4" fill="#ef6a4c"/>
+              <ellipse cx="0" cy="1.4" rx="9.5" ry="2.6" fill="#f9d9d0"/>
+              <circle cx="0" cy="-3.6" r="3.2" fill="#0f2a43"/>
+            </g>
+            <path d="M0 156 q 20 9 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="#2f88a8" opacity=".5"/>
+            <g transform="translate(104 58)" stroke="#0f2a43" fill="none" stroke-linecap="round">
+              <path d="M-15 -3 H15" stroke-width="2.2"/>
+              <path d="M-15 -3 V-8 M15 -3 V-8" stroke-width="1.6"/>
+              <path d="M-22 -9 H-8 M8 -9 H22" stroke-width="1.8"/>
+              <rect x="-8" y="-4" width="16" height="9" rx="3" fill="#26506b" stroke="none"/>
+              <rect x="-3" y="4" width="6" height="4" rx="1.4" fill="#ef6a4c" stroke="none"/>
+            </g>
+          </svg>
         </div>
-        <h3>Búsqueda y rescate</h3>
-        <p>Cobertura rápida de zonas costeras y de mar abierto donde cada minuto cuenta.</p>
-      </div>
-      <div class="card">
-        <div class="ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-5h4v5"/></svg>
+        <figcaption>
+          <h3>Búsqueda y rescate</h3>
+          <p>Barrer zonas costeras y de mar abierto donde cada minuto cuenta.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="escena">
+        <div class="escena-art">
+          <svg viewBox="0 0 360 210" role="img" aria-label="Dron inspeccionando una plataforma marina fija, con el barco de apoyo al costado">
+            <defs>
+              <linearGradient id="e2sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e6f2f8"/><stop offset="1" stop-color="#fbfdfe"/>
+              </linearGradient>
+              <linearGradient id="e2sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3fa3c0"/><stop offset="1" stop-color="#1d6f8c"/>
+              </linearGradient>
+            </defs>
+            <rect width="360" height="210" fill="url(#e2sky)"/>
+            <g stroke="#26506b" stroke-width="3" fill="none" stroke-linecap="round">
+              <path d="M56 112 L42 174 M130 112 L144 174"/>
+              <path d="M52 134 H134 M48 156 H138"/>
+              <path d="M54 122 L132 156 M132 122 L54 156" stroke-width="1.8" opacity=".65"/>
+            </g>
+            <rect x="38" y="98" width="110" height="13" rx="2.5" fill="#0f2a43"/>
+            <rect x="48" y="76" width="34" height="22" rx="2" fill="#1d4059"/>
+            <g fill="#9db8c9">
+              <rect x="54" y="82" width="6" height="6" rx="1"/><rect x="64" y="82" width="6" height="6" rx="1"/>
+            </g>
+            <path d="M104 98 L114 52 L124 98" stroke="#26506b" stroke-width="2.6" fill="none"/>
+            <path d="M107 84 H121 M109 70 H119" stroke="#26506b" stroke-width="1.6"/>
+            <path d="M114 52 q 7 -9 3 -16 q 9 8 3 16 Z" fill="#ef6a4c"/>
+            <g transform="translate(268 128) scale(.3)">
+              <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+              <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+              <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+            </g>
+            <path d="M0 138 q 20 -8 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="url(#e2sea)"/>
+            <path d="M0 156 q 20 9 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="#2f88a8" opacity=".5"/>
+            <path d="M196 66 q 34 34 8 68" stroke="#12a3c4" stroke-width="1.8" fill="none" stroke-dasharray="5 5" opacity=".8"/>
+            <g transform="translate(190 58)" stroke="#0f2a43" fill="none" stroke-linecap="round">
+              <path d="M-15 -3 H15" stroke-width="2.2"/>
+              <path d="M-15 -3 V-8 M15 -3 V-8" stroke-width="1.6"/>
+              <path d="M-22 -9 H-8 M8 -9 H22" stroke-width="1.8"/>
+              <rect x="-8" y="-4" width="16" height="9" rx="3" fill="#26506b" stroke="none"/>
+              <rect x="-8" y="3" width="6" height="4" rx="1.4" fill="#ef6a4c" stroke="none"/>
+            </g>
+          </svg>
         </div>
-        <h3>Inspección offshore</h3>
-        <p>Revisión de plataformas y estructuras marinas sin exponer operarios.</p>
-      </div>
-      <div class="card">
-        <div class="ico">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+        <figcaption>
+          <h3>Inspección offshore</h3>
+          <p>Revisar plataformas y estructuras sin exponer operarios.</p>
+        </figcaption>
+      </figure>
+
+      <figure class="escena">
+        <div class="escena-art">
+          <svg viewBox="0 0 360 210" role="img" aria-label="Dron recorriendo un patrón de vigilancia sobre el mar y volviendo al barco">
+            <defs>
+              <linearGradient id="e3sky" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#e6f2f8"/><stop offset="1" stop-color="#fbfdfe"/>
+              </linearGradient>
+              <linearGradient id="e3sea" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3fa3c0"/><stop offset="1" stop-color="#1d6f8c"/>
+              </linearGradient>
+            </defs>
+            <rect width="360" height="210" fill="url(#e3sky)"/>
+            <path d="M0 138 q 46 -22 92 -18 q 40 4 74 18 Z" fill="#c7dfe8" opacity=".75"/>
+            <path d="M264 96 C 224 58, 186 112, 146 74 S 78 56, 44 92"
+                  stroke="#12a3c4" stroke-width="1.8" fill="none" stroke-dasharray="5 5" opacity=".85"/>
+            <g transform="translate(264 132) scale(.44)">
+              <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+              <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+              <rect x="16" y="-22" width="60" height="5" rx="1.5" fill="#dbe7ee"/>
+              <rect x="41" y="-22" width="10" height="5" fill="#ef6a4c"/>
+              <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+              <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+              <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+              <g fill="#9db8c9">
+                <rect x="-56" y="-34" width="5" height="5" rx="1"/>
+                <rect x="-47" y="-34" width="5" height="5" rx="1"/>
+                <rect x="-38" y="-34" width="5" height="5" rx="1"/>
+              </g>
+            </g>
+            <path d="M0 138 q 20 -8 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="url(#e3sea)"/>
+            <g transform="translate(96 138)">
+              <path d="M0 4 L-5 -8 H5 Z" fill="#ef6a4c"/>
+              <line x1="0" y1="-8" x2="0" y2="-20" stroke="#0f2a43" stroke-width="2"/>
+              <circle cx="0" cy="-22" r="2.6" fill="#e8a13c"/>
+            </g>
+            <path d="M0 156 q 20 9 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 t 40 0 V210 H0 Z" fill="#2f88a8" opacity=".5"/>
+            <g transform="translate(44 92)" stroke="#0f2a43" fill="none" stroke-linecap="round">
+              <path d="M-15 -3 H15" stroke-width="2.2"/>
+              <path d="M-15 -3 V-8 M15 -3 V-8" stroke-width="1.6"/>
+              <path d="M-22 -9 H-8 M8 -9 H22" stroke-width="1.8"/>
+              <rect x="-8" y="-4" width="16" height="9" rx="3" fill="#26506b" stroke="none"/>
+              <rect x="-3" y="4" width="6" height="4" rx="1.4" fill="#ef6a4c" stroke="none"/>
+            </g>
+          </svg>
         </div>
-        <h3>Monitoreo marítimo</h3>
-        <p>Vigilancia ambiental y de tráfico con vuelos recurrentes desde la embarcación.</p>
-      </div>
+        <figcaption>
+          <h3>Monitoreo marítimo</h3>
+          <p>Vuelos recurrentes de vigilancia ambiental y de tráfico.</p>
+        </figcaption>
+      </figure>
+
     </div>
     </div><!-- /s-body -->
   </div>
 </section>
 
 <!-- S3 -->
-<section class="slide" data-block="0" data-title="El problema: la cubierta nunca está quieta">
+<section class="slide" data-block="0" data-title="Los tres grados que mueven la cubierta">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">El problema</div>
+      <div class="eyebrow">Contexto · Movimiento de la cubierta</div>
       <h2 class="head">Roll, pitch y heave: los tres grados que mueven la cubierta</h2>
       <p class="lead" style="max-width:70ch;">
         El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
@@ -247,31 +374,34 @@
 </section>
 
 <!-- S4 -->
-<section class="slide" data-block="0" data-title="¿Por qué no probar directo en el mar?">
+<section class="slide" data-block="0" data-title="Tres vías de validación">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">La motivación metodológica</div>
-      <h2 class="head">Por qué la validación no arranca en el mar</h2>
+      <div class="eyebrow">Contexto · Estrategia de validación</div>
+      <h2 class="head">Tres vías de validación: banco mecánico, ensayo en el mar, simulación</h2>
       <p class="lead">
         Un error de estimación puede terminar en colisión o en la pérdida del vehículo.
         Hay que validar antes, de forma segura, repetible y medible.
       </p>
     </header>
     <div class="s-body">
-    <div class="cards">
-      <div class="card">
-        <span class="pill" style="align-self:flex-start;background:#f3e6d6;color:#a06a1f;border-color:#e6cfa8;">Alternativa 1</span>
-        <h3>Banco mecánico a medida</h3>
-        <p>Más realismo físico, pero el esfuerzo se va al diseño mecánico y la calibración, no al problema.</p>
+    <!-- Las tres opciones no son equivalentes, asi que tampoco se muestran
+         iguales: las descartadas van en gris y la elegida se lleva el peso. -->
+    <div class="decision">
+      <div class="descartes">
+        <p class="descartes-kicker">Alternativas consideradas</p>
+        <div class="alt">
+          <h3>Banco mecánico a medida</h3>
+          <p>Más realismo físico, pero el esfuerzo se va al diseño mecánico y la calibración, no al problema.</p>
+        </div>
+        <div class="alt">
+          <h3>Ensayo real directo</h3>
+          <p>Factible, pero costoso y arriesgado; el mar introduce variabilidad difícil de repetir.</p>
+        </div>
       </div>
-      <div class="card">
-        <span class="pill coral" style="align-self:flex-start;">Alternativa 2</span>
-        <h3>Ensayo real directo</h3>
-        <p>Factible, pero costoso y arriesgado; el mar introduce variabilidad difícil de repetir.</p>
-      </div>
-      <div class="card accent">
-        <span class="pill" style="align-self:flex-start;background:var(--foam);color:var(--sea);border-color:var(--foam-line);">Nuestro camino</span>
-        <h3>Simulación → laboratorio</h3>
+      <div class="camino">
+        <p class="camino-kicker">Enfoque adoptado</p>
+        <h3>Simulación <span class="flecha">→</span> laboratorio</h3>
         <p>Iterar rápido, explorar fallas sin riesgo y llegar a las pruebas físicas con métricas claras.</p>
       </div>
     </div>
@@ -284,33 +414,58 @@
      ============================================================ -->
 
 <!-- S5 -->
-<section class="slide" data-block="1" data-title="Estado del arte en una lámina">
+<section class="slide" data-block="1" data-title="La cadena de aterrizaje y el tramo que cubre el trabajo">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">Dónde nos paramos</div>
-      <h2 class="head">Estado del arte: tres líneas que este trabajo combina</h2>
+      <div class="eyebrow">Problema · Alcance</div>
+      <h2 class="head">La cadena de aterrizaje y el tramo que cubre este trabajo</h2>
+      <p class="lead">
+        El trabajo no resuelve el aterrizaje completo: construye y mide el
+        escenario sobre el que esa cadena se va a probar.
+      </p>
     </header>
     <div class="s-body">
-    <div class="cards">
-      <div class="card">
-        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v6m0 0 3-2m-3 2L9 6M4 14l8 8 8-8-8-4-8 4z"/></svg></div>
-        <h3>Aterrizaje sobre plataformas móviles</h3>
-        <p>Percepción, estimación, seguimiento y control como cadena completa.</p>
+    <!-- El alcance no se explica con una lista de rasgos sino con la posicion
+         dentro de la cadena de aterrizaje: se dibuja entera y se marca el tramo
+         que ocupa el trabajo. Lo que queda afuera se ve en su lugar real, no
+         como items sueltos. -->
+    <div class="cadena">
+      <p class="rotulo izq">Fuera de alcance</p>
+      <p class="rotulo centro">Cubierto por este trabajo: generación del movimiento, observación y medición</p>
+      <p class="rotulo der">Fuera de alcance</p>
+
+      <div class="etapa fuera">
+        <div class="nodo"></div>
+        <h3>Dinámica marina real</h3>
+        <p>No se modela la hidrodinámica de un casco: interesa el efecto del oleaje sobre la pose, no su causa.</p>
       </div>
-      <div class="card">
-        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="8" y="8" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/></svg></div>
-        <h3>Marcadores fiduciales</h3>
-        <p>ArUco + PnP recuperan la pose relativa a partir de geometría conocida.</p>
+      <div class="etapa dentro">
+        <div class="nodo"></div>
+        <h3>El torso del Go2 hace de cubierta</h3>
+        <p>Roll, pitch y heave reproducidos como superposición de armónicos.</p>
       </div>
-      <div class="card">
-        <div class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v11H4z"/><path d="M2 20h20M9 9l2 2 3-4"/></svg></div>
-        <h3>Validación en simulación (SIL)</h3>
-        <p>Etapa decisiva antes del ensayo real, sobre todo con oscilación marina.</p>
+      <div class="etapa dentro">
+        <div class="nodo"></div>
+        <h3>La cámara ve el marcador</h3>
+        <p>Un ArUco solidario a la plataforma, con la misma geometría en simulación y en el laboratorio.</p>
+      </div>
+      <div class="etapa dentro">
+        <div class="nodo"></div>
+        <h3>Pose relativa estimada</h3>
+        <p>PnP devuelve posición y actitud cuadro a cuadro, y eso es lo que se mide.</p>
+      </div>
+      <div class="etapa fuera">
+        <div class="nodo"></div>
+        <h3>Control y aterrizaje del dron</h3>
+        <p>La aproximación y el toque quedan para trabajo futuro.</p>
       </div>
     </div>
-    <div class="row mt-l">
-      <span class="pill coral">Nuestro aporte: generar el movimiento, observarlo y medirlo, en simulación y en el robot real</span>
-    </div>
+
+    <p class="apoyo">
+      El tramo central se ejercita entero en simulación antes de llevarlo al robot real.
+      Se apoya en tres líneas de la literatura: aterrizaje sobre plataformas móviles ·
+      marcadores fiduciales (ArUco y PnP) · validación en simulación (SIL).
+    </p>
     </div><!-- /s-body -->
   </div>
 </section>
@@ -319,7 +474,7 @@
 <section class="slide" data-block="1" data-title="El instrumento: un cuadrúpedo comercial">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">El instrumento</div>
+      <div class="eyebrow">Problema · El instrumento</div>
       <h2 class="head">El Unitree Go2: doce articulaciones y un torso comandable</h2>
       <p class="lead">
         El Unitree Go2 tiene doce articulaciones, tres por pata. No nos interesa que camine:
@@ -357,7 +512,7 @@
 <section class="slide" data-block="1" data-title="La idea: un cuadrúpedo como barco sintético">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">La idea central</div>
+      <div class="eyebrow">Problema · Idea central</div>
       <h2 class="head">Un robot cuadrúpedo como <span class="accent">barco sintético</span></h2>
     </header>
     <div class="s-body">
@@ -443,7 +598,7 @@
 <section class="slide" data-block="1" data-title="Objetivo y dos preguntas de validación">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow">Objetivo y alcance</div>
+      <div class="eyebrow">Problema · Objetivo</div>
       <h2 class="head">Objetivo, alcance y las dos preguntas de validación</h2>
       <p class="lead" style="max-width:64ch;">
         No resolvemos el aterrizaje completo: construimos la capa habilitante: sintetizar
@@ -1570,11 +1725,11 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="Caso base: cámara fija">
+<section class="slide" data-block="3" data-title="Error con cámara fija">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Cámara fija</div>
-      <h2 class="head">Caso base: error de posición y de actitud</h2>
+      <h2 class="head">Error de posición y de actitud con cámara fija</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
@@ -1609,11 +1764,11 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="Caso fuerte: cámara en el dron">
+<section class="slide" data-block="3" data-title="Error con cámara en el dron">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Cámara en el dron</div>
-      <h2 class="head">Caso fuerte: degradación con el sensor en movimiento</h2>
+      <h2 class="head">Degradación del error con el sensor en movimiento</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
@@ -1633,7 +1788,7 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="3" data-title="Caso fuerte: números y repetibilidad">
+<section class="slide" data-block="3" data-title="Repetibilidad entre corridas">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Simulación</div>
@@ -1924,7 +2079,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow">Resultados · Laboratorio</div>
-      <h2 class="head">El residual no es ruido: su forma delata la atenuación</h2>
+      <h2 class="head">La forma bimodal del residual es consecuencia de la atenuación</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
