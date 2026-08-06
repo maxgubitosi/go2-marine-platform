@@ -10,7 +10,7 @@
   var current = 0;
 
   // Bloques para la barra de progreso (5 segmentos).
-  var BLOCKS = ["Contexto", "Problema", "Metodología", "Resultados", "Cierre"];
+  var BLOCKS = ["Introducción", "Problema", "Metodología", "Resultados", "Conclusiones"];
 
   /* ---------- Construir barra de progreso ---------- */
   var progress = document.getElementById("progress");
@@ -123,7 +123,7 @@
     });
     // HUD
     if (isBackup) {
-      blockName.textContent = "Respaldo";
+      blockName.textContent = "Backup";
       wtxtEl.textContent = "";
       dotsEl.innerHTML = "";
       counterEl.textContent = "B" + s.getAttribute("data-backup");

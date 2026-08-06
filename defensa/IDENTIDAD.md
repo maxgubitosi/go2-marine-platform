@@ -89,13 +89,41 @@ Antes de agregar un `accent`, contar cuántos hay:
 grep -c 'class="head".*accent' defensa/web/index.html    # no debería pasar de 5
 ```
 
-### 2.3 Eyebrow (`div.eyebrow`)
+### 2.3 Encabezado de sección (`div.eyebrow`)
 
-Es la ubicación en la charla, no un título alternativo. De S9 en adelante sigue
-el patrón `Bloque · Subtema` (*Metodología · Percepción*, *Resultados · Cámara
-fija*), que es el que conviene extender.
+Es la ubicación en la charla, no un título alternativo. Formato fijo:
 
-Va en mayúsculas por CSS: escribirlo en capitalización normal en el HTML.
+```html
+<div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: percepción</span></span></div>
+```
+
+- **Romano y color por sección.** El número dice qué capítulo es y el color
+  refuerza en qué bloque estamos. No es decoración: es la única señal de
+  ubicación que se ve desde el fondo del aula.
+- **Dos puntos como separador**, que es la convención de título de capítulo
+  (*Capítulo III: percepción*). Nunca `·`, nunca guion, nunca em dash.
+- **El subtema va en minúscula** (regla del castellano después de dos puntos) y
+  en gris, para que el nombre del bloque se lea primero.
+- **Caja baja, sin tracking.** No lleva mayúsculas con `letter-spacing` ancho.
+- **Portada y lámina de cierre usan `.eyebrow.plain`**: no son sección, así que
+  no llevan romano ni color.
+
+| Bloque | Romano | Token de color |
+|---|---|---|
+| Introducción | I | `--sec-intro` |
+| Problema | II | `--sec-prob` |
+| Metodología | III | `--sec-metodo` |
+| Resultados | IV | `--sec-result` |
+| Conclusiones | V | `--sec-concl` |
+| Backup | B | `--sec-backup` |
+
+El color sale de `data-block` en el `<section>`, así que **una lámina nueva sólo
+necesita su `data-block` correcto**: el color y el romano se escriben a mano en
+el encabezado, pero el color no se repite en el HTML.
+
+Los nombres de bloque viven en tres lugares y tienen que coincidir: el encabezado
+de cada lámina, el array `BLOCKS` de `deck.js` y el rótulo de backup de
+`deck.js`.
 
 ### 2.4 Bajada (`p.lead`) y cuerpo
 
@@ -148,7 +176,8 @@ si hace falta uno, se agrega como token con su razón de ser.
 | `--sea` | `#0e6e8c` | acento tipográfico, término técnico, eyebrow |
 | `--sea-bright` | `#12a3c4` | trayectorias y señales en ilustraciones |
 | `--foam` / `--foam-line` | `#d7ebf1` / `#b9d9e3` | fondos y bordes de panel claro |
-| `--coral` | `#ef6a4c` | **señal**: lo que hay que mirar |
+| `--coral` | `#ef6a4c` | **señal**: lo que hay que mirar, y color del bloque Resultados |
+| `--sec-intro` … `--sec-backup` | ver §2.3 | color de sección en el encabezado |
 | `--coral-soft` | `#f9d9d0` | fondo de énfasis coral |
 | `--amber` | `#e8a13c` | haces, luces, advertencia en ilustración |
 | `--line` | `#cfdce4` | bordes y rieles neutros |
@@ -178,7 +207,7 @@ Una sola familia, Inter (`--sans`), con la mono (`--mono`) reservada para datos.
 | `h3` de componente | 1,05 a 1,2rem | 640 a 720 |
 | cuerpo | 0,9 a 1rem | 400 |
 | `figcaption` | 0,85rem, `--ink-faint` | 400 |
-| eyebrow y rótulos | 0,74 a 0,82rem, mayúsculas, `letter-spacing .12em` | 600 |
+| encabezado de sección | 0,95rem caja baja, romano en mono a 0,76em | 660 y 430 |
 
 **La mono es para datos, nunca para prosa:** cifras, identificadores, tópicos ROS,
 nombres de archivo, ecuaciones en línea. Un párrafo en mono es un tic de terminal
@@ -254,6 +283,11 @@ aparecieron en este deck y se corrigieron.
 10. **Cifra suelta sin la condición** en que se midió.
 11. **Simetría perfecta** como valor por defecto. Un diseño hecho por alguien
     tiene jerarquía: algo es más importante y se nota.
+12. **Micro rótulo en mayúsculas con tracking ancho, más guion de color al
+    costado.** Es el encabezado de toda landing page de producto de los últimos
+    diez años. Se reemplazó en las 44 láminas por el romano numerado con color de
+    sección (§2.3). **Todavía queda en la portada**, en los rótulos "Autores" y
+    "Mentores".
 
 La prueba práctica: **¿esta lámina podría estar en la presentación de cualquier
 otro trabajo si le cambio las palabras?** Si la respuesta es sí, el formato no

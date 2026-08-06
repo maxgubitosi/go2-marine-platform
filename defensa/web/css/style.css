@@ -23,6 +23,15 @@
   --ok:         #2e9e6b;
   --warn:       #d98a2b;
 
+  /* Color por sección (paleta A): azules mientras se construye el entorno,
+     coral donde se mide, verde al cerrar, gris para lo que está fuera del hilo. */
+  --sec-intro:  #12a3c4;   /* I · Introducción */
+  --sec-prob:   #0e6e8c;   /* II · Problema */
+  --sec-metodo: #1d4059;   /* III · Metodología */
+  --sec-result: #ef6a4c;   /* IV · Resultados */
+  --sec-concl:  #2e9e6b;   /* V · Conclusiones */
+  --sec-backup: #8aa0b4;   /* B · Backup */
+
   /* Tipografía */
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   --mono: "SF Mono", "JetBrains Mono", ui-monospace, "Menlo", monospace;
@@ -107,23 +116,41 @@ html, body {
 
 /* ===================== Cabecera de anotación ===================== */
 
+/* El encabezado numera la sección como un capítulo y la colorea. La marca no
+   es adorno: el romano y el color dicen en qué parte de la charla estamos.
+   Reemplaza al par mayúsculas-con-tracking más guion coral, que era el
+   encabezado de plantilla que se repite en cualquier presentación. */
+
 .eyebrow {
   display: inline-flex;
-  align-items: center;
-  gap: .6rem;
-  font-size: .82rem;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--sea);
+  align-items: baseline;      /* el romano es mono y el rótulo sans: alinean por base, no por caja */
+  gap: .62rem;
+  font-size: .95rem;
+  font-weight: 660;
+  color: var(--sec, var(--sea));
   margin-bottom: 1.1rem;
 }
-.eyebrow::before {
-  content: "";
-  width: 26px; height: 2px;
-  background: var(--coral);
-  display: inline-block;
+.eyebrow .num {
+  flex: 0 0 auto;
+  min-width: 2.1em;           /* ancho fijo: el rótulo arranca en la misma x en todas las láminas */
+  font-family: var(--mono);
+  font-size: .76em; font-weight: 700; letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
 }
+/* Un solo item de flex para el rótulo: si el subtema fuera hermano directo,
+   el gap le metería un espacio antes de los dos puntos. */
+.eyebrow .lbl { display: inline; }
+.eyebrow .s { font-weight: 430; color: var(--ink-faint); }
+/* Portada y cierre: no son sección, así que no llevan romano ni color. */
+.eyebrow.plain { font-weight: 560; color: var(--ink-soft); }
+
+/* Color por sección. El backup va después para ganarle a su bloque. */
+.slide[data-block="0"] { --sec: var(--sec-intro); }
+.slide[data-block="1"] { --sec: var(--sec-prob); }
+.slide[data-block="2"] { --sec: var(--sec-metodo); }
+.slide[data-block="3"] { --sec: var(--sec-result); }
+.slide[data-block="4"] { --sec: var(--sec-concl); }
+.slide[data-backup]    { --sec: var(--sec-backup); }
 
 /* ===================== Tipografía de slide ===================== */
 
@@ -442,13 +469,14 @@ figcaption {
    en vez de partirse entre dos. */
 .cover-title .sea { color: var(--sea); white-space: nowrap; }
 
-.cover-people { display: flex; align-items: stretch; gap: 2.6rem; }
-.cover-sep { width: 1px; background: var(--line); }
+/* Mismo criterio que el encabezado de sección: el rótulo va en caja baja y en
+   gris, y el peso queda para los nombres. Sin filete entre columnas: separa el
+   aire. */
+.cover-people { display: flex; align-items: flex-start; gap: clamp(2.6rem, 6vw, 5rem); }
 .cover-role {
-  font-size: .8rem; font-weight: 600;
-  letter-spacing: .12em; text-transform: uppercase;
+  font-size: .92rem; font-weight: 450;
   color: var(--ink-faint);
-  margin-bottom: .35rem;
+  margin-bottom: .25rem;
 }
 .cover-names { font-size: 1.1rem; font-weight: 650; line-height: 1.45; }
 
@@ -651,11 +679,8 @@ ul.marks li.warn::before{ background: var(--warn); }
 .row { display: flex; gap: 1rem; align-items: center; }
 .wrap { flex-wrap: wrap; }
 
-/* Marca de agua "BACKUP" */
-.slide[data-backup] .eyebrow::after {
-  content: "BACKUP"; margin-left: .6rem;
-  color: var(--amber); font-weight: 700;
-}
+/* La marca de agua "BACKUP" que iba acá salió: ahora el propio encabezado dice
+   "B · Backup" y en gris, así que repetirlo era ruido. */
 
 /* Callout "pieza faltante" */
 .missing-piece {
