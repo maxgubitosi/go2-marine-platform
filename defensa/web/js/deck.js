@@ -121,6 +121,9 @@
       }
       else { seg.classList.remove("done"); fill.style.width = "0%"; }
     });
+    // En la portada el mar va pegado al borde inferior, así que el HUD y el
+    // hint suben para no quedar sobre el agua.
+    document.body.classList.toggle("is-cover", blockIdx === -1 && !isBackup);
     // HUD
     if (isBackup) {
       blockName.textContent = "Backup";

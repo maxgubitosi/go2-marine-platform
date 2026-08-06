@@ -101,7 +101,7 @@ html, body {
   min-height: 0;
 }
 /* Portadas / divisores: contenido centrado a propósito */
-.slide-inner.cover { justify-content: center; }
+.slide-inner.cover { justify-content: center; position: relative; }
 
 /* Header anclado (eyebrow + título) y cuerpo centrado en el espacio restante */
 .s-head { flex: 0 0 auto; }
@@ -454,16 +454,35 @@ figcaption {
    clavado abajo, así la portada ocupa la pantalla completa en vez de
    flotar en el medio. */
 .cover-main {
+  position: relative;   /* por encima del mar, que va posicionado */
+  z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 2.1rem;
   min-height: 0;
+  /* El titular es la masa de la portada: arranca abajo del rótulo y baja hasta
+     la fila de créditos, que se apoya sobre el agua. El aire sobrante queda
+     arriba, como margen, en vez de abrirse un hueco en el medio. */
+  justify-content: flex-end;
+  /* Deja libre el agua visible más la altura del barco sobre la línea de
+     flotación (6,2vw desde el borde inferior). Así la fila de créditos apoya
+     sobre el agua sin que el mástil se le meta, sea cual sea el ancho. */
+  padding-bottom: 6.2vw;
 }
-.cover-title {
+/* El rótulo viaja pegado al titular: el aire sobrante se acumula arriba de
+   todo, como margen de la composición, y no como un hueco entre las partes. */
+/* h1.title le gana por especificidad a .cover-title, así que el selector tiene
+   que igualarla o el tamaño de acá no se aplica nunca. */
+h1.title.cover-title {
+  /* 19ch es la medida más ancha que sigue cabiendo en la columna a 1080p
+     (donde el ancho está topeado en --maxw). Así el corte de líneas es el
+     mismo en las dos resoluciones. */
   max-width: 19ch;
-  font-size: clamp(2.2rem, 5.6vw, 4.5rem);
+  /* Escala con el ancho, pero topeada por el alto: en 16:9 las dos dan lo
+     mismo, y en una pantalla baja el vh evita que el titular desborde. */
+  font-size: clamp(2rem, min(5.6vw, 10vh), 6.8rem);
 }
 /* nowrap para que "robot cuadrúpedo" caiga entero en la última línea
    en vez de partirse entre dos. */
@@ -474,23 +493,34 @@ figcaption {
    aire. */
 .cover-people { display: flex; align-items: flex-start; gap: clamp(2.6rem, 6vw, 5rem); }
 .cover-role {
-  font-size: .92rem; font-weight: 450;
+  font-size: 1.02rem; font-weight: 450;
   color: var(--ink-faint);
   margin-bottom: .25rem;
 }
-.cover-names { font-size: 1.1rem; font-weight: 650; line-height: 1.45; }
+.cover-names { font-size: 1.32rem; font-weight: 650; line-height: 1.4; }
 
 /* Franja de mar al pie del título: usa el ancho de la pantalla sin robarle
    columna al titular. Sangra hasta los dos bordes del slide y se le sacan el
    panel y el borde de .wave-scene (acá el mar es fondo, no una figura).
    La doble clase en el selector es para ganarle a .wave-scene, que viene
    más abajo en la hoja. */
+/* El SVG tiene una banda transparente arriba: el barco necesita altura sobre la
+   línea de agua, que cae al 57% del alto de la franja. Si el mar ocupara lugar
+   en la columna, esa banda vacía empujaría el texto muy por encima del agua
+   visible. Por eso va posicionado, fuera del flujo: el texto puede bajar hasta
+   el agua y el barco queda en el hueco que le dejan las dos columnas. */
 .wave-scene.cover-sea {
-  flex: 0 0 auto;
+  position: absolute;
+  z-index: 0;
   /* 100vw en vez de 100% + padding: el slide-inner está topeado en --maxw,
      así que en pantallas anchas el segundo no llega a los bordes. */
   width: 100vw;
-  margin: 0 calc(50% - 50vw);
+  left: 50%;
+  transform: translateX(-50%);
+  /* El desplazamiento negativo cancela el padding de la lámina, así el agua
+     toca el borde inferior de la pantalla. */
+  bottom: calc(var(--pad) * -.72);
+  margin: 0;
   background: none;
   border: 0;
   border-radius: 0;
@@ -500,22 +530,37 @@ figcaption {
    con dejarla al 100% de ancho: crece con la pantalla sin recortar el buque. */
 .cover-sea svg { display: block; width: 100%; height: auto; }
 
+/* Fila de cierre de la portada: personas a la izquierda, institución a la
+   derecha. Sin filete de separación, que la fila ya se separa por el aire. */
+.cover-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  flex-wrap: wrap;
+  margin-top: clamp(1.8rem, 3.5vh, 3rem);
+}
 .cover-foot {
   flex: 0 0 auto;
   display: flex; align-items: center; gap: 1.1rem;
-  padding-top: 1.3rem;
-  border-top: 1px solid var(--line);
 }
+
+/* En la portada el mar ocupa el borde inferior, así que el chrome sube apenas
+   por encima de la franja. El mar mide 98/900 del ancho de pantalla. */
+body.is-cover #hud  { bottom: calc(4.7vw + .45rem); }
+/* El hint sigue abajo, sobre el agua: si sube choca con el barco, que ahora
+   navega en el hueco central. Es transitorio, se va solo a los 5 segundos, y
+   la píldora tiene fondo translúcido, así que se lee igual. */
 /* PNG con alfa real derivado del JPG del informe: sin caja blanca detrás. */
-.brand-logo { width: clamp(74px, 7.6vw, 104px); height: auto; }
+.brand-logo { width: clamp(112px, 11.4vw, 156px); height: auto; }
 .brand-carrera {
-  font-size: clamp(1rem, 1.35vw, 1.16rem);
+  font-size: clamp(1.18rem, 1.6vw, 1.4rem);
   font-weight: 680;
   color: var(--ink);
   letter-spacing: -.005em;
 }
 .brand-dept {
-  font-size: .88rem; font-weight: 500;
+  font-size: 1rem; font-weight: 500;
   color: var(--ink-faint);
   letter-spacing: .03em;
   margin-top: .12rem;
