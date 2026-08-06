@@ -32,7 +32,10 @@
   var counterEl = document.querySelector("#hud .counter");
 
   // Contar slides principales (no backup) para el contador.
-  var mainSlides = slides.filter(function (s) { return !s.hasAttribute("data-backup"); });
+  // Fuera del hilo principal: backup (respuestas preparadas) y borrador
+  // (laminas guardadas para decidir despues). Ninguno cuenta en el total.
+  function fueraDelHilo(s) { return s.hasAttribute("data-backup") || s.hasAttribute("data-draft"); }
+  var mainSlides = slides.filter(function (s) { return !fueraDelHilo(s); });
   totEl.textContent = mainSlides.length;
 
   // Agrupar slides principales por bloque para el progreso de sección.
@@ -52,9 +55,11 @@
   var ovGrid = document.getElementById("ov-grid");
   slides.forEach(function (s, i) {
     var item = document.createElement("div");
-    item.className = "ov-item" + (s.hasAttribute("data-backup") ? " is-backup" : "");
+    item.className = "ov-item" + (s.hasAttribute("data-backup") ? " is-backup" : "") + (s.hasAttribute("data-draft") ? " is-draft" : "");
     var label = s.getAttribute("data-title") || ("Slide " + (i + 1));
-    var num = s.hasAttribute("data-backup") ? ("B" + s.getAttribute("data-backup")) : (mainSlides.indexOf(s) + 1);
+    var num = s.hasAttribute("data-backup") ? ("B" + s.getAttribute("data-backup"))
+            : s.hasAttribute("data-draft") ? ("D" + s.getAttribute("data-draft"))
+            : (mainSlides.indexOf(s) + 1);
     item.innerHTML = '<span class="n">' + num + '</span><span class="t">' + label + "</span>";
     item.addEventListener("click", function () { go(i); closeOverview(); });
     ovGrid.appendChild(item);
@@ -108,12 +113,13 @@
   function updateChrome() {
     var s = slides[current];
     var isBackup = s.hasAttribute("data-backup");
+    var isDraft = s.hasAttribute("data-draft");
     var blockIdx = parseInt(s.getAttribute("data-block") || "0", 10); // 0..4, -1 portada
     var wb = withinBlock(s);
     // Progreso: segmento activo se llena proporcional al avance dentro del bloque
     segs.forEach(function (seg, i) {
       var fill = seg.querySelector(".fill");
-      if (isBackup) { seg.classList.add("done"); fill.style.width = "100%"; return; }
+      if (isBackup || isDraft) { seg.classList.add("done"); fill.style.width = "100%"; return; }
       if (i < blockIdx) { seg.classList.add("done"); fill.style.width = "100%"; }
       else if (i === blockIdx) {
         seg.classList.remove("done");
@@ -123,13 +129,13 @@
     });
     // En la portada el mar va pegado al borde inferior, así que el HUD y el
     // hint suben para no quedar sobre el agua.
-    document.body.classList.toggle("is-cover", blockIdx === -1 && !isBackup);
+    document.body.classList.toggle("is-cover", blockIdx === -1 && !isBackup && !isDraft);
     // HUD
-    if (isBackup) {
-      blockName.textContent = "Backup";
+    if (isBackup || isDraft) {
+      blockName.textContent = isDraft ? "Borrador" : "Backup";
       wtxtEl.textContent = "";
       dotsEl.innerHTML = "";
-      counterEl.textContent = "B" + s.getAttribute("data-backup");
+      counterEl.textContent = (isDraft ? "D" : "B") + s.getAttribute(isDraft ? "data-draft" : "data-backup");
     } else {
       blockName.textContent = blockIdx >= 0 ? BLOCKS[blockIdx] : "Portada";
       if (blockIdx >= 0) {
@@ -167,6 +173,12 @@
         // Saltar al primer backup
         var firstBackup = slides.findIndex(function (s) { return s.hasAttribute("data-backup"); });
         if (firstBackup >= 0) go(firstBackup);
+        break;
+      }
+      case "d": case "D": {
+        // Saltar al primer borrador
+        var firstDraft = slides.findIndex(function (s) { return s.hasAttribute("data-draft"); });
+        if (firstDraft >= 0) go(firstDraft);
         break;
       }
       case "f": case "F":

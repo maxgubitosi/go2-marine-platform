@@ -31,6 +31,7 @@
   --sec-result: #ef6a4c;   /* IV · Resultados */
   --sec-concl:  #2e9e6b;   /* V · Conclusiones */
   --sec-backup: #8aa0b4;   /* B · Backup */
+  --sec-borrador: #b07bd6; /* D · Borrador (fuera del hilo, en revisión) */
 
   /* Tipografía */
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
@@ -151,6 +152,7 @@ html, body {
 .slide[data-block="3"] { --sec: var(--sec-result); }
 .slide[data-block="4"] { --sec: var(--sec-concl); }
 .slide[data-backup]    { --sec: var(--sec-backup); }
+.slide[data-draft]     { --sec: var(--sec-borrador); }
 
 /* ===================== Tipografía de slide ===================== */
 
@@ -412,6 +414,167 @@ figcaption {
   color: var(--ink-faint);
 }
 
+/* ===================== Condiciones del ensayo ===================== */
+/* Dos por dos, en paneles lisos con el tinte de espuma. Sin borde, sin sombra
+   y sin icono: eso es la tarjeta de plantilla. El color lo pone la cifra, en el
+   cian que ya identifica al bloque Introducción, así la lámina se ata al
+   sistema en vez de estrenar un color propio. */
+
+.condiciones {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.1rem, 2.4vw, 2rem);
+}
+.condiciones li {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  column-gap: clamp(1rem, 2vw, 1.6rem);
+  background: var(--foam);
+  border-radius: 14px;
+  padding: clamp(1.3rem, 4.4vh, 2.8rem) clamp(1.4rem, 2.6vw, 2.2rem);
+}
+.condiciones .n {
+  font-size: clamp(2.4rem, 4.4vw, 3.9rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--sec-intro);
+  font-variant-numeric: tabular-nums;
+}
+.condiciones .txt {
+  font-size: clamp(1.05rem, 1.75vw, 1.5rem);
+  font-weight: 420;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.condiciones .txt b { font-weight: 720; color: var(--ink); }
+
+/* Cierre de lámina: la consecuencia de lo de arriba, con la barra coral porque
+   es lo único que hay que llevarse. */
+.conclusion {
+  margin-top: clamp(1.8rem, 4.5vh, 3.2rem);
+  border-left: 3px solid var(--coral);
+  padding-left: clamp(1rem, 2vw, 1.5rem);
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+  font-weight: 560;
+  max-width: 62ch;
+  line-height: 1.4;
+}
+
+/* ===================== La cuenta de grados de libertad ===================== */
+/* Sin párrafo: la cuenta es el contenido. El resultado va en coral porque es
+   lo único que hay que mirar, y la explicación la pone el expositor. */
+
+.go2-split { align-items: center; }
+.go2-retrato { background: #fff; border: 0; box-shadow: none; }
+.go2-retrato img { max-height: 46vh; object-fit: contain; }
+.go2-col { gap: clamp(1.2rem, 3vh, 2.2rem); }
+.go2-posturas { background: #fff; }
+.go2-posturas img { max-height: 22vh; object-fit: contain; }
+.cuenta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(.5rem, 1.4vw, 1.1rem);
+  flex-wrap: wrap;
+}
+.cuenta .t { display: flex; flex-direction: column; align-items: center; }
+.cuenta .n {
+  font-size: clamp(2.6rem, 5.4vw, 5rem);
+  font-weight: 820;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.cuenta .l {
+  margin-top: .5rem;
+  font-size: clamp(.76rem, 1vw, .92rem);
+  color: var(--ink-faint);
+  text-align: center;
+  max-width: 12ch;
+  line-height: 1.3;
+}
+.cuenta .op {
+  font-size: clamp(1.8rem, 3.4vw, 3.2rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink-faint);
+}
+.cuenta .res .n { color: var(--coral); }
+
+/* ===================== Los dos mundos ===================== */
+/* Par de imágenes del mismo robot en simulación y en el laboratorio. Las cajas
+   comparten proporción y recortan por el centro: los originales tienen
+   relaciones de aspecto distintas y de otro modo el par quedaría desparejo. */
+
+.dos-mundos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1.4rem, 3.2vw, 2.6rem);
+}
+.dos-mundos figure { margin: 0; }
+/* Cuadradas: la foto del laboratorio es casi cuadrada y con una caja apaisada
+   se le cortaban las patas. El cuadro de Gazebo pierde algo de piso a los
+   costados, que no es contenido. El ancho se topea para que el par no crezca
+   hasta desbordar de alto. */
+.dos-mundos { max-width: min(100%, 740px); margin-inline: auto; }
+.dos-mundos .media { aspect-ratio: 1 / 1; }
+.dos-mundos .media img { width: 100%; height: 100%; object-fit: cover; }
+.dos-mundos figcaption {
+  margin-top: .9rem;
+  text-align: center;
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ===================== Antecedentes ===================== */
+/* El año es la marca de cada fila: es dato, no viñeta, y va en el color de la
+   sección igual que la cifra de S4. Sin caja y sin filete. */
+
+.antecedentes {
+  display: grid;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  column-gap: clamp(1rem, 2.2vw, 1.9rem);
+  row-gap: clamp(1.2rem, 3.4vh, 2.4rem);
+  align-items: center;
+}
+/* Dibujos propios del montaje de cada trabajo. No son las figuras de los
+   papers: dos de los tres son de editoriales cerradas y el deck se publica en
+   un sitio público, así que se ilustra el concepto en el lenguaje del deck. */
+.ant-fig {
+  width: clamp(76px, 8.4vw, 122px);
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  background: var(--paper-2);
+  padding: .35rem;
+}
+.antecedentes .anio {
+  font-family: var(--mono);
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--sec-prob);
+  font-variant-numeric: tabular-nums;
+}
+.antecedentes p {
+  font-size: clamp(1.05rem, 1.75vw, 1.55rem);
+  color: var(--ink);
+  max-width: 54ch;
+  line-height: 1.4;
+}
+.antecedentes .ref {
+  display: block;
+  margin-top: .35rem;
+  font-size: .87rem;
+  color: var(--ink-faint);
+  letter-spacing: .01em;
+}
+
 /* ===================== Escenas de uso ===================== */
 /* Version sin caja de .cards: la ilustracion hace de bloque y el texto cuelga
    debajo. Tres tarjetas con borde, sombra e iconito daban aire de plantilla. */
@@ -419,11 +582,11 @@ figcaption {
 .escenas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.2rem;
+  gap: 1.9rem;          /* menos calle entre columnas: la ilustración gana ancho */
 }
 .escena { margin: 0; }
 .escena-art {
-  aspect-ratio: 12 / 7;
+  aspect-ratio: 12 / 8;   /* al sacar la bajada sobra alto: la escena lo usa */
   border-radius: 12px;
   overflow: hidden;                /* recorta la ilustracion al radio */
   background: var(--paper-2);
@@ -439,12 +602,12 @@ figcaption {
 }
 .escena h3 {
   margin-top: 1.05rem;
-  font-size: 1.18rem; font-weight: 720;
+  font-size: 1.3rem; font-weight: 720;
   letter-spacing: -.01em;
 }
 .escena p {
   margin-top: .35rem;
-  font-size: .97rem; color: var(--ink-soft);
+  font-size: 1.06rem; color: var(--ink-soft);
   max-width: 32ch;
 }
 
@@ -698,6 +861,8 @@ ul.marks li.warn::before{ background: var(--warn); }
 .ov-item .n { font-size: .74rem; color: var(--sea-bright); font-weight: 700; letter-spacing: .05em; }
 .ov-item .t { font-size: .9rem; color: #fff; line-height: 1.25; font-weight: 500; }
 .ov-item.is-backup .n { color: var(--amber); }
+.ov-item.is-draft .n { color: var(--sec-borrador); }
+.ov-item.is-draft .t { color: var(--ink-faint); font-style: italic; }
 
 /* ===================== Hint de teclado ===================== */
 #hint {

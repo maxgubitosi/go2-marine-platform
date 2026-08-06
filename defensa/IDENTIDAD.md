@@ -116,6 +116,7 @@ Es la ubicación en la charla, no un título alternativo. Formato fijo:
 | Resultados | IV | `--sec-result` |
 | Conclusiones | V | `--sec-concl` |
 | Backup | B | `--sec-backup` |
+| Borrador | D | `--sec-borrador` |
 
 El color sale de `data-block` en el `<section>`, así que **una lámina nueva sólo
 necesita su `data-block` correcto**: el color y el romano se escriben a mano en
@@ -231,6 +232,7 @@ de proyección.
 | Tabla | campañas, trazabilidad | `table` |
 | Decisión | comparar opciones no equivalentes | `.decision` |
 | Backup | respuestas a preguntas previsibles | igual que las anteriores, después de S34 |
+| Borrador | versiones guardadas y cambios temporales | `data-draft="N"`, al final de todo, tecla `D` |
 
 **Una lámina, una idea.** Si hacen falta dos titulares para describirla, son dos
 láminas. Y antes de dar por floja una lámina, revisar si su versión sustanciosa

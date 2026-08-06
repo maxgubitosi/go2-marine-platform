@@ -22,8 +22,8 @@ También se puede abrir `web/index.html` directo con doble clic: el deck no hace
 ningún `fetch` ni carga nada externo. Es más incómodo para iterar, pero sirve
 para verificar que anda sin servidor, que es como va a andar el día de la defensa.
 
-**Teclas:** `→` `←` o espacio para navegar · `O` índice · `B` backup · `F`
-pantalla completa.
+**Teclas:** `→` `←` o espacio para navegar · `O` índice · `B` backup · `D`
+borrador · `F` pantalla completa.
 
 ---
 
@@ -31,7 +31,7 @@ pantalla completa.
 
 | Archivo | Qué es |
 |---|---|
-| `web/index.html` | las 44 láminas, una `<section class="slide">` cada una |
+| `web/index.html` | las láminas, una `<section class="slide">` cada una |
 | `web/css/style.css` | todo el estilo, con comentarios explicando cada decisión |
 | `web/js/deck.js` | el motor: navegación, progreso, índice, animaciones |
 | `plan_presentacion.md` | qué se ve y qué se dice en cada lámina |
@@ -41,6 +41,13 @@ pantalla completa.
 **Antes de escribir una lámina nueva, leer `IDENTIDAD.md`.** Es lo que evita que
 el deck vuelva a los títulos genéricos y las cajitas conceptuales que Gastón pidió
 sacar.
+
+**Tres tipos de lámina.** Las del hilo principal se numeran solas. Las que
+llevan `data-backup="N"` quedan afuera del conteo y se saltan con `B`: son las
+respuestas preparadas para preguntas previsibles. Las que llevan
+`data-draft="N"` van al final de todo, se saltan con `D` y son el **borrador**:
+versiones guardadas por si se retoman, cambios temporales, pruebas. No cuentan
+en el total ni aparecen en el progreso.
 
 **El motor deriva todo del orden del DOM**: número de lámina, progreso por bloque
 y el índice salen de dónde está cada `<section>`. Eso quiere decir que **agregar o
