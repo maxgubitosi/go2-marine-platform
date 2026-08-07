@@ -1021,6 +1021,77 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pconn:nth-of-type(4)::after { animation-delay: .3s; }
 @keyframes flow { from { left: -40%; } to { left: 100%; } }
 
+/* ===================== Riel de arquitectura ===================== */
+/* Un riel, no dos. Dibujar el flujo de simulación arriba y el real abajo daría
+   doce cajas de las que la mitad dicen lo mismo, que es justo la grilla simétrica
+   que este deck evita. Acá la fila del laboratorio existe únicamente debajo de
+   las etapas que cambian de sustrato: donde dice "=" corre el mismo software sin
+   tocar. Los huecos son el argumento, así que no se rellenan.
+
+   Doce columnas: rótulo de fila + seis etapas intercaladas con cinco conectores.
+   Las dos filas comparten la grilla, así que las cajas de abajo caen alineadas
+   con su etapa sin depender de anchos calculados a mano. La colocación es por
+   flujo natural y cada fila aporta sus doce items en orden: nada lleva grid-row
+   ni grid-column, porque un item con fila explícita se coloca antes que el
+   rótulo y arrastra todo el riel una columna. */
+
+.railmap {
+  --conn: clamp(14px, 2.2vw, 34px);
+  --drop: clamp(.8rem, 2.1vh, 1.3rem);
+  display: grid;
+  grid-template-columns: max-content repeat(5, minmax(0, 1fr) var(--conn)) minmax(0, 1fr);
+  row-gap: 0;
+  width: 100%;
+}
+
+/* Rótulo de fila: cabeza de tabla, no leyenda de gráfico. */
+.rl-stub {
+  align-self: center;
+  padding-right: clamp(.75rem, 1.7vw, 1.25rem);
+  font-variant-caps: small-caps;
+  letter-spacing: .045em;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.rl-stub.sim { color: var(--sea); }
+.rl-stub.lab { color: var(--coral); padding-top: var(--drop); }
+
+/* Grid de un item para que las tres cajas se estiren a la altura de la fila:
+   con altura de contenido quedan dentadas y parecen un descuido. */
+.rl-cell { display: grid; position: relative; min-width: 0; padding-top: var(--drop); }
+.rl-gap  { display: block; }   /* columna de conector en la fila de abajo: vacía a propósito */
+
+/* Igual en los dos montajes. El signo dice lo mismo que la palabra y no le
+   compite el peso visual a las cajas de sustitución. */
+.rl-eq {
+  align-self: center; text-align: center;
+  font-family: var(--mono);
+  font-size: 1.3rem;
+  color: var(--ink-faint);
+}
+
+/* Sustitución: caja colgada de su etapa por una bajada de un píxel. */
+.rl-cell.sub::before {
+  content: ""; position: absolute; left: 50%; top: 0;
+  width: 1px; height: var(--drop);
+  background: var(--coral); opacity: .55;
+}
+.rl-box {
+  display: block; text-align: center;
+  background: #fff;
+  border: 1px solid var(--coral);
+  border-radius: 10px;
+  padding: .5rem .55rem .55rem;
+  box-shadow: var(--shadow-sm);
+  font-size: .84rem; font-weight: 680; line-height: 1.2;
+  color: var(--ink);
+}
+.rl-box small {
+  display: block; margin-top: .2rem;
+  font-size: .74rem; font-weight: 500; color: var(--ink-faint);
+}
+
 /* Fila de dos imágenes */
 .imgrow { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
 .imgrow .media { aspect-ratio: 1 / 1; }

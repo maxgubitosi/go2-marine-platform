@@ -544,30 +544,34 @@
 <!-- ============================================================
      BLOQUES 3-5 · placeholders (se completan en la próxima iteración)
      ============================================================ -->
-<section class="slide" data-block="2" data-title="Arquitectura del entorno">
+<section class="slide" data-block="2" data-title="Arquitectura: simulación y laboratorio">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el entorno</span></span></div>
-      <h2 class="head">Arquitectura del entorno: ROS2, Gazebo y registro en rosbag</h2>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: arquitectura</span></span></div>
+      <h2 class="head">Una sola arquitectura: en el laboratorio se sustituyen tres de las seis etapas</h2>
     </header>
     <div class="s-body">
-      <div class="pipeline" data-anim>
+      <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
+           sustrato. Las tres etapas con "=" son el mismo software corriendo sin
+           modificaciones, y ese es el punto de la lámina: no son dos pipelines. -->
+      <div class="railmap" data-anim>
+        <span class="rl-stub sim">Simulación</span>
         <div class="pnode">
           <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-6 10-6 10 6 10 6M2 12c2 2 5 3 10 3s8-1 10-3"/></svg></div>
-          <div class="lbl">Movimiento marino</div>
+          <div class="lbl">Consigna marina</div>
           <div class="sub">roll · pitch · heave</div>
         </div>
         <div class="pconn"></div>
         <div class="pnode">
           <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="9" rx="1.5"/><path d="M5 17v3M15 17v3M17 11h3v4h-3"/></svg></div>
-          <div class="lbl">Go2</div>
-          <div class="sub">control postural</div>
+          <div class="lbl">Postura del torso</div>
+          <div class="sub">IK propia + contacto</div>
         </div>
         <div class="pconn"></div>
         <div class="pnode">
           <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h4l1.5-2h7L17 7h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
           <div class="lbl">Cámara</div>
-          <div class="sub">fija · dron</div>
+          <div class="sub">ideal · fija y dron</div>
         </div>
         <div class="pconn"></div>
         <div class="pnode accent">
@@ -585,13 +589,28 @@
         <div class="pnode">
           <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg></div>
           <div class="lbl">Evaluación</div>
-          <div class="sub">offline vs GT</div>
+          <div class="sub">contra ground truth</div>
         </div>
+
+        <span class="rl-stub lab">Laboratorio</span>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
       </div>
-      <div class="row wrap mt-l" style="justify-content:center;gap:.7rem;">
-        <span class="pill">ROS2</span>
-        <span class="pill">Gazebo</span>
-      </div>
+      <p class="conclusion">
+        ROS2 es común a los dos montajes: lo que en simulación provee Gazebo, la
+        planta y la referencia, en el laboratorio lo aporta el robot físico. La
+        consigna de entrada es la misma, y eso es lo que hace comparables las dos
+        campañas.
+      </p>
     </div>
   </div>
 </section>
