@@ -113,6 +113,17 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Ojo con las imágenes:** las dos van recortadas a la misma relación 3:2 con `defensa/scripts/crop_escenarios.py`. Los originales tienen relaciones distintas, y en columnas de igual ancho cualquier diferencia hace que una caja salga más alta, desborde el cuerpo del slide y se superponga con el párrafo de cierre. Si se cambia alguna de las dos imágenes, hay que volver a pasarlas por el script.
 - **Resolución:** el recorte de cámara fija queda en 315 px de ancho y se muestra a 494 en 720p (1,56x). Es lo mejor disponible: el original es de 640x480 y casi todo el cuadro es fondo vacío.
 
+**S14b · Del torso a las articulaciones** 🦿
+- **Se ve:** la ec. (20) del informe, δ<sup>b</sup>p<sub>f<sub>i</sub></sub> ≈ −δp<sub>b</sub> − δω × <sup>b</sup>p<sub>f<sub>i</sub>,0</sub>, y debajo una tabla que la lee término por término: el de **traslación** da *heave* (muslo y rodilla en fase en las cuatro patas); el de **rotación** da *roll* (izquierdas distintas de derechas) y *pitch* (delanteras distintas de traseras), agrupados con rowspan porque salen del mismo producto vectorial.
+- **Se dice:** con los pies apoyados, lo que cambia físicamente no es dónde están los pies sino la configuración articular que sostiene el torso. Cada componente del oleaje es un patrón de actuación concreto.
+- **Cierre:** por eso el Go2 reproduce oleaje sin caminar, y **cuando el control interno decide dar un paso rompe justamente esta condición**. Deja plantado el guardrail de marcha, que se explica en el bloque de laboratorio.
+
+**S15b · Implementación: dos paquetes propios en ROS2** 🦿
+- **Se ve:** dos columnas deliberadamente desparejas. *Escrito para este trabajo*: `go2_tools` (marine_platform_simulator, marine_manual_control), `fixed_camera` (camera_controller, aruco_detector) y `aruco_relative_pose` fuera de línea (estimate_relative_pose, analyze_pose_results, evaluate_realtime_aruco). *Integrado*: ROS2 y Gazebo, `sjtu_drone` de terceros, `rosbag2`, OpenCV, y el SDK de Unitree en el lab.
+- **Se dice:** cubre el "código principal" que pide la pauta de cátedra. La nota al pie: la evaluación fuera de línea es más del doble que todo lo que corre en vivo.
+- **Cierre, y es el punto de la lámina:** `aruco_detector` toma el tópico de imagen y el de intrínsecos **como parámetros**, así que la cámara fija, la del dron y la webcam del laboratorio son la misma línea de configuración. Eso es lo que hace verdadero el `=` del riel de S9.
+- **El grafo de nodos y tópicos queda en backup (B4):** acá interesa qué se escribió, no cómo queda cableado en ejecución.
+
 **S16 · El sensor del laboratorio: recorte, calibración y montaje** 🦿
 - **Se ve:** a la izquierda un cuadro real de la cámara fija (`lab_camara_fija.jpg`, el Go2 desde arriba con el ArUco sobre el lomo). A la derecha una tabla de dos columnas, *idealización de Gazebo* contra *qué hubo que hacer*: sensor monocular por definición → cámara estéreo recortada al ojo izquierdo · intrínsecos exactos → tablero de calibración, **20 imágenes, RMS 0,221 px** · cámara rígida → trípode aproximadamente fijo · marcador solidario por el modelo → ArUco impreso y adherido.
 - **Se dice:** en Gazebo el sensor viene dado; acá hubo que construirlo y verificarlo. El único número verificable es el RMS de calibración, y es lo que sostiene tener intrínsecos medidos y no ideales.
@@ -123,7 +134,11 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Se dice:** la diferencia no es de precisión sino **de forma**. Arriba hay dos términos y una verdad externa contra la cual restar. Abajo hay tres señales encadenadas y cada eslabón se valida por separado, y por eso son tres y no dos: para saber si una discrepancia es nuestra o del robot. De acá salen las métricas de todo el bloque de laboratorio.
 - **Cierre:** movimiento y visión se evalúan **por separado**, declarado como decisión y no como omisión. Si corren juntas y algo falla, no se sabe si falló la percepción o la dinámica.
 
-> **Pendiente de numeración.** El bloque de metodología está en reconstrucción (faltan la lámina de cinemática inversa y la de implementación en ROS2). Cuando se cierre hay que hacer una pasada de renumerado de todo el archivo: hoy las S de acá en adelante están corridas respecto del deck.
+> **Pendiente de numeración.** El bloque de metodología quedó en 11 láminas y el
+> orden ahora baja por el riel de S9 (consigna → torso → cámara → ArUco → registro
+> → implementación → laboratorio), así que **Escenarios se movió delante de ArUco**.
+> Las S de este archivo ya no coinciden con el deck: hace falta una pasada de
+> renumerado completa. El orden real es el de `data-title` en `index.html`.
 
 ## Bloque 4a — Resultados: simulación
 

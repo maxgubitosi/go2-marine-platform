@@ -110,6 +110,12 @@ eq("contact_constraint", 1748, r"J_c(q)\,\dot{q} = 0",
    "eq:contact_velocity_constraint")
 eq("dof_count", 1748, r"\underbrace{18}_{6\ \text{base} \;+\; 12\ \text{art.}}"
                       r"\;-\;\underbrace{12}_{\operatorname{rank} J_c}\;=\;\underbrace{6}_{\text{pose del torso}}")
+# El puente entre la consigna del torso y las patas: con los pies apoyados, una
+# variación de la pose del cuerpo se lee como la corrección que cada pie tiene
+# que compensar en el marco del cuerpo. Es la que hace física la consigna marina.
+eq("body_to_feet", 1927,
+   r"\delta\, {}^{b}\!p_{f_i} \approx -\,\delta p_b - \delta \omega \times {}^{b}\!p_{f_i,0}",
+   "eq:body_variation_to_feet")
 eq("leg_ik", 1984, r"\delta q_i = J_i(q_i)^{-1}\,\delta\, {}^{b}\!p_{f_i}",
    "eq:leg_inverse_differential_kinematics")
 

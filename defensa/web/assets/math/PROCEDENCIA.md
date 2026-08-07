@@ -9,6 +9,7 @@ láminas.
 
 | SVG | Ecuación en el informe | Línea en `main.tex` | `\label` |
 |---|---|---|---|
+| `body_to_feet.svg` | (20) | 1927 | `eq:body_variation_to_feet` |
 | `commands.svg` | sin numerar | 2282 | `-` |
 | `contact_constraint.svg` | (15) | 1748 | `eq:contact_velocity_constraint` |
 | `dof_count.svg` | sin numerar | 1748 | `-` |

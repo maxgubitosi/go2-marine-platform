@@ -1103,6 +1103,71 @@ ul.marks li.warn::before{ background: var(--warn); }
   font-size: .74rem; font-weight: 500; color: var(--ink-faint);
 }
 
+/* ===================== Patrón articular ===================== */
+/* La tabla lee la ecuación de arriba: la primera columna es el término que
+   manda, y la fila de rotación agrupa dos componentes con rowspan porque las
+   dos salen del mismo producto vectorial. El nombre de la componente va en el
+   acento del deck: es el vocabulario que viene de la introducción. */
+
+.dtable.patron { font-size: .98rem; margin-top: clamp(1.4rem, 3.4vh, 2.4rem); }
+.dtable.patron td.term {
+  width: 20%;
+  color: var(--ink-soft);
+  vertical-align: middle;
+  border-right: 1px solid var(--line);
+}
+.dtable.patron td.term em { font-style: italic; color: var(--ink); white-space: nowrap; }
+.dtable.patron td.comp {
+  width: 15%;
+  font-weight: 700;
+  color: var(--sea);
+}
+
+/* ===================== Implementación ===================== */
+/* Dos columnas deliberadamente desparejas: de lo propio se listan los nodos, de
+   lo integrado alcanza con el nombre. Si las dos se llenaran igual, la lámina
+   diría que pesan lo mismo. */
+
+.codigo {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: clamp(1.6rem, 4vw, 3.2rem);
+  align-items: start;
+}
+.cd-col h3 {
+  margin: 0 0 .85rem;
+  font-size: .82rem; font-weight: 620;
+  text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft);
+}
+.cd-col.ours h3 { color: var(--sea); }
+.ul-reset, .pkg { list-style: none; margin: 0; padding: 0; }
+.pkg { display: flex; flex-direction: column; gap: .7rem; }
+.pkg > li { font-size: 1rem; color: var(--ink); line-height: 1.35; }
+.pkg > li > span {
+  display: block;
+  margin-left: 1.05rem;
+  font-family: var(--mono);
+  font-size: .82rem;
+  color: var(--ink-soft);
+}
+.pkg > li > span::before { content: "· "; color: var(--ink-faint); }
+.pkg em { font-style: normal; font-size: .8rem; color: var(--ink-faint); }
+.cd-nota {
+  margin: 1.4rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: .88rem; line-height: 1.4;
+  color: var(--ink-soft);
+  max-width: 34ch;
+}
+code {
+  font-family: var(--mono);
+  font-size: .88em;
+  font-weight: 600;
+  color: var(--ink);
+}
+
 /* ===================== El sensor real ===================== */
 /* Tabla de idealizaciones: la columna izquierda es lo que Gazebo daba por dado,
    apagada porque es lo que se cae; la derecha es el trabajo que hubo que hacer.
