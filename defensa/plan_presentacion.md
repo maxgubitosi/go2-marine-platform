@@ -73,9 +73,10 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 
 ## Bloque 3 — Metodología (técnico)
 
-**S9 · Arquitectura del entorno**
-- **Se ve:** diagrama de pipeline (`method_pipeline`) rediseñado para la web, con animación de flujo: simulador marino → Go2 → cámara (fija o dron) → detector ArUco → rosbag → evaluación offline.
-- **Se dice:** recorrido de 1 minuto por los bloques; todo corre en ROS2 + Gazebo, todo queda registrado.
+**S9 · Arquitectura: una sola, con tres sustituciones en el laboratorio**
+- **Se ve:** un riel de seis etapas (consigna marina → postura del torso → cámara → ArUco+PnP → registro → evaluación) con el rótulo `Simulación` a la izquierda, y debajo una fila `Laboratorio` que **sólo tiene caja donde el sustrato cambia**: API del Go2, webcam en trípode y sin ground truth. Las otras tres llevan `=`. El stack de cada montaje va en gris bajo su rótulo.
+- **Se dice:** no son dos pipelines sino uno con tres sustituciones. Lo que hay que decir en voz alta, porque el diagrama no lo dice: **la consigna es idéntica en los dos montajes, y eso es lo que hace comparables las dos campañas**.
+- **Ojo:** la fila de abajo está vacía a propósito bajo las etapas que no cambian. Si alguien la "completa", se pierde el argumento de la lámina.
 
 > **Las cuatro láminas que siguen se reconstruyeron el 28-07-2026** tras el feedback de Gastón Castro: *"tienen que entrar en la matemática y dar detalles técnicos claros"*, *"no pueden ser todos títulos generales y cajitas con flechas conceptuales"*. Antes eran cuatro `flowline` consecutivas con flechas y la matemática derivada al backup. Ahora cada una lleva las ecuaciones del informe, **citadas por su número real** para que el jurado pueda ir a buscarlas al texto.
 >
@@ -112,11 +113,17 @@ Presupuesto de tiempo: contexto+problema ~7 min · metodología ~8 min · result
 - **Ojo con las imágenes:** las dos van recortadas a la misma relación 3:2 con `defensa/scripts/crop_escenarios.py`. Los originales tienen relaciones distintas, y en columnas de igual ancho cualquier diferencia hace que una caja salga más alta, desborde el cuerpo del slide y se superponga con el párrafo de cierre. Si se cambia alguna de las dos imágenes, hay que volver a pasarlas por el script.
 - **Resolución:** el recorte de cámara fija queda en 315 px de ancho y se muestra a 494 en 720p (1,56x). Es lo mejor disponible: el original es de 640x480 y casi todo el cuadro es fondo vacío.
 
-**S16 · Del simulador al robot real: qué cambia** 🦿 *(Jack, opcional Máximo)*
-- **Se ve:** a la izquierda la tabla sim vs lab: ground truth perfecto → no hay · cámara ideal → webcam en trípode · comando directo → API del robot + control interno. A la derecha el mismo montaje dos veces, con una flecha en el medio: el Go2 con el marcador dentro de Gazebo (`sim_setup_gazebo.png`) y la foto del laboratorio con el trípode (`lab_go2_aruco_tripode_a.jpg`).
-- **Se dice:** las dificultades del pasaje y la decisión metodológica clave: en el lab evaluamos movimiento y visión POR SEPARADO (evitar saturación de cómputo que contamine registros). La flecha es el gesto que acompaña todo el bloque: lo que se armó en el simulador es lo que después se montó en el piso del laboratorio.
-- **Ojo con las imágenes:** las dos van en 3:4 para que los paneles midan igual y la flecha se lea como correspondencia. La de Gazebo se recorta a esa relación con `defensa/scripts/crop_setup_sim.py`. La del laboratorio ya está en 3:4, pero **el archivo se ve apaisado si se lo abre a mano**: trae orientación EXIF 6 y es el navegador el que la endereza. No re-exportarla sin conservar ese metadato.
-- **Los epígrafes tienen que entrar en una línea** (*"El montaje en Gazebo"* y *"Y en el laboratorio"*). Si se alargan y uno envuelve a dos líneas, las dos fotos se desalinean verticalmente.
+**S16 · El sensor del laboratorio: recorte, calibración y montaje** 🦿
+- **Se ve:** a la izquierda un cuadro real de la cámara fija (`lab_camara_fija.jpg`, el Go2 desde arriba con el ArUco sobre el lomo). A la derecha una tabla de dos columnas, *idealización de Gazebo* contra *qué hubo que hacer*: sensor monocular por definición → cámara estéreo recortada al ojo izquierdo · intrínsecos exactos → tablero de calibración, **20 imágenes, RMS 0,221 px** · cámara rígida → trípode aproximadamente fijo · marcador solidario por el modelo → ArUco impreso y adherido.
+- **Se dice:** en Gazebo el sensor viene dado; acá hubo que construirlo y verificarlo. El único número verificable es el RMS de calibración, y es lo que sostiene tener intrínsecos medidos y no ideales.
+- **Cierre:** por eso el caso de laboratorio es una **aproximación controlada** del escenario de cámara fija, no su réplica. Está en el informe con esas palabras.
+
+**S16b · Cambia la referencia, cambia la pregunta** 🦿
+- **Se ve:** dos filas con los mismos rótulos del riel de S9. Arriba, `Simulación`: estimación visual **contra** pose verdadera (cadena de marcos) → Δroll · Δpitch · ΔZ. Abajo, `Laboratorio`: consigna → comando enviado → estado interno, encadenados, con los tramos rotulados *nuestro software* y *planta física* → correlación r · ganancia g · retardo τ.
+- **Se dice:** la diferencia no es de precisión sino **de forma**. Arriba hay dos términos y una verdad externa contra la cual restar. Abajo hay tres señales encadenadas y cada eslabón se valida por separado, y por eso son tres y no dos: para saber si una discrepancia es nuestra o del robot. De acá salen las métricas de todo el bloque de laboratorio.
+- **Cierre:** movimiento y visión se evalúan **por separado**, declarado como decisión y no como omisión. Si corren juntas y algo falla, no se sabe si falló la percepción o la dinámica.
+
+> **Pendiente de numeración.** El bloque de metodología está en reconstrucción (faltan la lámina de cinemática inversa y la de implementación en ROS2). Cuando se cierre hay que hacer una pasada de renumerado de todo el archivo: hoy las S de acá en adelante están corridas respecto del deck.
 
 ## Bloque 4a — Resultados: simulación
 

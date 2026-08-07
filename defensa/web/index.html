@@ -1574,39 +1574,86 @@
     </div>
   </div>
 </section>
-<section class="slide" data-block="2" data-title="Del simulador al robot real">
+<section class="slide" data-block="2" data-title="El sensor del laboratorio">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: del simulador al laboratorio</span></span></div>
-      <h2 class="head">Del simulador al laboratorio: qué cambia en la medición</h2>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el sensor real</span></span></div>
+      <h2 class="head">De cámara ideal a instrumento: recorte a monocular, calibración y montaje</h2>
     </header>
     <div class="s-body">
-      <div class="split media-left">
-        <table class="dtable">
-          <thead><tr><th></th><th>Simulación</th><th>Laboratorio</th></tr></thead>
+      <!-- Lo que en Gazebo viene dado por el modelo, en el laboratorio hay que
+           construirlo y verificarlo. Cada fila es una idealización que se cae, y
+           la de calibración lleva el número porque es la única verificable. -->
+      <div class="split narrow-media sensor-split">
+        <figure>
+          <div class="media"><img src="assets/img/lab_camara_fija.jpg" alt="Cuadro de la cámara fija del laboratorio: el Go2 visto desde arriba con el marcador ArUco sobre el torso"></div>
+          <figcaption>Lo que entrega el sensor ya montado</figcaption>
+        </figure>
+        <table class="dtable sensor">
+          <thead><tr><th>Idealización de Gazebo</th><th>Qué hubo que hacer</th></tr></thead>
           <tbody>
-            <tr><td>Referencia</td><td class="num">ground truth exacto</td><td>no hay GT directo</td></tr>
-            <tr><td>Cámara</td><td class="num">ideal, calibrada</td><td>webcam en trípode</td></tr>
-            <tr><td>Comando</td><td class="num">se ejecuta perfecto</td><td>API + control interno</td></tr>
+            <tr>
+              <td>Sensor monocular definido por el modelo</td>
+              <td>Cámara estéreo recortada a un solo ojo, el izquierdo</td>
+            </tr>
+            <tr class="hi">
+              <td>Intrínsecos exactos por definición</td>
+              <td>Tablero de calibración: 20 imágenes, <strong class="fig">RMS 0,221 px</strong></td>
+            </tr>
+            <tr>
+              <td>Cámara perfectamente rígida</td>
+              <td>Trípode sobre la escena: aproximadamente fija, no rígida</td>
+            </tr>
+            <tr>
+              <td>Marcador solidario al torso por el modelo</td>
+              <td>ArUco impreso y adherido físicamente sobre el lomo</td>
+            </tr>
           </tbody>
         </table>
-        <div class="simreal">
-          <figure>
-            <div class="media"><img src="assets/img/sim_setup_gazebo.png" alt="El Go2 con el marcador ArUco dentro de Gazebo"></div>
-            <figcaption>El montaje en Gazebo</figcaption>
-          </figure>
-          <div class="simreal-arrow" aria-hidden="true">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg>
-          </div>
-          <figure>
-            <div class="media"><img src="assets/img/lab_go2_aruco_tripode_a.jpg" alt="Montaje del laboratorio con Go2, ArUco y trípode"></div>
-            <figcaption>Y en el laboratorio</figcaption>
-          </figure>
+      </div>
+      <p class="conclusion">
+        Por eso el caso de laboratorio se presenta como aproximación controlada
+        del escenario de cámara fija, y no como su réplica.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="2" data-title="Cambia la referencia, cambia la pregunta">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: criterio de evaluación</span></span></div>
+      <h2 class="head">Sin ground truth no se mide error contra la verdad, sino coherencia a lo largo de la cadena</h2>
+    </header>
+    <div class="s-body">
+      <!-- La diferencia no es de precisión sino de forma: en simulación hay dos
+           términos y una verdad externa contra la cual restar; en laboratorio hay
+           tres señales encadenadas y cada eslabón se valida por separado. De ahí
+           salen las metricas del bloque de resultados. -->
+      <div class="criterio">
+        <span class="rl-stub sim">Simulación<small>hay verdad externa</small></span>
+        <div class="cr-flow">
+          <span class="cr-t">estimación visual</span>
+          <span class="cr-op">contra</span>
+          <span class="cr-t gt">pose verdadera<small>cadena de marcos del simulador</small></span>
         </div>
+        <span class="cr-out sim">&Delta;roll · &Delta;pitch · &Delta;Z</span>
+
+        <span class="rl-stub lab">Laboratorio<small>sólo señales propias</small></span>
+        <div class="cr-flow">
+          <span class="cr-t">consigna</span>
+          <span class="cr-link"><small>nuestro software</small></span>
+          <span class="cr-t">comando enviado</span>
+          <span class="cr-link"><small>planta física</small></span>
+          <span class="cr-t">estado interno</span>
+        </div>
+        <span class="cr-out lab">correlación <em>r</em> · ganancia <em>g</em> · retardo <em>&tau;</em></span>
       </div>
-      <div class="row mt-m" style="justify-content:center;">
-        <span class="pill coral">Movimiento y visión se evalúan por separado, para no saturar el cómputo</span>
-      </div>
+      <p class="conclusion">
+        En el laboratorio movimiento y visión se evalúan por separado. Es una
+        decisión declarada, no una omisión: si las dos cosas corren juntas y algo
+        falla, no se sabe si falló la percepción o la dinámica.
+      </p>
     </div>
   </div>
 </section>
