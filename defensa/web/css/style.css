@@ -1044,7 +1044,9 @@ ul.marks li.warn::before{ background: var(--warn); }
   width: 100%;
 }
 
-/* Rótulo de fila: cabeza de tabla, no leyenda de gráfico. */
+/* Rótulo de fila: cabeza de tabla, no leyenda de gráfico. El renglón chico
+   lleva el stack de cada montaje, que es dato de contexto y no compite con los
+   rótulos. */
 .rl-stub {
   align-self: center;
   padding-right: clamp(.75rem, 1.7vw, 1.25rem);
@@ -1053,6 +1055,15 @@ ul.marks li.warn::before{ background: var(--warn); }
   font-size: 1rem;
   font-weight: 700;
   white-space: nowrap;
+}
+.rl-stub small {
+  display: block;
+  margin-top: .15rem;
+  font-variant-caps: normal;
+  letter-spacing: 0;
+  font-size: .75rem;
+  font-weight: 500;
+  color: var(--ink-faint);
 }
 .rl-stub.sim { color: var(--sea); }
 .rl-stub.lab { color: var(--coral); padding-top: var(--drop); }
