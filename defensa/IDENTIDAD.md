@@ -219,47 +219,90 @@ de proyección.
 
 ---
 
-## 5. Tipos de lámina
+## 5. Arquetipos de lámina
 
-| Tipo | Cuándo | Con qué |
-|---|---|---|
-| Portada | una | `.cover-*`, franja de mar a sangre |
-| Concepto ilustrado | contexto para público general | SVG propio, `.escenas` |
-| Par comparativo | sim contra lab, dos configuraciones | `.split`, `.simreal`, `.scenerow` |
-| Diagrama de proceso | pipeline, cadena, alcance | `.cadena`, `.flowline`, `.pipeline` |
-| Matemática | metodología | `.eq` + tabla de símbolos + cita al informe |
-| Resultado con figura | resultados | `.res-fig` + epígrafe de lectura |
-| Tabla | campañas, trazabilidad | `table` |
-| Decisión | comparar opciones no equivalentes | `.decision` |
-| Backup | respuestas a preguntas previsibles | igual que las anteriores, después de S34 |
-| Borrador | versiones guardadas y cambios temporales | `data-draft="N"`, al final de todo, tecla `D` |
+**Esta lista es cerrada.** Antes de escribir una clase de CSS nueva hay que poder
+decir por qué la lámina no entra en ninguno de estos seis. La medición del
+07-08-2026 explica por qué el inventario abierto que había acá no alcanzó: 165
+clases de componente, **115 usadas en una sola lámina**, y 21 estructuras de
+cuerpo distintas para 34 láminas. O sea que casi cada lámina se diseñó de cero.
+Eso es exactamente lo que se lee como "muchos estilos y cosas distintas".
 
-**Una lámina, una idea.** Si hacen falta dos titulares para describirla, son dos
-láminas. Y antes de dar por floja una lámina, revisar si su versión sustanciosa
-**ya existe en el backup**: pasó dos veces (la matemática de metodología y los
-histogramas de error).
+| | Arquetipo | Para qué | Estructura |
+|---|---|---|---|
+| **A** | Media y argumento | una figura y la afirmación que sostiene | `.split` |
+| **B** | Matemática | la ecuación es el ancla de la lámina | `.eq` + clave de símbolos + lectura + cita |
+| **C** | Par | dos cosas del mismo rango, comparables | dos `figure` de igual caja |
+| **D** | Serie | tres o más ítems del mismo rango | una sola grilla, ver la regla de abajo |
+| **E** | Resultado | figura de distribución con su lectura | cifra + figura + epígrafe |
+| **F** | Diagrama propio | un argumento que ninguna de las otras cinco puede sostener | a medida |
+
+Portada, backup y borrador quedan fuera: no son arquetipos, son estados.
+
+### 5.1 La regla de la serie (D)
+
+Es el arquetipo con más riesgo de leerse como plantilla, porque una grilla de
+tarjetas iguales es la forma por defecto de cualquier generador. Antes de usarlo:
+
+1. **¿Los ítems son intercambiables?** Si uno de ellos es la conclusión, o si hay
+   un orden que importa, no son una serie. Es una D falsa.
+2. **¿La grilla dice algo que una lista no diría?** Si la respuesta es que "queda
+   más prolijo", va lista.
+3. **Sin numerar.** Un `01 / 02 / 03` sólo se justifica si el contenido *es* una
+   secuencia y el lector necesita el orden. Casi nunca lo es.
+
+Hoy hay siete implementaciones distintas de este mismo arquetipo. Tienen que
+converger a una.
+
+### 5.2 El presupuesto de diagramas propios (F)
+
+**Como mucho cuatro en todo el deck.** Es la regla más importante de esta sección.
+
+Un diagrama a medida es donde se gasta la audacia: el riel de arquitectura y las
+dos filas del criterio de evaluación funcionan porque su forma *es* el argumento.
+Pero si hay ocho, ninguno se destaca y el deck vuelve a parecer un muestrario.
+Cuando entra un F nuevo, alguno de los que están tiene que salir o degradarse a
+A-E.
+
+Para calificar como F hay que contestar que **no** a las dos: ¿lo diría igual de
+bien una tabla? ¿lo diría igual de bien un par?
 
 ---
 
-## 6. Componentes
+## 6. Ritmo vertical
 
-Inventario de lo que ya existe, para no reinventar. Cada uno tiene su bloque
-comentado en `css/style.css`.
+**El cuerpo tiene que llegar al 80% de su alto.** Medido el 07-08-2026 a 1280x720:
+la mediana está en 96%, pero hay **13 láminas de 34 por debajo del 80%**, y las
+peores en 45-48%. Ese es el "queda mucho espacio vacío".
 
-| Clase | Qué es | Cuándo NO usarlo |
-|---|---|---|
-| `.escenas` | tres ilustraciones con título y bajada corta | si las tres cosas no son comparables entre sí |
-| `.decision` | opciones descartadas en gris, elegida con barra coral | si las opciones sí son equivalentes |
-| `.cadena` | proceso completo con el tramo propio marcado en el riel | si no hay un proceso lineal real detrás |
-| `.split` | media a un lado, texto al otro | si la imagen no aporta información |
-| `.eq` | ecuación en SVG pre-renderizado | nunca escribir la fórmula a mano en HTML |
-| `.pill` | etiqueta de dato (ROS2, Gazebo, una cifra) | como remate de lámina o como rótulo de rango |
-| `.cards` | grilla de tarjetas | cuando los ítems no son equivalentes, que es casi siempre |
-| `.hero-num` | cifra grande | en resultados |
+Cuando una lámina no llega, la salida **no** es agregar relleno ni estirar
+interlineados. En orden:
 
-Sobre `.cards`: queda en uso en cinco láminas, pero **es el componente con más
-riesgo de leerse como plantilla**. Antes de usarlo, preguntarse si los ítems son
-realmente intercambiables. Si uno de ellos es la conclusión, no lo son.
+1. Agrandar la media hasta donde el arquetipo lo permita.
+2. Si sigue sin llegar, la lámina tiene poco contenido: se funde con la vecina.
+3. Si no se puede fundir, se acepta y se deja anotado. Una lámina aireada a
+   propósito es legítima; trece no.
+
+Dos cosas ya resueltas que conviene no volver a romper:
+
+- `.s-body` separa del header con `margin-top`, **nunca `padding-top`**. Con
+  padding, el `justify-content:center` reparte sólo el alto restante y todo el
+  deck queda 18px más abajo que el centro de su caja. Estuvo así hasta el
+  07-08-2026.
+- Un elemento con `margin-top` grande al final del cuerpo (típicamente
+  `.conclusion`) mete ese margen adentro de la línea que se centra, así que el
+  contenido visible sube. Si la lámina se ve descolgada hacia arriba, es esto.
+
+### 6.1 Cuándo se permite una clase nueva
+
+Una clase nueva necesita **una de estas dos**:
+
+- la van a usar **dos láminas o más**, o
+- está adentro de un diagrama F, dentro del presupuesto.
+
+Si no cumple ninguna, la lámina se rehace sobre un arquetipo. Y un `style=` en el
+HTML no es una excepción a esto: es la misma deuda escrita en otro lado. Hoy hay
+42 en 19 láminas.
 
 ---
 
@@ -301,6 +344,9 @@ es el proceso real con el tramo propio marcado.
 
 ## 8. Antes de dar una lámina por cerrada
 
+- [ ] La lámina es uno de los **seis arquetipos** (§5), o justifica por qué no.
+- [ ] El cuerpo llega al **80%** de su alto (§6).
+- [ ] No agregó clases de un solo uso fuera de un diagrama F (§6.1).
 - [ ] El titular nombra el contenido y no lo anuncia.
 - [ ] Hay como mucho un elemento coral.
 - [ ] Ningún em dash (`grep -c '—'` da 0).

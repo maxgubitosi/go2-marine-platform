@@ -30,6 +30,43 @@ B9 ahora dice que se ensayó a 0,10 Hz porque a menor frecuencia los episodios d
 
 ---
 
+### 2b. Migrar las láminas a los seis arquetipos
+
+**Medido el 07-08-2026.** El deck tiene 165 clases de componente, **115 usadas en
+una sola lámina**, 21 estructuras de cuerpo distintas para 34 láminas y 42
+`style=` sueltos en 19 láminas. `IDENTIDAD.md` §5 y §6 ya fijan el sistema al que
+hay que llevarlo. Falta ejecutarlo.
+
+Orden por rédito, de mayor a menor:
+
+**1. Unificar la serie (D).** Siete implementaciones del mismo arquetipo:
+`.escenas`, `.antecedentes`, `.condiciones`, `.cards`, `.obst`, `.chain`,
+`.roadmap`. Es donde más se nota la variación y es el arquetipo con más riesgo de
+plantilla. Converge a uno solo.
+
+**2. Unificar el par (C).** Cinco implementaciones: `.dos-mundos`, `.escenarios`,
+`.simreal`, `.imgrow`, y dos láminas con `figure + figure` a mano.
+
+**3. Unificar la matemática (B).** Cinco láminas con cuatro estructuras
+distintas: `.postural`, `.eval-hero`, `.modelo-mar`, y la de patrón articular.
+
+**4. Recortar los diagramas propios (F) a cuatro.** Hoy hay más. Candidatos a
+quedarse por orden de fuerza: el riel de arquitectura, el criterio de evaluación,
+la cuenta de grados de libertad. El resto degrada a A-E.
+
+**5. Las 13 láminas por debajo del 80% de llenado.** Las peores: *Lectura
+conjunta* (45%), *Arquitectura* (48%), *Trabajo futuro* (53%), *Estado del arte*
+(58%), *¿Por qué no probar directo en el mar?* (59%).
+
+**6. Los 42 `style=` inline.** Concentrados en *Lectura conjunta* (8), *Alcance y
+limitaciones* (5), *El torso sigue la consigna* (4) y *Objetivo y dos preguntas*
+(4).
+
+**Ojo:** esto toca 34 láminas y varias ya están aprobadas por contenido. Migrar
+no puede cambiar lo que cada lámina dice, sólo con qué se dibuja.
+
+---
+
 ## 🟡 Media — material y producción
 
 ### 3. Video del robot en trote / moviéndose "trabado"
