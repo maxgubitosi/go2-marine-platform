@@ -89,10 +89,10 @@
     <div class="s-body">
     <!-- Las tres misiones van ilustradas, no en tarjetas: el barco aparece en
          las tres escenas, que es justamente lo que dice el titular. -->
-    <div class="escenas">
+    <div class="serie cols figs">
 
-      <figure class="escena">
-        <div class="escena-art">
+      <div class="serie-item">
+        <div class="serie-fig">
           <svg viewBox="0 0 360 240" role="img" aria-label="Dron barriendo el mar con un haz de búsqueda sobre una balsa, con el barco al fondo">
             <defs>
               <linearGradient id="e1sky" x1="0" y1="0" x2="0" y2="1">
@@ -131,14 +131,14 @@
             </g>
           </svg>
         </div>
-        <figcaption>
+        <div class="serie-txt">
           <h3>Búsqueda y rescate</h3>
           <p>Barrer zonas costeras y de mar abierto donde cada minuto cuenta.</p>
-        </figcaption>
-      </figure>
+        </div>
+      </div>
 
-      <figure class="escena">
-        <div class="escena-art">
+      <div class="serie-item">
+        <div class="serie-fig">
           <svg viewBox="0 0 360 240" role="img" aria-label="Dron inspeccionando una plataforma marina fija, con el barco de apoyo al costado">
             <defs>
               <linearGradient id="e2sky" x1="0" y1="0" x2="0" y2="1">
@@ -179,14 +179,14 @@
             </g>
           </svg>
         </div>
-        <figcaption>
+        <div class="serie-txt">
           <h3>Inspección offshore</h3>
           <p>Revisar plataformas y estructuras sin exponer operarios.</p>
-        </figcaption>
-      </figure>
+        </div>
+      </div>
 
-      <figure class="escena">
-        <div class="escena-art">
+      <div class="serie-item">
+        <div class="serie-fig">
           <svg viewBox="0 0 360 240" role="img" aria-label="Dron recorriendo un patrón de vigilancia sobre el mar y volviendo al barco">
             <defs>
               <linearGradient id="e3sky" x1="0" y1="0" x2="0" y2="1">
@@ -230,11 +230,11 @@
             </g>
           </svg>
         </div>
-        <figcaption>
+        <div class="serie-txt">
           <h3>Monitoreo marítimo</h3>
           <p>Vuelos recurrentes de vigilancia ambiental y de tráfico.</p>
-        </figcaption>
-      </figure>
+        </div>
+      </div>
 
     </div>
     </div><!-- /s-body -->
@@ -387,24 +387,24 @@
     <!-- Dos por dos, con la cifra grande en el cian de la sección haciendo de
          color. Panel liso, sin borde ni sombra: la caja blanca con sombra y el
          iconito en un cuadradito es el patrón de plantilla que el deck evita. -->
-    <ol class="condiciones">
-      <li>
-        <span class="n">1</span>
-        <span class="txt"><b>Repetir</b> la misma condición</span>
-      </li>
-      <li>
-        <span class="n">2</span>
-        <span class="txt"><b>Medir</b> contra una referencia conocida</span>
-      </li>
-      <li>
-        <span class="n">3</span>
-        <span class="txt"><b>Fallar</b> sin perder el vehículo</span>
-      </li>
-      <li>
-        <span class="n">4</span>
-        <span class="txt"><b>Iterar</b> en minutos, no en semanas</span>
-      </li>
-    </ol>
+    <div class="serie filas grande">
+        <div class="serie-item">
+          <span class="serie-k">Repetir</span>
+          <div class="serie-txt"><p>la misma condición</p></div>
+        </div>
+        <div class="serie-item">
+          <span class="serie-k">Medir</span>
+          <div class="serie-txt"><p>contra una referencia conocida</p></div>
+        </div>
+        <div class="serie-item">
+          <span class="serie-k">Fallar</span>
+          <div class="serie-txt"><p>sin perder el vehículo</p></div>
+        </div>
+        <div class="serie-item">
+          <span class="serie-k">Iterar</span>
+          <div class="serie-txt"><p>en minutos, no en semanas</p></div>
+        </div>
+      </div>
     </div><!-- /s-body -->
   </div>
 </section>
@@ -423,8 +423,9 @@
     <div class="s-body">
     <!-- El año hace de marca: es dato, no adorno, y muestra que la validación
          sustitutiva no es una idea nuestra sino una línea establecida. -->
-    <div class="antecedentes">
-      <svg class="ant-fig" viewBox="0 0 120 84" role="img" aria-label="Plataforma de seis grados de libertad sobre actuadores">
+    <div class="serie filas">
+      <div class="serie-item">
+        <div class="serie-fig"><svg viewBox="0 0 120 84" role="img" aria-label="Plataforma de seis grados de libertad sobre actuadores">
           <rect x="14" y="18" width="92" height="8" rx="2.5" fill="#26506b"/>
           <g stroke="#7b96ab" stroke-width="3.4" stroke-linecap="round">
             <path d="M26 27 L18 58 M42 27 L34 58"/>
@@ -433,12 +434,13 @@
           </g>
           <rect x="8" y="58" width="104" height="9" rx="2.5" fill="#0f2a43"/>
           <path d="M60 18 V8 M60 8 h-9 M60 8 h9" stroke="#0e6e8c" stroke-width="2.6" fill="none" stroke-linecap="round"/>
-        </svg>
-      <span class="anio">2014</span>
-      <p>Emula la cubierta con una plataforma física de seis grados de libertad, y valida ahí antes de salir al mar.
-        <span class="ref">Sánchez-López et al. · Journal of Intelligent and Robotic Systems</span></p>
-
-      <svg class="ant-fig" viewBox="0 0 120 84" role="img" aria-label="Dron sobre la cubierta de un barco inclinada por el oleaje">
+        </svg></div>
+        <span class="serie-k">2014</span>
+        <div class="serie-txt"><p>Emula la cubierta con una plataforma física de seis grados de libertad, y valida ahí antes de salir al mar.
+        <span class="ref">Sánchez-López et al. · Journal of Intelligent and Robotic Systems</span></p></div>
+      </div>
+      <div class="serie-item">
+        <div class="serie-fig"><svg viewBox="0 0 120 84" role="img" aria-label="Dron sobre la cubierta de un barco inclinada por el oleaje">
           <g transform="translate(66 44) rotate(-11)">
             <path d="M-30 -4 L30 -4 L34 -1 Q31 8 22 9 L-22 9 Q-29 9 -30 -4 Z" fill="#26506b"/>
             <rect x="-30" y="-8" width="64" height="4" rx="1.5" fill="#0f2a43"/>
@@ -452,12 +454,13 @@
           </g>
           <path d="M0 60 q 15 -7 30 0 t 30 0 t 30 0 t 30 0 V84 H0 Z" fill="#3fa3c0" opacity=".85"/>
           <path d="M0 70 q 15 7 30 0 t 30 0 t 30 0 t 30 0 V84 H0 Z" fill="#1d6f8c" opacity=".7"/>
-        </svg>
-      <span class="anio">2022</span>
-      <p>Aterriza sobre una cubierta de barco que oscila por oleaje, compensando el movimiento desde la imagen.
-        <span class="ref">Cho et al. · Aerospace Science and Technology</span></p>
-
-      <svg class="ant-fig" viewBox="0 0 120 84" role="img" aria-label="Escenario simulado en pantalla: catamarán en un entorno de simulación">
+        </svg></div>
+        <span class="serie-k">2022</span>
+        <div class="serie-txt"><p>Aterriza sobre una cubierta de barco que oscila por oleaje, compensando el movimiento desde la imagen.
+        <span class="ref">Cho et al. · Aerospace Science and Technology</span></p></div>
+      </div>
+      <div class="serie-item">
+        <div class="serie-fig"><svg viewBox="0 0 120 84" role="img" aria-label="Escenario simulado en pantalla: catamarán en un entorno de simulación">
           <rect x="10" y="10" width="100" height="58" rx="5" fill="#d7ebf1" stroke="#0f2a43" stroke-width="3"/>
           <path d="M52 68 h16 v6 h-16 Z" fill="#0f2a43"/>
           <rect x="40" y="74" width="40" height="4" rx="2" fill="#0f2a43"/>
@@ -467,10 +470,11 @@
             <path d="M-22 4 h-6 M22 4 h6" stroke="#26506b" stroke-width="3" stroke-linecap="round"/>
           </g>
           <path d="M16 52 q 11 -5 22 0 t 22 0 t 22 0 t 22 0" stroke="#3fa3c0" stroke-width="3" fill="none"/>
-        </svg>
-      <span class="anio">2022</span>
-      <p>Valida en <i>software-in-the-loop</i> con Gazebo y ROS2, sobre un catamarán.
-        <span class="ref">Delbene et al. · Sensors</span></p>
+        </svg></div>
+        <span class="serie-k">2022</span>
+        <div class="serie-txt"><p>Valida en <i>software-in-the-loop</i> con Gazebo y ROS2, sobre un catamarán.
+        <span class="ref">Delbene et al. · Sensors</span></p></div>
+      </div>
     </div>
     </div><!-- /s-body -->
   </div>
@@ -547,7 +551,7 @@
 <section class="slide" data-block="2" data-title="Arquitectura: simulación y laboratorio">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: arquitectura</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el riel completo</span></span></div>
       <h2 class="head">Una sola arquitectura: en el laboratorio se sustituyen tres de las seis etapas</h2>
     </header>
     <div class="s-body">
@@ -611,7 +615,7 @@
 <section class="slide" data-block="2" data-title="Modelo marino reducido">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: movimiento</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: consigna marina</span></span></div>
       <h2 class="head">Modelo reducido: la cubierta sigue la pendiente local del oleaje</h2>
     </header>
     <div class="s-body">
@@ -867,7 +871,7 @@
 <section class="slide" data-block="2" data-title="Consigna sinusoidal y parámetros del ensayo">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: consigna</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: consigna marina</span></span></div>
       <h2 class="head">Consigna sinusoidal: parámetros del ensayo de referencia</h2>
     </header>
     <div class="s-body">
@@ -1025,7 +1029,7 @@
 <section class="slide" data-block="2" data-title="Control postural: restricción de contacto">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: movimiento del robot</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: postura del torso</span></span></div>
       <h2 class="head">Los cuatro apoyos fijan doce de los <span class="accent">dieciocho</span> grados de libertad</h2>
     </header>
     <div class="s-body">
@@ -1266,7 +1270,7 @@
 <section class="slide" data-block="2" data-title="Del torso a las articulaciones">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: patrón articular</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: postura del torso</span></span></div>
       <h2 class="head">Los pies no se mueven: cambia la configuración articular que sostiene el torso</h2>
     </header>
     <div class="s-body">
@@ -1344,7 +1348,7 @@
 <section class="slide" data-block="2" data-title="Escenarios de observación">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: escenarios</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: cámara</span></span></div>
       <h2 class="head">Dos configuraciones de observación: cámara fija y cámara en vuelo</h2>
     </header>
     <div class="s-body">
@@ -1367,7 +1371,7 @@
 <section class="slide" data-block="2" data-title="Estimación visual: ArUco + PnP">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: percepción</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: ArUco y PnP</span></span></div>
       <h2 class="head">Pose por <span class="accent">PnP</span>: cuatro esquinas de geometría conocida y una cámara calibrada</h2>
     </header>
     <div class="s-body">
@@ -1566,7 +1570,7 @@
 <section class="slide" data-block="2" data-title="Registro y evaluación offline">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: evaluación</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: registro y evaluación</span></span></div>
       <h2 class="head">El ground truth es una cadena de transformaciones reconstruida del simulador</h2>
     </header>
     <div class="s-body">
@@ -1655,7 +1659,7 @@
 <section class="slide" data-block="2" data-title="Implementación en ROS2">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: implementación</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: todas las etapas</span></span></div>
       <h2 class="head">Dos paquetes propios en ROS2, y un detector que cambia de cámara por parámetro</h2>
     </header>
     <div class="s-body">
@@ -1710,7 +1714,7 @@
 <section class="slide" data-block="2" data-title="El sensor del laboratorio">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el sensor real</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: al laboratorio</span></span></div>
       <h2 class="head">De cámara ideal a instrumento: recorte a monocular, calibración y montaje</h2>
     </header>
     <div class="s-body">
@@ -1755,7 +1759,7 @@
 <section class="slide" data-block="2" data-title="Cambia la referencia, cambia la pregunta">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: criterio de evaluación</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: al laboratorio</span></span></div>
       <h2 class="head">Sin ground truth no se mide error contra la verdad, sino coherencia a lo largo de la cadena</h2>
     </header>
     <div class="s-body">
@@ -1931,22 +1935,22 @@
       <h2 class="head">Alcance y limitaciones de la validación en simulación</h2>
     </header>
     <div class="s-body">
-      <div class="cards two">
-        <div class="card" style="border-top:4px solid var(--ok);">
-          <span class="pill" style="align-self:flex-start;background:#d9f0e4;color:#1f7a52;border-color:#b6e2cc;">Lo que funciona</span>
-          <ul class="marks mt-s">
+      <div class="serie cols">
+        <div class="serie-item ok">
+          <span class="serie-k">Lo que funciona</span>
+          <div class="serie-txt"><ul class="marks">
             <li class="ok">El pipeline sigue la dinámica global del movimiento</li>
             <li class="ok">Medible contra una referencia reconstruible</li>
             <li class="ok">Repetible entre corridas equivalentes</li>
-          </ul>
+          </ul></div>
         </div>
-        <div class="card" style="border-top:4px solid var(--warn);">
-          <span class="pill" style="align-self:flex-start;background:#f6e8d3;color:#a06a1f;border-color:#ecd5ac;">Los límites</span>
-          <ul class="marks mt-s">
+        <div class="serie-item warn">
+          <span class="serie-k">Los límites</span>
+          <div class="serie-txt"><ul class="marks">
             <li class="warn">El <strong>heave</strong> es el eje posicional más sensible</li>
             <li class="warn">Sesgo sistemático en Y: limitación geométrica, no movimiento real</li>
             <li class="warn">Parte del desvío viene de desfases temporales no compensados</li>
-          </ul>
+          </ul></div>
         </div>
       </div>
       <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
@@ -1962,42 +1966,23 @@
       <h2 class="head">Tres obstáculos del pasaje al robot real, y qué se hizo con cada uno</h2>
     </header>
     <div class="s-body">
-      <div class="obst">
-        <div class="obst-head"><span class="a">Con qué chocamos</span><span></span><span class="b">Cómo lo resolvimos</span></div>
-
-        <div class="orow">
-          <div class="oprob">
-            <h3>Conectarnos al robot</h3>
-            <p>Salir de Gazebo cambió por completo la interfaz de control disponible.</p>
-          </div>
-          <div class="oarrow">→</div>
-          <div class="ofix">
-            <p>Refactor de la capa de comunicación: la <strong>consigna de oleaje se conservó</strong>, el camino hasta las patas se reescribió.</p>
-          </div>
-        </div>
-
-        <div class="orow">
-          <div class="oprob">
-            <h3>El guardrail de marcha</h3>
-            <p>Cada tanto el Go2 <strong>trota en el lugar</strong> para reasegurar su estabilidad, y abandona la postura pedida. Es un reflejo del control interno, no de nuestro código.</p>
-          </div>
-          <div class="oarrow">→</div>
-          <div class="ofix">
-            <p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina: lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p>
-          </div>
-        </div>
-
-        <div class="orow key">
-          <div class="oprob">
-            <h3>Sin acceso al firmware</h3>
-            <p>El robot se mueve <em>trabado</em>: sigue la forma de la consigna, pero no con la amplitud ni en el instante que pedimos.</p>
-          </div>
-          <div class="oarrow">→</div>
-          <div class="ofix">
-            <p>No podíamos corregir la dinámica: <strong>la medimos</strong>. De ahí salen el retardo τ y la ganancia g.</p>
-          </div>
-        </div>
-      </div>
+      <table class="dtable pares">
+        <thead><tr><th>Con qué chocamos</th><th>Cómo lo resolvimos</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Conectarnos al robot</b><p>Salir de Gazebo cambió por completo la interfaz de control disponible.</p></td>
+            <td><p>Refactor de la capa de comunicación: la <strong>consigna de oleaje se conservó</strong>, el camino hasta las patas se reescribió.</p></td>
+          </tr>
+          <tr>
+            <td><b>El guardrail de marcha</b><p>Cada tanto el Go2 <strong>trota en el lugar</strong> para reasegurar su estabilidad, y abandona la postura pedida. Es un reflejo del control interno, no de nuestro código.</p></td>
+            <td><p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina: lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p></td>
+          </tr>
+          <tr class="hi">
+            <td><b>Sin acceso al firmware</b><p>El robot se mueve <em>trabado</em>: sigue la forma de la consigna, pero no con la amplitud ni en el instante que pedimos.</p></td>
+            <td><p>No podíamos corregir la dinámica: <strong>la medimos</strong>. De ahí salen el retardo τ y la ganancia g.</p></td>
+          </tr>
+        </tbody>
+      </table>
 
       <div class="row mt-m" style="justify-content:center;">
       </div>
@@ -2266,16 +2251,14 @@
       <h2 class="head">Lectura conjunta de simulación y laboratorio</h2>
     </header>
     <div class="s-body">
-      <div class="cards two">
-        <div class="card" style="border-top:4px solid var(--sea);">
-          <span class="pill" style="align-self:flex-start;">Simulación · percepción</span>
-          <p style="font-size:1.05rem;color:var(--ink);">Si el robot se moviera perfecto, ¿mide bien la visión?</p>
-          <div class="row wrap" style="gap:.5rem;"><span class="pill">5,8 cm fija</span><span class="pill">2–3° · 2–2,4 cm dron</span></div>
+      <div class="serie cols">
+        <div class="serie-item sim">
+          <span class="serie-k">Simulación · percepción</span>
+          <div class="serie-txt"><p>Si el robot se moviera perfecto, ¿mide bien la visión?</p><div class="row wrap"><span class="pill">5,8 cm fija</span><span class="pill">2–3° · 2–2,4 cm dron</span></div></div>
         </div>
-        <div class="card" style="border-top:4px solid var(--coral);">
-          <span class="pill coral" style="align-self:flex-start;">Laboratorio · dinámica</span>
-          <p style="font-size:1.05rem;color:var(--ink);">¿El robot real sigue la consigna de movimiento?</p>
-          <div class="row wrap" style="gap:.5rem;"><span class="pill coral">r &gt; 0,95</span><span class="pill coral">τ, g medibles</span></div>
+        <div class="serie-item lab">
+          <span class="serie-k">Laboratorio · dinámica</span>
+          <div class="serie-txt"><p>¿El robot real sigue la consigna de movimiento?</p><div class="row wrap"><span class="pill coral">r &gt; 0,95</span><span class="pill coral">τ, g medibles</span></div></div>
         </div>
       </div>
       <div class="missing-piece">
@@ -2320,22 +2303,22 @@
       <h2 class="head">Trabajo futuro: del entorno al aterrizaje</h2>
     </header>
     <div class="s-body">
-      <div class="roadmap">
-        <div class="rstep next">
-          <div class="num">1</div>
-          <div class="rbody"><h3>Validación conjunta</h3><p>Visión activa <em>mientras</em> el robot se mueve, en una misma corrida con registro sincronizado.</p></div>
+      <div class="serie filas">
+        <div class="serie-item">
+          <span class="serie-k">1</span>
+          <div class="serie-txt"><h3>Validación conjunta</h3><p>Visión activa <em>mientras</em> el robot se mueve, en una misma corrida con registro sincronizado.</p></div>
         </div>
-        <div class="rstep">
-          <div class="num">2</div>
-          <div class="rbody"><h3>Ground truth externo</h3><p>OptiTrack en el laboratorio para una referencia de pose independiente del robot.</p></div>
+        <div class="serie-item">
+          <span class="serie-k">2</span>
+          <div class="serie-txt"><h3>Ground truth externo</h3><p>OptiTrack en el laboratorio para una referencia de pose independiente del robot.</p></div>
         </div>
-        <div class="rstep">
-          <div class="num">3</div>
-          <div class="rbody"><h3>Movimiento más rico</h3><p>Heave dinámico, yaw / surge / sway y oleaje irregular calibrado.</p></div>
+        <div class="serie-item">
+          <span class="serie-k">3</span>
+          <div class="serie-txt"><h3>Movimiento más rico</h3><p>Heave dinámico, yaw / surge / sway y oleaje irregular calibrado.</p></div>
         </div>
-        <div class="rstep">
-          <div class="num">4</div>
-          <div class="rbody"><h3>Aproximaciones de aterrizaje</h3><p>Que un dron observe el Go2, estime su pose y ensaye aproximaciones repetibles.</p></div>
+        <div class="serie-item">
+          <span class="serie-k">4</span>
+          <div class="serie-txt"><h3>Aproximaciones de aterrizaje</h3><p>Que un dron observe el Go2, estime su pose y ensaye aproximaciones repetibles.</p></div>
         </div>
       </div>
     </div>
@@ -2461,14 +2444,14 @@
       <h2 class="head">El sesgo sistemático en Y</h2>
     </header>
     <div class="s-body">
-      <div class="cards two">
-        <div class="card">
-          <h3>Qué se observa</h3>
-          <p>En el escenario con dron, un corrimiento constante en el eje Y que no corresponde a movimiento real de la plataforma.</p>
+      <div class="serie cols">
+        <div class="serie-item sim">
+          <span class="serie-k">Qué se observa</span>
+          <div class="serie-txt"><p>En el escenario con dron, un corrimiento constante en el eje Y que no corresponde a movimiento real de la plataforma.</p></div>
         </div>
-        <div class="card accent">
-          <h3>Interpretación</h3>
-          <p>Limitación de la cadena geométrica de estimación y evaluación (calibración + transformación), no una falla del movimiento. Candidato directo de refinamiento.</p>
+        <div class="serie-item lab">
+          <span class="serie-k">Interpretación</span>
+          <div class="serie-txt"><p>Limitación de la cadena geométrica de estimación y evaluación (calibración + transformación), no una falla del movimiento. Candidato directo de refinamiento.</p></div>
         </div>
       </div>
     </div>
@@ -2811,16 +2794,14 @@
       </p>
     </header>
     <div class="s-body">
-    <div class="cards two">
-      <div class="card" style="border-top:4px solid var(--sea);">
-        <span class="pill" style="align-self:flex-start;">Simulación</span>
-        <h3>¿El pipeline visual mide bien la pose?</h3>
-        <p>Pregunta de <strong>percepción</strong>. Con ground truth reconstruible del simulador como referencia.</p>
+    <div class="serie cols">
+      <div class="serie-item sim">
+        <span class="serie-k">Simulación</span>
+        <div class="serie-txt"><h3>¿El pipeline visual mide bien la pose?</h3><p>Pregunta de <strong>percepción</strong>. Con ground truth reconstruible del simulador como referencia.</p></div>
       </div>
-      <div class="card" style="border-top:4px solid var(--coral);">
-        <span class="pill coral" style="align-self:flex-start;">Laboratorio</span>
-        <h3>¿El robot real reproduce el movimiento?</h3>
-        <p>Pregunta de <strong>dinámica</strong>. Comparando consigna, comando enviado y respuesta física del Go2.</p>
+      <div class="serie-item lab">
+        <span class="serie-k">Laboratorio</span>
+        <div class="serie-txt"><h3>¿El robot real reproduce el movimiento?</h3><p>Pregunta de <strong>dinámica</strong>. Comparando consigna, comando enviado y respuesta física del Go2.</p></div>
       </div>
     </div>
     </div><!-- /s-body -->

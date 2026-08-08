@@ -251,8 +251,25 @@ tarjetas iguales es la forma por defecto de cualquier generador. Antes de usarlo
 3. **Sin numerar.** Un `01 / 02 / 03` sólo se justifica si el contenido *es* una
    secuencia y el lector necesita el orden. Casi nunca lo es.
 
-Hoy hay siete implementaciones distintas de este mismo arquetipo. Tienen que
-converger a una.
+Está resuelto con **un solo componente**, `.serie`, y cuatro modificadores que
+elige el contenido y no el gusto:
+
+| Modificador | Cuándo |
+|---|---|
+| `.cols` | ítems en columnas. Lleva filete superior en el color de la sección |
+| `.filas` | ítems apilados, con la marca a la izquierda. Reparte el alto |
+| `.figs` | la serie lleva dibujos: la altura la fija el dibujo, no se estira |
+| `.grande` | ítems de un renglón: se agranda el texto en vez de estirar la caja |
+
+Dentro de cada ítem: `.serie-fig` (opcional), `.serie-k` para la marca propia del
+ítem (un año, un orden real, el término que lo nombra) y `.serie-txt`. La
+codificación semántica va por clase en el ítem, no por `style=`: `.ok`, `.warn`,
+`.sim`, `.lab`.
+
+**Estirar una caja no llena una lámina.** Si el ítem lleva un SVG, la caja crece
+pero el dibujo conserva su proporción y queda flotando con bandas vacías. Se ve
+igual de vacío y además engaña a cualquier medición de llenado, porque la caja
+llega y la tinta no. Por eso existe `.figs`.
 
 ### 5.2 El presupuesto de diagramas propios (F)
 
