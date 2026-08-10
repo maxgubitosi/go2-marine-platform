@@ -42,6 +42,7 @@ borrador · `F` pantalla completa.
 | `plan_presentacion.md` | qué se ve y qué se dice en cada lámina |
 | `IDENTIDAD.md` | cómo se ve y cómo se escribe: paleta, tipografía, componentes, antipatrones |
 | `backlog.md` | lo que falta resolver antes de agosto |
+| `correcciones-2026-08-10.md` | **la devolución de Gastón y Juan y el plan de rework en curso** |
 
 **Una lámina, un archivo.** Es lo que deja que dos personas trabajen en paralelo:
 si cada uno toca láminas distintas, git no tiene nada que fusionar. El orden lo
