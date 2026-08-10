@@ -401,48 +401,6 @@ figcaption {
   line-height: 1.4;
 }
 
-/* ===================== La cuenta de grados de libertad ===================== */
-/* Sin párrafo: la cuenta es el contenido. El resultado va en coral porque es
-   lo único que hay que mirar, y la explicación la pone el expositor. */
-
-.go2-split { align-items: center; }
-.go2-retrato { background: #fff; border: 0; box-shadow: none; }
-.go2-retrato img { max-height: 46vh; object-fit: contain; }
-.go2-col { gap: clamp(1.2rem, 3vh, 2.2rem); }
-.go2-posturas { background: #fff; }
-.go2-posturas img { max-height: 22vh; object-fit: contain; }
-.cuenta {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: clamp(.5rem, 1.4vw, 1.1rem);
-  flex-wrap: wrap;
-}
-.cuenta .t { display: flex; flex-direction: column; align-items: center; }
-.cuenta .n {
-  font-size: clamp(2.6rem, 5.4vw, 5rem);
-  font-weight: 820;
-  line-height: 1;
-  letter-spacing: -.04em;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.cuenta .l {
-  margin-top: .5rem;
-  font-size: clamp(.76rem, 1vw, .92rem);
-  color: var(--ink-faint);
-  text-align: center;
-  max-width: 12ch;
-  line-height: 1.3;
-}
-.cuenta .op {
-  font-size: clamp(1.8rem, 3.4vw, 3.2rem);
-  font-weight: 500;
-  line-height: 1.35;
-  color: var(--ink-faint);
-}
-.cuenta .res .n { color: var(--coral); }
-
 /* ===================== Los dos mundos ===================== */
 /* Par de imágenes del mismo robot en simulación y en el laboratorio. Las cajas
    comparten proporción y recortan por el centro: los originales tienen
@@ -454,19 +412,34 @@ figcaption {
   gap: clamp(1.4rem, 3.2vw, 2.6rem);
 }
 .dos-mundos figure { margin: 0; }
-/* Cuadradas: la foto del laboratorio es casi cuadrada y con una caja apaisada
-   se le cortaban las patas. El cuadro de Gazebo pierde algo de piso a los
-   costados, que no es contenido. El ancho se topea para que el par no crezca
-   hasta desbordar de alto. */
-.dos-mundos { max-width: min(100%, 740px); margin-inline: auto; }
-.dos-mundos .media { aspect-ratio: 1 / 1; }
+/* Apaisadas: las dos fotos vienen apaisadas (el visor de Gazebo y el recorte
+   del laboratorio), así que el 4:3 las encuadra casi sin cortar.
+
+   El tope va en vh y no en px porque el que manda es el alto: con el ancho
+   entero de la columna, a 720 el par medía 486 px contra 439 de cuerpo y se le
+   subía encima a la bajada. Topeado en 112vh el aire sobrante lo reparte el
+   centrado del cuerpo y quedan ~60 px libres arriba del par en la pantalla más
+   baja, y ~150 a 1080. */
+.dos-mundos { max-width: min(100%, 112vh); margin-inline: auto; }
+.dos-mundos .media { aspect-ratio: 4 / 3; }
 .dos-mundos .media img { width: 100%; height: 100%; object-fit: cover; }
+/* Rótulo del montaje, con el mismo código de color que el riel de la lámina de
+   arquitectura: cian la simulación, coral el laboratorio. */
 .dos-mundos figcaption {
-  margin-top: .9rem;
+  margin-top: .85rem;
   text-align: center;
   font-size: clamp(1.05rem, 1.7vw, 1.4rem);
   font-weight: 700;
   color: var(--ink);
+}
+.dos-mundos figcaption.sim { color: var(--sea); }
+.dos-mundos figcaption.lab { color: var(--coral); }
+.dos-mundos figcaption small {
+  display: block;
+  margin-top: .15rem;
+  font-size: .74em;
+  font-weight: 500;
+  color: var(--ink-faint);
 }
 
 
@@ -898,14 +871,9 @@ ul.marks li.warn::before{ background: var(--warn); }
 .rl-cell { display: grid; position: relative; min-width: 0; padding-top: var(--drop); }
 .rl-gap  { display: block; }   /* columna de conector en la fila de abajo: vacía a propósito */
 
-/* Igual en los dos montajes. El signo dice lo mismo que la palabra y no le
-   compite el peso visual a las cajas de sustitución. */
-.rl-eq {
-  align-self: center; text-align: center;
-  font-family: var(--mono);
-  font-size: 1.3rem;
-  color: var(--ink-faint);
-}
+/* Donde el laboratorio no sustituye nada la celda va vacía: el hueco ya dice
+   que la etapa es la misma, y un "=" en cada una sumaba tres marcas que le
+   competían el peso a las cajas de sustitución, que son lo que hay que mirar. */
 
 /* Sustitución: caja colgada de su etapa por una bajada de un píxel. */
 .rl-cell.sub::before {
