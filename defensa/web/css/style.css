@@ -184,6 +184,8 @@ h2.head .accent { color: var(--sea); }
 p { line-height: 1.5; }
 strong { font-weight: 680; color: var(--ink); }
 .mono { font-family: var(--mono); }
+/* Identificadores del sistema: tópicos ROS, marcos, llamadas de API. */
+code { font-family: var(--mono); font-size: .92em; }
 
 /* ===================== Layout helpers ===================== */
 
@@ -1457,3 +1459,53 @@ code {
   .decision { grid-template-columns: 1fr; }
   .cadena { grid-template-columns: 1fr; }
 }
+
+/* ===================== Lámina del cuadrúpedo ===================== */
+
+/* Dos figuras que dicen lo mismo a dos niveles: la foto nombra las piezas sobre
+   el robot real, el diagrama las mide. Sobre una perspectiva no se puede acotar
+   d, l1 ni l2 con rigor, y por eso conviven en vez de elegir una.
+   Las dos las generan scripts, no se editan a mano. */
+
+/* La foto ocupa todo el alto de la fila. Se llega ahí con stretch en la grilla:
+   así la figura tiene alto definido y el max-height del SVG resuelve contra la
+   fila y no contra la ventana, que es lo que la hacía chocar con la tabla. */
+.robot { align-items: stretch; grid-template-columns: 1.2fr .8fr; }
+.robot > * { min-height: 0; }
+.robot .col { justify-content: center; gap: .7rem; }
+
+.fotonota { margin: 0; display: flex; align-items: center; justify-content: center; }
+.fotonota svg { max-height: 100%; max-width: 100%; width: auto; height: auto; }
+.fotonota text { font-family: var(--sans); }
+/* Los rótulos van FUERA de la foto, con guía hasta la pieza: encima de la imagen
+   se leen peor. El margen que ocupan lo calcula el generador desde el ancho real
+   del texto, así que cambiar un rótulo no vuelve a cortar una palabra.
+   Los cuerpos están en unidades del viewBox y escalan con la figura. */
+.fn-t {
+  font-size: 36px; font-weight: 660; fill: var(--ink);
+  paint-order: stroke; stroke: var(--paper); stroke-width: 7px; stroke-linejoin: round;
+}
+.fn-s {
+  font-size: 27px; fill: var(--ink-soft);
+  paint-order: stroke; stroke: var(--paper); stroke-width: 7px; stroke-linejoin: round;
+}
+.fn-l { stroke: var(--coral); stroke-width: 2.6; }
+.fn-d { fill: var(--coral); stroke: #fff; stroke-width: 2.4; }
+
+/* El diagrama de los dos planos, inline y no como <img>, para que el texto
+   herede la tipografía del deck. */
+.legfig { margin: 0; }
+.legfig svg { width: 100%; height: auto; display: block; }
+.legfig text { font-family: var(--sans); }
+.legfig figcaption {
+  margin-top: .4rem; text-align: center;
+  font-size: .8rem; color: var(--ink-faint);
+}
+.robot .legfig svg { max-height: 26vh; }
+
+/* La notación que definen estas figuras y que usan las láminas siguientes. */
+.vectores { font-size: .8rem; margin-top: .2rem; }
+.vectores td.sim { color: var(--sea); font-weight: 700; white-space: nowrap; width: 18%; }
+/* Los parámetros del URDF son un dato de la máquina: van en un renglón al pie y
+   no en filas propias, que sería darles el mismo peso que a los vectores. */
+.geo-line { margin: 0; font-size: .82rem; color: var(--ink-soft); }
