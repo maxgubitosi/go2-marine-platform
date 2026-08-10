@@ -1,0 +1,54 @@
+<section class="slide" data-block="2" data-title="Implementación en ROS2">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: todas las etapas</span></span></div>
+      <h2 class="head">Dos paquetes propios en ROS2, y un detector que cambia de cámara por parámetro</h2>
+    </header>
+    <div class="s-body">
+      <!-- La asimetría entre las dos columnas es el contenido: de lo propio se
+           listan los nodos, de lo integrado alcanza con nombrarlo. El grafo de
+           nodos y tópicos en ejecución queda en backup: acá interesa qué se
+           escribió, no cómo queda cableado en tiempo de corrida. -->
+      <div class="codigo">
+        <div class="cd-col ours">
+          <h3>Escrito para este trabajo</h3>
+          <ul class="pkg">
+            <li><code>go2_tools</code>
+              <span>marine_platform_simulator</span>
+              <span>marine_manual_control</span>
+            </li>
+            <li><code>fixed_camera</code>
+              <span>camera_controller</span>
+              <span>aruco_detector</span>
+            </li>
+            <li><code>aruco_relative_pose</code> <em>fuera de línea</em>
+              <span>estimate_relative_pose</span>
+              <span>analyze_pose_results</span>
+              <span>evaluate_realtime_aruco</span>
+            </li>
+          </ul>
+        </div>
+        <div class="cd-col theirs">
+          <h3>Integrado</h3>
+          <ul class="pkg">
+            <li>ROS2 y Gazebo</li>
+            <li><code>sjtu_drone</code> <em>de terceros</em></li>
+            <li><code>rosbag2</code></li>
+            <li>OpenCV, <code>cv2.aruco</code></li>
+            <li><em>En laboratorio:</em> SDK de Unitree</li>
+          </ul>
+          <p class="cd-nota">
+            La etapa de evaluación fuera de línea es la parte más extensa del
+            código propio: más del doble que todo lo que corre en vivo.
+          </p>
+        </div>
+      </div>
+      <p class="conclusion">
+        <code>aruco_detector</code> recibe el tópico de imagen y el de intrínsecos
+        como parámetros. La cámara fija, la del dron y la webcam del laboratorio
+        son la misma línea de configuración, y por eso el detector es literalmente
+        el mismo en los dos montajes.
+      </p>
+    </div>
+  </div>
+</section>

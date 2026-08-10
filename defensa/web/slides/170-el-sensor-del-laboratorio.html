@@ -1,0 +1,44 @@
+<section class="slide" data-block="2" data-title="El sensor del laboratorio">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: al laboratorio</span></span></div>
+      <h2 class="head">De cámara ideal a instrumento: recorte a monocular, calibración y montaje</h2>
+    </header>
+    <div class="s-body">
+      <!-- Lo que en Gazebo viene dado por el modelo, en el laboratorio hay que
+           construirlo y verificarlo. Cada fila es una idealización que se cae, y
+           la de calibración lleva el número porque es la única verificable. -->
+      <div class="split narrow-media sensor-split">
+        <figure>
+          <div class="media"><img src="assets/img/lab_camara_fija.jpg" alt="Cuadro de la cámara fija del laboratorio: el Go2 visto desde arriba con el marcador ArUco sobre el torso"></div>
+          <figcaption>Lo que entrega el sensor ya montado</figcaption>
+        </figure>
+        <table class="dtable sensor">
+          <thead><tr><th>Idealización de Gazebo</th><th>Qué hubo que hacer</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Sensor monocular definido por el modelo</td>
+              <td>Cámara estéreo recortada a un solo ojo, el izquierdo</td>
+            </tr>
+            <tr class="hi">
+              <td>Intrínsecos exactos por definición</td>
+              <td>Tablero de calibración: 20 imágenes, <strong class="fig">RMS 0,221 px</strong></td>
+            </tr>
+            <tr>
+              <td>Cámara perfectamente rígida</td>
+              <td>Trípode sobre la escena: aproximadamente fija, no rígida</td>
+            </tr>
+            <tr>
+              <td>Marcador solidario al torso por el modelo</td>
+              <td>ArUco impreso y adherido físicamente sobre el lomo</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="conclusion">
+        Por eso el caso de laboratorio se presenta como aproximación controlada
+        del escenario de cámara fija, y no como su réplica.
+      </p>
+    </div>
+  </div>
+</section>

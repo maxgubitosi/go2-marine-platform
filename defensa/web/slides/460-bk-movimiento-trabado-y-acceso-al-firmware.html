@@ -1,0 +1,31 @@
+<section class="slide" data-block="4" data-backup="10" data-title="Movimiento trabado y acceso al firmware">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup<span class="s">: limitaciones del robot</span></span></div>
+      <h2 class="head">Por qué no se mueve como le pedimos</h2>
+    </header>
+    <div class="s-body">
+      <div class="hyp">
+        <div class="hyp-item sym">
+          <span class="k">Síntoma</span>
+          <span class="v">El robot sigue la <strong>forma</strong> de la consigna (r &gt; 0,95) pero con retardo (τ = 0,45–0,95 s) y amplitud reducida (g ≈ 0,62). El movimiento se percibe <em>trabado</em>.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Descartado</span>
+          <span class="v">No es el camino de comando: la fidelidad entre consigna y comando enviado es <strong>&gt; 0,9999</strong>. Lo que sale de nuestro software llega intacto.</span>
+        </div>
+        <div class="hyp-item hip">
+          <span class="k">Hipótesis</span>
+          <span class="v">El desacople se introduce en el <strong>control interno del Go2</strong>, al que no tenemos acceso directo. El patrón (fase + escala, sin deformación) es el de un sistema con lazo propio, no el de un error aleatorio.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Verificación</span>
+          <span class="v">Ground truth externo (OptiTrack) para separar la respuesta física real de las señales internas del robot, y barrido de frecuencia para reconstruir la respuesta del lazo.</span>
+        </div>
+      </div>
+      <p class="lead center mt-m" style="max-width:66ch;margin-left:auto;margin-right:auto;">
+        Al no poder removerla, la limitación se volvió <strong>parte del modelo</strong>: θ<sub>real</sub>(t) ≈ g·θ<sub>cmd</sub>(t−τ) + b.
+      </p>
+    </div>
+  </div>
+</section>

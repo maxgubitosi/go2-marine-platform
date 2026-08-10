@@ -86,7 +86,7 @@ resaltar la parte "linda" de la frase.
 Antes de agregar un `accent`, contar cuántos hay:
 
 ```bash
-grep -c 'class="head".*accent' defensa/web/index.html    # no debería pasar de 5
+grep -c 'class="head".*accent' defensa/web/slides/*.html   # no debería pasar de 5
 ```
 
 ### 2.3 Encabezado de sección (`div.eyebrow`)
@@ -157,7 +157,7 @@ Ni uno. Se reemplaza por dos puntos, paréntesis, coma o `·`, según el caso y
 nunca de forma mecánica.
 
 ```bash
-grep -c '—' defensa/web/index.html defensa/web/css/style.css   # tiene que dar 0
+grep -c '—' defensa/web/slides/*.html defensa/web/css/style.css   # tiene que dar 0
 ```
 
 ---

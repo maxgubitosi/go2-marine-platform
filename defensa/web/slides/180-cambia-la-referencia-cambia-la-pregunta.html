@@ -1,0 +1,38 @@
+<section class="slide" data-block="2" data-title="Cambia la referencia, cambia la pregunta">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: al laboratorio</span></span></div>
+      <h2 class="head">Sin ground truth no se mide error contra la verdad, sino coherencia a lo largo de la cadena</h2>
+    </header>
+    <div class="s-body">
+      <!-- La diferencia no es de precisión sino de forma: en simulación hay dos
+           términos y una verdad externa contra la cual restar; en laboratorio hay
+           tres señales encadenadas y cada eslabón se valida por separado. De ahí
+           salen las metricas del bloque de resultados. -->
+      <div class="criterio">
+        <span class="rl-stub sim">Simulación<small>hay verdad externa</small></span>
+        <div class="cr-flow">
+          <span class="cr-t">estimación visual</span>
+          <span class="cr-op">contra</span>
+          <span class="cr-t gt">pose verdadera<small>cadena de marcos del simulador</small></span>
+        </div>
+        <span class="cr-out sim">&Delta;roll · &Delta;pitch · &Delta;Z</span>
+
+        <span class="rl-stub lab">Laboratorio<small>sólo señales propias</small></span>
+        <div class="cr-flow">
+          <span class="cr-t">consigna</span>
+          <span class="cr-link"><small>nuestro software</small></span>
+          <span class="cr-t">comando enviado</span>
+          <span class="cr-link"><small>planta física</small></span>
+          <span class="cr-t">estado interno</span>
+        </div>
+        <span class="cr-out lab">correlación <em>r</em> · ganancia <em>g</em> · retardo <em>&tau;</em></span>
+      </div>
+      <p class="conclusion">
+        En el laboratorio movimiento y visión se evalúan por separado. Es una
+        decisión declarada, no una omisión: si las dos cosas corren juntas y algo
+        falla, no se sabe si falló la percepción o la dinámica.
+      </p>
+    </div>
+  </div>
+</section>

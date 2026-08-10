@@ -1,0 +1,24 @@
+<section class="slide" data-block="3" data-title="Error con cámara en el dron">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: cámara en el dron</span></span></div>
+      <h2 class="head">Degradación del error con el sensor en movimiento</h2>
+    </header>
+    <div class="s-body">
+      <div class="split resultado">
+        <figure class="col">
+          <div class="media" style="background:#111;">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
+          </div>
+          <figcaption>Detección desde la cámara inferior del dron.</figcaption>
+        </figure>
+        <div class="col stack">
+          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron"></figure>
+          <figcaption class="res-cap">Roll y pitch siguen la oscilación principal, que es la parte angular que la consigna excita.</figcaption>
+          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_error_hist.png" alt="Distribución de errores crudos en el escenario con dron"></figure>
+          <figcaption class="res-cap">Sesgo y dispersión por componente. La nube abre respecto del caso fijo: es el costo de la geometría de observación, no una falla del estimador.</figcaption>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

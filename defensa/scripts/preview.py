@@ -25,6 +25,9 @@ import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import build_deck
+
 PUERTO = int(sys.argv[1]) if len(sys.argv) > 1 else 8771
 
 # Se sirve defensa/web/ sin importar desde donde se invoque el script.
@@ -36,6 +39,13 @@ ASSETS = os.path.join(WEB, "assets")
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=WEB, **kw)
+
+    def do_GET(self):
+        # index.html es generado a partir de web/slides/, así que se rearma en
+        # cada carga: editar una lámina y refrescar alcanza, sin build manual.
+        if urlparse(self.path).path in ("/", "/index.html"):
+            build_deck.build()
+        super().do_GET()
 
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")

@@ -1,0 +1,130 @@
+<!-- S3 -->
+<section class="slide" data-block="0" data-title="La cubierta está siempre en movimiento">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la cubierta</span></span></div>
+      <h2 class="head">La cubierta está siempre en movimiento</h2>
+      <p class="lead" style="max-width:70ch;">
+        El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
+        El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
+      </p>
+    </header>
+    <div class="s-body">
+    <div class="scenerow">
+
+      <figure>
+        <div class="wave-scene" data-anim>
+          <svg viewBox="0 88 420 232" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Buque de perfil: cabecea y sube sobre el oleaje">
+            <defs>
+              <linearGradient id="seaA" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8fd0e0"/>
+                <stop offset="1" stop-color="#3f9fbf"/>
+              </linearGradient>
+            </defs>
+
+            <!-- indicador de heave: nivel medio de cubierta + flecha vertical -->
+            <g class="ind">
+              <line x1="26" y1="180" x2="116" y2="180" stroke-width="1.4" stroke-dasharray="5 5" opacity=".5"/>
+              <line x1="40" y1="166" x2="40" y2="194" stroke-width="1.8"/>
+              <path d="M40 162 l-5 8 h10 z" class="fill"/>
+              <path d="M40 198 l-5 -8 h10 z" class="fill"/>
+              <text x="52" y="156">heave</text>
+            </g>
+
+            <!-- indicador de pitch: arco de giro delante de la proa -->
+            <g class="ind">
+              <path d="M311.1 113.1 A 132 132 0 0 1 341.3 184.2" fill="none" stroke-width="1.8"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(311.1 113.1) rotate(-40)"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(341.3 184.2) rotate(174)"/>
+              <text x="305" y="106" text-anchor="end">pitch</text>
+            </g>
+
+            <!-- mar de fondo (por detrás del buque) -->
+            <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".55"/>
+
+            <!-- buque de perfil: cabecea y sube/baja con la ola -->
+            <g transform="translate(210 198) scale(1.15)">
+              <g class="vessel">
+                <path d="M-84 -12 L88 -12 L96 -8 Q92 12 70 14 L-64 14 Q-80 14 -84 -12 Z" fill="#26506b"/>
+                <rect x="-84" y="-17" width="180" height="6" rx="2" fill="#0f2a43"/>
+                <rect x="16" y="-22" width="60" height="5" rx="1.5" fill="#dbe7ee"/>
+                <rect x="41" y="-22" width="10" height="5" fill="#ef6a4c"/>
+                <rect x="-60" y="-38" width="36" height="21" rx="2" fill="#1d4059"/>
+                <rect x="-53" y="-49" width="22" height="12" rx="2" fill="#26506b"/>
+                <line x1="-42" y1="-49" x2="-42" y2="-64" stroke="#0f2a43" stroke-width="2.4"/>
+                <g fill="#9db8c9">
+                  <rect x="-56" y="-34" width="5" height="5" rx="1"/>
+                  <rect x="-47" y="-34" width="5" height="5" rx="1"/>
+                  <rect x="-38" y="-34" width="5" height="5" rx="1"/>
+                </g>
+              </g>
+            </g>
+
+            <!-- mar de frente: tapa la obra viva y hace que el buque flote -->
+            <g class="waves">
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#seaA)" opacity=".92"/>
+              <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption><strong>Vista de perfil.</strong> <span class="dof">Pitch</span>: cabeceo longitudinal. <span class="dof">Heave</span>: ascenso y descenso vertical.</figcaption>
+      </figure>
+
+      <figure>
+        <div class="wave-scene" data-anim>
+          <svg viewBox="0 88 420 232" width="100%" xmlns="http://www.w3.org/2000/svg" aria-label="Buque visto de proa: se balancea de lado a lado">
+            <defs>
+              <linearGradient id="seaB" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#8fd0e0"/>
+                <stop offset="1" stop-color="#3f9fbf"/>
+              </linearGradient>
+            </defs>
+
+            <!-- indicador de roll: arco de giro sobre la superestructura -->
+            <g class="ind">
+              <path d="M161.8 129.2 A 84 84 0 0 1 258.2 129.2" fill="none" stroke-width="1.8"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(161.8 129.2) rotate(235)"/>
+              <path d="M0 0 L-4.5 9 L4.5 9 Z" class="fill" transform="translate(258.2 129.2) rotate(125)"/>
+              <text x="210" y="107" text-anchor="middle">roll</text>
+            </g>
+
+            <!-- mar de fondo (por detrás del buque) -->
+            <path class="w w0" d="M-220 198 q 40 -14 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#7cc3d8" opacity=".55"/>
+
+            <!-- buque de proa: se balancea de lado a lado sobre la línea de flotación -->
+            <g transform="translate(210 198) scale(1.15)">
+              <g class="vessel-bow">
+                <!-- casco en V; la mitad de babor va sombreada para que la roda
+                     central lea como la arista que mira al observador -->
+                <path d="M-50 -12 L50 -12 L42 8 Q30 24 10 26 L-10 26 Q-30 24 -42 8 Z" fill="#2d5b78"/>
+                <path d="M-50 -12 L0 -12 L0 26 L-10 26 Q-30 24 -42 8 Z" fill="#1d4059"/>
+                <rect x="-50" y="-17" width="100" height="6" rx="2" fill="#0f2a43"/>
+                <rect x="-30" y="-44" width="60" height="27" rx="2" fill="#1d4059"/>
+                <rect x="-18" y="-56" width="36" height="13" rx="2" fill="#26506b"/>
+                <g fill="#9db8c9">
+                  <rect x="-24" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="-13" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="-2" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="9" y="-40" width="6" height="6" rx="1"/>
+                  <rect x="20" y="-40" width="6" height="6" rx="1"/>
+                </g>
+                <!-- cubierta de proa por delante del puente: helipuerto y marcador -->
+                <rect x="-44" y="-24" width="88" height="7" rx="2" fill="#dbe7ee"/>
+                <rect x="-5" y="-24" width="10" height="7" fill="#ef6a4c"/>
+              </g>
+            </g>
+
+            <!-- mar de frente: tapa la obra viva y hace que el buque flote -->
+            <g class="waves">
+              <path class="w w1" d="M-220 210 q 40 -18 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="url(#seaB)" opacity=".92"/>
+              <path class="w w2" d="M-220 226 q 40 16 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 V340 H-220 Z" fill="#2f88a8" opacity=".55"/>
+            </g>
+          </svg>
+        </div>
+        <figcaption><strong>Vista de proa.</strong> <span class="dof">Roll</span>: balanceo lateral.</figcaption>
+      </figure>
+
+    </div>
+    </div><!-- /s-body -->
+  </div>
+</section>

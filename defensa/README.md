@@ -16,11 +16,14 @@ python3 defensa/scripts/preview.py     # desde la raíz del repo
 ```
 
 y abrir <http://localhost:8771>. El servidor sirve sin caché, que es lo que evita
-quedarse mirando una versión vieja del CSS sin darse cuenta.
+quedarse mirando una versión vieja del CSS sin darse cuenta, y **rearma
+`index.html` en cada carga**, así que editar una lámina y refrescar alcanza.
 
 También se puede abrir `web/index.html` directo con doble clic: el deck no hace
 ningún `fetch` ni carga nada externo. Es más incómodo para iterar, pero sirve
 para verificar que anda sin servidor, que es como va a andar el día de la defensa.
+Eso sí, ahí se ve el `index.html` del último build: si se editó una lámina sin
+levantar `preview.py`, correr antes `python3 defensa/scripts/build_deck.py`.
 
 **Teclas:** `→` `←` o espacio para navegar · `O` índice · `B` backup · `D`
 borrador · `F` pantalla completa.
@@ -31,12 +34,24 @@ borrador · `F` pantalla completa.
 
 | Archivo | Qué es |
 |---|---|
-| `web/index.html` | las láminas, una `<section class="slide">` cada una |
+| `web/slides/NNN-nombre.html` | **una lámina por archivo**, la `<section class="slide">` sola |
+| `web/plantilla.html` | la cáscara: `<head>`, chrome, HUD, índice |
+| `web/index.html` | **generado** por `scripts/build_deck.py`. No editar a mano |
 | `web/css/style.css` | todo el estilo, con comentarios explicando cada decisión |
 | `web/js/deck.js` | el motor: navegación, progreso, índice, animaciones |
 | `plan_presentacion.md` | qué se ve y qué se dice en cada lámina |
 | `IDENTIDAD.md` | cómo se ve y cómo se escribe: paleta, tipografía, componentes, antipatrones |
 | `backlog.md` | lo que falta resolver antes de agosto |
+
+**Una lámina, un archivo.** Es lo que deja que dos personas trabajen en paralelo:
+si cada uno toca láminas distintas, git no tiene nada que fusionar. El orden lo
+da el número del nombre, de a 10, para poder insertar una lámina en el medio
+(`115-...`) sin renombrar las que siguen. Agregar una lámina es crear el archivo
+y nada más: no hay índice ni lista que actualizar.
+
+`index.html` se regenera entero desde `web/slides/`, así que si aparece un
+conflicto ahí no se resuelve a mano: `git checkout --ours defensa/web/index.html`
+y volver a correr `build_deck.py`.
 
 **Antes de escribir una lámina nueva, leer `IDENTIDAD.md`.** Es lo que evita que
 el deck vuelva a los títulos genéricos y las cajitas conceptuales que Gastón pidió
@@ -65,7 +80,7 @@ en las dos; el único desborde horizontal es el de la portada y es a propósito
 caso por dos puntos, paréntesis, coma o `·`. Nunca de forma mecánica.
 
 ```bash
-grep -c '—' defensa/web/index.html defensa/web/css/style.css   # tiene que dar 0
+grep -c '—' defensa/web/slides/*.html defensa/web/css/style.css   # tiene que dar 0
 ```
 
 **2. Las ecuaciones no se editan a mano.** Son SVG pre-renderizados desde el
@@ -75,7 +90,7 @@ de caracteres, así que para editar una lámina que tenga fórmulas el ciclo es:
 
 ```bash
 python3 defensa/scripts/inline_math.py --strip   # vacía los contenedores
-# ... editar web/index.html cómodo ...
+# ... editar la lámina en web/slides/ cómodo ...
 python3 defensa/scripts/inline_math.py           # vuelve a inyectar
 python3 defensa/scripts/inline_math.py --check   # verifica que esté al día
 ```

@@ -1,0 +1,67 @@
+<!-- ============================================================
+     BLOQUES 3-5 · placeholders (se completan en la próxima iteración)
+     ============================================================ -->
+<section class="slide" data-block="2" data-title="Arquitectura: simulación y laboratorio">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el riel completo</span></span></div>
+      <h2 class="head">Una sola arquitectura: en el laboratorio se sustituyen tres de las seis etapas</h2>
+    </header>
+    <div class="s-body">
+      <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
+           sustrato. Las tres etapas con "=" son el mismo software corriendo sin
+           modificaciones, y ese es el punto de la lámina: no son dos pipelines. -->
+      <div class="railmap" data-anim>
+        <span class="rl-stub sim">Simulación<small>ROS2 · Gazebo</small></span>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-6 10-6 10 6 10 6M2 12c2 2 5 3 10 3s8-1 10-3"/></svg></div>
+          <div class="lbl">Consigna marina</div>
+          <div class="sub">roll · pitch · heave</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="9" rx="1.5"/><path d="M5 17v3M15 17v3M17 11h3v4h-3"/></svg></div>
+          <div class="lbl">Postura del torso</div>
+          <div class="sub">IK propia + contacto</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h4l1.5-2h7L17 7h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+          <div class="lbl">Cámara</div>
+          <div class="sub">ideal · fija y dron</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode accent">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7.5" y="7.5" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/></svg></div>
+          <div class="lbl">ArUco + PnP</div>
+          <div class="sub">pose relativa</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
+          <div class="lbl">Registro</div>
+          <div class="sub">rosbag</div>
+        </div>
+        <div class="pconn"></div>
+        <div class="pnode">
+          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg></div>
+          <div class="lbl">Evaluación</div>
+          <div class="sub">contra ground truth</div>
+        </div>
+
+        <span class="rl-stub lab">Laboratorio<small>ROS2 · Go2 real</small></span>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <i class="rl-gap"></i>
+        <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
+      </div>
+    </div>
+  </div>
+</section>

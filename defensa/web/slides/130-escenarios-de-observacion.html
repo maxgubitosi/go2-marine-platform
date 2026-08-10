@@ -1,0 +1,23 @@
+<section class="slide" data-block="2" data-title="Escenarios de observación">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: cámara</span></span></div>
+      <h2 class="head">Dos configuraciones de observación: cámara fija y cámara en vuelo</h2>
+    </header>
+    <div class="s-body">
+      <div class="split escenarios">
+        <figure class="col">
+          <div class="media"><img src="assets/img/sim_escenario_fija.png" alt="Cuadro crudo de la cámara fija: el marcador ArUco sobre el Go2"></div>
+          <figcaption><strong style="color:var(--sea)">Caso base: cámara fija.</strong> El sensor no se mueve: aísla el error del pipeline visual.</figcaption>
+        </figure>
+        <figure class="col">
+          <div class="media"><img src="assets/img/sim_escenario_dron.png" alt="Dron con cámara inferior observando el Go2"></div>
+          <figcaption><strong style="color:var(--coral)">Caso fuerte: cámara en el dron.</strong> El sensor se mueve: suma la geometría de observación al error.</figcaption>
+        </figure>
+      </div>
+      <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
+        Diseño deliberado: separar cuánto pesa el <em>pipeline</em> visual de cuánto pesa el movimiento del&nbsp;sensor.
+      </p>
+    </div>
+  </div>
+</section>

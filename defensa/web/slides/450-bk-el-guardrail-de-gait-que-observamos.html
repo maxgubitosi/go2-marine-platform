@@ -1,0 +1,32 @@
+<section class="slide" data-block="4" data-backup="9" data-title="El guardrail de gait: qué observamos">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup<span class="s">: limitaciones del robot</span></span></div>
+      <h2 class="head">El guardrail de gait</h2>
+    </header>
+    <div class="s-body">
+      <div class="hyp">
+        <div class="hyp-item sym">
+          <span class="k">Síntoma</span>
+          <span class="v">Cada tanto el Go2 <strong>trota en el lugar</strong>: da pasos sobre el mismo punto para reasegurar su estabilidad y, mientras lo hace, abandona la inclinación pedida.</span>
+        </div>
+        <div class="hyp-item hip">
+          <span class="k">Interpretación</span>
+          <span class="v">Es un <strong>guardrail del control interno</strong>: el robot prioriza no perder el equilibrio por sobre sostener la consigna de actitud. No es un problema del comando, que llega intacto, sino una decisión del firmware.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Evidencia</span>
+          <span class="v">Registrado como rosbag: <span class="num">lab_real_20260320_112522_trote_robot_full</span> (~59,7 s).</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Mitigación</span>
+          <span class="v">Barrido de frecuencias de consigna: <strong>a menor frecuencia los episodios de trote se espacian</strong>. No desaparecen: se vuelven poco frecuentes.</span>
+        </div>
+        <div class="hyp-item">
+          <span class="k">Consecuencia</span>
+          <span class="v">Por eso se ensayó a <strong>0,10 Hz</strong>: maximiza el tiempo de postura sostenida entre episodios. Queda como <strong>restricción del banco</strong>, no como resultado del trabajo.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

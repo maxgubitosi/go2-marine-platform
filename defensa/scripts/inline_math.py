@@ -34,8 +34,9 @@ import re
 import sys
 from pathlib import Path
 
-HTML = Path("defensa/web/index.html")
-MATH = Path("defensa/web/assets/math")
+WEB = Path(__file__).resolve().parent.parent / "web"
+SLIDES = WEB / "slides"
+MATH = WEB / "assets" / "math"
 
 # Captura el contenedor completo: apertura, contenido actual y cierre.
 PATRON = re.compile(
@@ -46,18 +47,11 @@ PATRON = re.compile(
 def main():
     check = "--check" in sys.argv
     strip = "--strip" in sys.argv
-    if not HTML.exists():
-        sys.exit(f"No está {HTML}")
+    laminas = sorted(SLIDES.glob("*.html"))
+    if not laminas:
+        sys.exit(f"No hay láminas en {SLIDES}")
 
-    html = HTML.read_text(encoding="utf-8")
-
-    if strip:
-        vacios = PATRON.sub(lambda m: m.group(1) + m.group(4), html)
-        HTML.write_text(vacios, encoding="utf-8")
-        print(f"{len(PATRON.findall(html))} contenedores vaciados. "
-              f"Editar y volver a correr sin --strip.")
-        return
-    faltantes, iguales, cambiadas = [], 0, []
+    faltantes, iguales, cambiadas, total = [], 0, [], 0
 
     def sustituir(m):
         nonlocal iguales
@@ -73,8 +67,22 @@ def main():
             cambiadas.append(nombre)
         return apertura + svg + cierre
 
-    nuevo = PATRON.sub(sustituir, html)
-    total = len(PATRON.findall(html))
+    for lamina in laminas:
+        html = lamina.read_text(encoding="utf-8")
+        total += len(PATRON.findall(html))
+        if strip:
+            lamina.write_text(PATRON.sub(lambda m: m.group(1) + m.group(4), html),
+                              encoding="utf-8")
+            continue
+        antes = len(cambiadas)
+        nuevo = PATRON.sub(sustituir, html)
+        if not check and len(cambiadas) > antes:
+            lamina.write_text(nuevo, encoding="utf-8")
+
+    if strip:
+        print(f"{total} contenedores vaciados. "
+              f"Editar y volver a correr sin --strip.")
+        return
 
     if faltantes:
         print("sin SVG (correr render_math.py primero): " + ", ".join(sorted(set(faltantes))))
@@ -84,10 +92,8 @@ def main():
         print(f"{total} contenedores, {iguales} al día, {len(cambiadas)} desactualizados -> {estado}")
         sys.exit(1 if (cambiadas or faltantes) else 0)
 
-    if cambiadas:
-        HTML.write_text(nuevo, encoding="utf-8")
-        for n in cambiadas:
-            print(f"  inyectada  {n}")
+    for n in cambiadas:
+        print(f"  inyectada  {n}")
     print(f"\n{total} contenedores: {len(cambiadas)} actualizados, {iguales} ya estaban al día.")
 
 
