@@ -1,13 +1,16 @@
-<section class="slide" data-block="3" data-title="El pipeline en acción (video sim)">
+<section class="slide" data-block="3" data-title="Detección del marcador">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
-      <h2 class="head">Detección del marcador cuadro a cuadro</h2>
+      <h2 class="head">Detección del marcador</h2>
     </header>
     <div class="s-body">
       <div class="split media-left">
+        <!-- Clip recortado: el render sale en 800x600 y el 94% del cuadro es
+             fondo gris plano. La ventana la calcula crop_sim_deteccion.py sobre
+             el recorrido del marcador en todo el clip. -->
         <figure class="media" style="background:#111;">
-          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion.mp4"></video>
+          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion_zoom.mp4"></video>
         </figure>
         <div class="col stack">
           <ul class="marks">
