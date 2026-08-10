@@ -86,7 +86,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: escenario</span></span></div>
-      <h2 class="head">El barco como <span class="accent">base móvil</span> de un dron</h2>
+      <h2 class="head">El barco como base móvil de un dron</h2>
     </header>
     <div class="s-body">
     <!-- Las tres misiones van ilustradas, no en tarjetas: el barco aparece en
@@ -244,14 +244,16 @@
 </section>
 
 <!-- S3 -->
-<section class="slide" data-block="0" data-title="La cubierta está siempre en movimiento">
+<section class="slide" data-block="0" data-title="Movimiento de una plataforma marina">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la cubierta</span></span></div>
-      <h2 class="head">La cubierta está siempre en movimiento</h2>
+      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la plataforma</span></span></div>
+      <h2 class="head">Movimiento de una plataforma marina</h2>
       <p class="lead" style="max-width:70ch;">
-        El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
-        El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
+        Trabajamos con tres de los seis grados de libertad. <strong>Surge</strong>,
+        <strong>sway</strong> y <strong>yaw</strong> desplazan la plataforma en el plano
+        pero no la inclinan: pesan menos en el problema y quedan fuera del modelo
+        simplificado.
       </p>
     </header>
     <div class="s-body">
@@ -312,7 +314,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de perfil.</strong> <span class="dof">Pitch</span>: cabeceo longitudinal. <span class="dof">Heave</span>: ascenso y descenso vertical.</figcaption>
       </figure>
 
       <figure>
@@ -366,7 +367,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de proa.</strong> <span class="dof">Roll</span>: balanceo lateral.</figcaption>
       </figure>
 
     </div>
@@ -386,10 +386,12 @@
       </p>
     </header>
     <div class="s-body">
-    <!-- Dos por dos, con la cifra grande en el cian de la sección haciendo de
-         color. Panel liso, sin borde ni sombra: la caja blanca con sombra y el
-         iconito en un cuadradito es el patrón de plantilla que el deck evita. -->
-    <div class="serie filas grande">
+    <!-- Dos por dos: en cuatro filas la mancha de texto ocupaba un tercio del
+         ancho y dejaba el resto vacío. El verbo grande en el cian de la sección
+         hace de color, y el filete superior marca dónde arranca cada ítem.
+         Panel liso, sin borde ni sombra: la caja blanca con sombra y el iconito
+         en un cuadradito es el patrón de plantilla que el deck evita. -->
+    <div class="serie malla grande">
         <div class="serie-item">
           <span class="serie-k">Repetir</span>
           <div class="serie-txt"><p>la misma condición</p></div>

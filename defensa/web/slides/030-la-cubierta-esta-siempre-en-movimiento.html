@@ -1,12 +1,14 @@
 <!-- S3 -->
-<section class="slide" data-block="0" data-title="La cubierta está siempre en movimiento">
+<section class="slide" data-block="0" data-title="Movimiento de una plataforma marina">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la cubierta</span></span></div>
-      <h2 class="head">La cubierta está siempre en movimiento</h2>
+      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la plataforma</span></span></div>
+      <h2 class="head">Movimiento de una plataforma marina</h2>
       <p class="lead" style="max-width:70ch;">
-        El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
-        El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
+        Trabajamos con tres de los seis grados de libertad. <strong>Surge</strong>,
+        <strong>sway</strong> y <strong>yaw</strong> desplazan la plataforma en el plano
+        pero no la inclinan: pesan menos en el problema y quedan fuera del modelo
+        simplificado.
       </p>
     </header>
     <div class="s-body">
@@ -67,7 +69,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de perfil.</strong> <span class="dof">Pitch</span>: cabeceo longitudinal. <span class="dof">Heave</span>: ascenso y descenso vertical.</figcaption>
       </figure>
 
       <figure>
@@ -121,7 +122,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de proa.</strong> <span class="dof">Roll</span>: balanceo lateral.</figcaption>
       </figure>
 
     </div>

@@ -472,29 +472,27 @@ figcaption {
 
 /* ===================== Portada ===================== */
 
-/* El bloque de título absorbe el alto libre y el pie institucional queda
-   clavado abajo, así la portada ocupa la pantalla completa en vez de
-   flotar en el medio. */
+/* El rótulo arranca en el mismo riel que el encabezado del resto de las
+   láminas (.s-head, pegado al padding superior) y el pie institucional queda
+   clavado abajo: la portada usa la misma retícula vertical que la charla en
+   vez de flotar centrada. El aire sobrante se junta entre el titular y los
+   créditos, que es donde el mar lo aprovecha. */
 .cover-main {
   position: relative;   /* por encima del mar, que va posicionado */
   z-index: 1;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 2.1rem;
+  justify-content: flex-start;
   min-height: 0;
-  /* El titular es la masa de la portada: arranca abajo del rótulo y baja hasta
-     la fila de créditos, que se apoya sobre el agua. El aire sobrante queda
-     arriba, como margen, en vez de abrirse un hueco en el medio. */
-  justify-content: flex-end;
   /* Deja libre el agua visible más la altura del barco sobre la línea de
      flotación (6,2vw desde el borde inferior). Así la fila de créditos apoya
      sobre el agua sin que el mástil se le meta, sea cual sea el ancho. */
   padding-bottom: 6.2vw;
 }
-/* El rótulo viaja pegado al titular: el aire sobrante se acumula arriba de
-   todo, como margen de la composición, y no como un hueco entre las partes. */
+/* El rótulo viaja pegado al titular con el mismo paso que en .s-head (el
+   margin-bottom de .eyebrow, sin gap de flex encima): rótulo y titular son
+   una sola unidad y arrancan donde arranca el encabezado del resto. */
 /* h1.title le gana por especificidad a .cover-title, así que el selector tiene
    que igualarla o el tamaño de acá no se aplica nunca. */
 h1.title.cover-title {
@@ -560,11 +558,22 @@ h1.title.cover-title {
   justify-content: space-between;
   gap: clamp(1.5rem, 4vw, 3.5rem);
   flex-wrap: wrap;
-  margin-top: clamp(1.8rem, 3.5vh, 3rem);
+  /* Los créditos siguen al titular a una distancia proporcional al alto, no
+     clavados abajo: rótulo, titular y créditos cuelgan del mismo riel. El
+     13vh deja el aire repartido casi por igual arriba y abajo de la fila
+     (93/106 px a 720, 128/133 a 1080, midiendo abajo hasta la punta del
+     mástil), con el barco cerrando el pie. */
+  margin-top: clamp(3rem, 13vh, 8rem);
 }
+/* El bloque institucional cierra abajo, no centrado sobre el escudo: así la
+   última línea de la derecha ("Departamento de Ingeniería…") apoya en el mismo
+   pie que la última de la izquierda ("Jack Spolski") en vez de quedar 30 px
+   más arriba. El pelo de padding compensa el interlineado, que es distinto en
+   las dos columnas. */
 .cover-foot {
   flex: 0 0 auto;
-  display: flex; align-items: center; gap: 1.1rem;
+  display: flex; align-items: flex-end; gap: 1.1rem;
+  padding-bottom: .2rem;
 }
 
 /* En la portada el mar ocupa el borde inferior, así que el chrome sube apenas
@@ -943,6 +952,11 @@ ul.marks li.warn::before{ background: var(--warn); }
 .serie.cols  { grid-auto-flow: column; grid-auto-columns: 1fr; flex: 1; }
 .serie.filas { grid-auto-rows: 1fr; flex: 1; }
 .serie.figs  { flex: 0 1 auto; }
+/* Malla 2×2, para cuatro ítems de un renglón. En cuatro filas la mancha ocupa
+   un tercio del ancho y deja el resto vacío; en una sola fila de cuatro las
+   columnas quedan tan angostas que el verbo grande se parte. La malla es la
+   única que llena las dos direcciones. */
+.serie.malla { grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; flex: 1; }
 
 .serie-item { display: flex; min-width: 0; min-height: 0; }
 .serie.cols .serie-item {
@@ -954,6 +968,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   align-items: center;
   gap: clamp(1rem, 2.4vw, 1.9rem);
 }
+.serie.malla .serie-item { flex-direction: column; gap: .5rem; }
 
 /* Figura del ítem. La caja se ajusta al dibujo en lugar de estirarse: si estira,
    el SVG conserva su proporción y queda flotando en el medio con bandas vacías
@@ -962,7 +977,9 @@ ul.marks li.warn::before{ background: var(--warn); }
 .serie-fig { min-height: 0; min-width: 0; display: grid; place-items: center; }
 .serie-fig svg, .serie-fig img { display: block; width: 100%; height: auto; }
 .serie.cols  .serie-fig { flex: 0 1 auto; width: 100%; }
-.serie.filas .serie-fig { flex: 0 0 clamp(96px, 13vw, 168px); }
+/* El dibujo al costado se leía chico para el alto que tiene la fila: con tres
+   ítems sobra lugar, así que crece hasta 200 px sin empujar la grilla. */
+.serie.filas .serie-fig { flex: 0 0 clamp(110px, 14.5vw, 200px); }
 
 /* Marca del ítem: el dato propio cuando lo hay (un año, un orden real) y si no
    el término que lo nombra. Va en el color de la sección, igual que el romano
@@ -975,14 +992,14 @@ ul.marks li.warn::before{ background: var(--warn); }
   line-height: 1.1;
 }
 .serie.cols  .serie-k { font-size: 1.12rem; }
-.serie.filas .serie-k { font-size: 1.35rem; min-width: 2.6em; }
+.serie.filas .serie-k { font-size: clamp(1.45rem, 2vw, 1.9rem); min-width: 2.6em; }
 
 /* Serie de ítems de un renglón. Repartir el alto entre cuatro frases cortas deja
-   la tipografía chica flotando en cuatro franjas casi vacías: lo que hay que
-   agrandar es el texto, no la caja. La marca lleva ancho fijo para que las
-   cuatro frases arranquen en la misma x. */
-.serie.grande .serie-k { font-size: clamp(1.5rem, 2.6vw, 2.15rem); min-width: 6.2em; }
-.serie.grande .serie-txt p { font-size: clamp(1.05rem, 1.7vw, 1.45rem); color: var(--ink); }
+   la tipografía chica flotando en franjas casi vacías: lo que hay que agrandar
+   es el texto, no la caja. Va con .malla, donde la marca se apoya sobre el
+   filete y la frase cuelga debajo. */
+.serie.grande .serie-k { font-size: clamp(1.7rem, 3vw, 3.4rem); }
+.serie.grande .serie-txt p { font-size: clamp(1.1rem, 1.95vw, 2.2rem); color: var(--ink); }
 
 .serie-txt { min-width: 0; }
 .serie-txt > * { margin: 0; }
@@ -990,16 +1007,22 @@ ul.marks li.warn::before{ background: var(--warn); }
 .serie-txt h3 { font-size: 1.08rem; font-weight: 700; color: var(--ink); line-height: 1.2; }
 .serie-txt p  { font-size: .97rem; color: var(--ink-soft); line-height: 1.42; }
 .serie.cols .serie-txt p { color: var(--ink); }
+/* En .filas hay pocas filas y mucho alto por fila: el cuerpo de .serie-txt,
+   calibrado para las columnas, queda chico. Sube con el ancho de pantalla. */
+.serie.filas .serie-txt h3 { font-size: clamp(1.15rem, 1.55vw, 1.45rem); }
+.serie.filas .serie-txt p  { font-size: clamp(1.05rem, 1.45vw, 1.35rem); }
 
 /* Fuente de la fila, cuando el ítem cita un trabajo ajeno. */
 .serie-txt .ref { display: block; margin-top: .3rem; font-size: .8rem; color: var(--ink-faint); }
+.serie.filas .serie-txt .ref { font-size: clamp(.85rem, 1.1vw, 1rem); }
 
 /* Filete superior en las columnas de texto. Sin él, una columna estirada se lee
    como un hueco; con él, el filete marca dónde empieza el ítem y el aire que
    queda abajo se lee como margen y no como olvido. No lleva fondo, ni sombra,
    ni esquinas redondeadas: eso lo volvería una tarjeta, que es la forma que
    este deck evita. En .figs no va, porque ahí el dibujo ya marca el arranque. */
-.serie.cols:not(.figs) .serie-item {
+.serie.cols:not(.figs) .serie-item,
+.serie.malla .serie-item {
   border-top: 3px solid var(--serie-c, var(--sec));
   padding-top: .85rem;
   justify-content: flex-start;
