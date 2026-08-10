@@ -521,71 +521,95 @@
   </div>
 </section>
 
-<!-- ============================================================
-     BLOQUES 3-5 · placeholders (se completan en la próxima iteración)
-     ============================================================ -->
-<section class="slide" data-block="2" data-title="Arquitectura: simulación y laboratorio">
+<!-- Flujo de arriba hacia abajo con una bifurcación explícita y una
+     convergencia explícita. Es lo que resuelve el problema de la versión
+     anterior: con dos conectores verticales paralelos, uno debajo de cada
+     mundo, parecía que la etapa 1 iba a simulación y la 5 al laboratorio. Acá
+     sale un solo tronco de la consigna, se abre en dos ramas rotuladas, y del
+     otro lado las dos ramas vuelven a juntarse en un solo tronco que entra a la
+     estimación. Una sola salida con dos destinos, y una sola entrada con dos
+     orígenes: eso es lo que hay que poder leer.
+
+     La distinción de fondo es la que marcó Gastón. Las cajas de arriba y de
+     abajo no dependen del montaje: la consigna son comandos y salen igual al
+     robot simulado o al real, y al detector no le importa de dónde vino el
+     píxel. Ninguna de las dos está adentro de una caja rotulada "simulación".
+     Lo que sí es del montaje son las etapas 2 y 3, y por eso aparecen dos
+     veces, una en cada mundo.
+
+     No se rotulan como "software propio": la detección es cv2.aruco y solvePnP,
+     que son de OpenCV. Lo propio es la integración, y eso lo dice la lámina de
+     implementación en ROS2, que es donde corresponde.
+
+     Verificado en el código antes de dibujarlo (10-08):
+     - marine_platform_simulator.py es un solo archivo con parámetro `mode`:
+       'sim' publica Pose en /body_pose, 'real' manda Euler() por unitree_sdk2py.
+       La generación de la onda y el suavizado son el mismo código.
+     - En modo real sólo viajan roll y pitch: Euler(roll, pitch, 0.0).
+     - No hay cinemática inversa propia en ninguna rama. -->
+<section class="slide" data-block="2" data-title="Pipeline de trabajo">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el riel completo</span></span></div>
-      <h2 class="head">Una sola arquitectura: en el laboratorio se sustituyen tres de las seis etapas</h2>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: la arquitectura</span></span></div>
+      <h2 class="head">Pipeline de trabajo</h2>
     </header>
     <div class="s-body">
-      <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
-           sustrato. Las celdas vacías son el mismo software corriendo sin
-           modificaciones, y ese es el punto de la lámina: no son dos pipelines.
-           La celda va igual aunque esté vacía, porque es la que sostiene la
-           columna de la grilla; si se saca, el riel se corre una etapa. -->
-      <div class="railmap" data-anim>
-        <span class="rl-stub sim">Simulación<small>ROS2 · Gazebo</small></span>
-        <div class="pnode">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3-6 10-6 10 6 10 6M2 12c2 2 5 3 10 3s8-1 10-3"/></svg></div>
-          <div class="lbl">Consigna marina</div>
-          <div class="sub">roll · pitch · heave</div>
-        </div>
-        <div class="pconn"></div>
-        <div class="pnode">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="8" width="14" height="9" rx="1.5"/><path d="M5 17v3M15 17v3M17 11h3v4h-3"/></svg></div>
-          <div class="lbl">Postura del torso</div>
-          <div class="sub">IK propia + contacto</div>
-        </div>
-        <div class="pconn"></div>
-        <div class="pnode">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7h4l1.5-2h7L17 7h4v12H3z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
-          <div class="lbl">Cámara</div>
-          <div class="sub">ideal · fija y dron</div>
-        </div>
-        <div class="pconn"></div>
-        <div class="pnode accent">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="1"/><rect x="7.5" y="7.5" width="3" height="3"/><rect x="13" y="13" width="3" height="3"/></svg></div>
-          <div class="lbl">ArUco + PnP</div>
-          <div class="sub">pose relativa</div>
-        </div>
-        <div class="pconn"></div>
-        <div class="pnode">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
-          <div class="lbl">Registro</div>
-          <div class="sub">rosbag</div>
-        </div>
-        <div class="pconn"></div>
-        <div class="pnode">
-          <div class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5m0 14h16M8 15l3-4 3 2 4-6"/></svg></div>
-          <div class="lbl">Evaluación</div>
-          <div class="sub">contra ground truth</div>
+      <div class="pipe" data-anim>
+
+        <div class="pipe-solo">
+          <span class="pipe-et"><i>1</i>Consigna marina<small>roll · pitch · heave</small></span>
         </div>
 
-        <span class="rl-stub lab">Laboratorio<small>ROS2 · Go2 real</small></span>
-        <div class="rl-cell"></div>
-        <i class="rl-gap"></i>
-        <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
-        <i class="rl-gap"></i>
-        <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
-        <i class="rl-gap"></i>
-        <div class="rl-cell"></div>
-        <i class="rl-gap"></i>
-        <div class="rl-cell"></div>
-        <i class="rl-gap"></i>
-        <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
+        <svg class="pipe-conn" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path class="ln" d="M600 0 V22"/>
+          <path class="ln" d="M290 22 H910"/>
+          <path class="ln sim" d="M290 22 V46"/>
+          <path class="ln lab" d="M910 22 V46"/>
+          <polygon class="pt sim" points="284,45 296,45 290,60"/>
+          <polygon class="pt lab" points="904,45 916,45 910,60"/>
+          <text class="et" x="301" y="41">/body_pose</text>
+          <text class="et" x="899" y="41" text-anchor="end">Euler() · SDK</text>
+        </svg>
+
+        <div class="pipe-caja mundo sim">
+          <span class="pipe-rot">Simulación<small>Gazebo</small></span>
+          <div class="pipe-flujo">
+            <span class="pipe-et"><i>2</i>Go2 simulado<small>la IK la resuelve CHAMP</small></span>
+            <b class="pipe-fl"></b>
+            <span class="pipe-et"><i>3</i>Cámara sintética<small>fija o en dron</small></span>
+          </div>
+          <p class="pipe-nota">ground truth del simulador</p>
+        </div>
+        <div class="pipe-caja mundo lab">
+          <span class="pipe-rot">Laboratorio<small>Go2 real</small></span>
+          <div class="pipe-flujo">
+            <span class="pipe-et"><i>2</i>Go2 real<small>IK en firmware cerrado · sólo actitud</small></span>
+            <b class="pipe-fl"></b>
+            <span class="pipe-et"><i>3</i>Webcam en trípode</span>
+          </div>
+          <p class="pipe-nota">sin ground truth</p>
+        </div>
+
+        <svg class="pipe-conn" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <path class="ln sim" d="M290 0 V34"/>
+          <path class="ln lab" d="M910 0 V34"/>
+          <path class="ln" d="M290 34 H910"/>
+          <path class="ln" d="M600 34 V46"/>
+          <polygon class="pt" points="594,45 606,45 600,60"/>
+          <text class="et" x="612" y="52">imagen</text>
+        </svg>
+
+        <div class="pipe-caja tronco">
+          <span class="pipe-rot">Estimación y evaluación</span>
+          <div class="pipe-flujo">
+            <span class="pipe-et"><i>4</i>Detección ArUco + PnP<small>pose relativa</small></span>
+            <b class="pipe-fl"></b>
+            <span class="pipe-et"><i>5</i>Registro<small>rosbag</small></span>
+            <b class="pipe-fl"></b>
+            <span class="pipe-et"><i>6</i>Evaluación<small>fuera de línea</small></span>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
