@@ -86,7 +86,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: escenario</span></span></div>
-      <h2 class="head">El barco como <span class="accent">base móvil</span> de un dron</h2>
+      <h2 class="head">El barco como base móvil de un dron</h2>
     </header>
     <div class="s-body">
     <!-- Las tres misiones van ilustradas, no en tarjetas: el barco aparece en
@@ -244,14 +244,16 @@
 </section>
 
 <!-- S3 -->
-<section class="slide" data-block="0" data-title="La cubierta está siempre en movimiento">
+<section class="slide" data-block="0" data-title="Movimiento de una plataforma marina">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la cubierta</span></span></div>
-      <h2 class="head">La cubierta está siempre en movimiento</h2>
+      <div class="eyebrow"><span class="num">I</span><span class="lbl">Introducción<span class="s">: movimiento de la plataforma</span></span></div>
+      <h2 class="head">Movimiento de una plataforma marina</h2>
       <p class="lead" style="max-width:70ch;">
-        El oleaje mueve la plataforma de forma continua, en tres ejes a la vez.
-        El dron necesita saber, cuadro a cuadro, dónde está y cómo está inclinada.
+        Trabajamos con tres de los seis grados de libertad. <strong>Surge</strong>,
+        <strong>sway</strong> y <strong>yaw</strong> desplazan la plataforma en el plano
+        pero no la inclinan: pesan menos en el problema y quedan fuera del modelo
+        simplificado.
       </p>
     </header>
     <div class="s-body">
@@ -312,7 +314,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de perfil.</strong> <span class="dof">Pitch</span>: cabeceo longitudinal. <span class="dof">Heave</span>: ascenso y descenso vertical.</figcaption>
       </figure>
 
       <figure>
@@ -366,7 +367,6 @@
             </g>
           </svg>
         </div>
-        <figcaption><strong>Vista de proa.</strong> <span class="dof">Roll</span>: balanceo lateral.</figcaption>
       </figure>
 
     </div>
@@ -386,10 +386,12 @@
       </p>
     </header>
     <div class="s-body">
-    <!-- Dos por dos, con la cifra grande en el cian de la sección haciendo de
-         color. Panel liso, sin borde ni sombra: la caja blanca con sombra y el
-         iconito en un cuadradito es el patrón de plantilla que el deck evita. -->
-    <div class="serie filas grande">
+    <!-- Dos por dos: en cuatro filas la mancha de texto ocupaba un tercio del
+         ancho y dejaba el resto vacío. El verbo grande en el cian de la sección
+         hace de color, y el filete superior marca dónde arranca cada ítem.
+         Panel liso, sin borde ni sombra: la caja blanca con sombra y el iconito
+         en un cuadradito es el patrón de plantilla que el deck evita. -->
+    <div class="serie malla grande">
         <div class="serie-item">
           <span class="serie-k">Repetir</span>
           <div class="serie-txt"><p>la misma condición</p></div>
@@ -483,49 +485,22 @@
 </section>
 
 <!-- S6 -->
+<!-- Unifica las dos láminas que antes presentaban el robot por separado (una
+     con la foto de producto y la cuenta de grados de libertad, otra con el par
+     simulación / laboratorio). Las tres cosas que tiene que hacer la lámina son
+     presentar el Go2, decir que su torso hace de cubierta y mostrar que el
+     mismo robot corre en los dos montajes: el par de fotos las dice todas, y
+     por eso son el cuerpo. La cuenta 18 − 12 = 6 no se pierde, la desarrolla la
+     lámina de control postural, que es donde el detalle hace falta. -->
 <section class="slide" data-block="1" data-title="El torso del Go2 hace de cubierta">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
       <h2 class="head">El torso del Unitree Go2 hace de cubierta</h2>
-    </header>
-    <div class="s-body">
-      <div class="split narrow-media go2-split">
-        <!-- Foto del Go2 sobre blanco: presenta el robot sin el ruido de una
-             foto de laboratorio. -->
-        <figure class="media contain go2-retrato">
-          <img src="assets/img/go2_producto.jpg" alt="El Unitree Go2, vista de tres cuartos">
-        </figure>
-        <div class="col stack go2-col">
-          <!-- Las tres posturas del torso: es lo que hace legible la cuenta de
-               abajo, porque muestra qué se mueve cuando cambian esos seis. -->
-          <figure class="media contain go2-posturas">
-            <img src="assets/img/go2_postures_trim.jpg" alt="El Go2 en tres posturas distintas del torso, con las cuatro patas apoyadas">
-          </figure>
-          <!-- La cuenta reemplaza al párrafo: el 6 va en coral porque es lo que
-               hay que mirar, y el resto de la explicación la da el expositor. -->
-          <div class="cuenta">
-            <span class="t"><span class="n">18</span><span class="l">coordenadas</span></span>
-            <span class="op">&minus;</span>
-            <span class="t"><span class="n">12</span><span class="l">fijadas por los contactos</span></span>
-            <span class="op">=</span>
-            <span class="t res"><span class="n">6</span><span class="l">pose del torso</span></span>
-          </div>
-        </div>
-      </div>
-    </div><!-- /s-body -->
-  </div>
-</section>
-
-<!-- S7 -->
-<section class="slide" data-block="1" data-title="Simulación y laboratorio">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: el enfoque</span></span></div>
-      <h2 class="head">Simulación y Laboratorio</h2>
-      <p class="lead">
-        Todo se construye y se mide primero en simulación, y recién después
-        sobre el robot físico: el mismo modelo del Go2 corre en los dos lados.
+      <p class="lead" style="max-width:76ch;">
+        El Unitree Go2 es un cuadrúpedo comercial. Con las cuatro patas apoyadas,
+        su torso se mueve con los mismos seis grados de libertad que la cubierta
+        de un barco.
       </p>
     </header>
     <div class="s-body">
@@ -535,11 +510,11 @@
     <div class="dos-mundos">
       <figure>
         <div class="media"><img src="assets/img/sim_gazebo_go2.png" alt="El Go2 dentro del simulador Gazebo"></div>
-        <figcaption>Simulación</figcaption>
+        <figcaption class="sim">Simulación<small>Gazebo</small></figcaption>
       </figure>
       <figure>
-        <div class="media"><img src="assets/img/lab_go2_parado.jpg" alt="El Go2 real de pie sobre el piso del laboratorio"></div>
-        <figcaption>Laboratorio</figcaption>
+        <div class="media"><img src="assets/img/lab_go2_aruco_crop.jpg" alt="El Go2 real en el laboratorio, con el marcador ArUco sobre el torso"></div>
+        <figcaption class="lab">Laboratorio<small>Go2 real</small></figcaption>
       </figure>
     </div>
     </div><!-- /s-body -->
@@ -557,8 +532,10 @@
     </header>
     <div class="s-body">
       <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
-           sustrato. Las tres etapas con "=" son el mismo software corriendo sin
-           modificaciones, y ese es el punto de la lámina: no son dos pipelines. -->
+           sustrato. Las celdas vacías son el mismo software corriendo sin
+           modificaciones, y ese es el punto de la lámina: no son dos pipelines.
+           La celda va igual aunque esté vacía, porque es la que sostiene la
+           columna de la grilla; si se saca, el riel se corre una etapa. -->
       <div class="railmap" data-anim>
         <span class="rl-stub sim">Simulación<small>ROS2 · Gazebo</small></span>
         <div class="pnode">
@@ -598,15 +575,15 @@
         </div>
 
         <span class="rl-stub lab">Laboratorio<small>ROS2 · Go2 real</small></span>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
       </div>
@@ -2401,20 +2378,20 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="Campaña experimental (simulación)">
+<section class="slide" data-block="3" data-title="Comparación de simulaciones">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
-      <h2 class="head">Campaña de simulación: escenarios, corridas y criterio de comparación</h2>
+      <h2 class="head">Comparación de simulaciones</h2>
     </header>
     <div class="s-body">
       <table class="dtable">
-        <thead><tr><th>Corrida</th><th>Fuente de imagen</th><th>Duración</th><th>Propósito</th></tr></thead>
+        <thead><tr><th>Corrida</th><th>Fuente de imagen</th><th>Propósito</th></tr></thead>
         <tbody>
-          <tr class="hi"><td><strong>Caso base</strong></td><td class="num">cámara fija</td><td class="num">57,5 s</td><td>Referencia limpia del pipeline</td></tr>
-          <tr><td>R1</td><td class="num">cámara en dron</td><td class="num">57,7 s</td><td>Repetición comparable</td></tr>
-          <tr><td>R2</td><td class="num">cámara en dron</td><td class="num">57,4 s</td><td>Corrida principal (series y detalle)</td></tr>
-          <tr><td>R3</td><td class="num">cámara en dron</td><td class="num">57,7 s</td><td>Variabilidad entre ejecuciones</td></tr>
+          <tr class="hi"><td><strong>Caso base</strong></td><td class="num">cámara fija</td><td>Referencia limpia del pipeline</td></tr>
+          <tr><td>R1</td><td class="num">cámara en dron</td><td>Repetición comparable</td></tr>
+          <tr><td>R2</td><td class="num">cámara en dron</td><td>Corrida principal (series y detalle)</td></tr>
+          <tr><td>R3</td><td class="num">cámara en dron</td><td>Variabilidad entre ejecuciones</td></tr>
         </tbody>
       </table>
       <p class="lead mt-m" style="max-width:66ch;">
@@ -2425,16 +2402,19 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="El pipeline en acción (video sim)">
+<section class="slide" data-block="3" data-title="Detección del marcador">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
-      <h2 class="head">Detección del marcador cuadro a cuadro</h2>
+      <h2 class="head">Detección del marcador</h2>
     </header>
     <div class="s-body">
       <div class="split media-left">
+        <!-- Clip recortado: el render sale en 800x600 y el 94% del cuadro es
+             fondo gris plano. La ventana la calcula crop_sim_deteccion.py sobre
+             el recorrido del marcador en todo el clip. -->
         <figure class="media" style="background:#111;">
-          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion.mp4"></video>
+          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion_zoom.mp4"></video>
         </figure>
         <div class="col stack">
           <ul class="marks">
