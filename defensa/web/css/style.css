@@ -1511,6 +1511,13 @@ code {
    opuestos. El rótulo de vía es lo que impide leerlas como una secuencia. */
 .cinematica { align-items: stretch; }
 .cinematica .col { justify-content: center; gap: 1.6rem; }
+/* Con poco alto ceden los aires entre fórmulas, no el cuerpo de la notación:
+   la lámina es casi sólo ecuaciones y achicarlas la vuelve ilegible. */
+@media (max-height: 899px) {
+  .cinematica .col { gap: .9rem; }
+  .cinematica .eq-block + .eq-block { margin-top: .9rem; }
+  .cinematica + .apoyo { margin-top: 1rem; }
+}
 /* Nota al pie: es la respuesta a "¿y la dinámica?", así que va apagada pero
    legible, y la cifra en tinta plena. */
 .cinematica + .apoyo { margin-top: 1.6rem; color: var(--ink-soft); }
