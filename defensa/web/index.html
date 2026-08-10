@@ -485,49 +485,22 @@
 </section>
 
 <!-- S6 -->
+<!-- Unifica las dos láminas que antes presentaban el robot por separado (una
+     con la foto de producto y la cuenta de grados de libertad, otra con el par
+     simulación / laboratorio). Las tres cosas que tiene que hacer la lámina son
+     presentar el Go2, decir que su torso hace de cubierta y mostrar que el
+     mismo robot corre en los dos montajes: el par de fotos las dice todas, y
+     por eso son el cuerpo. La cuenta 18 − 12 = 6 no se pierde, la desarrolla la
+     lámina de control postural, que es donde el detalle hace falta. -->
 <section class="slide" data-block="1" data-title="El torso del Go2 hace de cubierta">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
       <h2 class="head">El torso del Unitree Go2 hace de cubierta</h2>
-    </header>
-    <div class="s-body">
-      <div class="split narrow-media go2-split">
-        <!-- Foto del Go2 sobre blanco: presenta el robot sin el ruido de una
-             foto de laboratorio. -->
-        <figure class="media contain go2-retrato">
-          <img src="assets/img/go2_producto.jpg" alt="El Unitree Go2, vista de tres cuartos">
-        </figure>
-        <div class="col stack go2-col">
-          <!-- Las tres posturas del torso: es lo que hace legible la cuenta de
-               abajo, porque muestra qué se mueve cuando cambian esos seis. -->
-          <figure class="media contain go2-posturas">
-            <img src="assets/img/go2_postures_trim.jpg" alt="El Go2 en tres posturas distintas del torso, con las cuatro patas apoyadas">
-          </figure>
-          <!-- La cuenta reemplaza al párrafo: el 6 va en coral porque es lo que
-               hay que mirar, y el resto de la explicación la da el expositor. -->
-          <div class="cuenta">
-            <span class="t"><span class="n">18</span><span class="l">coordenadas</span></span>
-            <span class="op">&minus;</span>
-            <span class="t"><span class="n">12</span><span class="l">fijadas por los contactos</span></span>
-            <span class="op">=</span>
-            <span class="t res"><span class="n">6</span><span class="l">pose del torso</span></span>
-          </div>
-        </div>
-      </div>
-    </div><!-- /s-body -->
-  </div>
-</section>
-
-<!-- S7 -->
-<section class="slide" data-block="1" data-title="Simulación y laboratorio">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: el enfoque</span></span></div>
-      <h2 class="head">Simulación y Laboratorio</h2>
-      <p class="lead">
-        Todo se construye y se mide primero en simulación, y recién después
-        sobre el robot físico: el mismo modelo del Go2 corre en los dos lados.
+      <p class="lead" style="max-width:76ch;">
+        El Unitree Go2 es un cuadrúpedo comercial. Con las cuatro patas apoyadas,
+        su torso se mueve con los mismos seis grados de libertad que la cubierta
+        de un barco.
       </p>
     </header>
     <div class="s-body">
@@ -537,11 +510,11 @@
     <div class="dos-mundos">
       <figure>
         <div class="media"><img src="assets/img/sim_gazebo_go2.png" alt="El Go2 dentro del simulador Gazebo"></div>
-        <figcaption>Simulación</figcaption>
+        <figcaption class="sim">Simulación<small>Gazebo</small></figcaption>
       </figure>
       <figure>
-        <div class="media"><img src="assets/img/lab_go2_parado.jpg" alt="El Go2 real de pie sobre el piso del laboratorio"></div>
-        <figcaption>Laboratorio</figcaption>
+        <div class="media"><img src="assets/img/lab_go2_aruco_crop.jpg" alt="El Go2 real en el laboratorio, con el marcador ArUco sobre el torso"></div>
+        <figcaption class="lab">Laboratorio<small>Go2 real</small></figcaption>
       </figure>
     </div>
     </div><!-- /s-body -->
@@ -559,8 +532,10 @@
     </header>
     <div class="s-body">
       <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
-           sustrato. Las tres etapas con "=" son el mismo software corriendo sin
-           modificaciones, y ese es el punto de la lámina: no son dos pipelines. -->
+           sustrato. Las celdas vacías son el mismo software corriendo sin
+           modificaciones, y ese es el punto de la lámina: no son dos pipelines.
+           La celda va igual aunque esté vacía, porque es la que sostiene la
+           columna de la grilla; si se saca, el riel se corre una etapa. -->
       <div class="railmap" data-anim>
         <span class="rl-stub sim">Simulación<small>ROS2 · Gazebo</small></span>
         <div class="pnode">
@@ -600,15 +575,15 @@
         </div>
 
         <span class="rl-stub lab">Laboratorio<small>ROS2 · Go2 real</small></span>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
       </div>

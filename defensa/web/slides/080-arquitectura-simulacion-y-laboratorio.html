@@ -9,8 +9,10 @@
     </header>
     <div class="s-body">
       <!-- La fila de abajo sólo tiene caja donde el laboratorio cambia de
-           sustrato. Las tres etapas con "=" son el mismo software corriendo sin
-           modificaciones, y ese es el punto de la lámina: no son dos pipelines. -->
+           sustrato. Las celdas vacías son el mismo software corriendo sin
+           modificaciones, y ese es el punto de la lámina: no son dos pipelines.
+           La celda va igual aunque esté vacía, porque es la que sostiene la
+           columna de la grilla; si se saca, el riel se corre una etapa. -->
       <div class="railmap" data-anim>
         <span class="rl-stub sim">Simulación<small>ROS2 · Gazebo</small></span>
         <div class="pnode">
@@ -50,15 +52,15 @@
         </div>
 
         <span class="rl-stub lab">Laboratorio<small>ROS2 · Go2 real</small></span>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">API del Go2<small>control interno cerrado</small></span></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Webcam en trípode<small>sólo cámara fija</small></span></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
-        <div class="rl-cell"><span class="rl-eq">=</span></div>
+        <div class="rl-cell"></div>
         <i class="rl-gap"></i>
         <div class="rl-cell sub"><span class="rl-box">Sin ground truth<small>consigna y estado interno</small></span></div>
       </div>
