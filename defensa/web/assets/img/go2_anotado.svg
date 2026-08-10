@@ -1,0 +1,23 @@
+<svg viewBox='0 0 1288 1019' role='img' aria-label='Unitree Go2 con las partes de una pata señaladas'>
+<image href='assets/img/go2_producto.jpg' x='202' y='85' width='894' height='908'/>
+<line class='fn-l' x1='667' y1='230' x2='667' y2='79'/>
+<circle class='fn-d' cx='667' cy='230' r='9'/>
+<text class='fn-t' x='667' y='32' text-anchor='middle'>torso</text>
+<text class='fn-s' x='667' y='63' text-anchor='middle'>marco {b}</text>
+<line class='fn-l' x1='524' y1='312' x2='194' y2='259'/>
+<circle class='fn-d' cx='524' cy='312' r='9'/>
+<text class='fn-t' x='182' y='268' text-anchor='end'>abducción</text>
+<text class='fn-s' x='182' y='299' text-anchor='end'>HAA · eje x</text>
+<line class='fn-l' x1='569' y1='366' x2='194' y2='391'/>
+<circle class='fn-d' cx='569' cy='366' r='9'/>
+<text class='fn-t' x='182' y='400' text-anchor='end'>muslo</text>
+<text class='fn-s' x='182' y='431' text-anchor='end'>HFE · eje y</text>
+<line class='fn-l' x1='788' y1='634' x2='1102' y2='591'/>
+<circle class='fn-d' cx='788' cy='634' r='9'/>
+<text class='fn-t' x='1116' y='600' text-anchor='start'>rodilla</text>
+<text class='fn-s' x='1116' y='631' text-anchor='start'>KFE · eje y</text>
+<line class='fn-l' x1='596' y1='920' x2='1102' y2='891'/>
+<circle class='fn-d' cx='596' cy='920' r='9'/>
+<text class='fn-t' x='1116' y='900' text-anchor='start'>pie</text>
+<text class='fn-s' x='1116' y='931' text-anchor='start'>contacto</text>
+</svg>
