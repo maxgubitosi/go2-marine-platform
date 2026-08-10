@@ -1276,6 +1276,10 @@ code {
   font-size: .7rem; letter-spacing: .04em; text-transform: uppercase;
   color: var(--ink-faint);
 }
+/* Cuando el rótulo DEFINE un símbolo en vez de nombrar la ecuación, la caja alta
+   lo destruye: l1c2 se convierte en L1C2 y deja de ser la misma cantidad que la
+   fórmula de arriba. Esos van en caja baja y un poco más grandes. */
+.eq-ref.def { text-transform: none; letter-spacing: 0; font-size: .8rem; }
 
 /* Bloque de fórmula con su referencia, como unidad. */
 .eq-block { margin: 0; }
@@ -1509,3 +1513,49 @@ code {
 /* Los parámetros del URDF son un dato de la máquina: van en un renglón al pie y
    no en filas propias, que sería darles el mismo peso que a los vectores. */
 .geo-line { margin: 0; font-size: .82rem; color: var(--ink-soft); }
+
+/* ===================== Lámina de cinemática de pata ===================== */
+
+/* Las dos columnas no son dos temas: son la misma cadena leída en sentidos
+   opuestos. El rótulo de vía es lo que impide leerlas como una secuencia. */
+.cinematica { align-items: stretch; }
+.cinematica .col { justify-content: center; gap: 1.6rem; }
+/* Nota al pie: es la respuesta a "¿y la dinámica?", así que va apagada pero
+   legible, y la cifra en tinta plena. */
+.cinematica + .apoyo { margin-top: 1.6rem; color: var(--ink-soft); }
+.cinematica + .apoyo b { color: var(--ink); }
+/* Casi sólo notación: las fórmulas van un escalón por encima del cuerpo estándar
+   del deck para que se lean desde el fondo del aula. */
+.cinematica .eq { font-size: clamp(1rem, 1.55vw, 1.5rem); }
+.cinematica .eq.hero { font-size: clamp(1.1rem, 1.85vw, 1.85rem); }
+.cinematica .eq-block + .eq-block { margin-top: 1.5rem; }
+.via {
+  margin: 0; font-size: .74rem; font-weight: 660;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint);
+}
+.via.hi { color: var(--coral); }
+.via span {
+  display: block; margin-top: .15rem;
+  font-weight: 430; letter-spacing: 0; text-transform: none;
+  font-size: .82rem; color: var(--ink-soft);
+}
+/* La premisa que habilita la inversión. Va al pie de la columna directa, que es
+   donde la cadena se da vuelta, y no como una ecuación más.
+   Ojo: `.bisagra` ya existe para la lámina del barco sintético y es flex. */
+.premisa {
+  margin: .2rem 0 0; padding-top: .7rem; border-top: 1px solid var(--line);
+  font-size: .84rem; color: var(--ink-soft); line-height: 1.5;
+}
+
+/* La clave de símbolos y la lectura del signo van al lado, no debajo: la
+   ecuación de arriba no se entiende sin las dos. */
+/* No crece: `.split` trae flex:1 y acá eso abría un hueco entre la clave y la
+   tabla. El aire sobrante lo reparte el centrado del cuerpo, no esta fila. */
+.lectura { flex: none; align-items: start; gap: clamp(1.4rem, 3vw, 2.6rem); margin-top: 1.1rem; }
+/* Con poco alto ceden los aires, no el contenido. */
+@media (max-height: 899px) {
+  .lectura { margin-top: .6rem; }
+  .lectura + .patron { margin-top: .8rem; }
+  .patron + .conclusion { margin-top: 1.1rem; }
+}
+.lectura .symkey { font-size: .88rem; }

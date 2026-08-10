@@ -43,6 +43,23 @@ PATRON = re.compile(
     r'(<div class="[^"]*\beq\b[^"]*" data-eq="(\w+)"\s*>)(.*?)(</div>)',
     re.S)
 
+# dvisvgm nombra los glifos g<fuente>-<codigo>, y numera las fuentes por orden
+# de aparicion DENTRO de cada formula. O sea que `g2-50` es un glifo distinto en
+# cada archivo. Cada SVG suelto es correcto, pero el deck los inyecta a todos en
+# un mismo documento, y ahi `<use href="#g2-50">` resuelve al primero que
+# aparezca: una formula termina dibujando los glifos de otra. Se veia como
+# subindices cambiados por simbolos raros.
+# Se resuelve al inyectar, prefijando los ids con el nombre de la ecuacion. Los
+# .svg del disco quedan intactos, que es lo correcto: solos son validos.
+GLIFO_ID = re.compile(r"(<path id=')(g\d+-\d+)(')")
+GLIFO_REF = re.compile(r"((?:xlink:)?href='#)(g\d+-\d+)(')")
+
+
+def con_ids_propios(svg, nombre):
+    """Prefija los ids de glifo para que dos fórmulas no se pisen en el DOM."""
+    svg = GLIFO_ID.sub(lambda m: f"{m.group(1)}{nombre}-{m.group(2)}{m.group(3)}", svg)
+    return GLIFO_REF.sub(lambda m: f"{m.group(1)}{nombre}-{m.group(2)}{m.group(3)}", svg)
+
 
 def main():
     check = "--check" in sys.argv
@@ -60,7 +77,7 @@ def main():
         if not svg_path.exists():
             faltantes.append(nombre)
             return m.group(0)
-        svg = svg_path.read_text(encoding="utf-8").strip()
+        svg = con_ids_propios(svg_path.read_text(encoding="utf-8").strip(), nombre)
         if actual.strip() == svg:
             iguales += 1
         else:

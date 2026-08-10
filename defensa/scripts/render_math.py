@@ -119,6 +119,57 @@ eq("body_to_feet", 1927,
 eq("leg_ik", 1984, r"\delta q_i = J_i(q_i)^{-1}\,\delta\, {}^{b}\!p_{f_i}",
    "eq:leg_inverse_differential_kinematics")
 
+# --- Cadena cinemática de una pata -------------------------------------------
+# Las cuatro que sostienen la lámina de cinemática: la directa, su composición
+# con la pose del torso, la inversión con los pies fijos, y el despeje por pata.
+eq("leg_fk", 1694,
+   r"{}^{b}\!p_{f_i}(q_i) = {}^{b}r_{h_i} + \begin{bmatrix}"
+   r" -(l_1 s_2 + l_2 s_{23}) \\[3pt]"
+   r" d\,c_1 + (l_1 c_2 + l_2 c_{23})\,s_1 \\[3pt]"
+   r" d\,s_1 - (l_1 c_2 + l_2 c_{23})\,c_1 \end{bmatrix}",
+   "eq:leg_forward_kinematics")
+eq("foot_world", 1804,
+   r"{}^{w}\!p_{f_i} = {}^{w}\!p_b + {}^{w}\!R_b\, {}^{b}\!p_{f_i}(q_i)",
+   "eq:foot_forward_kinematics")
+eq("desired_feet", 1825,
+   r"{}^{b}\!p_{f_i}^{\star} = \left({}^{w}\!R_b^{\star}\right)^{\!\top}"
+   r"\left({}^{w}\!p_{f_i} - {}^{w}\!p_b^{\star}\right)",
+   "eq:desired_foot_positions")
+# El radio del plano frontal se renombra a r: en el informe se llama A, igual que
+# la extensión efectiva l1c2+l2c23, y en la lámina las dos conviven.
+eq("ik_hip", 2009,
+   r"r = \sqrt{p_y^2 + p_z^2 - d^2},"
+   r"\qquad q_{i,1} = \operatorname{atan2}(p_z, p_y) + \operatorname{atan2}(r, d)",
+   "eq:ik_hip")
+eq("ik_thigh_knee", 2021,
+   r"\begin{aligned}"
+   r" q_{i,3} &= -\arccos\!\left(\frac{L^2 - l_1^2 - l_2^2}{2\,l_1 l_2}\right) \\[6pt]"
+   r" q_{i,2} &= \operatorname{atan2}(p_x, r) - \operatorname{atan2}"
+   r"\left(l_2 \sin q_{i,3},\; l_1 + l_2 \cos q_{i,3}\right)"
+   r"\end{aligned}",
+   "eq:ik_thigh_knee")
+
+# --- Jacobiano de pata y lazo por junta --------------------------------------
+# El jacobiano es el mismo objeto leido en cuatro direcciones: velocidades,
+# correccion articular, singularidades, y (transpuesto) fuerzas a torques.
+eq("leg_jacobian_def", 1960,
+   r"\delta\, {}^{b}\!p_{f_i} = J_i(q_i)\,\delta q_i,"
+   r"\qquad J_i(q_i) = \frac{\partial\, {}^{b}\!p_{f_i}}{\partial q_i}"
+   r" \in \mathbb{R}^{3\times 3}",
+   "eq:leg_jacobian")
+eq("leg_jacobian", 1970,
+   r"J_i(q_i) = \begin{bmatrix}"
+   r" 0 & -A & -l_2 c_{23} \\[3pt]"
+   r" A\,c_1 - d\,s_1 & -B\,s_1 & -l_2 s_{23}\,s_1 \\[3pt]"
+   r" A\,s_1 + d\,c_1 & \;\;B\,c_1 & \;\;l_2 s_{23}\,c_1 \end{bmatrix}",
+   "eq:leg_jacobian_explicit")
+eq("leg_jacobian_det", 1991,
+   r"\det J_i = l_1 l_2\, s_3\,(l_1 c_2 + l_2 c_{23})")
+# No es una ecuacion numerada del informe: es la ley PD estandar que el texto
+# escribe en linea al describir los lazos de seguimiento articular.
+eq("joint_pd", 2050,
+   r"\tau = K_p\,(q_a^{\star} - q_a) + K_d\,(\dot q_a^{\star} - \dot q_a)")
+
 # --- Cadena de medición ----------------------------------------------------
 eq("transform_chain", 2132,
    r"{}^{c}T_a(t) = {}^{c}T_w(t)\,{}^{w}T_{bf}(t)\,{}^{bf}T_{bl}(t)\,{}^{bl}T_a",
