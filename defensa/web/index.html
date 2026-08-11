@@ -2178,10 +2178,10 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="Comparación de simulaciones">
+<section class="slide" data-block="2" data-title="Comparación de simulaciones">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
+      <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: la campaña de simulación</span></span></div>
       <h2 class="head">Comparación de simulaciones</h2>
     </header>
     <div class="s-body">
@@ -2202,68 +2202,40 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="Detección del marcador">
+<!-- R1 · el patrón de resultados que pidieron los mentores: el video (lo
+     lúdico) al lado de la evidencia cuantitativa, para que se validen entre
+     sí. Fusiona la lámina de video suelto y la de error con cámara fija. -->
+<section class="slide" data-block="3" data-title="Caso base: cámara fija">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
-      <h2 class="head">Detección del marcador</h2>
-    </header>
-    <div class="s-body">
-      <div class="split media-left">
-        <!-- Clip recortado: el render sale en 800x600 y el 94% del cuadro es
-             fondo gris plano. La ventana la calcula crop_sim_deteccion.py sobre
-             el recorrido del marcador en todo el clip. -->
-        <figure class="media" style="background:#111;">
-          <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion_zoom.mp4"></video>
-        </figure>
-        <div class="col stack">
-          <ul class="marks">
-            <li>El marcador sube, baja y se inclina siguiendo la consigna de oleaje</li>
-            <li>Los ejes dibujados son la <strong>pose estimada en tiempo real</strong></li>
-            <li>Detección estable cuadro a cuadro sobre la cámara fija</li>
-          </ul>
-          <span class="pill">Cámara fija · Gazebo</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="Error con cámara fija">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: cámara fija</span></span></div>
-      <h2 class="head">Error de posición y de actitud con cámara fija</h2>
+      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara fija</span></span></div>
+      <h2 class="head">Caso base: la estimación sigue la dinámica en los tres ejes</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
         <div class="col stack">
-          <figure class="media contain plot res-fig">
-            <img src="assets/img/sim_fixed_position_vs_gt.png" alt="Posición estimada vs ground truth, cámara fija">
+          <figure class="media" style="background:#111;">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion_zoom.mp4"></video>
           </figure>
-          <figcaption class="res-cap">Estimación contra referencia en los tres ejes. La componente de heave se sigue con claridad.</figcaption>
-        </div>
-        <div class="col stack">
-          <figure class="media contain plot res-fig">
-            <img src="assets/img/sim_fixed_error_hist.png" alt="Distribución del error de posición en el caso base">
-          </figure>
-          <figcaption class="res-cap">Distribución de ΔX, ΔY, ΔZ y del error euclidiano. <span class="eq-ref-inline">Informe · fig. de error, caso base</span></figcaption>
+          <figcaption class="res-cap">Los ejes dibujados sobre el marcador son la pose estimada en tiempo real, cuadro a cuadro.</figcaption>
           <table class="dtable params-tbl">
             <tbody>
-              <tr><td>Muestras útiles</td><td class="num">275</td><td>sobre 57,5 s de corrida</td></tr>
-              <tr><td>Tasa de detección</td><td class="num">4,78 Hz</td><td>marcador visible y resuelto</td></tr>
+              <tr><td>Error de posición</td><td class="num">5,8 cm medio · 8,5 cm P95</td></tr>
+              <tr><td>Error de actitud</td><td class="num">2,44° roll · 2,00° pitch</td></tr>
+              <tr><td>Muestras útiles</td><td class="num">275 en 57,5 s · 4,78 Hz</td></tr>
             </tbody>
           </table>
         </div>
-      </div>
-      <div class="descartado">
-        <p>
-          <strong>Estos histogramas son crudos.</strong> No se compensó el desfase temporal
-          entre la estimación visual y el ground truth, que se reconstruye a otra frecuencia
-          y se alinea por marca temporal. Parte del corrimiento respecto de cero es ese
-          retardo entre cadenas, no error geométrico del estimador. Aislar una cosa de la
-          otra requiere recentrar las series antes de calcular la distribución.
-        </p>
+        <div class="col stack">
+          <figure class="media contain plot res-fig">
+            <img src="assets/img/sim_fixed_position_vs_gt.png" alt="Posición estimada vs ground truth, cámara fija">
+          </figure>
+          <figcaption class="res-cap">La misma corrida, medida: estimación contra referencia en los tres ejes. El heave se sigue con particular claridad.</figcaption>
+          <figure class="media contain plot res-fig">
+            <img src="assets/img/sim_fixed_error_hist.png" alt="Distribución del error de posición en el caso base">
+          </figure>
+          <figcaption class="res-cap">Histogramas <b>crudos</b>: parte del corrimiento es desfase temporal entre las dos cadenas, no error geométrico del estimador.</figcaption>
+        </div>
       </div>
     </div>
   </div>
@@ -2319,167 +2291,39 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="Alcance y limitaciones (simulación)">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación</span></span></div>
-      <h2 class="head">Alcance y limitaciones de la validación en simulación</h2>
-    </header>
-    <div class="s-body">
-      <div class="serie cols">
-        <div class="serie-item ok">
-          <span class="serie-k">Lo que funciona</span>
-          <div class="serie-txt"><ul class="marks">
-            <li class="ok">El pipeline sigue la dinámica global del movimiento</li>
-            <li class="ok">Medible contra una referencia reconstruible</li>
-            <li class="ok">Repetible entre corridas equivalentes</li>
-          </ul></div>
-        </div>
-        <div class="serie-item warn">
-          <span class="serie-k">Los límites</span>
-          <div class="serie-txt"><ul class="marks">
-            <li class="warn">El <strong>heave</strong> es el eje posicional más sensible</li>
-            <li class="warn">Sesgo sistemático en Y: limitación geométrica, no movimiento real</li>
-            <li class="warn">Parte del desvío viene de desfases temporales no compensados</li>
-          </ul></div>
-        </div>
-      </div>
-      <p class="lead center mt-m" style="max-width:64ch;margin-left:auto;margin-right:auto;">
-        Para eso sirve la simulación: <strong>aislar estas limitaciones con ground truth</strong> antes del mundo físico.
-      </p>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="Lo que la simulación no anticipó">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: del simulador al laboratorio</span></span></div>
-      <h2 class="head">Tres obstáculos del pasaje al robot real, y qué se hizo con cada uno</h2>
-    </header>
-    <div class="s-body">
-      <table class="dtable pares">
-        <thead><tr><th>Con qué chocamos</th><th>Cómo lo resolvimos</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><b>Conectarnos al robot</b><p>Salir de Gazebo cambió por completo la interfaz de control disponible.</p></td>
-            <td><p>Refactor de la capa de comunicación: la <strong>consigna de oleaje se conservó</strong>, el camino hasta las patas se reescribió.</p></td>
-          </tr>
-          <tr>
-            <td><b>El guardrail de marcha</b><p>Cada tanto el Go2 <strong>trota en el lugar</strong> para reasegurar su estabilidad, y abandona la postura pedida. Es un reflejo del control interno, no de nuestro código.</p></td>
-            <td><p>Barrimos frecuencias de consigna: a <strong>menor frecuencia el trote se espacia</strong>. No lo elimina: lo vuelve infrecuente. De ahí sale el régimen de ensayo.</p></td>
-          </tr>
-          <tr class="hi">
-            <td><b>Sin acceso al firmware</b><p>El robot se mueve <em>trabado</em>: sigue la forma de la consigna, pero no con la amplitud ni en el instante que pedimos.</p></td>
-            <td><p>No podíamos corregir la dinámica: <strong>la medimos</strong>. De ahí salen el retardo τ y la ganancia g.</p></td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="row mt-m" style="justify-content:center;">
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="El montaje real (laboratorio)">
+<!-- R4 · el resultado central del laboratorio con su medición al lado: el video
+     del robot real y las series comando contra respuesta. La fidelidad del
+     comando baja a strip de cifras: su gráfico era una diagonal que no decía
+     nada (corr 0,9999 colapsa sobre la identidad); el scatter queda en backup
+     como método. Fusiona las láminas de video, seguimiento y fidelidad. -->
+<section class="slide" data-block="3" data-title="El robot real sigue la consigna">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
-      <h2 class="head">Montaje de laboratorio: Go2, marcador y cámara en trípode</h2>
+      <h2 class="head">El robot real sigue la forma de la consigna, con retardo y menor amplitud</h2>
     </header>
     <div class="s-body">
-      <div class="split narrow-media">
+      <div class="split resultado" style="grid-template-columns:.9fr 1.1fr;align-items:center;">
         <div class="col vwrap">
-          <div class="media portrait md">
-            <video data-autoplay loop muted playsinline src="assets/media/lab_08_setup_completo.mp4"></video>
-          </div>
-        </div>
-        <div class="col stack">
-          <ul class="marks">
-            <li>Cámara cenital sobre <strong>trípode</strong> observando al robot</li>
-            <li>Marcador <strong>ArUco</strong> montado en el lomo del Go2</li>
-            <li>Consigna de oleaje enviada por la <strong>API</strong> del robot</li>
-          </ul>
-          <span class="pill">Go2 real · webcam · ROS2</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="El torso sigue la consigna (video)">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
-      <h2 class="head">El torso del Go2 sigue la consigna marina comandada</h2>
-    </header>
-    <div class="s-body">
-      <div class="split" style="grid-template-columns:1.15fr .85fr;align-items:center;">
-        <div class="col vwrap">
-          <div class="media portrait" style="max-height:60vh;">
+          <div class="media portrait" style="max-height:56vh;">
             <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
           </div>
+          <figcaption class="res-cap" style="text-align:center;">La consigna de oleaje moviendo un robot real.</figcaption>
         </div>
         <div class="col stack">
-          <p class="lead" style="max-width:34ch;font-size:clamp(1.2rem,2vw,1.7rem);color:var(--ink);">
-            La consigna de oleaje moviendo un <strong>robot real</strong>.
-          </p>
-          <p class="lead" style="max-width:36ch;">
-            El operador envía el comando; el Go2 ejecuta las posturas marinas. Este es
-            el resultado central del laboratorio en una sola imagen.
-          </p>
+          <figure class="media contain plot res-fig">
+            <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
+          </figure>
+          <figcaption class="res-cap">La misma escena, medida: la respuesta reproduce la forma en roll y pitch, llega tarde y más chica. Eso es lo que τ y g cuantifican en la lámina siguiente.</figcaption>
+          <table class="dtable params-tbl">
+            <tbody>
+              <tr><td>Consigna → comando API</td><td class="num">correlación &gt; 0,9999</td></tr>
+              <tr><td>Desfase del camino de software</td><td class="num">≈ 5 ms</td></tr>
+            </tbody>
+          </table>
+          <figcaption class="res-cap">El software queda descartado: todo lo que difiere de acá en más es la <b>dinámica física</b> del robot.</figcaption>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="Fidelidad del comando">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
-      <h2 class="head">Fidelidad del comando: qué le llega efectivamente a la API</h2>
-    </header>
-    <div class="s-body">
-      <div class="split narrow-media">
-        <div class="col stack">
-          <div class="hero-num" style="color:var(--sea)">&gt;0,9999</div>
-          <p class="hero-label">correlación entre la consigna esperada y el comando efectivamente enviado, en roll y en pitch</p>
-          <p class="modelo-nota">
-            La dispersión es tan baja que la nube colapsa sobre la identidad: por eso
-            acá el número dice más que un histograma.
-          </p>
-          <p class="modelo-nota">
-            <strong>Ojo con el alcance:</strong> esto valida la cadena de software hasta la
-            capa de actuación, y nada más. Si el robot <em>ejecuta</em> ese comando es otra
-            pregunta, y se responde dos láminas más adelante, donde la ganancia cae a 0,62.
-          </p>
-        </div>
-        <figure class="col stack">
-          <figure class="media contain plot res-fig"><img src="assets/img/lab_api_fidelity.png" alt="Fidelidad del comando: consigna vs comando enviado"></figure>
-          <figcaption class="res-cap">Consigna contra comando enviado, por eje. Cada punto es una muestra del rosbag.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-block="3" data-title="Comando vs respuesta física">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
-      <h2 class="head">Seguimiento: la actitud medida contra la consigna</h2>
-    </header>
-    <div class="s-body">
-      <div class="result-plot" style="margin-bottom:1rem;">
-        <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
-      </div>
-      <p class="lead center" style="max-width:70ch;margin-left:auto;margin-right:auto;">
-        Reproduce la forma de la dinámica solicitada (se ve a ojo en las series), pero con
-        <strong>retardo</strong> y una <strong>amplitud efectiva menor</strong>. No es una falla del pipeline:
-        es el movimiento <em>trabado</em> del robot, el mismo que no pudimos corregir sin acceso al firmware.
-      </p>
     </div>
   </div>
 </section>
@@ -2552,7 +2396,6 @@
           <figcaption class="res-cap">Informe · tabla de comparación R4 contra R5</figcaption>
         </div>
         <div class="col stack">
-          <figure class="media contain plot res-fig"><img src="assets/img/lab_lag_correlation.png" alt="Curvas de correlación vs retardo aplicado"></figure>
           <p class="modelo-nota">
             Dos ensayos a amplitudes distintas dan el mismo patrón: retardo del orden
             del segundo, correlación alta y ganancia claramente menor que uno. El
@@ -2614,35 +2457,6 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="El pipeline visual también corre en el lab">
-  <div class="slide-inner">
-    <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
-      <h2 class="head">Detección visual sobre el robot real</h2>
-    </header>
-    <div class="s-body">
-      <div class="split" style="grid-template-columns:1.4fr .6fr;">
-        <div class="col">
-          <div class="imgrow" style="grid-template-columns:1fr 1fr 1fr;">
-            <figure class="media"><img src="assets/img/lab_aruco_t00.png" alt="Detección ArUco t=0s"></figure>
-            <figure class="media"><img src="assets/img/lab_aruco_t26.png" alt="Detección ArUco t=26s"></figure>
-            <figure class="media"><img src="assets/img/lab_aruco_t49.png" alt="Detección ArUco t=49s"></figure>
-          </div>
-          <p class="lead mt-m" style="max-width:52ch;">
-            La detección ArUco funciona sobre el robot real con la cámara del montaje.
-            Se evaluó <strong>por separado</strong> del movimiento, para no saturar el cómputo.
-          </p>
-        </div>
-        <div class="col vwrap">
-          <div class="media portrait md">
-            <video data-autoplay loop muted playsinline src="assets/media/lab_07_aruco_deteccion_pantalla.mp4"></video>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="slide" data-block="4" data-title="Lectura conjunta: dos piezas">
   <div class="slide-inner">
     <header class="s-head">
@@ -2668,30 +2482,40 @@
   </div>
 </section>
 
-<section class="slide" data-block="4" data-title="Conclusiones">
+<!-- Una sola lámina de limitaciones, como pidieron los mentores ("juntar
+     limitaciones y experiencias del trabajo en una slide con bullets").
+     Fusiona alcance/limitaciones de simulación y los tres obstáculos del
+     pasaje al robot real, más la limitación de interfaz del laboratorio. -->
+<section class="slide" data-block="4" data-title="Limitaciones y experiencias">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: conclusiones</span></span></div>
-      <h2 class="head">Conclusiones: generar, observar y medir</h2>
+      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: limitaciones y experiencias</span></span></div>
+      <h2 class="head">Lo que este trabajo no resuelve, y lo que enseñó intentarlo</h2>
     </header>
     <div class="s-body">
-      <div class="chain">
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>simulador marino</strong> genera movimiento representativo</span>
+      <div class="serie cols">
+        <div class="serie-item warn">
+          <span class="serie-k">Los límites de lo medido</span>
+          <div class="serie-txt"><ul class="marks">
+            <li class="warn">El <strong>heave</strong> es el eje posicional más sensible del pipeline visual</li>
+            <li class="warn">Sesgo sistemático en Y en el escenario con dron</li>
+            <li class="warn">Desfases temporales entre cadenas sin compensar: los histogramas son crudos</li>
+            <li class="warn">La interfaz de actitud del robot real <strong>no tiene canal de heave</strong>: los ensayos del laboratorio son de roll y pitch</li>
+          </ul></div>
         </div>
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>robot real</strong> lo reproduce de forma consistente</span>
-        </div>
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>pipeline visual</strong> mide su pose cuando las condiciones lo permiten</span>
+        <div class="serie-item">
+          <span class="serie-k">Lo que enseñó el pasaje al robot real</span>
+          <div class="serie-txt"><ul class="marks">
+            <li>Salir de Gazebo cambió la interfaz completa: refactor de comunicación, <strong>la consigna se conservó</strong></li>
+            <li>El <strong>guardrail de marcha</strong> trota para reasegurar estabilidad: a menor frecuencia se espacia, y de ahí sale el régimen de ensayo</li>
+            <li>Sin acceso al firmware la dinámica no se corrige: <strong>se mide</strong>. De ahí salen τ y g</li>
+          </ul></div>
         </div>
       </div>
-      <p class="lead center mt-l" style="max-width:60ch;margin-left:auto;margin-right:auto;">
-        No un sistema de aterrizaje: una <strong>base de investigación</strong> para estudiar ese
-        problema de forma progresiva, medible y reproducible.
+      <p class="apoyo">
+        Ninguna es un agujero descubierto tarde: las tres de la derecha están
+        declaradas como decisiones, y las de la izquierda quedaron aisladas con
+        ground truth antes de pasar al mundo físico.
       </p>
     </div>
   </div>
@@ -2722,6 +2546,35 @@
           <div class="serie-txt"><h3>Aproximaciones de aterrizaje</h3><p>Que un dron observe el Go2, estime su pose y ensaye aproximaciones repetibles.</p></div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-title="Conclusiones">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: conclusiones</span></span></div>
+      <h2 class="head">Conclusiones: generar, observar y medir</h2>
+    </header>
+    <div class="s-body">
+      <div class="chain">
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>simulador marino</strong> genera movimiento representativo</span>
+        </div>
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>robot real</strong> lo reproduce de forma consistente</span>
+        </div>
+        <div class="link">
+          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <span class="txt">El <strong>pipeline visual</strong> mide su pose cuando las condiciones lo permiten</span>
+        </div>
+      </div>
+      <p class="lead center mt-l" style="max-width:60ch;margin-left:auto;margin-right:auto;">
+        No un sistema de aterrizaje: una <strong>base de investigación</strong> para estudiar ese
+        problema de forma progresiva, medible y reproducible.
+      </p>
     </div>
   </div>
 </section>
@@ -2962,6 +2815,86 @@
       <p class="lead center mt-m" style="max-width:66ch;margin-left:auto;margin-right:auto;">
         Al no poder removerla, la limitación se volvió <strong>parte del modelo</strong>: θ<sub>real</sub>(t) ≈ g·θ<sub>cmd</sub>(t−τ) + b.
       </p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="11" data-title="El montaje real (laboratorio)">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup</span></div>
+      <h2 class="head">Montaje de laboratorio: Go2, marcador y cámara en trípode</h2>
+    </header>
+    <div class="s-body">
+      <div class="split narrow-media">
+        <div class="col vwrap">
+          <div class="media portrait md">
+            <video data-autoplay loop muted playsinline src="assets/media/lab_08_setup_completo.mp4"></video>
+          </div>
+        </div>
+        <div class="col stack">
+          <ul class="marks">
+            <li>Cámara cenital sobre <strong>trípode</strong> observando al robot</li>
+            <li>Marcador <strong>ArUco</strong> montado en el lomo del Go2</li>
+            <li>Consigna de oleaje enviada por la <strong>API</strong> del robot</li>
+          </ul>
+          <span class="pill">Go2 real · webcam · ROS2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-block="4" data-backup="12" data-title="El pipeline visual también corre en el lab">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup</span></div>
+      <h2 class="head">Detección visual sobre el robot real</h2>
+    </header>
+    <div class="s-body">
+      <div class="split" style="grid-template-columns:1.4fr .6fr;">
+        <div class="col">
+          <div class="imgrow" style="grid-template-columns:1fr 1fr 1fr;">
+            <figure class="media"><img src="assets/img/lab_aruco_t00.png" alt="Detección ArUco t=0s"></figure>
+            <figure class="media"><img src="assets/img/lab_aruco_t26.png" alt="Detección ArUco t=26s"></figure>
+            <figure class="media"><img src="assets/img/lab_aruco_t49.png" alt="Detección ArUco t=49s"></figure>
+          </div>
+          <p class="lead mt-m" style="max-width:52ch;">
+            La detección ArUco funciona sobre el robot real con la cámara del montaje.
+            Se evaluó <strong>por separado</strong> del movimiento, para no saturar el cómputo.
+          </p>
+        </div>
+        <div class="col vwrap">
+          <div class="media portrait md">
+            <video data-autoplay loop muted playsinline src="assets/media/lab_07_aruco_deteccion_pantalla.mp4"></video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Los dos gráficos de correlación que salieron del hilo: son el MÉTODO, no
+     el resultado. El scatter de fidelidad es una diagonal (corr 0,9999 colapsa
+     sobre la identidad) y la curva de lag exige explicar el método antes de
+     leerse. Responden "¿cómo midieron la fidelidad?" y "¿cómo encontraron τ?". -->
+<section class="slide" data-block="4" data-backup="13" data-title="Método: fidelidad y búsqueda de retardo">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup</span></div>
+      <h2 class="head">Método: la fidelidad del comando y la búsqueda del retardo</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <div class="col stack">
+          <figure class="media contain plot res-fig"><img src="assets/img/lab_api_fidelity.png" alt="Consigna vs comando enviado, por eje"></figure>
+          <figcaption class="res-cap">Consigna contra comando enviado, por eje: la nube colapsa sobre la identidad (corr &gt; 0,9999, desfase ≈ 5 ms). Valida la cadena de software hasta la capa de actuación, y nada más.</figcaption>
+        </div>
+        <div class="col stack">
+          <figure class="media contain plot res-fig"><img src="assets/img/lab_lag_correlation.png" alt="Correlación comando-real según el retardo aplicado"></figure>
+          <figcaption class="res-cap">τ se encuentra barriendo el retardo aplicado al comando en ±3 s y quedándose con el máximo de correlación: 0,45 s en roll, 0,95 s en pitch (R4).</figcaption>
+        </div>
+      </div>
     </div>
   </div>
 </section>

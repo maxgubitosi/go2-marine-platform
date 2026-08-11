@@ -1,0 +1,24 @@
+<!-- Los dos gráficos de correlación que salieron del hilo: son el MÉTODO, no
+     el resultado. El scatter de fidelidad es una diagonal (corr 0,9999 colapsa
+     sobre la identidad) y la curva de lag exige explicar el método antes de
+     leerse. Responden "¿cómo midieron la fidelidad?" y "¿cómo encontraron τ?". -->
+<section class="slide" data-block="4" data-backup="13" data-title="Método: fidelidad y búsqueda de retardo">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup</span></div>
+      <h2 class="head">Método: la fidelidad del comando y la búsqueda del retardo</h2>
+    </header>
+    <div class="s-body">
+      <div class="split">
+        <div class="col stack">
+          <figure class="media contain plot res-fig"><img src="assets/img/lab_api_fidelity.png" alt="Consigna vs comando enviado, por eje"></figure>
+          <figcaption class="res-cap">Consigna contra comando enviado, por eje: la nube colapsa sobre la identidad (corr &gt; 0,9999, desfase ≈ 5 ms). Valida la cadena de software hasta la capa de actuación, y nada más.</figcaption>
+        </div>
+        <div class="col stack">
+          <figure class="media contain plot res-fig"><img src="assets/img/lab_lag_correlation.png" alt="Correlación comando-real según el retardo aplicado"></figure>
+          <figcaption class="res-cap">τ se encuentra barriendo el retardo aplicado al comando en ±3 s y quedándose con el máximo de correlación: 0,45 s en roll, 0,95 s en pitch (R4).</figcaption>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

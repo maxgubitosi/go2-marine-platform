@@ -1,0 +1,38 @@
+<!-- Una sola lámina de limitaciones, como pidieron los mentores ("juntar
+     limitaciones y experiencias del trabajo en una slide con bullets").
+     Fusiona alcance/limitaciones de simulación y los tres obstáculos del
+     pasaje al robot real, más la limitación de interfaz del laboratorio. -->
+<section class="slide" data-block="4" data-title="Limitaciones y experiencias">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: limitaciones y experiencias</span></span></div>
+      <h2 class="head">Lo que este trabajo no resuelve, y lo que enseñó intentarlo</h2>
+    </header>
+    <div class="s-body">
+      <div class="serie cols">
+        <div class="serie-item warn">
+          <span class="serie-k">Los límites de lo medido</span>
+          <div class="serie-txt"><ul class="marks">
+            <li class="warn">El <strong>heave</strong> es el eje posicional más sensible del pipeline visual</li>
+            <li class="warn">Sesgo sistemático en Y en el escenario con dron</li>
+            <li class="warn">Desfases temporales entre cadenas sin compensar: los histogramas son crudos</li>
+            <li class="warn">La interfaz de actitud del robot real <strong>no tiene canal de heave</strong>: los ensayos del laboratorio son de roll y pitch</li>
+          </ul></div>
+        </div>
+        <div class="serie-item">
+          <span class="serie-k">Lo que enseñó el pasaje al robot real</span>
+          <div class="serie-txt"><ul class="marks">
+            <li>Salir de Gazebo cambió la interfaz completa: refactor de comunicación, <strong>la consigna se conservó</strong></li>
+            <li>El <strong>guardrail de marcha</strong> trota para reasegurar estabilidad: a menor frecuencia se espacia, y de ahí sale el régimen de ensayo</li>
+            <li>Sin acceso al firmware la dinámica no se corrige: <strong>se mide</strong>. De ahí salen τ y g</li>
+          </ul></div>
+        </div>
+      </div>
+      <p class="apoyo">
+        Ninguna es un agujero descubierto tarde: las tres de la derecha están
+        declaradas como decisiones, y las de la izquierda quedaron aisladas con
+        ground truth antes de pasar al mundo físico.
+      </p>
+    </div>
+  </div>
+</section>

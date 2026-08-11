@@ -1613,6 +1613,21 @@ code {
   font-size: .84rem; color: var(--ink-soft); line-height: 1.5;
 }
 
+/* ===================== Resultados: video junto a su medición ===================== */
+
+/* El patrón del bloque de resultados: el video valida los gráficos y al revés.
+   A 720p el alto es el recurso escaso: ceden el video y las figuras, nunca el
+   texto ni las cifras. */
+@media (max-height: 899px) {
+  .resultado .media video { max-height: 26vh; }
+  .resultado .res-fig, .resultado .res-fig img { max-height: 20vh; }
+  .resultado .col.stack .res-fig:not(:only-of-type),
+  .resultado .col.stack .res-fig:not(:only-of-type) img { max-height: 18vh; }
+  .resultado .params-tbl { font-size: .78rem; }
+  .resultado .params-tbl td { padding: .3rem .7rem; }
+  .media.portrait video { max-height: 42vh; }
+}
+
 /* ===================== Lámina del lazo por junta ===================== */
 
 /* La ecuación del lazo abre la lámina y es su título: es la única del bloque
