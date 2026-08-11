@@ -775,78 +775,176 @@ ul.marks li.warn::before{ background: var(--warn); }
 .hyp-item .v { font-size: 1rem; color: var(--ink); line-height: 1.45; }
 
 
-/* ===================== Pipeline animado (S8) ===================== */
-.pipeline {
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  gap: 0;
-  flex-wrap: nowrap;
+/* ===================== Pipeline de trabajo ===================== */
+/* Flujo de arriba hacia abajo, con una bifurcación explícita y una
+   convergencia explícita. La versión anterior ponía un conector vertical
+   debajo de cada mundo y se leía mal: parecía que la etapa 1 iba a simulación
+   y la 5 al laboratorio. Acá sale un solo tronco de la consigna, se abre en dos
+   ramas rotuladas y del otro lado las dos ramas se juntan en un tronco que
+   entra a la estimación. Una salida con dos destinos, una entrada con dos
+   orígenes.
+
+   Los conectores van en SVG y no en CSS porque una bifurcación necesita
+   diagonales y horizontales que se crucen: con bordes y pseudo-elementos sale
+   una escalera de rectángulos. El viewBox se estira al ancho de la columna, así
+   que las ramas caen sobre el centro de cada mundo en cualquier resolución.
+
+   Las cajas de tronco no dependen del montaje, que es la distinción que pidió
+   la devolución: la consigna son comandos y salen igual al robot simulado o al
+   real, y al detector no le importa de dónde vino el píxel. Ninguna de las dos
+   está adentro de una caja rotulada "simulación". Tampoco se rotulan como
+   software propio: la detección es cv2.aruco y solvePnP. */
+
+.pipe {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(1.4rem, 3.4vw, 3rem);
   width: 100%;
 }
-.pnode {
-  flex: 1 1 0;
-  background: #fff;
+
+.pipe-caja {
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 1rem .8rem;
-  text-align: center;
-  display: flex; flex-direction: column; align-items: center; gap: .5rem;
-  box-shadow: var(--shadow-sm);
+  background: #fff;
+  padding: clamp(.45rem, 1.1vh, .75rem) clamp(.75rem, 1.5vw, 1.1rem) clamp(.55rem, 1.2vh, .9rem);
   min-width: 0;
 }
-.pnode .ico {
-  width: 42px; height: 42px; border-radius: 10px;
-  display: grid; place-items: center;
-  background: var(--foam); color: var(--sea);
+/* Tronco: centrado y angosto el de arriba, para que la bifurcación salga del
+   medio y se vea que es una sola salida. */
+.pipe-caja.tronco { grid-column: 1 / -1; border-color: var(--verde-line); }
+/* La consigna es un bloque solo, sin caja contenedora: rotular el contenedor
+   "Consigna" y el bloque de adentro "Consigna marina" decía dos veces lo mismo.
+   El filete en tinta, el mismo de la caja de abajo, es lo que dice que ninguno
+   de los dos depende del montaje, sin tener que escribirlo. */
+.pipe-solo {
+  grid-column: 1 / -1;
+  display: flex;
+  max-width: min(100%, 42%);
+  margin-inline: auto;
 }
-.pnode.accent .ico { background: var(--coral-soft); color: var(--coral); }
-.pnode .lbl { font-weight: 680; font-size: .95rem; line-height: 1.15; color: var(--ink); }
-.pnode .sub { font-size: .78rem; color: var(--ink-faint); line-height: 1.2; }
-.pconn {
-  flex: 0 0 clamp(20px, 3vw, 52px);
+.pipe-solo .pipe-et {
+  background: var(--amber-soft);
+  border: 1px solid var(--amber);
+  padding: clamp(.55rem, 1.3vh, .85rem) 1rem;
+}
+.pipe-caja.mundo { background: var(--c-soft); border-color: var(--c-line); }
+
+.pipe-rot {
+  display: block;
+  margin-bottom: clamp(.4rem, 1vh, .65rem);
+  font-variant-caps: small-caps;
+  letter-spacing: .045em;
+  font-weight: 700;
+  font-size: clamp(.95rem, 1.2vw, 1.15rem);
+  color: var(--ink);
+}
+.pipe-rot small {
+  font-variant-caps: normal; letter-spacing: 0;
+  font-size: .72em; font-weight: 500; color: var(--ink-faint);
+  margin-left: .55em;
+}
+.pipe-caja.sim .pipe-rot { color: var(--sea); }
+.pipe-caja.lab .pipe-rot { color: var(--coral); }
+
+.pipe-flujo { display: flex; align-items: stretch; gap: clamp(.35rem, .9vw, .7rem); }
+
+.pipe-et {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: clamp(.45rem, 1vh, .68rem) .55rem;
+  border-radius: 9px;
+  background: var(--verde-soft);
+  border: 1px solid var(--verde-line);
+  text-align: center;
+  font-weight: 680;
+  font-size: clamp(.85rem, 1.05vw, 1.02rem);
+  line-height: 1.18;
+  color: var(--ink);
+}
+.pipe-et small {
+  display: block; margin-top: .18rem;
+  font-size: .78em; font-weight: 500; color: var(--ink-faint);
+}
+/* Número de etapa: es el orden, y hay que poder seguirlo aunque el recorrido
+   cambie de caja. Mismo mono que el romano del encabezado. */
+.pipe-et i {
+  display: block; margin-bottom: .2rem;
+  font-family: var(--mono); font-style: normal;
+  font-size: .8em; font-weight: 700; color: var(--ink-faint);
+}
+
+.pipe-fl {
+  flex: 0 0 clamp(10px, 1.5vw, 20px);
   align-self: center;
-  height: 3px;
-  position: relative;
-  background: var(--foam-line);
-  border-radius: 3px;
-  overflow: hidden;
+  position: relative; height: 2px;
+  background: var(--fl-c, var(--verde-line));
 }
-.pconn::after {
-  content: ""; position: absolute; top: 0; left: -40%;
-  width: 40%; height: 100%;
-  background: linear-gradient(90deg, transparent, var(--sea-bright), transparent);
+.pipe-fl::after {
+  content: ""; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
+  border-left: 6px solid var(--fl-c, var(--verde-line));
+  border-top: 4px solid transparent; border-bottom: 4px solid transparent;
 }
-[data-anim].run .pconn::after { animation: flow 2.4s linear infinite; }
-.pconn:nth-of-type(4)::after { animation-delay: .3s; }
-@keyframes flow { from { left: -40%; } to { left: 100%; } }
 
-/* ===================== Riel de arquitectura ===================== */
-/* Un riel, no dos. Dibujar el flujo de simulación arriba y el real abajo daría
-   doce cajas de las que la mitad dicen lo mismo, que es justo la grilla simétrica
-   que este deck evita. Acá la fila del laboratorio existe únicamente debajo de
-   las etapas que cambian de sustrato: donde dice "=" corre el mismo software sin
-   tocar. Los huecos son el argumento, así que no se rellenan.
-
-   Doce columnas: rótulo de fila + seis etapas intercaladas con cinco conectores.
-   Las dos filas comparten la grilla, así que las cajas de abajo caen alineadas
-   con su etapa sin depender de anchos calculados a mano. La colocación es por
-   flujo natural y cada fila aporta sus doce items en orden: nada lleva grid-row
-   ni grid-column, porque un item con fila explícita se coloca antes que el
-   rótulo y arrastra todo el riel una columna. */
-
-.railmap {
-  --conn: clamp(14px, 2.2vw, 34px);
-  --drop: clamp(.8rem, 2.1vh, 1.3rem);
-  display: grid;
-  grid-template-columns: max-content repeat(5, minmax(0, 1fr) var(--conn)) minmax(0, 1fr);
-  row-gap: 0;
+/* Conectores: bifurcación arriba, convergencia abajo. */
+.pipe-conn {
+  grid-column: 1 / -1;
+  display: block;
   width: 100%;
+  height: auto;
+  max-height: clamp(44px, 7.6vh, 74px);
+}
+.pipe-conn .ln { fill: none; stroke: var(--foam-line); stroke-width: 2.5; }
+.pipe-conn .pt { fill: var(--foam-line); }
+.pipe-conn .ln.sim, .pipe-conn .pt.sim { stroke: var(--sea); fill: none; }
+.pipe-conn .pt.sim { fill: var(--sea); }
+.pipe-conn .ln.lab { stroke: var(--coral); }
+.pipe-conn .pt.lab { fill: var(--coral); }
+.pipe-conn .et {
+  font-family: var(--mono);
+  font-size: 15px;
+  fill: var(--ink-faint);
 }
 
-/* Rótulo de fila: cabeza de tabla, no leyenda de gráfico. El renglón chico
-   lleva el stack de cada montaje, que es dato de contexto y no compite con los
-   rótulos. */
+/* Las etapas del montaje van en bloque, igual que las del resto del diagrama:
+   en lista se leían como viñetas de texto y no como parte del pipeline. Sobre
+   el tinte del contenedor van en blanco, que es lo que hace el diagrama de
+   ros_control con sus cajas internas. */
+.pipe-caja.mundo .pipe-et {
+  background: var(--c-bloque);
+  border: 1px solid var(--c-borde);
+}
+/* La referencia contra la que se evalúa es propiedad del montaje, no una etapa:
+   va sin número, sin bloque y en gris. La lámina del criterio la desarrolla. */
+.pipe-nota {
+  margin: .5rem 0 0;
+  padding-top: .42rem;
+  border-top: 1px solid var(--c-line);
+  font-size: clamp(.8rem, .95vw, .93rem);
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+/* Cada zona del diagrama tiene su color, y el bloque va un tono más saturado
+   que el contenedor que lo aloja: es lo que hace que se lea como caja adentro de
+   caja y no como un panel plano. Ámbar la consigna, teal la simulación, coral el
+   laboratorio, verde la estimación. Los cuatro salen de la paleta del deck. */
+.pipe {
+  --amber-soft: #fbeacf;
+  --verde-soft: #ddf0e6;
+  --verde-line: #a3d6bf;
+}
+.pipe .sim {
+  --c-soft: var(--foam);        --c-line: var(--foam-line);
+  --c-bloque: #bcdfeb;          --c-borde: #7cbdd2;  --fl-c: #7cbdd2;
+}
+.pipe .lab {
+  --c-soft: var(--coral-soft);  --c-line: #f0c0b1;
+  --c-bloque: #f8c7b7;          --c-borde: #ef9c84;  --fl-c: #ef9c84;
+}
+
+/* Rótulo de fila de los dos montajes. Lo usa también la lámina del criterio de
+   evaluación, que es la que dice en qué se diferencian: mismo color, misma
+   caja baja, para que se lean como el mismo par. */
 .rl-stub {
   align-self: center;
   padding-right: clamp(.75rem, 1.7vw, 1.25rem);
@@ -866,37 +964,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   color: var(--ink-faint);
 }
 .rl-stub.sim { color: var(--sea); }
-.rl-stub.lab { color: var(--coral); padding-top: var(--drop); }
-
-/* Grid de un item para que las tres cajas se estiren a la altura de la fila:
-   con altura de contenido quedan dentadas y parecen un descuido. */
-.rl-cell { display: grid; position: relative; min-width: 0; padding-top: var(--drop); }
-.rl-gap  { display: block; }   /* columna de conector en la fila de abajo: vacía a propósito */
-
-/* Donde el laboratorio no sustituye nada la celda va vacía: el hueco ya dice
-   que la etapa es la misma, y un "=" en cada una sumaba tres marcas que le
-   competían el peso a las cajas de sustitución, que son lo que hay que mirar. */
-
-/* Sustitución: caja colgada de su etapa por una bajada de un píxel. */
-.rl-cell.sub::before {
-  content: ""; position: absolute; left: 50%; top: 0;
-  width: 1px; height: var(--drop);
-  background: var(--coral); opacity: .55;
-}
-.rl-box {
-  display: block; text-align: center;
-  background: #fff;
-  border: 1px solid var(--coral);
-  border-radius: 10px;
-  padding: .5rem .55rem .55rem;
-  box-shadow: var(--shadow-sm);
-  font-size: .84rem; font-weight: 680; line-height: 1.2;
-  color: var(--ink);
-}
-.rl-box small {
-  display: block; margin-top: .2rem;
-  font-size: .74rem; font-weight: 500; color: var(--ink-faint);
-}
+.rl-stub.lab { color: var(--coral); }
 
 /* ===================== Serie · arquetipo D ===================== */
 /* Una sola forma para "tres o más ítems del mismo rango". Antes había siete
