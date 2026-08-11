@@ -1396,7 +1396,7 @@ code {
 /* La figura de repetibilidad ahora comparte la lámina con la banda de cifras y
    con el epígrafe que explica cómo leer los diagramas de caja, así que hay que
    acotarla para que las tres cosas entren juntas en 720p. */
-.result-plot img { max-height: 44vh; width: auto; margin-inline: auto; display: block; }
+.result-plot img { max-height: 44vh; max-width: 100%; width: auto; height: auto; margin-inline: auto; display: block; }
 
 /* ===================== Slides de metodología con ecuaciones ===================== */
 

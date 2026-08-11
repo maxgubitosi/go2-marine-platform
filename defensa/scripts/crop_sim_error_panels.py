@@ -1,15 +1,13 @@
-"""Recorta dos paneles del histograma de error del caso base, para el deck.
+"""Recorta paneles de las figuras de error para que la letra se lea en el deck.
 
-La figura original (sim_fixed_error_hist.png, 1782x1274) trae los cuatro paneles
-en una grilla de 2x2. Mostrada entera en media lámina, la letra de los ejes
-queda en ~6 px y no se lee ni de cerca, que es exactamente lo que los mentores
-marcaron en la devolución del 10-08.
+Las figuras originales traen grillas de paneles (2x2 el caso base, 2x3 el caso
+con dron) y mostradas enteras a media lámina la letra de los ejes queda en ~6 px,
+que es exactamente lo que los mentores marcaron en la devolución del 10-08.
 
-En vez de regenerarla (los rosbags no están en este checkout), se recortan los
-dos paneles que sostienen lo que se dice en voz alta: ΔZ (el heave concentra la
-dispersión) y ||Δpos|| (5,8 cm de media, 8,5 de P95). Mostrados a media lámina
-cada uno quedan al 65% de su escala nativa y la letra vuelve a leerse. La
-figura completa con los cuatro ejes sigue en el backup de histogramas.
+En vez de regenerarlas (los rosbags no están en este checkout), se recortan los
+paneles que sostienen lo que se dice en voz alta y se muestran a media lámina
+cada uno, donde vuelven a escala legible. Las figuras completas siguen en el
+backup de histogramas.
 
 Como todos los scripts de recorte del deck: escribe archivos nuevos, nunca pisa
 el original. Los cortes son los cuadrantes exactos de la grilla de matplotlib.
@@ -21,18 +19,29 @@ import subprocess
 from pathlib import Path
 
 IMG = Path("defensa/web/assets/img")
-SRC = IMG / "sim_fixed_error_hist.png"
 
-# panel -> (w, h, x, y): cuadrantes inferiores de la grilla 2x2 de 1782x1274
-PANELES = {
-    "sim_fixed_error_hist_dz.png":   (891, 637, 0,   637),
-    "sim_fixed_error_hist_norm.png": (891, 637, 891, 637),
+# origen -> {destino: (w, h, x, y)}
+CORTES = {
+    # caso base, grilla 2x2 de 1782x1274: cuadrantes inferiores
+    "sim_fixed_error_hist.png": {
+        "sim_fixed_error_hist_dz.png":   (891, 637, 0,   637),
+        "sim_fixed_error_hist_norm.png": (891, 637, 891, 637),
+    },
+    # caso dron, grilla 2x3 de 1998x1238: los dos angulares que la consigna
+    # excita (fila inferior, columnas 1 y 2)
+    "sim_drone_error_hist.png": {
+        "sim_drone_error_hist_droll.png":  (666, 619, 0,   619),
+        # 640 y no 666: el tercio exacto arrastra los números del eje y del
+        # panel vecino por el borde derecho
+        "sim_drone_error_hist_dpitch.png": (640, 619, 666, 619),
+    },
 }
 
-for nombre, (w, h, x, y) in PANELES.items():
-    dst = IMG / nombre
-    subprocess.run(
-        ["ffmpeg", "-v", "error", "-y", "-i", str(SRC),
-         "-vf", f"crop={w}:{h}:{x}:{y}", str(dst)],
-        check=True)
-    print(f"{dst}  {w}x{h}")
+for src, paneles in CORTES.items():
+    for nombre, (w, h, x, y) in paneles.items():
+        dst = IMG / nombre
+        subprocess.run(
+            ["ffmpeg", "-v", "error", "-y", "-i", str(IMG / src),
+             "-vf", f"crop={w}:{h}:{x}:{y}", str(dst)],
+            check=True)
+        print(f"{dst}  {w}x{h}")

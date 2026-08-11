@@ -2266,27 +2266,64 @@
   </div>
 </section>
 
-<section class="slide" data-block="3" data-title="Error con cámara en el dron">
+<!-- R2a · el patrón de resultados: video junto a su medición. La serie de
+     orientación pasa a protagonista; los histogramas se leen grandes en la
+     lámina siguiente y la figura completa de seis ejes queda en backup. -->
+<section class="slide" data-block="3" data-title="Cámara en el dron: video y series">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: cámara en el dron</span></span></div>
-      <h2 class="head">Degradación del error con el sensor en movimiento</h2>
+      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
+      <h2 class="head">Desde el dron la estimación sigue la oscilación en roll y pitch</h2>
+    </header>
+    <div class="s-body">
+      <div class="split resultado" style="grid-template-columns:.72fr 1.28fr;align-items:center;">
+        <div class="col stack">
+          <figure class="media" style="background:#111;">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
+          </figure>
+          <figcaption class="res-cap">Detección desde la cámara inferior del dron: ahora el sensor también se mueve, y su pose entra en la cadena.</figcaption>
+        </div>
+        <div class="col stack">
+          <figure class="media contain plot res-fig solo">
+            <img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron">
+          </figure>
+          <figcaption class="res-cap">Roll y pitch estimados (azul) contra la referencia (rojo): la oscilación principal se sigue también con el sensor en vuelo.</figcaption>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- R2b · la distribución del error con el dron, con los dos paneles angulares
+     recortados a escala legible (crop_sim_error_panels.py). El sesgo en Y se
+     nombra y se desarrolla en su backup; los seis ejes completos, también. -->
+<section class="slide" data-block="3" data-title="Cámara en el dron: distribución del error">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
+      <h2 class="head">El error abre respecto del caso fijo: el costo de la geometría</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
-        <figure class="col">
-          <div class="media" style="background:#111;">
-            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
-          </div>
-          <figcaption>Detección desde la cámara inferior del dron.</figcaption>
-        </figure>
         <div class="col stack">
-          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron"></figure>
-          <figcaption class="res-cap">Roll y pitch siguen la oscilación principal, que es la parte angular que la consigna excita.</figcaption>
-          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_error_hist.png" alt="Distribución de errores crudos en el escenario con dron"></figure>
-          <figcaption class="res-cap">Sesgo y dispersión por componente. La nube abre respecto del caso fijo: es el costo de la geometría de observación, no una falla del estimador.</figcaption>
+          <figure class="media contain plot res-fig solo">
+            <img src="assets/img/sim_drone_error_hist_droll.png" alt="Distribución del error de roll con dron">
+          </figure>
+          <figcaption class="res-cap"><b>ΔRoll</b>: 2,7° a 3,0° de error absoluto medio según la corrida, contra 2,44° con cámara fija.</figcaption>
+        </div>
+        <div class="col stack">
+          <figure class="media contain plot res-fig solo">
+            <img src="assets/img/sim_drone_error_hist_dpitch.png" alt="Distribución del error de pitch con dron">
+          </figure>
+          <figcaption class="res-cap"><b>ΔPitch</b>: 2,0° a 2,2° de error absoluto medio. La nube abre, pero no pierde la estructura.</figcaption>
         </div>
       </div>
+      <p class="apoyo">
+        No es una falla del estimador sino el costo de que el sensor también se
+        mueva: su pose entra en la cadena. En Y aparece además un sesgo
+        sistemático de −0,30 m, desarrollado en el backup junto con los seis
+        ejes completos.
+      </p>
     </div>
   </div>
 </section>
@@ -2328,7 +2365,7 @@
       <h2 class="head">El robot real sigue la forma de la consigna, con retardo y menor amplitud</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado" style="grid-template-columns:.9fr 1.1fr;align-items:center;">
+      <div class="split resultado" style="grid-template-columns:.66fr 1.34fr;align-items:center;">
         <div class="col vwrap">
           <div class="media portrait" style="max-height:56vh;">
             <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
@@ -2336,7 +2373,7 @@
           <figcaption class="res-cap" style="text-align:center;">La consigna de oleaje moviendo un robot real.</figcaption>
         </div>
         <div class="col stack">
-          <figure class="media contain plot res-fig">
+          <figure class="media contain plot res-fig solo">
             <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
           </figure>
           <figcaption class="res-cap">La misma escena, medida: la respuesta reproduce la forma en roll y pitch, llega tarde y más chica. Eso es lo que τ y g cuantifican en la lámina siguiente.</figcaption>
@@ -2445,18 +2482,11 @@
       <h2 class="head">La forma bimodal del residual es consecuencia de la atenuación</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado">
-        <div class="col stack">
-          <figure class="media contain plot res-fig">
-            <img src="assets/img/lab_error_hist.png" alt="Distribución del error residual de actitud en el ensayo R5">
-          </figure>
-          <figcaption class="res-cap">
-            Ensayo R5, error entre consigna y respuesta real, ya compensado el retardo
-            físico de cada eje (0,58 s en roll, 1,16 s en pitch).
-            <span class="eq-ref-inline">Informe · fig. de residual de actitud</span>
-          </figcaption>
-        </div>
-        <div class="col stack">
+      <div class="result-plot">
+        <img src="assets/img/lab_error_hist.png" alt="Distribución del error residual de actitud en el ensayo R5">
+      </div>
+      <div class="split" style="align-items:start;margin-top:1rem;flex:none;">
+        <div class="col">
           <table class="dtable params-tbl">
             <thead><tr><th></th><th>Roll</th><th>Pitch</th></tr></thead>
             <tbody>
@@ -2464,19 +2494,15 @@
               <tr><td>Dispersión</td><td class="num">3,86°</td><td class="num">2,93°</td></tr>
             </tbody>
           </table>
-          <p class="modelo-nota">
-            Las dos distribuciones quedan centradas cerca de cero, así que
-            <strong>el robot no introduce un sesgo sistemático de actitud</strong>.
-          </p>
-          <p class="modelo-nota">
-            Pero la forma no es la de un ruido de medición: en vez de concentrarse
-            alrededor de la media, la frecuencia se acumula hacia los extremos. Esa
-            estructura bimodal es la huella de la atenuación. Al restar una sinusoide
-            atenuada de la consigna queda otra sinusoide de menor amplitud, y el
-            histograma de una sinusoide se concentra en los picos, no en el centro.
-            Es consistente con la ganancia g ≈ 0,47 de la lámina anterior.
-          </p>
         </div>
+        <p class="modelo-nota">
+          Ensayo R5, compensado el retardo de cada eje (0,58 s roll, 1,16 s
+          pitch). Las medias quedan cerca de cero: <b>el robot no introduce un
+          sesgo sistemático de actitud</b>. Y la forma no es ruido: la frecuencia
+          se acumula hacia los extremos, que es la huella de restar una sinusoide
+          atenuada. Es la predicción del modelo de ganancia g ≈ 0,47, no una
+          casualidad.
+        </p>
       </div>
     </div>
   </div>
