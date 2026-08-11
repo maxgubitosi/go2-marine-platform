@@ -1547,13 +1547,23 @@ code {
 
 /* La clave de símbolos y la lectura del signo van al lado, no debajo: la
    ecuación de arriba no se entiende sin las dos. */
-/* No crece: `.split` trae flex:1 y acá eso abría un hueco entre la clave y la
-   tabla. El aire sobrante lo reparte el centrado del cuerpo, no esta fila. */
-.lectura { flex: none; align-items: start; gap: clamp(1.4rem, 3vw, 2.6rem); margin-top: 1.1rem; }
-/* Con poco alto ceden los aires, no el contenido. */
+/* Por qué se lineariza, antes de la ecuación: sin el motivo, la aproximación
+   parece una concesión y no una herramienta de lectura. */
+.motivo { max-width: 68ch; color: var(--ink-soft); margin-bottom: 1.1rem; }
+/* La ley por junta y su lectura física, del mismo peso: la ecuación no se
+   entiende sin el resorte-amortiguador, y al revés tampoco. `.split` trae
+   flex:1 y acá abriría un hueco contra la conclusión. */
+.cierre { flex: none; align-items: center; margin-top: 1.4rem; }
 @media (max-height: 899px) {
-  .lectura { margin-top: .6rem; }
-  .lectura + .patron { margin-top: .8rem; }
-  .patron + .conclusion { margin-top: 1.1rem; }
+  .motivo { margin-bottom: .5rem; font-size: .86rem; }
+  .cierre { margin-top: .5rem; }
+  .patron + .cierre { margin-top: .5rem; }
+  .patron { margin-top: .6rem; font-size: .88rem; }
+  .patron th, .patron td { padding: .32rem .8rem; }
+  .cierre .eq.hero { font-size: 1.3rem; }
+  .cierre .symkey { font-size: .78rem; }
+  .cierre .modelo-nota { font-size: .8rem; }
+  .cierre + .apoyo { margin-top: .6rem; font-size: .78rem; }
+  .apoyo + .conclusion { margin-top: .6rem; font-size: 1.05rem; }
 }
 .lectura .symkey { font-size: .88rem; }
