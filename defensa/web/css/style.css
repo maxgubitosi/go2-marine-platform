@@ -1352,6 +1352,62 @@ code {
 
 /* ===================== Slide del modelo marino reducido ===================== */
 
+/* Traducción de la ola a una pose: tres pasos en fila, con la ecuación al medio
+   como eje. Los costados la leen (qué entra, qué sale) y la ecuación es lo único
+   que va en tinta plena: si los tres pesaran igual, la lámina se leería como
+   tres bloques de texto en vez de como una conversión. */
+.traduce {
+  display: flex;
+  align-items: center;
+  gap: clamp(.6rem, 1.8vw, 1.6rem);
+  width: 100%;
+}
+.tr-paso { flex: 1 1 0; min-width: 0; }
+/* La ecuación pide más ancho que los dos rótulos: es la que no se puede achicar
+   sin volverse ilegible desde el fondo del aula. */
+.tr-paso.eje { flex: 1.5 1 0; display: grid; place-items: center; }
+.tr-rot {
+  display: block; margin-bottom: .5rem;
+  font-variant-caps: small-caps; letter-spacing: .045em;
+  font-weight: 700; font-size: clamp(.9rem, 1.1vw, 1.05rem);
+  color: var(--sea);
+}
+.tr-paso li {
+  position: relative; padding-left: .9rem;
+  font-size: clamp(.88rem, 1.05vw, 1.05rem);
+  line-height: 1.4; color: var(--ink-soft);
+}
+.tr-paso li + li { margin-top: .35rem; }
+.tr-paso li::before {
+  content: ""; position: absolute; left: 0; top: .62em;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--foam-line);
+}
+.tr-paso li b { font-weight: 700; color: var(--ink); }
+.tr-fl {
+  flex: 0 0 clamp(14px, 2.2vw, 30px);
+  align-self: center; position: relative;
+  height: 2px; background: var(--foam-line);
+}
+.tr-fl::after {
+  content: ""; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
+  border-left: 7px solid var(--foam-line);
+  border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+}
+.traduce-pie {
+  margin-top: clamp(.8rem, 2.2vh, 1.5rem);
+  font-size: clamp(.9rem, 1.1vw, 1.08rem);
+  line-height: 1.45; color: var(--ink-soft);
+  max-width: 78ch;
+}
+
+/* Lo que el filtro le saca a la consigna. Va en tabla y no en prosa porque son
+   tres pares de números y es lo que hay que poder leer de un vistazo si
+   preguntan con qué amplitud se movió el robot. */
+.filtro-tbl { font-size: .84rem; }
+.filtro-tbl th { font-size: .74rem; }
+.filtro-tbl td:first-child { color: var(--sea); font-weight: 600; }
+.filtro-tbl .hi { color: var(--coral); font-weight: 700; }
+
 .modelo-mar { align-items: start; }
 /* La figura acompaña a la ecuación del campo de olas, no compite con ella. */
 .modelo-mar .wave-fig { max-height: 22vh; }
@@ -1410,7 +1466,11 @@ code {
 .params-tbl td:first-child { color: var(--sea); font-weight: 600; white-space: nowrap; }
 
 /* Las figuras acompañan a la ecuación, no al revés. */
-.postural .media img, .consigna .media img { max-height: 24vh; width: auto; margin-inline: auto; }
+.postural .media img { max-height: 24vh; width: auto; margin-inline: auto; }
+/* La figura de componentes son tres paneles apilados: a 24vh cada panel queda
+   en 60 px y la diferencia entre objetivo y suavizado, que es lo que hay que
+   ver, no se distingue. Con el cuerpo de la lámina sobra alto para 34. */
+.consigna .media img { max-height: 34vh; width: auto; margin-inline: auto; }
 .pnp-fig img { max-height: 20vh; width: auto; margin-inline: auto; }
 
 /* La cadena de transformaciones va sola arriba porque es larga y define todo lo
@@ -1474,6 +1534,36 @@ code {
 .scenerow figcaption { text-align: center; }
 /* Cada término va del color de su flecha en la escena */
 .scenerow figcaption .dof { color: var(--coral); font-weight: 700; }
+
+
+/* Marcas de zona. Nacen en la línea de flotación, cruzan el borde del cuadro y
+   terminan en su rótulo: dicen dónde se mide la altura del agua, que es la
+   diferencia que inclina la cubierta.
+
+   Van en HTML y no dentro del SVG justamente para poder salirse del cuadro; la
+   escena recorta lo que la excede. La línea es el propio elemento (borde
+   izquierdo punteado, ancho cero) y el rótulo cuelga de su punta, así cada marca
+   es un solo nodo y no hay dos piezas que alinear.
+
+   El 47% de arriba es la línea de flotación: el mar está al 53% del alto de la
+   escena y el pie de rótulos suma un alto fijo, de modo que la proporción se
+   sostiene sola entre 720 y 1080. Estáticas a propósito: el buque cabecea, pero
+   la zona que nombran no se mueve con él. */
+.scenerow figure { position: relative; padding-bottom: 2.7rem; }
+.zona {
+  position: absolute;
+  left: var(--x); margin-left: -1px;
+  top: 47%; bottom: 1.5rem;
+  border-left: 2px dashed var(--coral);
+  opacity: .85;
+}
+.zona em {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  margin-top: .3rem;
+  font-style: normal; font-weight: 700;
+  font-size: clamp(.82rem, .95vw, .98rem);
+  color: var(--coral); white-space: nowrap;
+}
 
 /* Anotaciones de grados de libertad sobre las escenas */
 .wave-scene .ind { stroke: var(--coral); fill: none; }

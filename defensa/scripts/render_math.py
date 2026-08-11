@@ -176,11 +176,18 @@ eq("transform_chain", 2132,
    "eq:camera_marker_chain")
 
 # --- Consignas efectivamente enviadas --------------------------------------
+# Los desacoples temporales van como rho y no como kappa, que es la letra que
+# usa el informe. Es la única fórmula del deck que se aparta de la notación del
+# texto, y a propósito: el informe llama kappa a dos cosas sin relación, los
+# coeficientes que escalan la pendiente local en el estado reducido
+# (kappa_phi, kappa_theta) y los desacoples temporales de la consigna. En el
+# texto están a doscientas páginas de distancia; proyectadas quedan en dos
+# láminas seguidas y la colisión se nota. La lámina lo declara.
 eq("commands", 2282,
    r"\begin{aligned}"
    r"r(t) &= A_r \sin(\omega t) \\"
-   r"p(t) &= A_p \sin(\omega \kappa_p t + \pi/3) \\"
-   r"h(t) &= A_h \sin(\omega \kappa_h t)"
+   r"p(t) &= A_p \sin(\omega \rho_p t + \pi/3) \\"
+   r"h(t) &= A_h \sin(\omega \rho_h t)"
    r"\end{aligned}")
 eq("ema", 2365, r"\tilde{x}_k = \alpha\,\tilde{x}_{k-1} + (1-\alpha)\,x_k")
 
