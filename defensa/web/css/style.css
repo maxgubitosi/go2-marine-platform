@@ -1618,7 +1618,18 @@ code {
 /* El patrón del bloque de resultados: el video valida los gráficos y al revés.
    A 720p el alto es el recurso escaso: ceden el video y las figuras, nunca el
    texto ni las cifras. */
+/* La figura única de una lámina de resultados: más alta que las apiladas.
+   width y height en auto con los dos topes: si sólo se topea la altura, el
+   ancho crece más que la columna y el overflow:hidden recorta el gráfico. */
+.resultado .res-fig.solo { max-height: 52vh; }
+.resultado .res-fig.solo img {
+  max-height: 52vh; max-width: 100%; width: auto; height: auto;
+  margin-inline: auto;
+}
+
 @media (max-height: 899px) {
+  .resultado .res-fig.solo, .resultado .res-fig.solo img { max-height: 42vh; }
+  .resultado .res-fig.solo img { max-width: 100%; width: auto; height: auto; }
   .resultado .media video { max-height: 26vh; }
   .resultado .res-fig, .resultado .res-fig img { max-height: 20vh; }
   .resultado .col.stack .res-fig:not(:only-of-type),

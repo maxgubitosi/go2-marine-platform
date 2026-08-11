@@ -1,6 +1,7 @@
-<!-- R1 · el patrón de resultados que pidieron los mentores: el video (lo
-     lúdico) al lado de la evidencia cuantitativa, para que se validen entre
-     sí. Fusiona la lámina de video suelto y la de error con cámara fija. -->
+<!-- R1a · el video de detección junto a la medición de la misma corrida. El
+     video va recortado al recorrido real del marcador (crop_sim_deteccion.py)
+     y la serie es la protagonista: los histogramas se leen grandes en la
+     lámina siguiente, y la figura completa de cuatro ejes queda en backup. -->
 <section class="slide" data-block="3" data-title="Caso base: cámara fija">
   <div class="slide-inner">
     <header class="s-head">
@@ -8,29 +9,18 @@
       <h2 class="head">Caso base: la estimación sigue la dinámica en los tres ejes</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado">
-        <div class="col stack">
-          <figure class="media" style="background:#111;">
+      <div class="split resultado" style="grid-template-columns:.72fr 1.28fr;align-items:center;">
+        <div class="col vwrap">
+          <div class="media portrait md" style="background:#2f3230;">
             <video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion_zoom.mp4"></video>
-          </figure>
-          <figcaption class="res-cap">Los ejes dibujados sobre el marcador son la pose estimada en tiempo real, cuadro a cuadro.</figcaption>
-          <table class="dtable params-tbl">
-            <tbody>
-              <tr><td>Error de posición</td><td class="num">5,8 cm medio · 8,5 cm P95</td></tr>
-              <tr><td>Error de actitud</td><td class="num">2,44° roll · 2,00° pitch</td></tr>
-              <tr><td>Muestras útiles</td><td class="num">275 en 57,5 s · 4,78 Hz</td></tr>
-            </tbody>
-          </table>
+          </div>
+          <figcaption class="res-cap" style="text-align:center;">Los ejes sobre el marcador son la pose estimada, cuadro a cuadro.</figcaption>
         </div>
         <div class="col stack">
-          <figure class="media contain plot res-fig">
+          <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_fixed_position_vs_gt.png" alt="Posición estimada vs ground truth, cámara fija">
           </figure>
-          <figcaption class="res-cap">La misma corrida, medida: estimación contra referencia en los tres ejes. El heave se sigue con particular claridad.</figcaption>
-          <figure class="media contain plot res-fig">
-            <img src="assets/img/sim_fixed_error_hist.png" alt="Distribución del error de posición en el caso base">
-          </figure>
-          <figcaption class="res-cap">Histogramas <b>crudos</b>: parte del corrimiento es desfase temporal entre las dos cadenas, no error geométrico del estimador.</figcaption>
+          <figcaption class="res-cap">La misma corrida, medida: estimación (azul) contra referencia (rojo) en X, Y y Z. El heave se sigue con particular claridad · 275 muestras útiles en 57,5 s (4,78 Hz).</figcaption>
         </div>
       </div>
     </div>

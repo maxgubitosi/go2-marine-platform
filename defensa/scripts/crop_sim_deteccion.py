@@ -7,14 +7,14 @@ Medido sobre todo el clip (56 cuadros a 3 fps), ese contenido nunca sale de
 x[320,483] y[56,243], más las patas que bajan hasta y≈278: una ventana de
 163x222 dentro de 800x600.
 
-La ventana elegida es 360x270, el mismo 4:3 del original para no tocar el alto
-de la caja en la lámina, centrada en ese contenido y con ~24 px de aire arriba y
-abajo en las posiciones extremas del oleaje. Deja el marcador 2,2 veces más
-grande.
+La ventana elegida es 220x260, medida sobre cuadros con grilla en cuatro
+momentos del clip: el marcador con sus ejes vive en x[318,492] y, con las patas,
+y[65,290]. Con ~20 px de margen queda centrado en todas las posiciones del
+oleaje y el marcador pasa a ocupar el 70% del ancho, contra el 45% del recorte
+anterior, que dejaba un tercio del cuadro muerto a la derecha.
 
-El escalado a 720x540 no agrega detalle (la ventana real son 360x270), pero hace
-el remuestreo una sola vez y con lanczos, en vez de dejárselo al navegador, que
-en la lámina la muestra a ~566 px de ancho.
+El escalado a 550x650 no agrega detalle, pero hace el remuestreo una sola vez y
+con lanczos, en vez de dejárselo al navegador.
 
 Uso:
     python3 defensa/scripts/crop_sim_deteccion.py     # desde la raíz del repo
@@ -27,8 +27,8 @@ MEDIA = Path("defensa/web/assets/media")
 SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else MEDIA / "sim_01_camara_fija_deteccion.mp4"
 DST = Path(sys.argv[2]) if len(sys.argv) > 2 else MEDIA / "sim_01_camara_fija_deteccion_zoom.mp4"
 
-CROP = (360, 270, 220, 32)  # ancho, alto, x, y
-OUT = (720, 540)
+CROP = (220, 260, 296, 44)  # ancho, alto, x, y
+OUT = (550, 650)
 
 w, h, x, y = CROP
 subprocess.run(
