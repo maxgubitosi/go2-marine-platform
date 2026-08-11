@@ -181,6 +181,20 @@ h2.head .accent { color: var(--sea); }
   max-width: 40ch;
   font-weight: 420;
 }
+/* Bajada en viñetas, para cuando no es una oración sino una cadena de pasos: en
+   prosa hay que leerla entera para sacarle la estructura, y en viñetas la
+   estructura se ve antes de leer. Va un punto por debajo de .lead porque son
+   tres renglones y no uno. */
+.lead-bul { display: flex; flex-direction: column; gap: .3rem; max-width: 62ch; }
+.lead-bul li {
+  position: relative; padding-left: 1.1rem;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  color: var(--ink-soft); line-height: 1.35; font-weight: 420;
+}
+.lead-bul li::before {
+  content: ""; position: absolute; left: 0; top: .58em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--foam-line);
+}
 p { line-height: 1.5; }
 strong { font-weight: 680; color: var(--ink); }
 .mono { font-family: var(--mono); }
@@ -1352,52 +1366,61 @@ code {
 
 /* ===================== Slide del modelo marino reducido ===================== */
 
-/* Traducción de la ola a una pose: tres pasos en fila, con la ecuación al medio
-   como eje. Los costados la leen (qué entra, qué sale) y la ecuación es lo único
-   que va en tinta plena: si los tres pesaran igual, la lámina se leería como
-   tres bloques de texto en vez de como una conversión. */
-.traduce {
-  display: flex;
-  align-items: center;
-  gap: clamp(.6rem, 1.8vw, 1.6rem);
-  width: 100%;
+/* La ecuación a la izquierda y sus tres filas leídas a la derecha, en el mismo
+   orden: altura, pendiente transversal, pendiente longitudinal. Los rótulos
+   debajo de la fórmula obligaban a bajarle el cuerpo para que todo entrara en
+   720p, y una matriz de tres filas es justamente lo que no se puede achicar sin
+   volverse ilegible desde el fondo del aula. Centrada, no arriba: con una sola
+   fórmula por columna, alinear arriba deja la derecha flotando. */
+.modelo { align-items: center; }
+
+/* Las dos láminas del modelado son las únicas del deck donde la fórmula ES el
+   contenido: no ilustra un argumento de texto, lo sostiene. Con el cuerpo
+   general sobraban ~150 px de blanco en 720p y la matriz quedaba en 134 px, al
+   límite de lo legible desde el fondo. Sube sólo acá.
+   Provisional: cuando la fase A suba los topes tipográficos de todo el deck,
+   revisar si estas dos reglas siguen haciendo falta. */
+.modelo .eq.hero,
+.consigna .eq.hero { font-size: clamp(1.15rem, 2.7vw, 2.4rem); }
+/* La del suavizado es de una línea y acompaña, así que sube menos: si igualara
+   a la consigna, las dos competirían por ser la protagonista de la lámina. */
+.consigna .eq:not(.hero) { font-size: clamp(1rem, 1.7vw, 1.55rem); }
+
+/* Las dos tablas de esta lámina son el machete: los valores con los que se
+   corrió y lo que el filtro les saca. Al cuerpo compartido quedaban en 13 px y
+   sobraba media lámina en blanco, así que suben. La de parámetros sube menos y
+   con menos aire lateral: tiene tres columnas en media lámina, y al mismo
+   cuerpo que la otra la terna de amplitudes se parte en dos líneas. */
+.consigna .params-tbl { font-size: .9rem; }
+.consigna .params-tbl th,
+.consigna .params-tbl td { padding-inline: .55rem; }
+.consigna .params-tbl th:first-child,
+.consigna .params-tbl td:first-child { padding-left: 0; }
+.consigna .filtro-tbl { font-size: .95rem; }
+.consigna .filtro-tbl th { font-size: .78rem; }
+
+.plano { display: flex; flex-direction: column; gap: .8rem; }
+.plano li {
+  display: flex; align-items: baseline; gap: .8rem;
+  padding-bottom: .8rem; border-bottom: 1px solid var(--line);
 }
-.tr-paso { flex: 1 1 0; min-width: 0; }
-/* La ecuación pide más ancho que los dos rótulos: es la que no se puede achicar
-   sin volverse ilegible desde el fondo del aula. */
-.tr-paso.eje { flex: 1.5 1 0; display: grid; place-items: center; }
-.tr-rot {
-  display: block; margin-bottom: .5rem;
-  font-variant-caps: small-caps; letter-spacing: .045em;
-  font-weight: 700; font-size: clamp(.9rem, 1.1vw, 1.05rem);
+.plano li:last-child { padding-bottom: 0; border-bottom: 0; }
+.pl-src {
+  flex: 1 1 auto; min-width: 0;
+  font-size: clamp(.88rem, 1.05vw, 1.05rem);
+  line-height: 1.35; color: var(--ink-soft);
+}
+/* El grado de libertad es lo que hay que retener de cada fila, así que es lo
+   único en color y con cuerpo propio. La flecha va en el gris del sistema para
+   que marque la correspondencia sin competir con el término. */
+.pl-dof {
+  flex: 0 0 auto;
+  font-weight: 720; font-size: clamp(1rem, 1.3vw, 1.28rem);
   color: var(--sea);
 }
-.tr-paso li {
-  position: relative; padding-left: .9rem;
-  font-size: clamp(.88rem, 1.05vw, 1.05rem);
-  line-height: 1.4; color: var(--ink-soft);
-}
-.tr-paso li + li { margin-top: .35rem; }
-.tr-paso li::before {
-  content: ""; position: absolute; left: 0; top: .62em;
-  width: 4px; height: 4px; border-radius: 50%; background: var(--foam-line);
-}
-.tr-paso li b { font-weight: 700; color: var(--ink); }
-.tr-fl {
-  flex: 0 0 clamp(14px, 2.2vw, 30px);
-  align-self: center; position: relative;
-  height: 2px; background: var(--foam-line);
-}
-.tr-fl::after {
-  content: ""; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-  border-left: 7px solid var(--foam-line);
-  border-top: 5px solid transparent; border-bottom: 5px solid transparent;
-}
-.traduce-pie {
-  margin-top: clamp(.8rem, 2.2vh, 1.5rem);
-  font-size: clamp(.9rem, 1.1vw, 1.08rem);
-  line-height: 1.45; color: var(--ink-soft);
-  max-width: 78ch;
+.pl-dof::before {
+  content: "→"; margin-right: .45rem;
+  font-weight: 400; color: var(--foam-line);
 }
 
 /* Lo que el filtro le saca a la consigna. Va en tabla y no en prosa porque son
@@ -1408,10 +1431,24 @@ code {
 .filtro-tbl td:first-child { color: var(--sea); font-weight: 600; }
 .filtro-tbl .hi { color: var(--coral); font-weight: 700; }
 
-.modelo-mar { align-items: start; }
-/* La figura acompaña a la ecuación del campo de olas, no compite con ella. */
-.modelo-mar .wave-fig { max-height: 22vh; }
-.modelo-mar .wave-fig img { max-height: 22vh; width: auto; margin-inline: auto; }
+/* Los dos destinos de la consigna, que es el cierre del bloque de modelado.
+   Mismos colores que el par de fotos de la lámina 6 (simulación en teal,
+   laboratorio en coral) para que se lean como los mismos dos mundos y no como
+   dos ítems cualesquiera. */
+.destinos {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(1.2rem, 3vw, 2.6rem);
+  margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line);
+}
+.dest-k {
+  display: block; margin-bottom: .25rem;
+  font-variant-caps: small-caps; letter-spacing: .045em;
+  font-weight: 700; font-size: clamp(.88rem, 1.05vw, 1rem);
+}
+.dest.sim .dest-k { color: var(--sea); }
+.dest.lab .dest-k { color: var(--coral); }
+.dest p { margin: 0; font-size: .84rem; color: var(--ink-soft); line-height: 1.45; }
+
 .modelo-nota { font-size: .9rem; color: var(--ink-soft); line-height: 1.55; margin: 0; }
 
 /* La franja de lo que se decide no resolver. Va apagada y separada por una
