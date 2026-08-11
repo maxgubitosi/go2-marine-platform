@@ -1452,7 +1452,7 @@ code {
 /* La figura de repetibilidad ahora comparte la lámina con la banda de cifras y
    con el epígrafe que explica cómo leer los diagramas de caja, así que hay que
    acotarla para que las tres cosas entren juntas en 720p. */
-.result-plot img { max-height: 44vh; width: auto; margin-inline: auto; display: block; }
+.result-plot img { max-height: 44vh; max-width: 100%; width: auto; height: auto; margin-inline: auto; display: block; }
 
 /* ===================== Slides de metodología con ecuaciones ===================== */
 
@@ -1703,15 +1703,53 @@ code {
   font-size: .84rem; color: var(--ink-soft); line-height: 1.5;
 }
 
-/* La clave de símbolos y la lectura del signo van al lado, no debajo: la
-   ecuación de arriba no se entiende sin las dos. */
-/* No crece: `.split` trae flex:1 y acá eso abría un hueco entre la clave y la
-   tabla. El aire sobrante lo reparte el centrado del cuerpo, no esta fila. */
-.lectura { flex: none; align-items: start; gap: clamp(1.4rem, 3vw, 2.6rem); margin-top: 1.1rem; }
-/* Con poco alto ceden los aires, no el contenido. */
-@media (max-height: 899px) {
-  .lectura { margin-top: .6rem; }
-  .lectura + .patron { margin-top: .8rem; }
-  .patron + .conclusion { margin-top: 1.1rem; }
+/* ===================== Resultados: video junto a su medición ===================== */
+
+/* El patrón del bloque de resultados: el video valida los gráficos y al revés.
+   A 720p el alto es el recurso escaso: ceden el video y las figuras, nunca el
+   texto ni las cifras. */
+/* La figura única de una lámina de resultados: más alta que las apiladas.
+   width y height en auto con los dos topes: si sólo se topea la altura, el
+   ancho crece más que la columna y el overflow:hidden recorta el gráfico. */
+.resultado .res-fig.solo { max-height: 52vh; }
+.resultado .res-fig.solo img {
+  max-height: 52vh; max-width: 100%; width: auto; height: auto;
+  margin-inline: auto;
 }
-.lectura .symkey { font-size: .88rem; }
+
+@media (max-height: 899px) {
+  .resultado .res-fig.solo, .resultado .res-fig.solo img { max-height: 42vh; }
+  .resultado .res-fig.solo img { max-width: 100%; width: auto; height: auto; }
+  .resultado .media video { max-height: 26vh; }
+  .resultado .res-fig, .resultado .res-fig img { max-height: 20vh; }
+  .resultado .col.stack .res-fig:not(:only-of-type),
+  .resultado .col.stack .res-fig:not(:only-of-type) img { max-height: 18vh; }
+  .resultado .params-tbl { font-size: .78rem; }
+  .resultado .params-tbl td { padding: .3rem .7rem; }
+  .media.portrait video { max-height: 42vh; }
+}
+
+/* ===================== Lámina del lazo por junta ===================== */
+
+/* La ecuación del lazo abre la lámina y es su título: es la única del bloque
+   que corre de verdad, y la comparten simulación y robot real. El patrón y la
+   garantía del camino la acompañan. `.split` trae flex:1 y acá abriría huecos. */
+.cierre { flex: none; align-items: center; }
+.cierre .eq.hero { font-size: clamp(1.3rem, 2.4vw, 2.3rem); }
+.cierre .symkey { font-size: .86rem; }
+.cierre + .motivo { margin-top: 1.6rem; }
+.motivo { max-width: 78ch; color: var(--ink-soft); margin-bottom: 1.1rem; }
+/* La garantía del camino: números legibles, tono de nota. */
+.patron + .apoyo { margin-top: 1.2rem; color: var(--ink-soft); max-width: 92ch; }
+.patron + .apoyo b { color: var(--ink); }
+@media (max-height: 899px) {
+  .cierre .eq.hero { font-size: 1.5rem; }
+  .cierre .symkey { font-size: .78rem; }
+  .cierre .modelo-nota { font-size: .8rem; }
+  .cierre + .motivo { margin-top: .8rem; }
+  .motivo { margin-bottom: .5rem; font-size: .86rem; }
+  .patron { margin-top: .6rem; font-size: .88rem; }
+  .patron th, .patron td { padding: .32rem .8rem; }
+  .patron + .apoyo { margin-top: .6rem; font-size: .78rem; }
+  .apoyo + .conclusion { margin-top: .6rem; font-size: 1.05rem; }
+}

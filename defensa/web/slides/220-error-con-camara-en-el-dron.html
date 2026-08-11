@@ -1,22 +1,25 @@
-<section class="slide" data-block="3" data-title="Error con cámara en el dron">
+<!-- R2a · el patrón de resultados: video junto a su medición. La serie de
+     orientación pasa a protagonista; los histogramas se leen grandes en la
+     lámina siguiente y la figura completa de seis ejes queda en backup. -->
+<section class="slide" data-block="3" data-title="Cámara en el dron: video y series">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: cámara en el dron</span></span></div>
-      <h2 class="head">Degradación del error con el sensor en movimiento</h2>
+      <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
+      <h2 class="head">Desde el dron la estimación sigue la oscilación en roll y pitch</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado">
-        <figure class="col">
-          <div class="media" style="background:#111;">
-            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
-          </div>
-          <figcaption>Detección desde la cámara inferior del dron.</figcaption>
-        </figure>
+      <div class="split resultado" style="grid-template-columns:.72fr 1.28fr;align-items:center;">
         <div class="col stack">
-          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron"></figure>
-          <figcaption class="res-cap">Roll y pitch siguen la oscilación principal, que es la parte angular que la consigna excita.</figcaption>
-          <figure class="media contain plot res-fig"><img src="assets/img/sim_drone_error_hist.png" alt="Distribución de errores crudos en el escenario con dron"></figure>
-          <figcaption class="res-cap">Sesgo y dispersión por componente. La nube abre respecto del caso fijo: es el costo de la geometría de observación, no una falla del estimador.</figcaption>
+          <figure class="media" style="background:#111;">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
+          </figure>
+          <figcaption class="res-cap">Detección desde la cámara inferior del dron: ahora el sensor también se mueve, y su pose entra en la cadena.</figcaption>
+        </div>
+        <div class="col stack">
+          <figure class="media contain plot res-fig solo">
+            <img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron">
+          </figure>
+          <figcaption class="res-cap">Roll y pitch estimados (azul) contra la referencia (rojo): la oscilación principal se sigue también con el sensor en vuelo.</figcaption>
         </div>
       </div>
     </div>

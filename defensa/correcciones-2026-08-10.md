@@ -37,6 +37,10 @@ Las notas usan la numeración del deck **de hoy** (37 láminas en el hilo, despu
 del merge del PR #4 de metodología). Lo verifiqué cruzando contenido, no
 posición:
 
+> **Ojo (10-08, más tarde):** el commit que elimina la lámina del jacobiano
+> deja el hilo en 36, así que **todo lo de la 13 en adelante corre uno hacia
+> abajo** respecto de estas notas. El contenido citado sigue siendo el mismo.
+
 | Nota | Cae en | ¿Coherente? |
 |---|---|---|
 | "23: video de dron despegando" | 23 · Error con cámara en el dron | sí |
@@ -137,7 +141,8 @@ define desde el principio.
 - **B3.** **Láminas 8-9, modelado.** Iterar. Requiere revisión teórica previa
   (§6).
 - **B4.** **Lámina 13** (*El patrón articular*): no nos convence, rehacer.
-  Definir qué tiene que decir antes de maquetarla.
+  Definir qué tiene que decir antes de maquetarla. **Rehecha el 10-08** (ver
+  §7); revisar si cierra o se vuelve a iterar.
 
 ### Fase C — Setup de experimentos (láminas 14-19 → 3 o 4)
 
@@ -248,6 +253,15 @@ A revisar:
 
 ## 7. Hecho
 
+- **Láminas 12-13 → 12** — se eliminó la del jacobiano y se rehizo *El patrón
+  articular* (la B4). El criterio que quedó de la iteración: el hilo principal
+  muestra sólo lo que corre. El jacobiano no se ejecuta en ningún punto del
+  proyecto (verificado con grep sobre `src/` y la rama `real`), así que queda
+  como respuesta preparada junto con la ec. (20). La lámina quedó: patrón +
+  superposición, la tabla, el lazo PD por junta como ancla (la única ecuación
+  que corre, y la que comparten simulación y robot real), y la garantía del
+  camino al pie (consigna suavizada, <medio grado y 5 mm entre muestras,
+  precarga de un cuarto del peso por pie). Revisar si cierra.
 - **Lámina 6** — la foto de simulación pasa a ser el montaje real con la
   plataforma y el marcador sobre el torso (`sim_montaje_aruco.png`), en lugar
   del Go2 solo. Fuente en `docs/media/montaje_aruco_sim.png`, recorte

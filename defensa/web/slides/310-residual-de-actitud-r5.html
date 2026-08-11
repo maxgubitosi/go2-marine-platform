@@ -5,18 +5,11 @@
       <h2 class="head">La forma bimodal del residual es consecuencia de la atenuación</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado">
-        <div class="col stack">
-          <figure class="media contain plot res-fig">
-            <img src="assets/img/lab_error_hist.png" alt="Distribución del error residual de actitud en el ensayo R5">
-          </figure>
-          <figcaption class="res-cap">
-            Ensayo R5, error entre consigna y respuesta real, ya compensado el retardo
-            físico de cada eje (0,58 s en roll, 1,16 s en pitch).
-            <span class="eq-ref-inline">Informe · fig. de residual de actitud</span>
-          </figcaption>
-        </div>
-        <div class="col stack">
+      <div class="result-plot">
+        <img src="assets/img/lab_error_hist.png" alt="Distribución del error residual de actitud en el ensayo R5">
+      </div>
+      <div class="split" style="align-items:start;margin-top:1rem;flex:none;">
+        <div class="col">
           <table class="dtable params-tbl">
             <thead><tr><th></th><th>Roll</th><th>Pitch</th></tr></thead>
             <tbody>
@@ -24,19 +17,15 @@
               <tr><td>Dispersión</td><td class="num">3,86°</td><td class="num">2,93°</td></tr>
             </tbody>
           </table>
-          <p class="modelo-nota">
-            Las dos distribuciones quedan centradas cerca de cero, así que
-            <strong>el robot no introduce un sesgo sistemático de actitud</strong>.
-          </p>
-          <p class="modelo-nota">
-            Pero la forma no es la de un ruido de medición: en vez de concentrarse
-            alrededor de la media, la frecuencia se acumula hacia los extremos. Esa
-            estructura bimodal es la huella de la atenuación. Al restar una sinusoide
-            atenuada de la consigna queda otra sinusoide de menor amplitud, y el
-            histograma de una sinusoide se concentra en los picos, no en el centro.
-            Es consistente con la ganancia g ≈ 0,47 de la lámina anterior.
-          </p>
         </div>
+        <p class="modelo-nota">
+          Ensayo R5, compensado el retardo de cada eje (0,58 s roll, 1,16 s
+          pitch). Las medias quedan cerca de cero: <b>el robot no introduce un
+          sesgo sistemático de actitud</b>. Y la forma no es ruido: la frecuencia
+          se acumula hacia los extremos, que es la huella de restar una sinusoide
+          atenuada. Es la predicción del modelo de ganancia g ≈ 0,47, no una
+          casualidad.
+        </p>
       </div>
     </div>
   </div>
