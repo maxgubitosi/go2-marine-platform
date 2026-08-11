@@ -1613,25 +1613,27 @@ code {
   font-size: .84rem; color: var(--ink-soft); line-height: 1.5;
 }
 
-/* La clave de símbolos y la lectura del signo van al lado, no debajo: la
-   ecuación de arriba no se entiende sin las dos. */
-/* Por qué se lineariza, antes de la ecuación: sin el motivo, la aproximación
-   parece una concesión y no una herramienta de lectura. */
-.motivo { max-width: 68ch; color: var(--ink-soft); margin-bottom: 1.1rem; }
-/* La ley por junta y su lectura física, del mismo peso: la ecuación no se
-   entiende sin el resorte-amortiguador, y al revés tampoco. `.split` trae
-   flex:1 y acá abriría un hueco contra la conclusión. */
-.cierre { flex: none; align-items: center; margin-top: 1.4rem; }
+/* ===================== Lámina del lazo por junta ===================== */
+
+/* La ecuación del lazo abre la lámina y es su título: es la única del bloque
+   que corre de verdad, y la comparten simulación y robot real. El patrón y la
+   garantía del camino la acompañan. `.split` trae flex:1 y acá abriría huecos. */
+.cierre { flex: none; align-items: center; }
+.cierre .eq.hero { font-size: clamp(1.3rem, 2.4vw, 2.3rem); }
+.cierre .symkey { font-size: .86rem; }
+.cierre + .motivo { margin-top: 1.6rem; }
+.motivo { max-width: 78ch; color: var(--ink-soft); margin-bottom: 1.1rem; }
+/* La garantía del camino: números legibles, tono de nota. */
+.patron + .apoyo { margin-top: 1.2rem; color: var(--ink-soft); max-width: 92ch; }
+.patron + .apoyo b { color: var(--ink); }
 @media (max-height: 899px) {
-  .motivo { margin-bottom: .5rem; font-size: .86rem; }
-  .cierre { margin-top: .5rem; }
-  .patron + .cierre { margin-top: .5rem; }
-  .patron { margin-top: .6rem; font-size: .88rem; }
-  .patron th, .patron td { padding: .32rem .8rem; }
-  .cierre .eq.hero { font-size: 1.3rem; }
+  .cierre .eq.hero { font-size: 1.5rem; }
   .cierre .symkey { font-size: .78rem; }
   .cierre .modelo-nota { font-size: .8rem; }
-  .cierre + .apoyo { margin-top: .6rem; font-size: .78rem; }
+  .cierre + .motivo { margin-top: .8rem; }
+  .motivo { margin-bottom: .5rem; font-size: .86rem; }
+  .patron { margin-top: .6rem; font-size: .88rem; }
+  .patron th, .patron td { padding: .32rem .8rem; }
+  .patron + .apoyo { margin-top: .6rem; font-size: .78rem; }
   .apoyo + .conclusion { margin-top: .6rem; font-size: 1.05rem; }
 }
-.lectura .symkey { font-size: .88rem; }
