@@ -999,7 +999,13 @@
     <div class="s-body">
       <div class="split robot">
         <figure class="fotonota">
-<svg viewBox='0 0 1288 1019' role='img' aria-label='Unitree Go2 con las partes de una pata señaladas'>
+<!-- El lienzo arranca en x negativo y termina pasado el ancho de la foto porque
+     los rótulos van fuera de la imagen: con el viewBox cerrado en 0..1288,
+     "abducción" empezaba en -21 y se comía la a, y "KFE · eje y" llegaba a 1281
+     de 1288. Los extremos reales son -21 y 1281; el lienzo les deja 19 de aire
+     de cada lado. Si se cambia un rótulo o el cuerpo de .fn-t / .fn-s, hay que
+     volver a medirlos. -->
+<svg viewBox='-40 0 1340 1019' role='img' aria-label='Unitree Go2 con las partes de una pata señaladas'>
 <image href='assets/img/go2_producto.jpg' x='202' y='85' width='894' height='908'/>
 <line class='fn-l' x1='667' y1='230' x2='667' y2='79'/>
 <circle class='fn-d' cx='667' cy='230' r='9'/>
@@ -1026,9 +1032,11 @@
         <div class="col stack">
         <figure class="legfig">
 <svg viewBox='0 0 627 308' role='img' aria-label='Estructura articular del Go2: planta con las cuatro patas, plano frontal con la abducción de cadera y plano sagital con muslo y rodilla'><g transform='translate(131.5,59.9)'><rect x='-104.0' y='-17.0' width='104.0' height='34.0' rx='6' fill='#e7eef3' stroke='#b9cbd8' stroke-width='1.2'/><line x1='0.0' y1='0.0' x2='0.0' y2='160.4' stroke='#b9cbd8' stroke-width='1' stroke-dasharray='4 4'/><line x1='44.9' y1='-9.6' x2='44.9' y2='82.4' stroke='#b9cbd8' stroke-width='1' stroke-dasharray='4 4'/><line x1='0.0' y1='0.0' x2='44.9' y2='-9.6' stroke='#8e6bb5' stroke-width='3.6'/><line x1='44.9' y1='-9.6' x2='78.5' y2='148.4' stroke='#2b5f80' stroke-width='4'/><path d='M36.1 -7.7 L38.0 1.1 L46.8 -0.7' fill='none' stroke='#4a6480' stroke-width='1.1'/><path d='M44.9 68.4 A 78 78 0 0 0 61.1 66.7' fill='none' stroke='#ef6a4c' stroke-width='2'/><circle cx='0.0' cy='0.0' r='5.5' fill='#fff' stroke='#0f2a43' stroke-width='2'/><circle cx='0.0' cy='0.0' r='1.7' fill='#0f2a43'/><circle cx='44.9' cy='-9.6' r='5.5' fill='#fff' stroke='#0f2a43' stroke-width='2'/><circle cx='78.5' cy='148.4' r='5' fill='#0f2a43'/><path d='M-74.0 174.4 L-104.0 174.4 L-104.0 144.4' fill='none' stroke='#8aa0b4' stroke-width='1.3'/><text x='-52.0' y='4.0' class='lf-t' fill='#8aa0b4' text-anchor='middle'>torso</text><text x='14.0' y='-20.0' class='lf-t' fill='#0f2a43' text-anchor='start' font-weight='620'>HAA</text><text x='22.5' y='15.0' class='lf-t' fill='#8e6bb5' text-anchor='middle' font-weight='700'>d</text><text x='35.9' y='74.4' class='lf-t' fill='#ef6a4c' text-anchor='end'>q<tspan dy='2.9' font-size='9.4'>i,1</tspan></text><text x='-69.0' y='178.4' class='lf-ax' fill='#8aa0b4' text-anchor='start'>y</text><text x='-109.0' y='140.4' class='lf-ax' fill='#8aa0b4' text-anchor='end'>z</text><text x='-18.5' y='229.6' class='lf-cap' fill='#8aa0b4' text-anchor='middle'>(a) plano frontal · abducción</text></g><g transform='translate(383.8,57.4)'><rect x='-78.0' y='-23.0' width='191.0' height='46.0' rx='6' fill='#e7eef3' stroke='#b9cbd8' stroke-width='1.2'/><line x1='93.0' y1='0.0' x2='93.0' y2='96.0' stroke='#b9cbd8' stroke-width='1' stroke-dasharray='4 4'/><line x1='156.1' y1='80.7' x2='188.1' y2='121.7' stroke='#b9cbd8' stroke-width='1' stroke-dasharray='4 4'/><line x1='93.0' y1='0.0' x2='156.1' y2='80.7' stroke='#2b5f80' stroke-width='4'/><line x1='156.1' y1='80.7' x2='93.0' y2='161.5' stroke='#2b5f80' stroke-width='4'/><path d='M93.0 58.0 A 58 58 0 0 0 128.7 45.7' fill='none' stroke='#ef6a4c' stroke-width='2'/><path d='M183.2 115.4 A 44 44 0 0 1 129.0 115.4' fill='none' stroke='#ef6a4c' stroke-width='2'/><line x1='0.0' y1='0.0' x2='84.0' y2='0.0' stroke='#8e6bb5' stroke-width='2.2'/><path d='M84.0 0.0 L75.0 4.0 L75.0 -4.0 Z' fill='#8e6bb5'/><line x1='0.0' y1='0.0' x2='88.5' y2='153.7' stroke='#ef6a4c' stroke-width='2.2'/><path d='M88.5 153.7 L80.6 147.9 L87.5 143.9 Z' fill='#ef6a4c'/><path d='M-7.0 0.0 H7.0 M0.0 -7.0 V7.0' stroke='#0f2a43' stroke-width='1.4'/><circle cx='0.0' cy='0.0' r='2.4' fill='#0f2a43'/><circle cx='93.0' cy='0.0' r='5.5' fill='#fff' stroke='#0f2a43' stroke-width='2'/><circle cx='93.0' cy='0.0' r='1.7' fill='#0f2a43'/><circle cx='156.1' cy='80.7' r='5.5' fill='#fff' stroke='#0f2a43' stroke-width='2'/><circle cx='156.1' cy='80.7' r='1.7' fill='#0f2a43'/><circle cx='93.0' cy='161.5' r='5' fill='#0f2a43'/><path d='M-22.0 191.5 L-52.0 191.5 L-52.0 161.5' fill='none' stroke='#8aa0b4' stroke-width='1.3'/><text x='-52.0' y='-12.0' class='lf-t' fill='#8aa0b4' text-anchor='middle'>torso</text><text x='-13.0' y='9.0' class='lf-t' fill='#0f2a43' text-anchor='end' font-weight='620'>{b}</text><text x='46.5' y='-8.0' class='lf-t' fill='#8e6bb5' text-anchor='middle' font-weight='700'>r<tspan dy='2.9' font-size='9.4'>h i</tspan></text><text x='69.0' y='131.5' class='lf-t' fill='#ef6a4c' text-anchor='end' font-weight='700'>p<tspan dy='2.9' font-size='9.4'>f i</tspan></text><text x='103.0' y='-32.0' class='lf-t' fill='#0f2a43' text-anchor='start' font-weight='620'>HFE</text><text x='169.1' y='74.7' class='lf-t' fill='#0f2a43' text-anchor='start' font-weight='620'>KFE</text><text x='97.0' y='183.5' class='lf-t' fill='#4a6480' text-anchor='middle'>pie</text><text x='83.0' y='76.0' class='lf-t' fill='#ef6a4c' text-anchor='end'>q<tspan dy='2.9' font-size='9.4'>i,2</tspan></text><text x='208.1' y='128.7' class='lf-t' fill='#ef6a4c' text-anchor='start'>q<tspan dy='2.9' font-size='9.4'>i,3</tspan></text><text x='142.6' y='38.4' class='lf-t' fill='#8aa0b4' text-anchor='start'>l₁</text><text x='98.6' y='125.1' class='lf-t' fill='#8aa0b4' text-anchor='end'>l₂</text><text x='-17.0' y='195.5' class='lf-ax' fill='#8aa0b4' text-anchor='start'>x</text><text x='-57.0' y='157.5' class='lf-ax' fill='#8aa0b4' text-anchor='end'>z</text><text x='78.8' y='232.1' class='lf-cap' fill='#8aa0b4' text-anchor='middle'>(b) plano sagital · muslo y rodilla</text></g></svg>
+          <!-- Corto a propósito: al subir al piso de cuerpo, cada renglón de
+               este epígrafe cuesta 26 px de la columna. -->
           <figcaption>
-            Las dos vistas comparten escala. El punto dentro de una junta marca
-            que su eje de rotación es perpendicular al plano dibujado.
+            Las dos vistas comparten escala. El punto en una junta dice que su
+            eje sale del plano.
           </figcaption>
         </figure>
       <table class="dtable vectores">
@@ -1213,9 +1221,8 @@
             <span class="eq-ref">compuesta con la pose del torso: el pie en el mundo</span>
           </figure>
           <p class="premisa">
-            Las cuatro patas apoyadas no deslizan, así que <b>la posición de
-            los pies en el mundo no cambia</b>. Eso es lo único que permite dar
-            vuelta la cadena.
+            Las cuatro patas apoyadas no deslizan: <b>la posición de los pies
+            en el mundo no cambia</b>. Es lo único que permite dar vuelta la cadena.
           </p>
           <figure class="eq-block">
             <div class="eq hero" data-eq="dof_count"><!-- This file was generated by dvisvgm 3.6 -->
@@ -1303,7 +1310,7 @@
 <use x='280.5703' y='-2.7453' xlink:href='#dof_count-g4-111'/>
 </g>
 </svg></div>
-            <span class="eq-ref">cuatro contactos puntuales sin deslizamiento, tres componentes cada uno</span>
+            <span class="eq-ref">cuatro contactos, tres componentes cada uno</span>
           </figure>
         </div>
 
@@ -1687,9 +1694,9 @@
       <h2 class="head">Tres montajes de observación: fija, en vuelo y en el laboratorio</h2>
     </header>
     <div class="s-body">
-      <div class="serie cols figs">
+      <div class="serie cols figs montajes">
         <div class="serie-item">
-          <figure class="serie-fig"><img src="assets/img/sim_escenario_fija.png" alt="Cuadro crudo de la cámara fija en Gazebo"></figure>
+          <figure class="serie-fig retrato"><img src="assets/img/sim_montaje_camara_fija.png" alt="Montaje de la cámara fija en Gazebo: el sensor colgado sobre el Go2 con el marcador"></figure>
           <span class="serie-k">Cámara fija · Gazebo</span>
           <div class="serie-txt"><p>El sensor no se mueve: toda la variabilidad
           viene de la plataforma. Aísla el error del pipeline visual.</p></div>
@@ -1701,18 +1708,13 @@
           la cadena. Es la geometría del problema de aterrizaje.</p></div>
         </div>
         <div class="serie-item">
-          <figure class="serie-fig"><img style="aspect-ratio:3/2;object-fit:cover;width:100%;" src="assets/img/lab_camara_fija.jpg" alt="Cuadro de la cámara del laboratorio: el Go2 con el marcador visto desde arriba"></figure>
+          <figure class="serie-fig retrato"><img src="assets/img/lab_montaje_camara.jpg" alt="Montaje del laboratorio: la cámara en trípode sobre el Go2 con el marcador, y el tablero de calibración"></figure>
           <span class="serie-k">Cámara del laboratorio</span>
           <div class="serie-txt"><p>Estéreo usada como monocular (ojo izquierdo),
           calibrada con tablero: 20 imágenes, <b>RMS 0,221 px</b>. En trípode:
           aproximadamente fija, no rígida.</p></div>
         </div>
       </div>
-      <p class="apoyo">
-        Los dos primeros separan cuánto pesa el pipeline visual de cuánto pesa el
-        movimiento del sensor. El tercero es la aproximación controlada del caso
-        fijo sobre el robot real, no su réplica.
-      </p>
     </div>
   </div>
 </section>
