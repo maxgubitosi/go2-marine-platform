@@ -182,11 +182,16 @@ eq("transform_chain", 2132,
 # coeficientes que escalan la pendiente local en el estado reducido
 # (kappa_phi, kappa_theta) y los desacoples temporales de la consigna. En el
 # texto están a doscientas páginas de distancia; proyectadas quedan en dos
-# láminas seguidas y la colisión se nota. La lámina lo declara.
+# láminas seguidas y la colisión se nota. La lámina no lo declara por escrito: la
+# tabla de abajo da los valores (omega, omega, 1,5 omega) y con eso rho se lee
+# sin necesidad de nombrarlo. Si se preguntan, se responde hablando.
+#
+# El interlineado va forzado a 4pt: son tres renglones proyectados y al espaciado
+# natural de amsmath quedan pegados desde la mitad del aula para atrás.
 eq("commands", 2282,
    r"\begin{aligned}"
-   r"r(t) &= A_r \sin(\omega t) \\"
-   r"p(t) &= A_p \sin(\omega \rho_p t + \pi/3) \\"
+   r"r(t) &= A_r \sin(\omega t) \\[4pt]"
+   r"p(t) &= A_p \sin(\omega \rho_p t + \pi/3) \\[4pt]"
    r"h(t) &= A_h \sin(\omega \rho_h t)"
    r"\end{aligned}")
 eq("ema", 2365, r"\tilde{x}_k = \alpha\,\tilde{x}_{k-1} + (1-\alpha)\,x_k")

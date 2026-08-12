@@ -130,6 +130,13 @@ html, body {
   min-height: 0;
   margin-top: clamp(.8rem, 2.5vh, 2rem);
 }
+/* El diagrama del pipeline sube hasta la altura del titular. Puede: el titular
+   es corto y termina cerca de x=570, y el primer nodo va centrado y arranca en
+   x=600, así que no se pisan. Lo que era margen entre encabezado y cuerpo, más
+   la banda vacía al costado del título, se convierte en alto de diagrama.
+   El valor va en rem y no en vh porque el encabezado mide casi lo mismo en
+   720p que en 1080: lo fija el tope del titular, no la altura de la ventana. */
+.s-body.pegado { margin-top: -4.4rem; }
 
 /* ===================== Cabecera de anotación ===================== */
 
@@ -201,15 +208,21 @@ h2.head .accent { color: var(--sea); }
    prosa hay que leerla entera para sacarle la estructura, y en viñetas la
    estructura se ve antes de leer. Va un punto por debajo de .lead porque son
    tres renglones y no uno. */
-.lead-bul { display: flex; flex-direction: column; gap: .3rem; max-width: 62ch; }
-.lead-bul li {
-  position: relative; padding-left: 1.1rem;
-  font-size: clamp(1rem, 1.5vw, 1.35rem);
-  color: var(--ink-soft); line-height: 1.35; font-weight: 420;
+.lead-bul {
+  display: flex; flex-direction: column; gap: .45rem; max-width: 62ch;
+  /* Separadas del titular: pegadas se leían como un subtítulo de tres renglones
+     y no como los tres pasos que son. */
+  margin-top: .55rem;
 }
+.lead-bul li {
+  position: relative; padding-left: 1.2rem;
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  color: var(--ink); line-height: 1.35; font-weight: 430;
+}
+/* La viñeta iba en el celeste de filete, que contra el fondo casi no existía. */
 .lead-bul li::before {
-  content: ""; position: absolute; left: 0; top: .58em;
-  width: 5px; height: 5px; border-radius: 50%; background: var(--foam-line);
+  content: ""; position: absolute; left: 0; top: .55em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--sea);
 }
 p { line-height: 1.5; }
 strong { font-weight: 680; color: var(--ink); }
@@ -834,18 +847,37 @@ ul.marks li.warn::before{ background: var(--warn); }
    está adentro de una caja rotulada "simulación". Tampoco se rotulan como
    software propio: la detección es cv2.aruco y solvePnP. */
 
+/* El diagrama ocupa el alto que tenga, no el que le dicten los clamps: las
+   filas se estiran y el sobrante va a parar a las cajas. Con topes en vh, cada
+   altura de ventana dejaba un resto distinto abajo (92 px en 1040), y ajustarlo
+   a mano para una resolución lo rompía en la otra. */
 .pipe {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: clamp(1.4rem, 3.4vw, 3rem);
   width: 100%;
+  height: 100%;
+  /* Cinco filas: consigna, conector, los dos mundos, conector, estimación. El
+     alto sobrante va a las tres filas de cajas (1fr) y NO a los conectores
+     (auto). Con align-content:stretch se estiraban también las filas de
+     conector, el SVG conservaba su alto natural y quedaba centrado en una fila
+     más alta: por eso las puntas de flecha terminaban en el aire. */
+  grid-template-rows: 1fr auto 1fr auto 1fr;
 }
+/* La caja reparte su alto: el rótulo y la nota ocupan lo suyo y la fila de
+   bloques se queda con el resto, así el aire extra engorda los bloques y no
+   deja un hueco al pie de la caja. */
+.pipe-caja { display: flex; flex-direction: column; }
+.pipe-caja .pipe-flujo { flex: 1; }
+/* Con la caja más alta que su texto, el contenido del bloque va centrado. El
+   número no se mueve: está posicionado contra la esquina. */
+.pipe-et { display: flex; flex-direction: column; justify-content: center; }
 
 .pipe-caja {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #fff;
-  padding: clamp(.45rem, 1.1vh, .75rem) clamp(.75rem, 1.5vw, 1.1rem) clamp(.55rem, 1.2vh, .9rem);
+  padding: clamp(.8rem, 2.35vh, 1.76rem) clamp(.85rem, 1.7vw, 1.3rem) clamp(.9rem, 2.45vh, 1.84rem);
   min-width: 0;
 }
 /* Tronco: centrado y angosto el de arriba, para que la bifurcación salga del
@@ -858,15 +890,16 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pipe-solo {
   grid-column: 1 / -1;
   display: flex;
-  max-width: min(100%, 42%);
+  max-width: min(100%, 50%);
   margin-inline: auto;
 }
 .pipe-solo .pipe-et {
   background: var(--amber-soft);
   border: 1px solid var(--amber);
-  padding: clamp(.55rem, 1.3vh, .85rem) 1rem;
+  padding: clamp(1.6rem, 3.4vh, 2.5rem) .6rem clamp(.75rem, 1.85vh, 1.4rem);
 }
-.pipe-caja.mundo { background: var(--c-soft); border-color: var(--c-line); }
+.pipe-caja.mundo,
+.pipe-caja.verde { background: var(--c-soft); border-color: var(--c-line); }
 
 /* Bold plano, sin versalitas ni tracking: ese par es el rótulo de plantilla que
    el deck ya se sacó de encima en el encabezado, y acá se había vuelto a colar.
@@ -875,11 +908,11 @@ ul.marks li.warn::before{ background: var(--warn); }
   display: block;
   margin-bottom: clamp(.4rem, 1vh, .65rem);
   font-weight: 700;
-  font-size: clamp(1.05rem, 1.45vw, 1.4rem);
+  font-size: clamp(1.4rem, 1.95vw, 1.92rem);
   color: var(--ink);
 }
 .pipe-rot small {
-  font-size: var(--fs-min); font-weight: 500; color: var(--ink-faint);
+  font-size: max(var(--fs-min), 1.36rem); font-weight: 500; color: var(--ink-soft);
   margin-left: .55em;
 }
 .pipe-caja.sim .pipe-rot { color: var(--sea); }
@@ -890,26 +923,37 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pipe-et {
   flex: 1 1 0;
   min-width: 0;
-  padding: clamp(.45rem, 1vh, .68rem) .55rem;
+  position: relative;
+  /* El número se reserva una banda ARRIBA, no margen a los costados: con el
+     texto centrado, un título de dos renglones metía el primer renglón en la
+     esquina y se pisaba con el número igual. Reservando alto el choque es
+     imposible sea cual sea el ancho del título, y de paso vuelve el ancho
+     lateral, que es lo que evita que los títulos se partan. */
+  padding: clamp(1.6rem, 3.4vh, 2.5rem) .6rem clamp(.75rem, 1.85vh, 1.4rem);
   border-radius: 9px;
   background: var(--verde-soft);
   border: 1px solid var(--verde-line);
   text-align: center;
   font-weight: 680;
-  font-size: clamp(1rem, 1.28vw, 1.25rem);
+  font-size: clamp(1.32rem, 1.8vw, 1.78rem);
   line-height: 1.2;
   color: var(--ink);
 }
 .pipe-et small {
-  display: block; margin-top: .18rem;
-  font-size: var(--fs-min); font-weight: 500; color: var(--ink-faint);
+  display: block; margin-top: .22rem;
+  font-size: max(var(--fs-min), 1.4rem); font-weight: 500; color: var(--ink-soft);
 }
 /* Número de etapa: es el orden, y hay que poder seguirlo aunque el recorrido
    cambie de caja. Mismo mono que el romano del encabezado. */
+/* El número va en la esquina y no en un renglón propio: con tres renglones por
+   bloque (número, título, glosa) el diagrama gastaba altura en algo que se lee
+   de un vistazo. En la esquina el bloque baja a dos renglones y esa altura se
+   convierte en cuerpo de letra. */
 .pipe-et i {
-  display: block; margin-bottom: .2rem;
+  position: absolute; top: .32rem; left: .5rem;
   font-family: var(--mono); font-style: normal;
-  font-size: var(--fs-min); font-weight: 700; color: var(--ink-faint);
+  font-size: .74em; font-weight: 700; color: var(--ink-soft);
+  line-height: 1;
 }
 
 .pipe-fl {
@@ -930,7 +974,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   display: block;
   width: 100%;
   height: auto;
-  max-height: clamp(44px, 7.6vh, 74px);
+  max-height: clamp(50px, 8.5vh, 86px);
 }
 .pipe-conn .ln { fill: none; stroke: var(--foam-line); stroke-width: 2.5; }
 .pipe-conn .pt { fill: var(--foam-line); }
@@ -941,15 +985,16 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pipe-conn .et {
   font-family: var(--mono);
   /* En unidades del viewBox (1200 de ancho), así que escala con el diagrama. */
-  font-size: 19px;
-  fill: var(--ink-faint);
+  font-size: 25px;
+  fill: var(--ink-soft);
 }
 
 /* Las etapas del montaje van en bloque, igual que las del resto del diagrama:
    en lista se leían como viñetas de texto y no como parte del pipeline. Sobre
    el tinte del contenedor van en blanco, que es lo que hace el diagrama de
    ros_control con sus cajas internas. */
-.pipe-caja.mundo .pipe-et {
+.pipe-caja.mundo .pipe-et,
+.pipe-caja.verde .pipe-et {
   background: var(--c-bloque);
   border: 1px solid var(--c-borde);
 }
@@ -959,7 +1004,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   margin: .5rem 0 0;
   padding-top: .42rem;
   border-top: 1px solid var(--c-line);
-  font-size: var(--fs-min);
+  font-size: max(var(--fs-min), 1.36rem);
   font-weight: 500;
   color: var(--ink-soft);
 }
@@ -980,6 +1025,12 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pipe .lab {
   --c-soft: var(--coral-soft);  --c-line: #f0c0b1;
   --c-bloque: #f8c7b7;          --c-borde: #ef9c84;  --fl-c: #ef9c84;
+}
+/* La caja de estimación va en verde como las otras dos en su color: en blanco
+   quedaba como si no fuera parte del mismo diagrama. */
+.pipe .verde {
+  --c-soft: var(--verde-soft);  --c-line: var(--verde-line);
+  --c-bloque: #b3ddc6;          --c-borde: #7fc4a4;  --fl-c: #7fc4a4;
 }
 
 /* Rótulo de fila de los dos montajes. Lo usa también la lámina del criterio de
@@ -1065,9 +1116,13 @@ ul.marks li.warn::before{ background: var(--warn); }
    ancho, o sea 253 de alto, y ese tope manda también en 1080. */
 .serie.cols  .serie-fig {
   flex: 0 0 auto;
-  height: min(30vh, 15.8rem);
-  width: auto; max-width: 100%;
-  margin-inline: auto;
+  /* Por defecto la figura ocupa la columna entera, así que su borde izquierdo
+     coincide con el del rótulo y el del párrafo. Centrada y más angosta que la
+     columna quedaba corrida contra el texto de abajo. La variante .montajes,
+     que necesita anchos distintos por figura, lo resuelve aparte. */
+  width: 100%;
+  /* Sin tope de alto: con uno, la caja deja de ser 3:2 y el object-fit recorta
+     las ilustraciones, que ya vienen en esa proporción exacta. */
   aspect-ratio: 3 / 2;
   /* display:block y no la grilla centrada del .serie-fig general: con
      place-items:center la imagen conserva su alto natural y el object-fit no
@@ -1134,7 +1189,7 @@ ul.marks li.warn::before{ background: var(--warn); }
    daba 17,3 px de titulillo y 15,5 de texto contra un titular de 50, y no
    crecía nada al proyectar. Las tres columnas dejan alto de sobra (el item
    ocupaba 338 px de 575), así que el cuerpo sube y ahora escala. */
-.serie.cols .serie-txt h3 { font-size: clamp(1.2rem, 1.65vw, 1.6rem); }
+.serie.cols .serie-txt h3 { font-size: clamp(1.32rem, 1.82vw, 1.78rem); }
 .serie.cols .serie-txt p  { font-size: clamp(1.05rem, 1.4vw, 1.38rem); line-height: 1.4; }
 /* En .filas hay pocas filas y mucho alto por fila: el cuerpo de .serie-txt,
    calibrado para las columnas, queda chico. Sube con el ancho de pantalla. */
@@ -1451,7 +1506,10 @@ code {
    720p, y una matriz de tres filas es justamente lo que no se puede achicar sin
    volverse ilegible desde el fondo del aula. Centrada, no arriba: con una sola
    fórmula por columna, alinear arriba deja la derecha flotando. */
-.modelo { align-items: center; }
+/* La fórmula se lleva más columna que las lecturas: es un SVG de 15,6 em de
+   ancho y lo que la limita es el ancho disponible, no el cuerpo de letra.
+   En mitades iguales quedaba topeada a 580 px y sobraban 247 de aire. */
+.modelo { align-items: center; grid-template-columns: 1.45fr 1fr; }
 
 /* Las dos láminas del modelado son las únicas del deck donde la fórmula ES el
    contenido: no ilustra un argumento de texto, lo sostiene. Con el cuerpo
@@ -1459,8 +1517,10 @@ code {
    límite de lo legible desde el fondo. Sube sólo acá.
    Provisional: cuando la fase A suba los topes tipográficos de todo el deck,
    revisar si estas dos reglas siguen haciendo falta. */
-.modelo .eq.hero,
 .consigna .eq.hero { font-size: clamp(1.15rem, 2.7vw, 2.4rem); }
+/* La lámina es la ecuación: con el cuerpo compartido quedaban 247 px muertos
+   entre las viñetas y la fórmula. */
+.modelo .eq.hero { font-size: clamp(1.4rem, 3.6vw, 3.3rem); }
 /* La del suavizado es de una línea y acompaña, así que sube menos: si igualara
    a la consigna, las dos competirían por ser la protagonista de la lámina. */
 .consigna .eq:not(.hero) { font-size: clamp(1rem, 1.7vw, 1.55rem); }
@@ -1476,6 +1536,16 @@ code {
 .consigna .params-tbl th:first-child,
 .consigna .params-tbl td:first-child { padding-left: 0; }
 
+/* La columna izquierda son tres renglones de fórmula, un rótulo y una tabla de
+   cuatro filas, uno abajo del otro y todos apretados: sobraban 113 px por
+   debajo de las dos columnas y ninguno estaba puesto entre las líneas. El aire
+   se reparte en las tres juntas que se leen encimadas. En vh y no en rem
+   porque lo que sobra es alto de lámina, no píxeles. */
+.consigna .col.stack { gap: clamp(1rem, 2.6vh, 1.9rem); }
+.consigna .eq-ref { margin-top: clamp(.5rem, 1.2vh, .9rem); }
+.consigna .dtable th,
+.consigna .dtable td { padding-block: clamp(.55rem, 1.5vh, .95rem); }
+
 
 
 .plano { display: flex; flex-direction: column; gap: .8rem; }
@@ -1486,7 +1556,7 @@ code {
 .plano li:last-child { padding-bottom: 0; border-bottom: 0; }
 .pl-src {
   flex: 1 1 auto; min-width: 0;
-  font-size: var(--fs-min);
+  font-size: max(var(--fs-min), 1.32rem);
   line-height: 1.35; color: var(--ink-soft);
 }
 /* El grado de libertad es lo que hay que retener de cada fila, así que es lo
@@ -1494,7 +1564,7 @@ code {
    que marque la correspondencia sin competir con el término. */
 .pl-dof {
   flex: 0 0 auto;
-  font-weight: 720; font-size: clamp(1rem, 1.3vw, 1.28rem);
+  font-weight: 720; font-size: clamp(1.3rem, 1.8vw, 1.75rem);
   color: var(--sea);
 }
 .pl-dof::before {
