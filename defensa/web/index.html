@@ -2152,6 +2152,13 @@
 </section>
 
 <section class="slide" data-block="3" data-title="Residual de actitud (R5)">
+  <!-- El grafico es la evidencia de la lamina: sube del tope general de 44vh
+       y la nota queda en condicion de medicion + como leer. La interpretacion
+       la da el titular y la voz. Scoped aca mientras el rework corre en paralelo. -->
+  <style>
+    .slide[data-title="Residual de actitud (R5)"] .result-plot img { max-height: 50vh; }
+    .slide[data-title="Residual de actitud (R5)"] .split { align-items: center; margin-top: .8rem; flex: none; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
@@ -2161,7 +2168,7 @@
       <div class="result-plot">
         <img src="assets/img/lab_error_hist.png" alt="Distribución del error residual de actitud en el ensayo R5">
       </div>
-      <div class="split" style="align-items:start;margin-top:1rem;flex:none;">
+      <div class="split">
         <div class="col">
           <table class="dtable params-tbl">
             <thead><tr><th></th><th>Roll</th><th>Pitch</th></tr></thead>
@@ -2172,12 +2179,9 @@
           </table>
         </div>
         <p class="modelo-nota">
-          Ensayo R5, compensado el retardo de cada eje (0,58 s roll, 1,16 s
-          pitch). Las medias quedan cerca de cero: <b>el robot no introduce un
-          sesgo sistemático de actitud</b>. Y la forma no es ruido: la frecuencia
-          se acumula hacia los extremos, que es la huella de restar una sinusoide
-          atenuada. Es la predicción del modelo de ganancia g ≈ 0,47, no una
-          casualidad.
+          Ensayo R5, con el retardo óptimo de cada eje compensado (0,58 s roll,
+          1,16 s pitch). La línea negra marca el cero; la roja punteada, la media
+          de cada distribución.
         </p>
       </div>
     </div>
