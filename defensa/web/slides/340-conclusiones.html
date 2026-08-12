@@ -1,27 +1,42 @@
+<!-- Fusión de "Lectura conjunta" y "Conclusiones" (corrección 10-08, fase E2).
+     Sigue el capítulo de Conclusiones del informe: objetivo cumplido (título),
+     percepción y dinámica con sus cifras (filas), base de investigación (cierre).
+     Los límites (¶4 del capítulo) viven en la lámina de limitaciones. -->
 <section class="slide" data-block="4" data-title="Conclusiones">
   <div class="slide-inner">
     <header class="s-head">
-      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: conclusiones</span></span></div>
-      <h2 class="head">Conclusiones: generar, observar y medir</h2>
+      <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: síntesis</span></span></div>
+      <h2 class="head">El entorno genera movimiento marino, lo observa y lo mide en condiciones controladas</h2>
     </header>
     <div class="s-body">
-      <div class="chain">
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>simulador marino</strong> genera movimiento representativo</span>
+      <div class="serie filas">
+        <div class="serie-item sim">
+          <span class="serie-k">Percepción<br>simulación</span>
+          <div class="serie-txt">
+            <p>El pipeline visual recupera la dinámica del marcador contra la
+               referencia del simulador, en los dos montajes de cámara.</p>
+            <div class="row wrap">
+              <span class="pill">5,8 cm de error medio · cámara fija</span>
+              <span class="pill">2–3° y 2–2,4 cm · cámara en dron</span>
+            </div>
+          </div>
         </div>
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>robot real</strong> lo reproduce de forma consistente</span>
-        </div>
-        <div class="link">
-          <span class="check"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <span class="txt">El <strong>pipeline visual</strong> mide su pose cuando las condiciones lo permiten</span>
+        <div class="serie-item lab">
+          <span class="serie-k">Dinámica<br>laboratorio</span>
+          <div class="serie-txt">
+            <p>La consigna llega al robot real sin degradación, y el cuerpo la
+               sigue con retardo y atenuación medibles en roll y pitch a 0,10 Hz.</p>
+            <div class="row wrap">
+              <span class="pill">comando: r &gt; 0,9999</span>
+              <span class="pill">cuerpo: τ = 0,45–0,95 s · g ≈ 0,62 · ensayo principal</span>
+            </div>
+          </div>
         </div>
       </div>
-      <p class="lead center mt-l" style="max-width:60ch;margin-left:auto;margin-right:auto;">
-        No un sistema de aterrizaje: una <strong>base de investigación</strong> para estudiar ese
-        problema de forma progresiva, medible y reproducible.
+      <p class="conclusion">
+        El resultado principal no es un sistema de aterrizaje: es una base de
+        investigación para estudiar ese problema de forma progresiva, medible
+        y reproducible.
       </p>
     </div>
   </div>
