@@ -30,11 +30,11 @@
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: la arquitectura</span></span></div>
       <h2 class="head">Pipeline de trabajo</h2>
     </header>
-    <div class="s-body">
+    <div class="s-body pegado">
       <div class="pipe" data-anim>
 
         <div class="pipe-solo">
-          <span class="pipe-et"><i>1</i>Consigna marina<small>roll · pitch · heave</small></span>
+          <span class="pipe-et"><i>1</i>Consigna marina<small>roll, pitch, heave</small></span>
         </div>
 
         <svg class="pipe-conn" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
@@ -45,13 +45,13 @@
           <polygon class="pt sim" points="284,45 296,45 290,60"/>
           <polygon class="pt lab" points="904,45 916,45 910,60"/>
           <text class="et" x="301" y="41">/body_pose</text>
-          <text class="et" x="899" y="41" text-anchor="end">Euler() · SDK</text>
+          <text class="et" x="899" y="41" text-anchor="end">Euler() por SDK</text>
         </svg>
 
         <div class="pipe-caja mundo sim">
           <span class="pipe-rot">Simulación<small>Gazebo</small></span>
           <div class="pipe-flujo">
-            <span class="pipe-et"><i>2</i>Go2 simulado<small>la IK la resuelve CHAMP</small></span>
+            <span class="pipe-et"><i>2</i>Go2 simulado<small>IK por CHAMP</small></span>
             <b class="pipe-fl"></b>
             <span class="pipe-et"><i>3</i>Cámara sintética<small>fija o en dron</small></span>
           </div>
@@ -60,7 +60,7 @@
         <div class="pipe-caja mundo lab">
           <span class="pipe-rot">Laboratorio<small>Go2 real</small></span>
           <div class="pipe-flujo">
-            <span class="pipe-et"><i>2</i>Go2 real<small>IK en firmware cerrado · sólo actitud</small></span>
+            <span class="pipe-et"><i>2</i>Go2 real<small>IK en firmware cerrado</small></span>
             <b class="pipe-fl"></b>
             <span class="pipe-et"><i>3</i>Webcam en trípode</span>
           </div>
@@ -76,14 +76,14 @@
           <text class="et" x="612" y="52">imagen</text>
         </svg>
 
-        <div class="pipe-caja tronco">
+        <div class="pipe-caja tronco verde">
           <span class="pipe-rot">Estimación y evaluación</span>
           <div class="pipe-flujo">
             <span class="pipe-et"><i>4</i>Detección ArUco + PnP<small>pose relativa</small></span>
             <b class="pipe-fl"></b>
             <span class="pipe-et"><i>5</i>Registro<small>rosbag</small></span>
             <b class="pipe-fl"></b>
-            <span class="pipe-et"><i>6</i>Evaluación<small>fuera de línea</small></span>
+            <span class="pipe-et"><i>6</i>Evaluación<small>offline</small></span>
           </div>
         </div>
 

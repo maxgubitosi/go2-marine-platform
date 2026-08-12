@@ -17,6 +17,8 @@ Uso:
     python3 defensa/scripts/build_deck.py     # desde cualquier lado
 """
 
+import hashlib
+import re
 import sys
 from pathlib import Path
 
@@ -34,7 +36,15 @@ def armar():
     if MARCA not in plantilla:
         sys.exit(f"plantilla.html no tiene la marca {MARCA}")
     cuerpo = "\n\n".join(p.read_text(encoding="utf-8").rstrip("\n") for p in laminas)
-    return plantilla.replace(MARCA, cuerpo), len(laminas)
+    html = plantilla.replace(MARCA, cuerpo)
+    # El ?v= del CSS se calcula del contenido del archivo. Con un numero fijo a
+    # mano, el navegador servia la hoja vieja de cache despues de editarla y la
+    # lamina se veia rota sin que nada estuviera roto.
+    css = WEB / "css" / "style.css"
+    if css.exists():
+        sello = hashlib.sha1(css.read_bytes()).hexdigest()[:10]
+        html = re.sub(r'(href="css/style\.css)(\?v=[^"]*)?"', rf'\1?v={sello}"', html)
+    return html, len(laminas)
 
 
 def build():

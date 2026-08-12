@@ -1,27 +1,31 @@
 <!-- Cierra el setup presentando todas las corridas, tambien las del lab: los
-     resultados arrancan sin explicar contexto. La linea del pie reemplaza a
-     las laminas de ROS2 y de registro que salieron del hilo. -->
-<section class="slide" data-block="2" data-title="La campaña">
+     resultados arrancan sin explicar contexto. Las vinetas del pie reemplazan a
+     las laminas de ROS2 y de registro que salieron del hilo.
+     Sin duraciones en la primera columna: cuanto duro cada corrida no cambia
+     ninguna lectura de los resultados y competia con los identificadores, que
+     son lo que hay que retener porque vuelven en todas las laminas de error. -->
+
+<section class="slide" data-block="2" data-title="Ensayos realizados">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: la campaña</span></span></div>
-      <h2 class="head">Seis corridas registradas: misma consigna, tres montajes</h2>
+      <h2 class="head">Ensayos realizados</h2>
     </header>
     <div class="s-body">
-      <table class="dtable">
+      <table class="dtable campana">
         <thead><tr><th>Corrida</th><th>Montaje</th><th>Qué responde</th></tr></thead>
         <tbody>
-          <tr class="hi"><td><strong>Caso base</strong> · 57,5 s</td><td class="num">cámara fija · sim</td><td>La referencia limpia del pipeline visual</td></tr>
-          <tr><td>R1 · R2 · R3 · ~57 s c/u</td><td class="num">cámara en dron · sim</td><td>Variabilidad entre ejecuciones: que la lectura no dependa de una corrida con suerte</td></tr>
+          <tr class="hi"><td>Caso base</td><td class="num">cámara fija · sim</td><td>La referencia limpia del pipeline visual</td></tr>
+          <tr><td>R1 · R2 · R3</td><td class="num">cámara en dron · sim</td><td>Variabilidad entre ejecuciones: que la lectura no dependa de una corrida con suerte</td></tr>
           <tr><td>R4 · roll ±14,8° · pitch ±9,9°</td><td class="num">robot real</td><td>Seguimiento a la amplitud principal</td></tr>
           <tr><td>R5 · roll ±9,9° · pitch ±7,9°</td><td class="num">robot real</td><td>Control a menor amplitud: si el patrón se replica, es caracterización y no anécdota</td></tr>
         </tbody>
       </table>
-      <p class="apoyo">
-        Todo corre sobre ROS2 y todo queda en rosbag: la evaluación es siempre
-        offline, contra registro. Las corridas son reevaluables con el mismo
-        criterio y comparables entre sí.
-      </p>
+      <ul class="lead-bul ul-reset">
+        <li>Todo corre sobre ROS2 y queda en rosbags</li>
+        <li>Evaluación siempre offline, contra registro</li>
+        <li>Corridas reevaluables con el mismo criterio y comparables entre sí</li>
+      </ul>
     </div>
   </div>
 </section>

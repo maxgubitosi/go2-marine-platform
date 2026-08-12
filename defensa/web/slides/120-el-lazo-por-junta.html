@@ -5,12 +5,20 @@
      Regla que dejó la iteración: el hilo principal muestra sólo lo que se
      ejecuta. El jacobiano y la linealización (informe, ec. 20) analizan la
      cadena pero no corren en ningún punto del proyecto: son respuestas
-     preparadas, no láminas. -->
-<section class="slide" data-block="2" data-title="El lazo por junta">
+     preparadas, no láminas.
+
+     La lámina tenía 230 palabras en cuatro párrafos y era la más cargada del
+     deck: se leía en vez de escucharse. Quedan las viñetas, que son el machete,
+     y el desarrollo va hablado. Lo que se dice y no se escribe: que mirar qué
+     grupo de patas cambia dice qué está haciendo el torso; que la superposición
+     vale a primer orden; y que lo del medio grado y la precarga es lo que
+     garantiza que cada referencia intermedia sea otra postura sobre los mismos
+     apoyos. -->
+<section class="slide" data-block="2" data-title="Control PD por junta">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: postura del torso</span></span></div>
-      <h2 class="head">Del ángulo al torque: un lazo PD por junta</h2>
+      <h2 class="head">Control PD por junta</h2>
     </header>
     <div class="s-body">
 
@@ -64,56 +72,44 @@
         </figure>
         <div class="col stack">
           <dl class="symkey">
-            <dt>q<sub>a</sub><sup>⋆</sup>, q<sub>a</sub></dt><dd>la referencia que sale de la inversión, y el ángulo que mide el encoder</dd>
-            <dt>K<sub>p</sub>, K<sub>d</sub></dt><dd>la rigidez del resorte y la disipación del amortiguador virtuales</dd>
+            <dt>q<sub>a</sub><sup>⋆</sup>, q<sub>a</sub></dt><dd>referencia de la inversión, ángulo del encoder</dd>
+            <dt>K<sub>p</sub>, K<sub>d</sub></dt><dd>rigidez y disipación virtuales</dd>
           </dl>
-          <p class="modelo-nota">
-            Cada junta se comporta como un <b>resorte y un amortiguador
-            virtuales</b> alrededor de su referencia. Es el único eslabón que los
-            dos entornos comparten: la interfaz de bajo nivel del robot real
-            expone esta misma estructura por motor.
-          </p>
+          <ul class="lead-bul ul-reset">
+            <li>Un resorte y un amortiguador por junta</li>
+            <li>El único eslabón que comparten los dos entornos</li>
+          </ul>
         </div>
       </div>
 
-      <p class="motivo">
-        Las referencias que siguen esos lazos traen un <b>patrón propio</b> por
-        componente: mirar qué grupo de patas cambia dice qué está haciendo el
-        torso. Las tres llegan a la vez y, a primer orden, <b>se superponen</b>:
-        cada pata recibe la suma.
-      </p>
-
       <table class="dtable patron">
-        <thead><tr><th>El torso</th><th>Componente</th><th>Qué hacen las patas</th></tr></thead>
+        <thead><tr><th>El torso</th><th>Componente</th><th>Las patas</th></tr></thead>
         <tbody>
           <tr>
             <td class="term"><em>sube o baja</em></td>
             <td class="comp">heave</td>
-            <td>Muslo y rodilla flexionan y extienden en fase, igual en las cuatro patas.</td>
+            <td>muslo y rodilla en fase, las cuatro</td>
           </tr>
           <tr>
             <td class="term" rowspan="2"><em>se inclina</em></td>
             <td class="comp">roll</td>
-            <td>Las patas izquierdas adoptan una configuración distinta de las derechas.</td>
+            <td>izquierdas distinto de derechas</td>
           </tr>
           <tr>
             <td class="comp">pitch</td>
-            <td>Las delanteras adoptan una configuración distinta de las traseras.</td>
+            <td>delanteras distinto de traseras</td>
           </tr>
         </tbody>
       </table>
 
-      <p class="apoyo">
-        El camino también está garantizado: la consigna llega suavizada y entre
-        muestras cambia menos de <b>medio grado y 5 mm</b>, así que cada
-        referencia intermedia es otra postura sobre los mismos apoyos; y como el
-        centro de masa queda lejos del borde del polígono, cada pie conserva una
-        <b>precarga de un cuarto del peso</b> y no se despega.
-      </p>
+      <ul class="lead-bul ul-reset">
+        <li>Las tres se superponen, cada pata recibe la suma</li>
+        <li>El camino: entre muestras, menos de medio grado y 5 mm</li>
+        <li>Los apoyos: un cuarto del peso de precarga por pie</li>
+      </ul>
 
-      <p class="conclusion">
-        Por eso el Go2 puede reproducir el oleaje sin caminar. Cuando el control
-        interno decide dar un paso, rompe justamente esta condición.
+      <p class="conclusion llana">
+        El Go2 reproduce el oleaje sin caminar. Un paso rompe esa condición.
       </p>
     </div>
   </div>
