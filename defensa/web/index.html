@@ -2067,6 +2067,14 @@
 </section>
 
 <section class="slide" data-block="3" data-title="Cuantificando: retardo y ganancia">
+  <!-- Los mentores pidieron dejar esta lamina; solo formato: la ecuacion y la
+       tabla suben de cuerpo para llenar el alto, las notas quedan en una linea
+       cada una y sin negritas. Scoped mientras el rework corre en paralelo. -->
+  <style>
+    .slide[data-title="Cuantificando: retardo y ganancia"] .eq.hero { font-size: clamp(1.4rem, 2.5vw, 2.4rem); margin-bottom: 1.2rem; }
+    .slide[data-title="Cuantificando: retardo y ganancia"] .dtable { font-size: 1.15rem; }
+    .slide[data-title="Cuantificando: retardo y ganancia"] .split { align-items: center; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
@@ -2135,15 +2143,12 @@
         </div>
         <div class="col stack">
           <p class="modelo-nota">
-            Dos ensayos a amplitudes distintas dan el mismo patrón: retardo del orden
-            del segundo, correlación alta y ganancia claramente menor que uno. El
-            desacople es <strong>fase más escala</strong>, no deformación de la forma de onda.
-            Que se replique es lo que lo convierte en caracterización y no en anécdota.
+            Dos ensayos a amplitudes distintas, el mismo patrón: el desacople es
+            fase más escala, sin deformación de la forma de onda.
           </p>
           <p class="modelo-nota">
-            <strong>Hipótesis, no causa probada:</strong> el patrón es consistente con un
-            control interno del robot que no podemos modificar. Al no poder removerlo,
-            lo medimos.
+            Hipótesis, no causa probada: consistente con el control interno del
+            robot. Al no poder removerlo, se mide.
           </p>
         </div>
       </div>
