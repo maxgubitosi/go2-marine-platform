@@ -44,8 +44,13 @@
           <path class="ln lab" d="M910 22 V46"/>
           <polygon class="pt sim" points="284,45 296,45 290,60"/>
           <polygon class="pt lab" points="904,45 916,45 910,60"/>
-          <text class="et" x="301" y="41">/body_pose</text>
-          <text class="et" x="899" y="41" text-anchor="end">Euler() por SDK</text>
+          <!-- Los rotulos van POR FUERA de las dos ramas, no entre ellas. La
+               horizontal va de 290 a 910, asi que cualquier texto metido en ese
+               tramo la cruza: el rotulo mide 29 unidades de alto en un lienzo de
+               64 y no hay banda libre donde meterlo. Afuera del tramo no hay
+               linea horizontal que cruzar. -->
+          <text class="et" x="272" y="40" text-anchor="end">/body_pose</text>
+          <text class="et" x="928" y="40">Euler() por SDK</text>
         </svg>
 
         <div class="pipe-caja mundo sim">
@@ -68,12 +73,16 @@
         </div>
 
         <svg class="pipe-conn" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <path class="ln sim" d="M290 0 V34"/>
-          <path class="ln lab" d="M910 0 V34"/>
-          <path class="ln" d="M290 34 H910"/>
-          <path class="ln" d="M600 34 V46"/>
-          <polygon class="pt" points="594,45 606,45 600,60"/>
-          <text class="et" x="612" y="52">imagen</text>
+          <!-- La horizontal sube de 34 a 20 para abrirle una banda al rotulo:
+               "imagen" mide 29 unidades de alto y antes arrancaba en 23, o sea
+               que la cruzaba. Ahora va de 31 a 60, por debajo de la linea y a la
+               derecha del tronco. -->
+          <path class="ln sim" d="M290 0 V20"/>
+          <path class="ln lab" d="M910 0 V20"/>
+          <path class="ln" d="M290 20 H910"/>
+          <path class="ln" d="M600 20 V48"/>
+          <polygon class="pt" points="594,47 606,47 600,62"/>
+          <text class="et" x="616" y="60">imagen</text>
         </svg>
 
         <div class="pipe-caja tronco verde">

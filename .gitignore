@@ -48,6 +48,7 @@ informe/figures/**/*.orig.jpeg
 # Python venv y datasets
 .venv_plot/
 informe/scripts/.mplconfig/
+defensa/scripts/.mplconfig/
 informe/scripts/.pydeps/
 marine_robot_dataset/venv/
 marine_robot_dataset/datasets/

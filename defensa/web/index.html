@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defensa PF · Plataforma marina sintética con Go2</title>
-<link rel="stylesheet" href="css/style.css?v=1d99591c22">
+<link rel="stylesheet" href="css/style.css?v=9af64ab966">
 </head>
 <body>
 
@@ -614,8 +614,13 @@
           <path class="ln lab" d="M910 22 V46"/>
           <polygon class="pt sim" points="284,45 296,45 290,60"/>
           <polygon class="pt lab" points="904,45 916,45 910,60"/>
-          <text class="et" x="301" y="41">/body_pose</text>
-          <text class="et" x="899" y="41" text-anchor="end">Euler() por SDK</text>
+          <!-- Los rotulos van POR FUERA de las dos ramas, no entre ellas. La
+               horizontal va de 290 a 910, asi que cualquier texto metido en ese
+               tramo la cruza: el rotulo mide 29 unidades de alto en un lienzo de
+               64 y no hay banda libre donde meterlo. Afuera del tramo no hay
+               linea horizontal que cruzar. -->
+          <text class="et" x="272" y="40" text-anchor="end">/body_pose</text>
+          <text class="et" x="928" y="40">Euler() por SDK</text>
         </svg>
 
         <div class="pipe-caja mundo sim">
@@ -638,12 +643,16 @@
         </div>
 
         <svg class="pipe-conn" viewBox="0 0 1200 64" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-          <path class="ln sim" d="M290 0 V34"/>
-          <path class="ln lab" d="M910 0 V34"/>
-          <path class="ln" d="M290 34 H910"/>
-          <path class="ln" d="M600 34 V46"/>
-          <polygon class="pt" points="594,45 606,45 600,60"/>
-          <text class="et" x="612" y="52">imagen</text>
+          <!-- La horizontal sube de 34 a 20 para abrirle una banda al rotulo:
+               "imagen" mide 29 unidades de alto y antes arrancaba en 23, o sea
+               que la cruzaba. Ahora va de 31 a 60, por debajo de la linea y a la
+               derecha del tronco. -->
+          <path class="ln sim" d="M290 0 V20"/>
+          <path class="ln lab" d="M910 0 V20"/>
+          <path class="ln" d="M290 20 H910"/>
+          <path class="ln" d="M600 20 V48"/>
+          <polygon class="pt" points="594,47 606,47 600,62"/>
+          <text class="et" x="616" y="60">imagen</text>
         </svg>
 
         <div class="pipe-caja tronco verde">
@@ -998,14 +1007,13 @@
 </svg></div>
             <span class="eq-ref def">suavizado exponencial · α = 0,95 a 20 Hz, τ ≈ 1 s</span>
           </figure>
-          <table class="dtable filtro-tbl">
-            <thead><tr><th>Tras el filtro</th><th>al robot</th><th>de lo pedido</th></tr></thead>
-            <tbody>
-              <tr><td>roll</td><td class="num hi">±12,8°</td><td class="num">85 %</td></tr>
-              <tr><td>pitch</td><td class="num hi">±8,5°</td><td class="num">85 %</td></tr>
-              <tr><td>heave</td><td class="num hi">±0,074 m</td><td class="num">74 %</td></tr>
-            </tbody>
-          </table>
+          <figure class="fig-suavizado">
+            <img src="assets/img/method_consigna_suavizado.png" alt="Las tres consignas antes y después del filtro: la curva suavizada conserva la forma y la frecuencia, con menos amplitud y algo de atraso">
+            <figcaption>
+              Al robot llegan ±12,8° de roll, ±8,5° de pitch y ±0,074 m de heave:
+              85 %, 85 % y 74 % de lo pedido, con casi un segundo de atraso.
+            </figcaption>
+          </figure>
         </div>
 
       </div>

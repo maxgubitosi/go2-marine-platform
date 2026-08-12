@@ -897,7 +897,12 @@ ul.marks li.warn::before{ background: var(--warn); }
      (auto). Con align-content:stretch se estiraban también las filas de
      conector, el SVG conservaba su alto natural y quedaba centrado en una fila
      más alta: por eso las puntas de flecha terminaban en el aire. */
-  grid-template-rows: 1fr auto 1fr auto 1fr;
+  /* La consigna va en `auto` y no en `1fr`: es un bloque de dos renglones y
+     estirado quedaba 20 px mas alto que su contenido, con el numero flotando
+     lejos del titulo. Ese alto se devuelve como aire ENTRE filas, que es lo que
+     separa los rotulos de los conectores de las cajas. */
+  grid-template-rows: auto auto 1fr auto 1fr;
+  row-gap: clamp(.2rem, .75vh, .7rem);
 }
 /* La caja reparte su alto: el rótulo y la nota ocupan lo suyo y la fila de
    bloques se queda con el resto, así el aire extra engorda los bloques y no
@@ -912,7 +917,7 @@ ul.marks li.warn::before{ background: var(--warn); }
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #fff;
-  padding: clamp(.8rem, 2.35vh, 1.76rem) clamp(.85rem, 1.7vw, 1.3rem) clamp(.9rem, 2.45vh, 1.84rem);
+  padding: clamp(.7rem, 1.85vh, 1.4rem) clamp(.85rem, 1.7vw, 1.3rem) clamp(.75rem, 1.95vh, 1.5rem);
   min-width: 0;
 }
 /* Tronco: centrado y angosto el de arriba, para que la bifurcación salga del
@@ -931,7 +936,9 @@ ul.marks li.warn::before{ background: var(--warn); }
 .pipe-solo .pipe-et {
   background: var(--amber-soft);
   border: 1px solid var(--amber);
-  padding: clamp(1.6rem, 3.4vh, 2.5rem) .6rem clamp(.75rem, 1.85vh, 1.4rem);
+  /* Banda del numero mas corta que en los bloques de adentro: este titulo es de
+     una linea y no puede crecer, asi que no hace falta reservar para dos. */
+  padding: clamp(1.15rem, 2.45vh, 1.8rem) .6rem clamp(.75rem, 1.85vh, 1.4rem);
 }
 .pipe-caja.mundo,
 .pipe-caja.verde { background: var(--c-soft); border-color: var(--c-line); }
@@ -964,7 +971,7 @@ ul.marks li.warn::before{ background: var(--warn); }
      esquina y se pisaba con el número igual. Reservando alto el choque es
      imposible sea cual sea el ancho del título, y de paso vuelve el ancho
      lateral, que es lo que evita que los títulos se partan. */
-  padding: clamp(1.6rem, 3.4vh, 2.5rem) .6rem clamp(.75rem, 1.85vh, 1.4rem);
+  padding: clamp(1.25rem, 2.7vh, 2rem) .6rem clamp(.7rem, 1.6vh, 1.2rem);
   border-radius: 9px;
   background: var(--verde-soft);
   border: 1px solid var(--verde-line);
@@ -1008,8 +1015,13 @@ ul.marks li.warn::before{ background: var(--warn); }
   grid-column: 1 / -1;
   display: block;
   width: 100%;
+  /* Sin tope de alto, a proposito. El alto sale del viewBox y del ancho, y esa
+     es la unica forma de que la rama de x=290 caiga sobre el centro de la caja
+     de simulacion: con un max-height, el preserveAspectRatio "meet" achica el
+     dibujo entero para que entre a lo alto y lo centra, o sea que TAMBIEN lo
+     encoge a lo ancho. A 720p el tope lo dejaba en 40 px de 61 y las flechas
+     caian 103 px corridas del centro de su caja. */
   height: auto;
-  max-height: clamp(50px, 8.5vh, 86px);
 }
 .pipe-conn .ln { fill: none; stroke: var(--foam-line); stroke-width: 2.5; }
 .pipe-conn .pt { fill: var(--foam-line); }
@@ -1621,8 +1633,23 @@ code {
    preguntan con qué amplitud se movió el robot. */
 
 
-.filtro-tbl td:first-child { color: var(--sea); font-weight: 600; }
-.filtro-tbl .hi { color: var(--coral); font-weight: 700; }
+/* Lo que el filtro le hace a la consigna, dibujado. Reemplaza a la tabla de tres
+   filas que decía lo mismo en números: la tabla no mostraba el atraso, que es la
+   otra mitad de lo que hace un pasabajos, y sobre todo no dejaba ver que la
+   forma y la frecuencia se conservan. Los números no se perdieron, los lleva el
+   epígrafe.
+   El tope de alto con width auto y no con width 100 %: fijando ancho y alto a la
+   vez el navegador ignora la proporción y estira la imagen. Mismo patrón que
+   .result-plot img. */
+.fig-suavizado { margin: 0; }
+.fig-suavizado img {
+  display: block; margin-inline: auto;
+  max-width: 100%; max-height: 42vh; width: auto; height: auto;
+}
+.fig-suavizado figcaption {
+  margin-top: .55rem;
+  font-size: var(--fs-min); color: var(--ink-soft); line-height: 1.4;
+}
 
 /* Los dos destinos de la consigna, que es el cierre del bloque de modelado.
    Mismos colores que el par de fotos de la lámina 6 (simulación en teal,
@@ -2013,7 +2040,6 @@ code {
   .pipe-caja { padding: .35rem .7rem .45rem; }
   .pipe-flujo { gap: .3rem; }
   .pipe-et { padding: .35rem .45rem; }
-  .pipe-conn { max-height: clamp(34px, 5.6vh, 54px); }
 
   .cinematica .col { gap: .3rem; }
   .cinematica .eq-block + .eq-block { margin-top: .35rem; }
