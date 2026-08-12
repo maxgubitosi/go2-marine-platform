@@ -1,4 +1,13 @@
+<!-- Los histogramas completos de simulación, para preguntas. Arriba las dos
+     grillas posicionales; abajo la lectura angular del caso base tal como está
+     en el informe: pitch y yaw. El panel de roll no existe en el informe (el
+     2,44° es cifra textual); si se regenera esa figura con roll, actualizar acá. -->
 <section class="slide" data-block="4" data-backup="5" data-title="Histogramas de error (simulación)">
+  <style>
+    .slide[data-title="Histogramas de error (simulación)"] .split .media img { max-height: 36vh; width: auto; margin-inline: auto; }
+    .slide[data-title="Histogramas de error (simulación)"] .ang .media img { max-height: 22vh; width: auto; margin-inline: auto; }
+    .slide[data-title="Histogramas de error (simulación)"] .ang { margin-top: .6rem; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">B</span><span class="lbl">Backup</span></div>
@@ -6,10 +15,11 @@
     </header>
     <div class="s-body">
       <div class="split">
-        <figure class="col"><div class="media contain plot"><img src="assets/img/sim_fixed_error_hist.png" alt="Histograma de error, cámara fija"></div><figcaption>Cámara fija.</figcaption></figure>
+        <figure class="col"><div class="media contain plot"><img src="assets/img/sim_fixed_error_hist.png" alt="Histograma de error, cámara fija"></div><figcaption>Cámara fija · posición.</figcaption></figure>
         <figure class="col"><div class="media contain plot"><img src="assets/img/sim_drone_error_hist.png" alt="Histograma de error, dron"></div><figcaption>Cámara en dron.</figcaption></figure>
       </div>
-      <p class="small muted center mt-s" style="margin-left:auto;margin-right:auto;">Parte del desplazamiento respecto de cero proviene de desfases temporales no compensados.</p>
+      <figure class="ang"><div class="media contain plot"><img src="assets/img/sim_fixed_angle_error_hist_raw.png" alt="Histograma angular crudo, cámara fija: pitch y yaw"></div><figcaption>Cámara fija · actitud, tal como figura en el informe: pitch y yaw crudos. Roll se reporta numéricamente (2,44° de error absoluto medio); yaw es control diagnóstico, no se excita.</figcaption></figure>
+      <p class="small muted center mt-s" style="margin-left:auto;margin-right:auto;">Histogramas crudos: parte del desplazamiento respecto de cero proviene de desfases temporales no compensados.</p>
     </div>
   </div>
 </section>
