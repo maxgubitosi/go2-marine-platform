@@ -1,17 +1,26 @@
 <!-- Setup del marcador y la estimacion, sin matematica en pantalla: pinhole,
-     intrinsecos y el argmin de PnP viven en el backup de PnP. Lo que la lamina
-     sostiene es el montaje fisico y la frase que resume el metodo. -->
-<section class="slide" data-block="2" data-title="El marcador y la pose">
+     intrinsecos y el argmin de PnP viven en el backup de PnP.
+
+     La figura es un cuadro real de la camara del laboratorio con la deteccion
+     dibujada encima, y no el esquema camara-marcador que estaba antes (ese se
+     mudo al backup de PnP, que era todo ecuaciones y ni un dibujo). El motivo:
+     en Gazebo que el detector enganche es casi tautologico, porque el marcador
+     es una textura perfecta. Lo que hay que mostrar es que engancha sobre una
+     hoja impresa, pegada con cinta y con la luz del taller.
+
+     Sin captura del recuadro de pose a proposito: proyectado queda en dos o
+     tres puntos y no se lee desde el fondo del aula. Los datos duros van en la
+     tabla, en la tipografia del deck. -->
+<section class="slide" data-block="2" data-title="Marcador fiducial y estimación de pose">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el marcador</span></span></div>
-      <h2 class="head">Un ArUco rígido al torso: cuatro esquinas de geometría conocida</h2>
+      <h2 class="head">Marcador fiducial y estimación de pose</h2>
     </header>
     <div class="s-body">
-      <div class="split narrow-media">
+      <div class="split media-left">
         <figure class="col">
-          <div class="media contain"><img src="assets/img/camera_marker_geometry.png" alt="La cámara del laboratorio observando el marcador sobre el torso del Go2"></div>
-          <figcaption>La geometría cámara–marcador del montaje real: la misma lógica que en Gazebo.</figcaption>
+          <div class="media contain"><img src="assets/img/lab_aruco_deteccion.png" alt="Cuadro de la cámara del laboratorio: el ArUco sobre el lomo del Go2, con el contorno de la detección, la esquina de origen y el identificador dibujados encima"></div>
         </figure>
         <div class="col stack">
           <table class="dtable params-tbl">
@@ -19,17 +28,15 @@
               <tr><td>Marcador</td><td>ArUco, el mismo diccionario en simulación y laboratorio</td></tr>
               <tr><td>Lado físico</td><td class="num">0,20 m</td></tr>
               <tr><td>Montaje</td><td>impreso y adherido rígido sobre el lomo del Go2</td></tr>
-              <tr><td>Qué aporta</td><td>identidad inequívoca y <b>cuatro esquinas de geometría conocida</b></td></tr>
+              <tr><td>Qué aporta</td><td>identidad inequívoca y cuatro esquinas de geometría conocida</td></tr>
             </tbody>
           </table>
-          <p class="modelo-nota">
-            Con esas cuatro esquinas y la cámara calibrada, <b>PnP</b> devuelve la
-            posición y la actitud del marcador respecto de la cámara, cuadro a
-            cuadro y con una sola cámara monocular. Convierte la postura del robot
-            en una pose observable: el problema visual deja de ser inferir la
-            geometría de una embarcación y pasa a ser seguir un objeto plano y
-            bien definido. La matemática completa está en el backup.
-          </p>
+          <ul class="lead-bul ul-reset">
+            <li>Cuatro esquinas más cámara calibrada, y PnP resuelve la pose</li>
+            <li>Posición y actitud, cuadro a cuadro, con una sola cámara</li>
+            <li>La postura del robot, convertida en pose observable</li>
+            <li>Ya no hay que inferir la geometría de un barco, sino seguir un plano</li>
+          </ul>
         </div>
       </div>
     </div>

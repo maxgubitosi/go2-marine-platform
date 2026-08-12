@@ -1,5 +1,9 @@
 <!-- La matematica que salio de la lamina del marcador: pinhole, intrinsecos y
-     el argmin. Responde "como estima la pose exactamente" sin gastar hilo. -->
+     el argmin. Responde "como estima la pose exactamente" sin gastar hilo.
+     El esquema camara-marcador tambien bajo de la lamina 14: es la figura que
+     nombra los simbolos de estas ecuaciones (las esquinas P_i del plano y sus
+     proyecciones p_i en la imagen), y aca al lado de las formulas rinde mas que
+     en el hilo principal, donde competia con la evidencia real. -->
 <section class="slide" data-block="4" data-backup="14" data-title="La matemática de PnP">
   <div class="slide-inner">
     <header class="s-head">
@@ -190,6 +194,10 @@
             minimiza el error de reproyección. Como el marcador es plano, las
             esquinas son coplanares y la solución inicial sale de una homografía.
           </p>
+          <figure>
+            <div class="media contain esquema"><img src="assets/img/camera_marker_geometry.png" alt="Esquema de la geometría cámara-marcador: el centro óptico, el plano imagen con las proyecciones y el marcador con sus cuatro esquinas y su normal"></div>
+            <figcaption>Las cuatro esquinas del plano y sus proyecciones en la imagen.</figcaption>
+          </figure>
         </div>
       </div>
     </div>

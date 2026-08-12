@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defensa PF · Plataforma marina sintética con Go2</title>
-<link rel="stylesheet" href="css/style.css?v=9f00261d6c">
+<link rel="stylesheet" href="css/style.css?v=5e88bc69da">
 </head>
 <body>
 
@@ -991,11 +991,11 @@
        la foto anotada, en el mismo commit que este archivo.
      La foto nombra las piezas; el diagrama las mide. Sobre una perspectiva no se
      puede acotar d, l1 ni l2 con rigor, y por eso conviven. -->
-<section class="slide" data-block="2" data-title="El cuadrúpedo: dónde están los actuadores">
+<section class="slide" data-block="2" data-title="Geometría articular del Go2">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el instrumento</span></span></div>
-      <h2 class="head">Doce actuadores rotativos: tres por pata, ninguno en el torso</h2>
+      <h2 class="head">Geometría articular del Go2</h2>
     </header>
     <div class="s-body">
       <div class="split robot">
@@ -1063,11 +1063,11 @@
      Reemplaza a la lámina de control postural: la dinámica de base flotante y
      el conteo 18-12=6 se iban por duplicado (el conteo ya está en la lámina 6,
      y de la dinámica se habla, no se proyecta). -->
-<section class="slide" data-block="2" data-title="De la pose del torso a los ángulos">
+<section class="slide" data-block="2" data-title="Cinemática directa e inversa de una pata">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: postura del torso</span></span></div>
-      <h2 class="head">Con los pies fijos, una pose de torso determina los doce ángulos</h2>
+      <h2 class="head">Cinemática directa e inversa de una pata</h2>
     </header>
     <div class="s-body">
       <div class="split cinematica">
@@ -1570,12 +1570,20 @@
      Regla que dejó la iteración: el hilo principal muestra sólo lo que se
      ejecuta. El jacobiano y la linealización (informe, ec. 20) analizan la
      cadena pero no corren en ningún punto del proyecto: son respuestas
-     preparadas, no láminas. -->
-<section class="slide" data-block="2" data-title="El lazo por junta">
+     preparadas, no láminas.
+
+     La lámina tenía 230 palabras en cuatro párrafos y era la más cargada del
+     deck: se leía en vez de escucharse. Quedan las viñetas, que son el machete,
+     y el desarrollo va hablado. Lo que se dice y no se escribe: que mirar qué
+     grupo de patas cambia dice qué está haciendo el torso; que la superposición
+     vale a primer orden; y que lo del medio grado y la precarga es lo que
+     garantiza que cada referencia intermedia sea otra postura sobre los mismos
+     apoyos. -->
+<section class="slide" data-block="2" data-title="Control PD por junta">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: postura del torso</span></span></div>
-      <h2 class="head">Del ángulo al torque: un lazo PD por junta</h2>
+      <h2 class="head">Control PD por junta</h2>
     </header>
     <div class="s-body">
 
@@ -1629,56 +1637,44 @@
         </figure>
         <div class="col stack">
           <dl class="symkey">
-            <dt>q<sub>a</sub><sup>⋆</sup>, q<sub>a</sub></dt><dd>la referencia que sale de la inversión, y el ángulo que mide el encoder</dd>
-            <dt>K<sub>p</sub>, K<sub>d</sub></dt><dd>la rigidez del resorte y la disipación del amortiguador virtuales</dd>
+            <dt>q<sub>a</sub><sup>⋆</sup>, q<sub>a</sub></dt><dd>referencia de la inversión, ángulo del encoder</dd>
+            <dt>K<sub>p</sub>, K<sub>d</sub></dt><dd>rigidez y disipación virtuales</dd>
           </dl>
-          <p class="modelo-nota">
-            Cada junta se comporta como un <b>resorte y un amortiguador
-            virtuales</b> alrededor de su referencia. Es el único eslabón que los
-            dos entornos comparten: la interfaz de bajo nivel del robot real
-            expone esta misma estructura por motor.
-          </p>
+          <ul class="lead-bul ul-reset">
+            <li>Un resorte y un amortiguador por junta</li>
+            <li>El único eslabón que comparten los dos entornos</li>
+          </ul>
         </div>
       </div>
 
-      <p class="motivo">
-        Las referencias que siguen esos lazos traen un <b>patrón propio</b> por
-        componente: mirar qué grupo de patas cambia dice qué está haciendo el
-        torso. Las tres llegan a la vez y, a primer orden, <b>se superponen</b>:
-        cada pata recibe la suma.
-      </p>
-
       <table class="dtable patron">
-        <thead><tr><th>El torso</th><th>Componente</th><th>Qué hacen las patas</th></tr></thead>
+        <thead><tr><th>El torso</th><th>Componente</th><th>Las patas</th></tr></thead>
         <tbody>
           <tr>
             <td class="term"><em>sube o baja</em></td>
             <td class="comp">heave</td>
-            <td>Muslo y rodilla flexionan y extienden en fase, igual en las cuatro patas.</td>
+            <td>muslo y rodilla en fase, las cuatro</td>
           </tr>
           <tr>
             <td class="term" rowspan="2"><em>se inclina</em></td>
             <td class="comp">roll</td>
-            <td>Las patas izquierdas adoptan una configuración distinta de las derechas.</td>
+            <td>izquierdas distinto de derechas</td>
           </tr>
           <tr>
             <td class="comp">pitch</td>
-            <td>Las delanteras adoptan una configuración distinta de las traseras.</td>
+            <td>delanteras distinto de traseras</td>
           </tr>
         </tbody>
       </table>
 
-      <p class="apoyo">
-        El camino también está garantizado: la consigna llega suavizada y entre
-        muestras cambia menos de <b>medio grado y 5 mm</b>, así que cada
-        referencia intermedia es otra postura sobre los mismos apoyos; y como el
-        centro de masa queda lejos del borde del polígono, cada pie conserva una
-        <b>precarga de un cuarto del peso</b> y no se despega.
-      </p>
+      <ul class="lead-bul ul-reset">
+        <li>Las tres se superponen, cada pata recibe la suma</li>
+        <li>El camino: entre muestras, menos de medio grado y 5 mm</li>
+        <li>Los apoyos: un cuarto del peso de precarga por pie</li>
+      </ul>
 
-      <p class="conclusion">
-        Por eso el Go2 puede reproducir el oleaje sin caminar. Cuando el control
-        interno decide dar un paso, rompe justamente esta condición.
+      <p class="conclusion llana">
+        El Go2 reproduce el oleaje sin caminar. Un paso rompe esa condición.
       </p>
     </div>
   </div>
@@ -1686,13 +1682,16 @@
 
 <!-- Setup en cuatro laminas (fase C): esta es la primera. Fusiona los dos
      escenarios de simulacion con el sensor del laboratorio: tres montajes del
-     mismo rango, cada uno con lo que aisla. El detalle de calibracion que
-     justificaba una lamina propia queda en el epigrafe del tercero. -->
-<section class="slide" data-block="2" data-title="Qué observa la cámara">
+     mismo rango, cada uno con lo que aisla.
+     Del epigrafe del tercero salieron los numeros de la calibracion (20
+     imagenes, RMS 0,221 px), la salvedad del tripode (aproximadamente fija, no
+     rigida) y cual de los dos ojos se usa (el izquierdo): son de respuesta
+     hablada, no de lamina. Los tres estan en el informe. -->
+<section class="slide" data-block="2" data-title="Tres montajes de observación">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: los montajes</span></span></div>
-      <h2 class="head">Tres montajes de observación: fija, en vuelo y en el laboratorio</h2>
+      <h2 class="head">Tres montajes de observación</h2>
     </header>
     <div class="s-body">
       <div class="serie cols figs montajes">
@@ -1711,9 +1710,8 @@
         <div class="serie-item">
           <figure class="serie-fig retrato"><img src="assets/img/lab_montaje_camara.jpg" alt="Montaje del laboratorio: la cámara en trípode sobre el Go2 con el marcador, y el tablero de calibración"></figure>
           <span class="serie-k">Cámara del laboratorio</span>
-          <div class="serie-txt"><p>Estéreo usada como monocular (ojo izquierdo),
-          calibrada con tablero: 20 imágenes, <b>RMS 0,221 px</b>. En trípode:
-          aproximadamente fija, no rígida.</p></div>
+          <div class="serie-txt"><p>Estéreo usada como monocular, calibrada con
+          tablero.</p></div>
         </div>
       </div>
     </div>
@@ -1721,19 +1719,28 @@
 </section>
 
 <!-- Setup del marcador y la estimacion, sin matematica en pantalla: pinhole,
-     intrinsecos y el argmin de PnP viven en el backup de PnP. Lo que la lamina
-     sostiene es el montaje fisico y la frase que resume el metodo. -->
-<section class="slide" data-block="2" data-title="El marcador y la pose">
+     intrinsecos y el argmin de PnP viven en el backup de PnP.
+
+     La figura es un cuadro real de la camara del laboratorio con la deteccion
+     dibujada encima, y no el esquema camara-marcador que estaba antes (ese se
+     mudo al backup de PnP, que era todo ecuaciones y ni un dibujo). El motivo:
+     en Gazebo que el detector enganche es casi tautologico, porque el marcador
+     es una textura perfecta. Lo que hay que mostrar es que engancha sobre una
+     hoja impresa, pegada con cinta y con la luz del taller.
+
+     Sin captura del recuadro de pose a proposito: proyectado queda en dos o
+     tres puntos y no se lee desde el fondo del aula. Los datos duros van en la
+     tabla, en la tipografia del deck. -->
+<section class="slide" data-block="2" data-title="Marcador fiducial y estimación de pose">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: el marcador</span></span></div>
-      <h2 class="head">Un ArUco rígido al torso: cuatro esquinas de geometría conocida</h2>
+      <h2 class="head">Marcador fiducial y estimación de pose</h2>
     </header>
     <div class="s-body">
-      <div class="split narrow-media">
+      <div class="split media-left">
         <figure class="col">
-          <div class="media contain"><img src="assets/img/camera_marker_geometry.png" alt="La cámara del laboratorio observando el marcador sobre el torso del Go2"></div>
-          <figcaption>La geometría cámara–marcador del montaje real: la misma lógica que en Gazebo.</figcaption>
+          <div class="media contain"><img src="assets/img/lab_aruco_deteccion.png" alt="Cuadro de la cámara del laboratorio: el ArUco sobre el lomo del Go2, con el contorno de la detección, la esquina de origen y el identificador dibujados encima"></div>
         </figure>
         <div class="col stack">
           <table class="dtable params-tbl">
@@ -1741,17 +1748,15 @@
               <tr><td>Marcador</td><td>ArUco, el mismo diccionario en simulación y laboratorio</td></tr>
               <tr><td>Lado físico</td><td class="num">0,20 m</td></tr>
               <tr><td>Montaje</td><td>impreso y adherido rígido sobre el lomo del Go2</td></tr>
-              <tr><td>Qué aporta</td><td>identidad inequívoca y <b>cuatro esquinas de geometría conocida</b></td></tr>
+              <tr><td>Qué aporta</td><td>identidad inequívoca y cuatro esquinas de geometría conocida</td></tr>
             </tbody>
           </table>
-          <p class="modelo-nota">
-            Con esas cuatro esquinas y la cámara calibrada, <b>PnP</b> devuelve la
-            posición y la actitud del marcador respecto de la cámara, cuadro a
-            cuadro y con una sola cámara monocular. Convierte la postura del robot
-            en una pose observable: el problema visual deja de ser inferir la
-            geometría de una embarcación y pasa a ser seguir un objeto plano y
-            bien definido. La matemática completa está en el backup.
-          </p>
+          <ul class="lead-bul ul-reset">
+            <li>Cuatro esquinas más cámara calibrada, y PnP resuelve la pose</li>
+            <li>Posición y actitud, cuadro a cuadro, con una sola cámara</li>
+            <li>La postura del robot, convertida en pose observable</li>
+            <li>Ya no hay que inferir la geometría de un barco, sino seguir un plano</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -2634,7 +2639,11 @@
 </section>
 
 <!-- La matematica que salio de la lamina del marcador: pinhole, intrinsecos y
-     el argmin. Responde "como estima la pose exactamente" sin gastar hilo. -->
+     el argmin. Responde "como estima la pose exactamente" sin gastar hilo.
+     El esquema camara-marcador tambien bajo de la lamina 14: es la figura que
+     nombra los simbolos de estas ecuaciones (las esquinas P_i del plano y sus
+     proyecciones p_i en la imagen), y aca al lado de las formulas rinde mas que
+     en el hilo principal, donde competia con la evidencia real. -->
 <section class="slide" data-block="4" data-backup="14" data-title="La matemática de PnP">
   <div class="slide-inner">
     <header class="s-head">
@@ -2825,6 +2834,10 @@
             minimiza el error de reproyección. Como el marcador es plano, las
             esquinas son coplanares y la solución inicial sale de una homografía.
           </p>
+          <figure>
+            <div class="media contain esquema"><img src="assets/img/camera_marker_geometry.png" alt="Esquema de la geometría cámara-marcador: el centro óptico, el plano imagen con las proyecciones y el marcador con sus cuatro esquinas y su normal"></div>
+            <figcaption>Las cuatro esquinas del plano y sus proyecciones en la imagen.</figcaption>
+          </figure>
         </div>
       </div>
     </div>

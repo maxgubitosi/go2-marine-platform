@@ -264,6 +264,17 @@ figure { min-width: 0; }
 }
 .media.contain { background: #fff; }
 .media.contain img, .media.contain video { object-fit: contain; }
+/* Esquema que acompaña a una columna de fórmulas, no la protagoniza: a ancho
+   completo de columna se comía el alto de la lámina.
+   El tope va en la IMAGEN y no en la caja: con max-height en la caja, el
+   height:100% de la imagen se resuelve contra el alto sin topear, la imagen
+   sobresale y el overflow:hidden la recorta. Topeando la imagen, la caja la
+   sigue y no hay ni recorte ni bandas. */
+.media.contain.esquema { display: flex; justify-content: center; }
+.media.contain.esquema img {
+  width: auto; height: auto;
+  max-width: 100%; max-height: clamp(120px, 24vh, 240px);
+}
 /* Video/imagen vertical: la caja se ajusta al contenido, sin recorte */
 .vwrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; }
 .media.portrait {
@@ -449,6 +460,11 @@ figcaption {
   max-width: 62ch;
   line-height: 1.4;
 }
+/* Variante al cuerpo de la lámina. El salto de tamaño funciona cuando el cierre
+   remata texto corrido; sobre una lámina que ya es toda viñetas queda como un
+   renglón suelto más grande que todo lo demás, sin nada que lo justifique. La
+   barra coral alcanza para marcar que es lo que hay que llevarse. */
+.conclusion.llana { font-size: max(var(--fs-min), 1.08rem); }
 
 /* ===================== Los dos mundos ===================== */
 /* Par de imágenes del mismo robot en simulación y en el laboratorio. Las cajas
@@ -1145,6 +1161,13 @@ ul.marks li.warn::before{ background: var(--warn); }
 }
 .serie.cols.montajes .serie-fig {
   height: min(41vh, 21rem);
+  /* El ancho SALE de la proporción, no de la columna. Con el width:100% que
+     .serie.cols pone por defecto quedan fijados ancho Y alto, el aspect-ratio
+     se ignora y las tres cajas terminan casi cuadradas: la foto del
+     laboratorio, que es 3:4, se recortaba 23 % a lo alto y perdía la cámara
+     arriba y las patas abajo, que son justo las dos cosas que tiene que
+     mostrar. Esta es la línea de la que depende toda la fila. */
+  width: auto;
   margin-inline: 0;
   /* Sin esto el ítem (flex column) la estira al ancho de la columna y el
      aspect-ratio queda sin efecto: las dos verticales salían casi cuadradas. */
@@ -1229,10 +1252,12 @@ ul.marks li.warn::before{ background: var(--warn); }
    dos salen del mismo producto vectorial. El nombre de la componente va en el
    acento del deck: es el vocabulario que viene de la introducción. */
 
-.dtable.patron { margin-top: clamp(.5rem, 1.3vh, 1rem); }
-/* Cuatro filas con el cuerpo al piso: el aire vertical de la celda es lo
-   único que queda para recortar en esta lámina, que es la más cargada. */
-.dtable.patron th, .dtable.patron td { padding-block: .3rem; }
+.dtable.patron { margin-top: clamp(.8rem, 2.2vh, 1.6rem); }
+/* El aire de la celda venía recortado al mínimo porque esta era la lámina más
+   cargada del deck. Al pasar los cuatro párrafos a viñetas dejó de serlo, así
+   que la tabla respira como cualquier otra. En vh: lo que sobra es alto de
+   lámina. */
+.dtable.patron th, .dtable.patron td { padding-block: clamp(.4rem, 1.1vh, .8rem); }
 .dtable.patron td.term {
   width: 20%;
   color: var(--ink-soft);
@@ -1940,32 +1965,20 @@ code {
    que corre de verdad, y la comparten simulación y robot real. El patrón y la
    garantía del camino la acompañan. `.split` trae flex:1 y acá abriría huecos. */
 .cierre { flex: none; align-items: center; }
-.cierre .eq.hero { font-size: clamp(1.3rem, 2.1vw, 1.95rem); }
+/* Sube sin costo: la fila la marca la columna de la derecha (símbolos más dos
+   viñetas, 127 px) y la fórmula ocupaba 21. Puede crecer hasta llenar ese alto
+   sin mover nada; el tope real es el ancho de su columna. */
+.cierre .eq.hero { font-size: clamp(1.5rem, 2.6vw, 2.4rem); }
 
-.cierre + .motivo { margin-top: .75rem; }
-.motivo { max-width: 78ch; font-size: var(--fs-min); color: var(--ink-soft); margin-bottom: .3rem; }
-/* La garantía del camino: números legibles, tono de nota. */
-.patron + .apoyo { margin-top: .75rem; color: var(--ink-soft); max-width: 92ch; }
-.patron + .apoyo b { color: var(--ink); }
-/* La lámina encadena cinco bloques, así que el aire entre el último y su cierre
-   va acotado: con el margen general de .conclusion sumaban 148 px de márgenes
-   contra 804 de cuerpo, y en 1080 desbordaba. */
-.apoyo + .conclusion { margin-top: .6rem; }
-/* Con poca altura ceden los aires y el paddeo de la tabla, no el cuerpo del
-   texto: el piso del deck vale igual en 720p que en 1080p, que es justamente
-   para lo que está en vh. */
-@media (max-height: 899px) {
-  .cierre .eq.hero { font-size: 1.3rem; }
-
-  .cierre + .motivo { margin-top: .3rem; }
-  .motivo { margin-bottom: .15rem; }
-  /* .dtable.patron gana por especificidad: el override tiene que igualarla
-     o no se aplica nunca. Estuvo sin efecto hasta acá. */
-  .dtable.patron { margin-top: .5rem; }
-  .dtable.patron th, .dtable.patron td { padding: .18rem .7rem; }
-  .patron + .apoyo { margin-top: .25rem; }
-  .apoyo + .conclusion { margin-top: .25rem; }
-}
+/* La lista de lectura va separada de la tabla: pegada se leía como una cuarta
+   fila sin borde. */
+.patron + .lead-bul { margin-top: clamp(.9rem, 2.4vh, 1.7rem); }
+.lead-bul + .conclusion { margin-top: clamp(1rem, 2.8vh, 2rem); }
+/* Con poca altura ceden los aires, nunca el cuerpo del texto: el piso del deck
+   vale igual en 720p que en 1080p, que es justamente para lo que está en vh.
+   Los recortes de esta lámina (paddeo de tabla al mínimo, cuerpo de la
+   ecuación fijo en 1,3rem) eran de cuando encadenaba cinco bloques de texto
+   corrido; con viñetas entra sola y no queda nada que ceder. */
 
 /* ===================== Ajustes de altura corta (720p) ===================== */
 
@@ -1982,8 +1995,5 @@ code {
   .cinematica .eq-block + .eq-block { margin-top: .35rem; }
   .premisa { padding-top: .45rem; }
 
-  .dtable.patron { margin-top: .3rem; }
-  .dtable.patron th, .dtable.patron td { padding: .12rem .6rem; }
-  .cierre + .motivo { margin-top: .2rem; }
   .conclusion { padding-top: 0; }
 }
