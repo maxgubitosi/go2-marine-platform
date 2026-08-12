@@ -1944,26 +1944,35 @@
 
 <!-- R2a · el patrón de resultados: video junto a su medición. La serie de
      orientación pasa a protagonista; los histogramas se leen grandes en la
-     lámina siguiente y la figura completa de seis ejes queda en backup. -->
+     lámina siguiente y la figura completa de seis ejes queda en backup.
+     Pendiente de material: el video del dron despegando que pidieron los
+     mentores (correcciones 10-08, pregunta abierta 3). -->
 <section class="slide" data-block="3" data-title="Cámara en el dron: video y series">
+  <style>
+    .slide[data-title="Cámara en el dron: video y series"] .split { grid-template-columns: .72fr 1.28fr; align-items: center; gap: 1.8rem; }
+    .slide[data-title="Cámara en el dron: video y series"] .res-fig.solo,
+    .slide[data-title="Cámara en el dron: video y series"] .res-fig.solo img { max-height: 58vh; }
+    .slide[data-title="Cámara en el dron: video y series"] .media.video-dron { background: #111; aspect-ratio: 800 / 680; }
+    .slide[data-title="Cámara en el dron: video y series"] .media.video-dron video { max-height: none; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
-      <h2 class="head">Desde el dron la estimación sigue la oscilación en roll y pitch</h2>
+      <h2 class="head">Desde el dron la estimación sigue la oscilación</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado" style="grid-template-columns:.72fr 1.28fr;align-items:center;">
+      <div class="split resultado">
         <div class="col stack">
-          <figure class="media" style="background:#111;">
-            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video>
+          <figure class="media video-dron">
+            <video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion_zoom.mp4"></video>
           </figure>
-          <figcaption class="res-cap">Detección desde la cámara inferior del dron: ahora el sensor también se mueve, y su pose entra en la cadena.</figcaption>
+          <figcaption class="res-cap">La detección del marcador desde la cámara inferior del dron.</figcaption>
         </div>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_drone_orientation_vs_gt.png" alt="Orientación estimada vs ground truth, dron">
           </figure>
-          <figcaption class="res-cap">Roll y pitch estimados (azul) contra la referencia (rojo): la oscilación principal se sigue también con el sensor en vuelo.</figcaption>
+          <figcaption class="res-cap">Corrida principal R2: roll y pitch estimados (azul) contra el ground truth (rojo).</figcaption>
         </div>
       </div>
     </div>
