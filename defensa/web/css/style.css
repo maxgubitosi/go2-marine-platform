@@ -1386,8 +1386,9 @@ code {
 .resultado .col.stack .res-fig:not(:only-of-type) { max-height: 24vh; }
 .resultado .col.stack .res-fig:not(:only-of-type) img { max-height: 24vh; }
 
-/* Epígrafe de figura de resultados: dice cómo leerla, no la repite. */
-.res-cap { font-size: .78rem; color: var(--ink-soft); line-height: 1.45; margin-top: -.2rem; }
+/* Epígrafe de figura de resultados: dice cómo leerla, no la repite. Lleva las
+   cifras con su condición, así que va legible desde el aula, no en letra chica. */
+.res-cap { font-size: 1rem; color: var(--ink-soft); line-height: 1.45; margin-top: -.1rem; }
 
 /* La tabla R4 contra R5 tiene dos columnas de cifras que hay que poder comparar
    de un vistazo, así que van del mismo ancho. */
