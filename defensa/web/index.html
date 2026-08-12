@@ -2030,36 +2030,36 @@
 </section>
 
 <!-- R4 · el resultado central del laboratorio con su medición al lado: el video
-     del robot real y las series comando contra respuesta. La fidelidad del
-     comando baja a strip de cifras: su gráfico era una diagonal que no decía
-     nada (corr 0,9999 colapsa sobre la identidad); el scatter queda en backup
-     como método. Fusiona las láminas de video, seguimiento y fidelidad. -->
+     del robot real y las series comando contra respuesta, sin más texto que el
+     epígrafe de lectura. La fidelidad del comando (corr 0,9999, ~5 ms) sale de
+     la lámina: se dice en voz alta, está en conclusiones y el scatter queda en
+     backup como método. -->
 <section class="slide" data-block="3" data-title="El robot real sigue la consigna">
+  <!-- Formato scoped en lugar de style= inline, mientras el rework corre en paralelo. -->
+  <style>
+    .slide[data-title="El robot real sigue la consigna"] .split { grid-template-columns: .66fr 1.34fr; align-items: center; }
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait { max-height: 56vh; }
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait video { max-height: 56vh; }
+    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo,
+    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo img { max-height: 58vh; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: laboratorio</span></span></div>
       <h2 class="head">El robot real sigue la forma de la consigna, con retardo y menor amplitud</h2>
     </header>
     <div class="s-body">
-      <div class="split resultado" style="grid-template-columns:.66fr 1.34fr;align-items:center;">
+      <div class="split resultado">
         <div class="col vwrap">
-          <div class="media portrait" style="max-height:56vh;">
+          <div class="media portrait">
             <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
           </div>
-          <figcaption class="res-cap" style="text-align:center;">La consigna de oleaje moviendo un robot real.</figcaption>
         </div>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
           </figure>
-          <figcaption class="res-cap">La misma escena, medida: la respuesta reproduce la forma en roll y pitch, llega tarde y más chica. Eso es lo que τ y g cuantifican en la lámina siguiente.</figcaption>
-          <table class="dtable params-tbl">
-            <tbody>
-              <tr><td>Consigna → comando API</td><td class="num">correlación &gt; 0,9999</td></tr>
-              <tr><td>Desfase del camino de software</td><td class="num">≈ 5 ms</td></tr>
-            </tbody>
-          </table>
-          <figcaption class="res-cap">El software queda descartado: todo lo que difiere de acá en más es la <b>dinámica física</b> del robot.</figcaption>
+          <figcaption class="res-cap">Ensayo R4, 60 s: en azul la consigna de roll y pitch; en naranja la actitud reportada por el estado del robot.</figcaption>
         </div>
       </div>
     </div>
