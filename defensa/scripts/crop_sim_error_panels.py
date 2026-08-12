@@ -31,9 +31,11 @@ CORTES = {
     # excita (fila inferior, columnas 1 y 2)
     "sim_drone_error_hist.png": {
         "sim_drone_error_hist_droll.png":  (666, 619, 0,   619),
-        # 640 y no 666: el tercio exacto arrastra los números del eje y del
-        # panel vecino por el borde derecho
-        "sim_drone_error_hist_dpitch.png": (640, 619, 666, 619),
+        # 654 y no 666: el tercio exacto arrastra los números del eje y del
+        # panel vecino. El marco del panel cierra en x=1315 y los números del
+        # vecino arrancan en x=1325: 666+654=1320 deja el marco entero afuera
+        # de los dígitos ajenos (con 640 el marco quedaba cortado).
+        "sim_drone_error_hist_dpitch.png": (654, 619, 666, 619),
     },
 }
 
