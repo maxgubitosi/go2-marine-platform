@@ -1910,8 +1910,14 @@
 <!-- R1b · la distribución del error del caso base, con los dos paneles que
      sostienen lo que se dice en voz recortados a escala legible
      (crop_sim_error_panels.py). Partir la lámina para agrandar los gráficos
-     es lo que los mentores autorizaron explícitamente el 10-08. -->
+     es lo que los mentores autorizaron explícitamente el 10-08. La aclaración
+     de histogramas crudos va en la voz (y está en limitaciones y en backup). -->
 <section class="slide" data-block="3" data-title="Caso base: distribución del error">
+  <style>
+    .slide[data-title="Caso base: distribución del error"] .res-fig.solo,
+    .slide[data-title="Caso base: distribución del error"] .res-fig.solo img { max-height: 52vh; }
+    .slide[data-title="Caso base: distribución del error"] .split { align-items: center; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara fija</span></span></div>
@@ -1923,21 +1929,15 @@
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_fixed_error_hist_dz.png" alt="Distribución del error en Z">
           </figure>
-          <figcaption class="res-cap"><b>ΔZ</b>: el heave es el eje con mayor dispersión posicional, 3,4 cm de error absoluto medio.</figcaption>
+          <figcaption class="res-cap">ΔZ: el heave es el eje con mayor dispersión posicional, 3,4 cm de error absoluto medio.</figcaption>
         </div>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_fixed_error_hist_norm.png" alt="Distribución del error euclidiano de posición">
           </figure>
-          <figcaption class="res-cap"><b>‖Δpos‖</b>: 5,8 cm de media y 8,5 cm de P95. En actitud: 2,44° en roll, 2,00° en pitch.</figcaption>
+          <figcaption class="res-cap">‖Δpos‖: 5,8 cm de media y 8,5 cm de P95. En actitud: 2,44° en roll, 2,00° en pitch.</figcaption>
         </div>
       </div>
-      <p class="apoyo">
-        Histogramas <b>crudos</b>: no se compensó el desfase temporal entre la
-        estimación y el ground truth, así que parte del corrimiento respecto de
-        cero es retardo entre cadenas, no error geométrico del estimador. Los
-        cuatro ejes completos están en el backup.
-      </p>
     </div>
   </div>
 </section>
