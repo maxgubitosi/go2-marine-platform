@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defensa PF · Plataforma marina sintética con Go2</title>
-<link rel="stylesheet" href="css/style.css?v=6f46f74135">
+<link rel="stylesheet" href="css/style.css?v=1d99591c22">
 </head>
 <body>
 
@@ -496,11 +496,11 @@
      mismo robot corre en los dos montajes: el par de fotos las dice todas, y
      por eso son el cuerpo. La cuenta 18 − 12 = 6 no se pierde, la desarrolla la
      lámina de control postural, que es donde el detalle hace falta. -->
-<section class="slide" data-block="1" data-title="El torso del Go2 hace de cubierta">
+<section class="slide" data-block="1" data-title="Unitree Go2 como plataforma marina">
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
-      <h2 class="head">El torso del Unitree Go2 hace de cubierta</h2>
+      <h2 class="head">Unitree Go2 como plataforma marina</h2>
       <p class="lead" style="max-width:76ch;">
         El Unitree Go2 es un cuadrúpedo comercial. Con las cuatro patas apoyadas,
         su torso se mueve con los mismos seis grados de libertad que la cubierta
@@ -522,6 +522,49 @@
       </figure>
     </div>
     </div><!-- /s-body -->
+  </div>
+</section>
+
+<!-- La evidencia propia del bloque de la plataforma. La lamina 6 afirma que el
+     torso del Go2 hace de cubierta y lo muestra con dos fotos quietas; esta la
+     muestra siendo eso, y con la misma corrida vista de las dos maneras: la
+     escena desde afuera y lo que el sensor mide adentro.
+
+     Va antes del pipeline y no despues a proposito: el diagrama de la lamina 7
+     se lee mucho mejor cuando ya viste la cosa moverse. Concreto, concreto,
+     abstracto.
+
+     Sin foto del laboratorio, aunque entraba: el laboratorio ya aparece en la
+     lamina 6 (el Go2 real con el marcador), en la 13 (el montaje de la camara)
+     y en la 14 (el cuadro real de la deteccion). Una cuarta aparicion no suma y
+     rompe lo que hace fuerte a esta lamina, que es que las dos ventanas son la
+     misma corrida.
+
+     Sin texto tampoco: los videos se explican hablando, y cualquier renglon
+     compite con ellos por la atencion durante los segundos en que corren.
+
+     El panel de datos del video derecho dice "Lado 0.50 m", que es el marcador
+     de Gazebo; el del laboratorio mide 0,20 m y lo declara la lamina 14. No es
+     contradiccion (comparten diccionario, no tamano) pero conviene tenerlo a
+     mano si preguntan. -->
+<section class="slide" data-block="1" data-title="El escenario de simulación">
+  <div class="slide-inner">
+    <header class="s-head">
+      <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
+      <h2 class="head">El escenario de simulación</h2>
+    </header>
+    <div class="s-body">
+      <div class="dos-mundos videos">
+        <figure>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim_06_dron_escena_exterior.mp4"></video></div>
+          <figcaption class="sim">La escena<small>el dron sobre la plataforma</small></figcaption>
+        </figure>
+        <figure>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim_05_dron_camara_datos.mp4"></video></div>
+          <figcaption class="sim">Lo que ve la cámara<small>detección y pose, cuadro a cuadro</small></figcaption>
+        </figure>
+      </div>
+    </div>
   </div>
 </section>
 

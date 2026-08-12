@@ -499,6 +499,14 @@ figcaption {
 }
 .dos-mundos figcaption.sim { color: var(--sea); }
 .dos-mundos figcaption.lab { color: var(--coral); }
+/* Variante en video, para el par de la escena y la vista de la cámara. Los dos
+   vienen 16:9, así que la caja los toma enteros y no hay nada que recortar.
+   Y como son más bajos que las fotos 4:3, el tope de ancho puede subir: con el
+   de 112vh el par quedaba angosto y sobraba media lámina de aire a los lados.
+   El fondo acompaña al gris del visor de Gazebo, para que no se vea un borde
+   claro mientras el video carga. */
+.dos-mundos.videos { max-width: min(100%, 168vh); }
+.dos-mundos.videos .media { aspect-ratio: 16 / 9; background: #2f3230; }
 /* El montaje concreto (Gazebo, Go2 real) es lo que distingue una foto de la
    otra, así que no puede ser la letra más chica de la lámina. */
 .dos-mundos figcaption small {
