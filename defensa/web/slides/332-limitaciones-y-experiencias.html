@@ -1,38 +1,43 @@
 <!-- Una sola lámina de limitaciones, como pidieron los mentores ("juntar
      limitaciones y experiencias del trabajo en una slide con bullets").
-     Fusiona alcance/limitaciones de simulación y los tres obstáculos del
-     pasaje al robot real, más la limitación de interfaz del laboratorio. -->
+     Todo lo afirmado sale del informe: los límites del ¶4 del capítulo de
+     Conclusiones y de la lectura de simulación; las experiencias, de las
+     secciones de laboratorio. El guardrail de gait no está en el informe:
+     queda en backup (B9) como respuesta preparada. -->
 <section class="slide" data-block="4" data-title="Limitaciones y experiencias">
+  <!-- Cuerpo un punto por encima del ul.marks estándar: la lámina es solo
+       bullets y a distancia de proyección el 1.08rem quedaba corto. Scoped
+       acá y no en style.css mientras el rework corre en paralelo. -->
+  <style>
+    .slide[data-title="Limitaciones y experiencias"] ul.marks li { font-size: 1.22rem; }
+    .slide[data-title="Limitaciones y experiencias"] ul.marks { gap: 1rem; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: limitaciones y experiencias</span></span></div>
-      <h2 class="head">Lo que este trabajo no resuelve, y lo que enseñó intentarlo</h2>
+      <h2 class="head">Limitaciones del trabajo y experiencias del pasaje al robot real</h2>
     </header>
     <div class="s-body">
-      <div class="serie cols">
+      <div class="serie filas">
         <div class="serie-item warn">
-          <span class="serie-k">Los límites de lo medido</span>
+          <span class="serie-k">Los límites<br>de lo medido</span>
           <div class="serie-txt"><ul class="marks">
-            <li class="warn">El <strong>heave</strong> es el eje posicional más sensible del pipeline visual</li>
-            <li class="warn">Sesgo sistemático en Y en el escenario con dron</li>
-            <li class="warn">Desfases temporales entre cadenas sin compensar: los histogramas son crudos</li>
-            <li class="warn">La interfaz de actitud del robot real <strong>no tiene canal de heave</strong>: los ensayos del laboratorio son de roll y pitch</li>
+            <li class="warn">El modelo marino es una simplificación: prioriza roll, pitch y heave, sin yaw, surge ni sway, ni hidrodinámica completa</li>
+            <li class="warn">El heave es la componente posicional más sensible del pipeline visual</li>
+            <li class="warn">Sesgo sistemático en Y, visto en simulación y laboratorio: sway del Go2 que no se comanda ni se compensa</li>
+            <li class="warn">Desfases temporales sin compensar entre estimación y referencia: los histogramas son crudos</li>
+            <li class="warn">Los ensayos físicos no incluyeron heave dinámico: la consigna vertical quedó en cero y la validación es de roll y pitch</li>
           </ul></div>
         </div>
         <div class="serie-item">
-          <span class="serie-k">Lo que enseñó el pasaje al robot real</span>
+          <span class="serie-k">Lo que enseñó<br>el laboratorio</span>
           <div class="serie-txt"><ul class="marks">
-            <li>Salir de Gazebo cambió la interfaz completa: refactor de comunicación, <strong>la consigna se conservó</strong></li>
-            <li>El <strong>guardrail de marcha</strong> trota para reasegurar estabilidad: a menor frecuencia se espacia, y de ahí sale el régimen de ensayo</li>
-            <li>Sin acceso al firmware la dinámica no se corrige: <strong>se mide</strong>. De ahí salen τ y g</li>
+            <li>La continuidad entre entornos no la dio una interfaz idéntica sino el objetivo físico del movimiento: la consigna se tradujo a comandos de actitud</li>
+            <li>Un ensayo preliminar de mayor amplitud se descartó: video, detección y telemetría en paralelo generaban incidentes de procesamiento, y se repitió sin grabación</li>
+            <li>El control embarcado del Go2 no se modela ni se corrige: la dinámica propia se caracteriza con τ y g</li>
           </ul></div>
         </div>
       </div>
-      <p class="apoyo">
-        Ninguna es un agujero descubierto tarde: las tres de la derecha están
-        declaradas como decisiones, y las de la izquierda quedaron aisladas con
-        ground truth antes de pasar al mundo físico.
-      </p>
     </div>
   </div>
 </section>
