@@ -1,11 +1,16 @@
 <!-- R2b · la distribución del error con el dron, con los dos paneles angulares
-     recortados a escala legible (crop_sim_error_panels.py). El sesgo en Y se
-     nombra y se desarrolla en su backup; los seis ejes completos, también. -->
+     recortados a escala legible (crop_sim_error_panels.py). El sesgo en Y vive
+     en limitaciones y en su backup; los seis ejes completos, también. -->
 <section class="slide" data-block="3" data-title="Cámara en el dron: distribución del error">
+  <style>
+    .slide[data-title="Cámara en el dron: distribución del error"] .res-fig.solo,
+    .slide[data-title="Cámara en el dron: distribución del error"] .res-fig.solo img { max-height: 52vh; }
+    .slide[data-title="Cámara en el dron: distribución del error"] .split { align-items: center; }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
-      <h2 class="head">El error abre respecto del caso fijo: el costo de la geometría</h2>
+      <h2 class="head">Con la cámara embarcada el error crece y conserva la estructura</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
@@ -13,21 +18,15 @@
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_drone_error_hist_droll.png" alt="Distribución del error de roll con dron">
           </figure>
-          <figcaption class="res-cap"><b>ΔRoll</b>: 2,7° a 3,0° de error absoluto medio según la corrida, contra 2,44° con cámara fija.</figcaption>
+          <figcaption class="res-cap">ΔRoll: 2,7° a 3,0° de error absoluto medio según la corrida, contra 2,44° con cámara fija.</figcaption>
         </div>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/sim_drone_error_hist_dpitch.png" alt="Distribución del error de pitch con dron">
           </figure>
-          <figcaption class="res-cap"><b>ΔPitch</b>: 2,0° a 2,2° de error absoluto medio. La nube abre, pero no pierde la estructura.</figcaption>
+          <figcaption class="res-cap">ΔPitch: 2,0° a 2,2° de error absoluto medio según la corrida.</figcaption>
         </div>
       </div>
-      <p class="apoyo">
-        No es una falla del estimador sino el costo de que el sensor también se
-        mueva: su pose entra en la cadena. En Y aparece además un sesgo
-        sistemático de −0,30 m, desarrollado en el backup junto con los seis
-        ejes completos.
-      </p>
     </div>
   </div>
 </section>
