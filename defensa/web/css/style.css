@@ -673,6 +673,17 @@ ul.marks li.warn::before{ background: var(--warn); }
 .dtable td.num { font-variant-numeric: tabular-nums; font-weight: 640; color: var(--sea); }
 .dtable tr.hi td { background: var(--foam); }
 
+/* Tabla de los ensayos. Es lo único que hay en su lámina y al paddeo general
+   ocupaba 203 px de 575, con 120 de blanco abajo. El aire va en la celda y no
+   en el cuerpo: el cuerpo ya está en el piso del deck y no puede bajar, y una
+   fila alta con letra al piso se lee mejor de lejos que una fila apretada con
+   letra grande. En vh porque lo que sobra es alto de lámina. */
+.dtable.campana th,
+.dtable.campana td { padding-block: clamp(.7rem, 2.4vh, 1.7rem); }
+/* Ancho propio: al tope general de 62ch la última viñeta partía en dos y dejaba
+   un "sí" solo en el segundo renglón. */
+.dtable.campana + .lead-bul { margin-top: clamp(1rem, 2.6vh, 1.9rem); max-width: 92ch; }
+
 /* ===================== Section divider slide ===================== */
 
 .slide.divider { background: var(--ink); color: #fff; }
