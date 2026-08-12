@@ -1836,7 +1836,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">III</span><span class="lbl">Metodología<span class="s">: al laboratorio</span></span></div>
-      <h2 class="head">Sin ground truth no se mide error contra la verdad, sino coherencia a lo largo de la cadena</h2>
+      <h2 class="head">El criterio de evaluación en cada entorno</h2>
     </header>
     <div class="s-body">
       <!-- La diferencia no es de precisión sino de forma: en simulación hay dos
@@ -1862,17 +1862,9 @@
         </div>
         <span class="cr-out lab">correlación <em>r</em> · ganancia <em>g</em> · retardo <em>&tau;</em></span>
       </div>
-      <p class="apoyo">
-        La verdad externa no es un dato mágico: el simulador publica cada eslabón
-        de la cadena de marcos, así que la pose verdadera del marcador se
-        <b>reconstruye</b>, no se mide. En el laboratorio esa cadena no existe, y
-        por eso cambia el criterio.
-      </p>
-
       <p class="conclusion">
-        En el laboratorio movimiento y visión se evalúan por separado. Es una
-        decisión declarada, no una omisión: si las dos cosas corren juntas y algo
-        falla, no se sabe si falló la percepción o la dinámica.
+        El cambio de referencia cambia la pregunta: de cuánto se equivoca el
+        estimador a cuánto del movimiento pedido llega al cuerpo.
       </p>
     </div>
   </div>
