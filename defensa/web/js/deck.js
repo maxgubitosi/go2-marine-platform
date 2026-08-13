@@ -112,6 +112,9 @@
   /* ---------- Actualizar chrome ---------- */
   function updateChrome() {
     var s = slides[current];
+    // Quién arranca hablando la lámina: data-speaker="jack" pinta el contador
+    // de negro; sin marca queda el color de siempre (arranca Máximo).
+    counterEl.classList.toggle("jack", s.getAttribute("data-speaker") === "jack");
     var isBackup = s.hasAttribute("data-backup");
     var isDraft = s.hasAttribute("data-draft");
     var blockIdx = parseInt(s.getAttribute("data-block") || "0", 10); // 0..4, -1 portada

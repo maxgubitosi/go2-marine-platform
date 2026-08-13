@@ -755,6 +755,9 @@ ul.marks li.warn::before{ background: var(--warn); }
   font-variant-numeric: tabular-nums; font-weight: 600;
   color: var(--ink-faint); font-size: .8rem;
 }
+/* Marca de orador para los presentadores: negro = arranca Jack,
+   color de siempre = arranca Máximo. El público no la registra. */
+#hud .counter.jack { color: #000; }
 
 /* Flechas de navegación (discretas) */
 .navarrow {
