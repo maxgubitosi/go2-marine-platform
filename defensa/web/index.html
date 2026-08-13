@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Defensa PF · Plataforma marina sintética con Go2</title>
-<link rel="stylesheet" href="css/style.css?v=9af64ab966">
+<link rel="stylesheet" href="css/style.css?v=374f02943a">
 </head>
 <body>
 
@@ -21,7 +21,9 @@
   <div class="slide-inner cover">
     <div class="cover-main">
       <div class="eyebrow plain">Trabajo de Graduación, Agosto 2026</div>
-      <h1 class="title cover-title">Simulación de dinámica de plataforma marina mediante un <span class="sea">robot cuadrúpedo</span></h1>
+      <!-- El span conserva el nowrap que antes traía la clase .sea; el color pasa a
+           heredar el negro del título. -->
+      <h1 class="title cover-title">Simulación de dinámica de plataforma marina mediante un <span style="white-space:nowrap">robot cuadrúpedo</span></h1>
       <!-- Personas a la izquierda e institución a la derecha, en la misma fila:
            apiladas cargaban todo el peso del texto sobre el margen izquierdo. -->
       <div class="cover-bottom">
@@ -497,6 +499,15 @@
      por eso son el cuerpo. La cuenta 18 − 12 = 6 no se pierde, la desarrolla la
      lámina de control postural, que es donde el detalle hace falta. -->
 <section class="slide" data-block="1" data-title="Unitree Go2 como plataforma marina">
+  <!-- La fila pasa a tres: el video muestra el torso moviéndose, que es la
+       afirmación de la bajada; las fotos siguen diciendo que es el mismo robot
+       en los dos mundos. El tope de ancho sube porque ahora reparten tres. -->
+  <style>
+    .slide[data-title="Unitree Go2 como plataforma marina"] .dos-mundos {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: min(100%, 158vh);
+    }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
@@ -508,10 +519,18 @@
       </p>
     </header>
     <div class="s-body">
-    <!-- El par de imágenes es el argumento: se ve que es el mismo robot en dos
-         mundos. Las dos cajas comparten proporción y recortan por el centro,
-         porque los originales vienen con relaciones de aspecto distintas. -->
+    <!-- El video más el par de imágenes son el argumento: el torso se mueve como
+         una cubierta, y es el mismo robot en dos mundos. Las tres cajas comparten
+         proporción y recortan por el centro, porque los originales vienen con
+         relaciones de aspecto distintas. -->
     <div class="dos-mundos">
+      <figure>
+        <!-- sim1_crop.mp4 sale de sim1.mp4 con
+             ffmpeg -vf crop=480:360:265:150: el cuadro original era casi todo
+             piso vacío y el robot quedaba chico. -->
+        <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim1_crop.mp4"></video></div>
+        <figcaption class="sim">El torso en movimiento<small>Gazebo, consigna marina</small></figcaption>
+      </figure>
       <figure>
         <div class="media"><img src="assets/img/sim_montaje_aruco.png" alt="El Go2 en Gazebo con la plataforma y el marcador ArUco montados sobre el torso"></div>
         <figcaption class="sim">Simulación<small>Gazebo</small></figcaption>
@@ -637,7 +656,7 @@
           <div class="pipe-flujo">
             <span class="pipe-et"><i>2</i>Go2 real<small>IK en firmware cerrado</small></span>
             <b class="pipe-fl"></b>
-            <span class="pipe-et"><i>3</i>Webcam en trípode</span>
+            <span class="pipe-et"><i>3</i>Cámara estéreo en trípode</span>
           </div>
           <p class="pipe-nota">sin ground truth</p>
         </div>
@@ -1985,7 +2004,7 @@
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">IV</span><span class="lbl">Resultados<span class="s">: simulación, cámara en el dron</span></span></div>
-      <h2 class="head">Con la cámara embarcada el error crece y conserva la estructura</h2>
+      <h2 class="head">Con la cámara embarcada el error crece, pero sigue centrado en cero</h2>
     </header>
     <div class="s-body">
       <div class="split resultado">
@@ -2034,19 +2053,35 @@
   </div>
 </section>
 
-<!-- R4 · el resultado central del laboratorio con su medición al lado: el video
+<!-- R4 · el resultado central del laboratorio con su medición al lado: los videos
      del robot real y las series comando contra respuesta, sin más texto que el
-     epígrafe de lectura. La fidelidad del comando (corr 0,9999, ~5 ms) sale de
+     epígrafe de lectura. El segundo video es el episodio de trote: los picos de
+     error alrededor del segundo 33 en las series tienen su causa a la vista en
+     la misma lámina. La fidelidad del comando (corr 0,9999, ~5 ms) sale de
      la lámina: se dice en voz alta, está en conclusiones y el scatter queda en
      backup como método. -->
 <section class="slide" data-block="3" data-title="El robot real sigue la consigna">
   <!-- Formato scoped en lugar de style= inline, mientras el rework corre en paralelo. -->
   <style>
-    .slide[data-title="El robot real sigue la consigna"] .split { grid-template-columns: .66fr 1.34fr; align-items: center; }
-    .slide[data-title="El robot real sigue la consigna"] .media.portrait { max-height: 56vh; }
-    .slide[data-title="El robot real sigue la consigna"] .media.portrait video { max-height: 56vh; }
+    /* Tres columnas: consigna | series | trote (el del trote, junto a los
+       picos del s 33). Los anchos van proporcionales a la relación de aspecto
+       de cada pieza (videos 9:16 = .5625, gráfico 3:2 = 1.5): con eso las tres
+       alturas quedan iguales sin fijar ninguna. */
+    .slide[data-title="El robot real sigue la consigna"] .split {
+      grid-template-columns: .5625fr 1.5fr .5625fr;
+      gap: clamp(1rem, 1.6vw, 1.6rem);
+      align-items: center;
+    }
+    .slide[data-title="El robot real sigue la consigna"] .split figure.vwrap { margin: 0; text-align: center; }
+    /* Caja 9:16 y cover: los dos videos difieren un 1% de proporción entre sí;
+       la caja común los empareja al píxel recortando ese pelo. */
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait { width: 100%; aspect-ratio: 9 / 16; }
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait video { width: 100%; height: 100%; max-height: none; object-fit: cover; }
+    /* width 0 + min-width 100%: el epígrafe no aporta ancho a su columna
+       (envuelve al ancho del video). */
+    .slide[data-title="El robot real sigue la consigna"] .split figure.vwrap figcaption { width: 0; min-width: 100%; }
     .slide[data-title="El robot real sigue la consigna"] .res-fig.solo,
-    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo img { max-height: 58vh; }
+    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo img { max-height: 62vh; }
   </style>
   <div class="slide-inner">
     <header class="s-head">
@@ -2055,17 +2090,24 @@
     </header>
     <div class="s-body">
       <div class="split resultado">
-        <div class="col vwrap">
+        <figure class="col vwrap">
           <div class="media portrait">
             <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
           </div>
-        </div>
+          <figcaption>La consigna en el robot real.</figcaption>
+        </figure>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
           </figure>
           <figcaption class="res-cap">Ensayo R4, 60 s: azul la consigna; naranja la actitud reportada por el robot.</figcaption>
         </div>
+        <figure class="col vwrap">
+          <div class="media portrait">
+            <video data-autoplay loop muted playsinline src="assets/media/trote.mp4"></video>
+          </div>
+          <figcaption>Episodio de trote (~s 33).</figcaption>
+        </figure>
       </div>
     </div>
   </div>
@@ -2320,23 +2362,46 @@
 </section>
 
 <section class="slide" data-block="4" data-title="Cierre y preguntas">
+  <!-- El cierre lleva un collage en vez de una foto sola: mezcla de lo que
+       salió bien y de bloopers del camino (assets/media/bloopers/). Las
+       calibracion_*.png son la mitad UNDISTORTED de las capturas originales
+       (*_raw.png), recortadas con ffmpeg porque el chiste vive en ese panel. -->
+  <style>
+    .slide[data-title="Cierre y preguntas"] .split { grid-template-columns: .75fr 1.25fr; align-items: center; }
+    .slide[data-title="Cierre y preguntas"] .collage {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .55rem;
+    }
+    .slide[data-title="Cierre y preguntas"] .collage .media { aspect-ratio: 16 / 10; background: #2f3230; }
+    .slide[data-title="Cierre y preguntas"] .collage-fig { margin: 0; }
+    .slide[data-title="Cierre y preguntas"] .collage-fig figcaption { text-align: center; }
+  </style>
   <div class="slide-inner cover">
     <div class="split" style="align-items:center;">
       <div class="col stack">
         <div class="eyebrow plain">Proyecto Final · Universidad de San Andrés</div>
-        <h1 class="title" style="font-size:clamp(2.6rem,6vw,4.4rem);">¡Gracias!<br><span style="color:var(--sea)">¿Preguntas?</span></h1>
-        <p class="lead" style="max-width:40ch;">
-          Una plataforma marina sintética con el Go2 para validar percepción visual,
-          de forma segura y reproducible.
-        </p>
+        <h1 class="title" style="font-size:clamp(2.6rem,6vw,4.4rem);">¡Gracias!<br>¿Preguntas?</h1>
         <div class="row wrap" style="gap:2rem;margin-top:.6rem;">
           <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Autores</div><div style="font-weight:680;">Máximo Gubitosi · Jack Spolski</div></div>
           <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Mentores</div><div style="font-weight:680;">Gastón Castro · Juan I. Giribet</div></div>
         </div>
       </div>
-      <figure class="col vwrap">
-        <div class="media portrait md"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
-        <figcaption>Go2 con marcador ArUco en el montaje de laboratorio.</figcaption>
+      <figure class="col collage-fig">
+        <div class="collage">
+          <div class="media"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/bloopers/simcontabla.mp4"></video></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video></div>
+          <div class="media"><img src="assets/media/bloopers/perro_desparramado.png" alt="El Go2 simulado desparramado en el piso de Gazebo"></div>
+          <!-- Los videos verticales llevan object-position bajo: el robot vive
+               en el tercio inferior del cuadro y el recorte 16:10 centrado lo
+               dejaba afuera. -->
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/lab_08_setup_completo.mp4" style="object-position:50% 82%"></video></div>
+          <div class="media"><img src="assets/media/bloopers/rviz_sin_transforms.png" alt="RViz sin transforms: el robot en pedazos"></div>
+          <div class="media"><img src="assets/media/bloopers/calibracion_tablero.png" alt="Calibración fallida: el tablero convertido en una esfera"></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/lab_05_roll_operador.mp4" style="object-position:50% 78%"></video></div>
+          <div class="media"><img src="assets/img/lab_panorama.jpg" alt="El Go2 en reposo en el laboratorio" style="object-position:50% 62%"></div>
+        </div>
       </figure>
     </div>
   </div>
@@ -2641,7 +2706,7 @@
             <li>Marcador <strong>ArUco</strong> montado en el lomo del Go2</li>
             <li>Consigna de oleaje enviada por la <strong>API</strong> del robot</li>
           </ul>
-          <span class="pill">Go2 real · webcam · ROS2</span>
+          <span class="pill">Go2 real · cámara estéreo · ROS2</span>
         </div>
       </div>
     </div>
@@ -2955,7 +3020,7 @@
       </div>
       <p class="conclusion">
         <code>aruco_detector</code> recibe el tópico de imagen y el de intrínsecos
-        como parámetros. La cámara fija, la del dron y la webcam del laboratorio
+        como parámetros. La cámara fija, la del dron y la cámara estéreo del laboratorio
         son la misma línea de configuración, y por eso el detector es literalmente
         el mismo en los dos montajes.
       </p>

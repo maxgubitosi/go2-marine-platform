@@ -1,16 +1,32 @@
-<!-- R4 · el resultado central del laboratorio con su medición al lado: el video
+<!-- R4 · el resultado central del laboratorio con su medición al lado: los videos
      del robot real y las series comando contra respuesta, sin más texto que el
-     epígrafe de lectura. La fidelidad del comando (corr 0,9999, ~5 ms) sale de
+     epígrafe de lectura. El segundo video es el episodio de trote: los picos de
+     error alrededor del segundo 33 en las series tienen su causa a la vista en
+     la misma lámina. La fidelidad del comando (corr 0,9999, ~5 ms) sale de
      la lámina: se dice en voz alta, está en conclusiones y el scatter queda en
      backup como método. -->
 <section class="slide" data-block="3" data-title="El robot real sigue la consigna">
   <!-- Formato scoped en lugar de style= inline, mientras el rework corre en paralelo. -->
   <style>
-    .slide[data-title="El robot real sigue la consigna"] .split { grid-template-columns: .66fr 1.34fr; align-items: center; }
-    .slide[data-title="El robot real sigue la consigna"] .media.portrait { max-height: 56vh; }
-    .slide[data-title="El robot real sigue la consigna"] .media.portrait video { max-height: 56vh; }
+    /* Tres columnas: consigna | series | trote (el del trote, junto a los
+       picos del s 33). Los anchos van proporcionales a la relación de aspecto
+       de cada pieza (videos 9:16 = .5625, gráfico 3:2 = 1.5): con eso las tres
+       alturas quedan iguales sin fijar ninguna. */
+    .slide[data-title="El robot real sigue la consigna"] .split {
+      grid-template-columns: .5625fr 1.5fr .5625fr;
+      gap: clamp(1rem, 1.6vw, 1.6rem);
+      align-items: center;
+    }
+    .slide[data-title="El robot real sigue la consigna"] .split figure.vwrap { margin: 0; text-align: center; }
+    /* Caja 9:16 y cover: los dos videos difieren un 1% de proporción entre sí;
+       la caja común los empareja al píxel recortando ese pelo. */
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait { width: 100%; aspect-ratio: 9 / 16; }
+    .slide[data-title="El robot real sigue la consigna"] .media.portrait video { width: 100%; height: 100%; max-height: none; object-fit: cover; }
+    /* width 0 + min-width 100%: el epígrafe no aporta ancho a su columna
+       (envuelve al ancho del video). */
+    .slide[data-title="El robot real sigue la consigna"] .split figure.vwrap figcaption { width: 0; min-width: 100%; }
     .slide[data-title="El robot real sigue la consigna"] .res-fig.solo,
-    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo img { max-height: 58vh; }
+    .slide[data-title="El robot real sigue la consigna"] .res-fig.solo img { max-height: 62vh; }
   </style>
   <div class="slide-inner">
     <header class="s-head">
@@ -19,17 +35,24 @@
     </header>
     <div class="s-body">
       <div class="split resultado">
-        <div class="col vwrap">
+        <figure class="col vwrap">
           <div class="media portrait">
             <video data-autoplay loop muted playsinline src="assets/media/lab_02_posturas_operador.mp4"></video>
           </div>
-        </div>
+          <figcaption>La consigna en el robot real.</figcaption>
+        </figure>
         <div class="col stack">
           <figure class="media contain plot res-fig solo">
             <img src="assets/img/lab_timeseries_cmd_vs_real.png" alt="Series temporales: comando esperado vs respuesta real (roll y pitch)">
           </figure>
           <figcaption class="res-cap">Ensayo R4, 60 s: azul la consigna; naranja la actitud reportada por el robot.</figcaption>
         </div>
+        <figure class="col vwrap">
+          <div class="media portrait">
+            <video data-autoplay loop muted playsinline src="assets/media/trote.mp4"></video>
+          </div>
+          <figcaption>Episodio de trote (~s 33).</figcaption>
+        </figure>
       </div>
     </div>
   </div>

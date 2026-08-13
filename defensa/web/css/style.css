@@ -605,7 +605,9 @@ h1.title.cover-title {
   align-items: flex-end;
   justify-content: space-between;
   gap: clamp(1.5rem, 4vw, 3.5rem);
-  flex-wrap: wrap;
+  /* nowrap: la institución comparte fila con autores y mentores siempre; con
+     wrap, en ventanas angostas el escudo bajaba a un segundo renglón. */
+  flex-wrap: nowrap;
   /* Los créditos siguen al titular a una distancia proporcional al alto, no
      clavados abajo: rótulo, titular y créditos cuelgan del mismo riel. El
      13vh deja el aire repartido casi por igual arriba y abajo de la fila
@@ -619,7 +621,10 @@ h1.title.cover-title {
    más arriba. El pelo de padding compensa el interlineado, que es distinto en
    las dos columnas. */
 .cover-foot {
-  flex: 0 0 auto;
+  /* Puede encogerse: con la fila en nowrap, si falta ancho cede este bloque
+     (el texto institucional envuelve) antes que desbordar la lámina. */
+  flex: 0 1 auto;
+  min-width: 0;
   display: flex; align-items: flex-end; gap: 1.1rem;
   padding-bottom: .2rem;
 }
@@ -639,7 +644,10 @@ body.is-cover #hud  { bottom: calc(4.7vw + .45rem); }
   letter-spacing: -.005em;
 }
 .brand-dept {
-  font-size: var(--fs-min); font-weight: 500;
+  /* Topeado: --fs-min crece con el alto de pantalla pero la fila vive dentro
+     de --maxw fijo (1220px); a 1080p la línea del departamento medía 612px y
+     empujaba al escudo a un segundo renglón. */
+  font-size: min(var(--fs-min), 1.15rem); font-weight: 500;
   color: var(--ink-faint);
   letter-spacing: .03em;
   margin-top: .12rem;

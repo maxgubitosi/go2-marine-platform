@@ -1,21 +1,44 @@
 <section class="slide" data-block="4" data-title="Cierre y preguntas">
+  <!-- El cierre lleva un collage en vez de una foto sola: mezcla de lo que
+       salió bien y de bloopers del camino (assets/media/bloopers/). Las
+       calibracion_*.png son la mitad UNDISTORTED de las capturas originales
+       (*_raw.png), recortadas con ffmpeg porque el chiste vive en ese panel. -->
+  <style>
+    .slide[data-title="Cierre y preguntas"] .split { grid-template-columns: .75fr 1.25fr; align-items: center; }
+    .slide[data-title="Cierre y preguntas"] .collage {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .55rem;
+    }
+    .slide[data-title="Cierre y preguntas"] .collage .media { aspect-ratio: 16 / 10; background: #2f3230; }
+    .slide[data-title="Cierre y preguntas"] .collage-fig { margin: 0; }
+    .slide[data-title="Cierre y preguntas"] .collage-fig figcaption { text-align: center; }
+  </style>
   <div class="slide-inner cover">
     <div class="split" style="align-items:center;">
       <div class="col stack">
         <div class="eyebrow plain">Proyecto Final · Universidad de San Andrés</div>
-        <h1 class="title" style="font-size:clamp(2.6rem,6vw,4.4rem);">¡Gracias!<br><span style="color:var(--sea)">¿Preguntas?</span></h1>
-        <p class="lead" style="max-width:40ch;">
-          Una plataforma marina sintética con el Go2 para validar percepción visual,
-          de forma segura y reproducible.
-        </p>
+        <h1 class="title" style="font-size:clamp(2.6rem,6vw,4.4rem);">¡Gracias!<br>¿Preguntas?</h1>
         <div class="row wrap" style="gap:2rem;margin-top:.6rem;">
           <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Autores</div><div style="font-weight:680;">Máximo Gubitosi · Jack Spolski</div></div>
           <div><div class="small muted" style="letter-spacing:.1em;text-transform:uppercase;">Mentores</div><div style="font-weight:680;">Gastón Castro · Juan I. Giribet</div></div>
         </div>
       </div>
-      <figure class="col vwrap">
-        <div class="media portrait md"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
-        <figcaption>Go2 con marcador ArUco en el montaje de laboratorio.</figcaption>
+      <figure class="col collage-fig">
+        <div class="collage">
+          <div class="media"><img src="assets/img/lab_vista_cenital.jpg" alt="Vista cenital del Go2 con marcador ArUco"></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/bloopers/simcontabla.mp4"></video></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim_02_dron_deteccion.mp4"></video></div>
+          <div class="media"><img src="assets/media/bloopers/perro_desparramado.png" alt="El Go2 simulado desparramado en el piso de Gazebo"></div>
+          <!-- Los videos verticales llevan object-position bajo: el robot vive
+               en el tercio inferior del cuadro y el recorte 16:10 centrado lo
+               dejaba afuera. -->
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/lab_08_setup_completo.mp4" style="object-position:50% 82%"></video></div>
+          <div class="media"><img src="assets/media/bloopers/rviz_sin_transforms.png" alt="RViz sin transforms: el robot en pedazos"></div>
+          <div class="media"><img src="assets/media/bloopers/calibracion_tablero.png" alt="Calibración fallida: el tablero convertido en una esfera"></div>
+          <div class="media"><video data-autoplay loop muted playsinline src="assets/media/lab_05_roll_operador.mp4" style="object-position:50% 78%"></video></div>
+          <div class="media"><img src="assets/img/lab_panorama.jpg" alt="El Go2 en reposo en el laboratorio" style="object-position:50% 62%"></div>
+        </div>
       </figure>
     </div>
   </div>

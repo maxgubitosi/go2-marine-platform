@@ -7,6 +7,15 @@
      por eso son el cuerpo. La cuenta 18 − 12 = 6 no se pierde, la desarrolla la
      lámina de control postural, que es donde el detalle hace falta. -->
 <section class="slide" data-block="1" data-title="Unitree Go2 como plataforma marina">
+  <!-- La fila pasa a tres: el video muestra el torso moviéndose, que es la
+       afirmación de la bajada; las fotos siguen diciendo que es el mismo robot
+       en los dos mundos. El tope de ancho sube porque ahora reparten tres. -->
+  <style>
+    .slide[data-title="Unitree Go2 como plataforma marina"] .dos-mundos {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: min(100%, 158vh);
+    }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">II</span><span class="lbl">Problema<span class="s">: la plataforma sintética</span></span></div>
@@ -18,10 +27,18 @@
       </p>
     </header>
     <div class="s-body">
-    <!-- El par de imágenes es el argumento: se ve que es el mismo robot en dos
-         mundos. Las dos cajas comparten proporción y recortan por el centro,
-         porque los originales vienen con relaciones de aspecto distintas. -->
+    <!-- El video más el par de imágenes son el argumento: el torso se mueve como
+         una cubierta, y es el mismo robot en dos mundos. Las tres cajas comparten
+         proporción y recortan por el centro, porque los originales vienen con
+         relaciones de aspecto distintas. -->
     <div class="dos-mundos">
+      <figure>
+        <!-- sim1_crop.mp4 sale de sim1.mp4 con
+             ffmpeg -vf crop=480:360:265:150: el cuadro original era casi todo
+             piso vacío y el robot quedaba chico. -->
+        <div class="media"><video data-autoplay loop muted playsinline src="assets/media/sim1_crop.mp4"></video></div>
+        <figcaption class="sim">El torso en movimiento<small>Gazebo, consigna marina</small></figcaption>
+      </figure>
       <figure>
         <div class="media"><img src="assets/img/sim_montaje_aruco.png" alt="El Go2 en Gazebo con la plataforma y el marcador ArUco montados sobre el torso"></div>
         <figcaption class="sim">Simulación<small>Gazebo</small></figcaption>
