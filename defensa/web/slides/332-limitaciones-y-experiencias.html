@@ -1,43 +1,26 @@
-<!-- Una sola lámina de limitaciones, como pidieron los mentores ("juntar
-     limitaciones y experiencias del trabajo en una slide con bullets").
-     Todo lo afirmado sale del informe: los límites del ¶4 del capítulo de
-     Conclusiones y de la lectura de simulación; las experiencias, de las
-     secciones de laboratorio. El guardrail de gait no está en el informe:
-     queda en backup (B9) como respuesta preparada. -->
+<!-- Práctica del 13/8: se saca la columna "los límites de lo medido" (ya se
+     dijo antes en la charla y tiraba para atrás) y quedan solo las experiencias
+     del laboratorio, en bullets cortos y directos. El guardrail de gait sigue
+     en backup (B9) como respuesta preparada. -->
 <section class="slide" data-speaker="jack" data-block="4" data-title="Limitaciones y experiencias">
-  <!-- Cuerpo un punto por encima del ul.marks estándar: la lámina es solo
-       bullets y a distancia de proyección el 1.08rem quedaba corto. Scoped
-       acá y no en style.css mientras el rework corre en paralelo. -->
+  <!-- Cuerpo por encima del ul.marks estándar: la lámina es solo bullets y a
+       distancia de proyección quedaba corto. Scoped acá. -->
   <style>
-    .slide[data-title="Limitaciones y experiencias"] ul.marks li { font-size: 1.22rem; }
-    .slide[data-title="Limitaciones y experiencias"] ul.marks { gap: 1rem; }
+    .slide[data-title="Limitaciones y experiencias"] ul.marks li { font-size: 1.35rem; }
+    .slide[data-title="Limitaciones y experiencias"] ul.marks { gap: 1.4rem; max-width: 96ch; }
   </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: limitaciones y experiencias</span></span></div>
-      <h2 class="head">Limitaciones del trabajo y experiencias del pasaje al robot real</h2>
+      <h2 class="head">Lo que enseñó el pasaje al robot real</h2>
     </header>
     <div class="s-body">
-      <div class="serie filas">
-        <div class="serie-item warn">
-          <span class="serie-k">Los límites<br>de lo medido</span>
-          <div class="serie-txt"><ul class="marks">
-            <li class="warn">El modelo marino es una simplificación: prioriza roll, pitch y heave, sin yaw, surge ni sway, ni hidrodinámica completa</li>
-            <li class="warn">El heave es la componente posicional más sensible del pipeline visual</li>
-            <li class="warn">Sesgo sistemático en Y, visto en simulación y laboratorio: sway del Go2 que no se comanda ni se compensa</li>
-            <li class="warn">Desfases temporales sin compensar entre estimación y referencia: los histogramas son crudos</li>
-            <li class="warn">Los ensayos físicos no incluyeron heave dinámico: la consigna vertical quedó en cero y la validación es de roll y pitch</li>
-          </ul></div>
-        </div>
-        <div class="serie-item">
-          <span class="serie-k">Lo que enseñó<br>el laboratorio</span>
-          <div class="serie-txt"><ul class="marks">
-            <li>La continuidad entre entornos no la dio una interfaz idéntica sino el objetivo físico del movimiento: la consigna se tradujo a comandos de actitud</li>
-            <li>Un ensayo preliminar de mayor amplitud se descartó: video, detección y telemetría en paralelo generaban incidentes de procesamiento, y se repitió sin grabación</li>
-            <li>El control embarcado del Go2 no se modela ni se corrige: la dinámica propia se caracteriza con τ y g</li>
-          </ul></div>
-        </div>
-      </div>
+      <ul class="marks">
+        <li>Sin acceso al firmware ni conexión inalámbrica: todo pasa por el SDK oficial, con cable</li>
+        <li>Video, detección y telemetría en paralelo saturaban el cómputo: los ensayos se separaron en corridas sin grabación simultánea</li>
+        <li>El robot real se mueve menos fluido que la simulación: la interfaz no permite más, y esa dinámica propia se midió con τ y g</li>
+        <li>La continuidad entre entornos la dio la consigna física de actitud, no una interfaz idéntica</li>
+      </ul>
     </div>
   </div>
 </section>

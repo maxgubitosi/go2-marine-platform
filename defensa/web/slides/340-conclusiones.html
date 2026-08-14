@@ -1,12 +1,31 @@
 <!-- Fusión de "Lectura conjunta" y "Conclusiones" (corrección 10-08, fase E2).
      Sigue el capítulo de Conclusiones del informe: objetivo cumplido (título),
      percepción y dinámica con sus cifras (filas), base de investigación (cierre).
-     Los límites (¶4 del capítulo) viven en la lámina de limitaciones. -->
+     Los límites (¶4 del capítulo) viven en la lámina de limitaciones.
+     Práctica 13/8: fuera las pills celestes ("muy chat"); las cifras quedan
+     como línea de texto en cada fila. -->
 <section class="slide" data-speaker="jack" data-block="4" data-title="Conclusiones">
+  <style>
+    /* Las cifras van como lista marks (el patrón del deck), con el cuadradito
+       en el color de la fila. Compactas: son datos de apoyo, no bullets de tesis. */
+    .slide[data-title="Conclusiones"] ul.marks.cifras { gap: .35rem; margin-top: .55rem; }
+    .slide[data-title="Conclusiones"] ul.marks.cifras li {
+      font-size: max(var(--fs-min), 1.02rem);
+      font-variant-numeric: tabular-nums;
+      color: var(--ink-soft);
+    }
+    .slide[data-title="Conclusiones"] .serie-item.lab ul.marks.cifras li::before { background: var(--coral); }
+    /* El remate quedaba apoyado contra el contador de página: se despega del
+       borde inferior y cede ese aire al bloque de filas. */
+    .slide[data-title="Conclusiones"] .conclusion {
+      margin-top: clamp(.9rem, 2.2vh, 1.6rem);
+      margin-bottom: clamp(1.2rem, 3.4vh, 2.4rem);
+    }
+  </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: síntesis</span></span></div>
-      <h2 class="head">El entorno genera movimiento marino, lo observa y lo mide en condiciones controladas</h2>
+      <h2 class="head">Síntesis y conclusiones</h2>
     </header>
     <div class="s-body">
       <div class="serie filas">
@@ -15,10 +34,10 @@
           <div class="serie-txt">
             <p>El pipeline visual recupera la dinámica del marcador contra la
                referencia del simulador, en los dos montajes de cámara.</p>
-            <div class="row wrap">
-              <span class="pill">5,8 cm de error medio · cámara fija</span>
-              <span class="pill">2–3° y 2–2,4 cm · cámara en dron</span>
-            </div>
+            <ul class="marks cifras">
+              <li>5,8 cm de error medio con cámara fija</li>
+              <li>2–3° y 2–2,4 cm con la cámara en el dron</li>
+            </ul>
           </div>
         </div>
         <div class="serie-item lab">
@@ -26,10 +45,10 @@
           <div class="serie-txt">
             <p>La consigna llega al robot real sin degradación, y el cuerpo la
                sigue con retardo y atenuación medibles en roll y pitch a 0,10 Hz.</p>
-            <div class="row wrap">
-              <span class="pill">comando: r &gt; 0,9999</span>
-              <span class="pill">cuerpo: τ = 0,45–0,95 s · g ≈ 0,62 · ensayo principal</span>
-            </div>
+            <ul class="marks cifras">
+              <li>comando: r &gt; 0,9999</li>
+              <li>cuerpo: τ = 0,45–0,95 s · g ≈ 0,62 (ensayo principal)</li>
+            </ul>
           </div>
         </div>
       </div>

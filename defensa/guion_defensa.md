@@ -5,7 +5,7 @@ Numeración = orden del deck (`web/index.html`). Se va completando a medida que 
 
 Señal en pantalla: el número de página (abajo a la derecha) va en gris azulado si arranca Maxo y en **negro** si arranca Jack (`data-speaker="jack"` en la lámina fuente).
 
-Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 min (S9–S17) · resultados ~12 min (S18–S24) · cierre ~3 min (S25–S28).
+Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 min (S9–S17) · resultados ~12 min (S18–S23) · cierre ~3 min (S24–S27).
 
 ---
 
@@ -101,33 +101,31 @@ Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 mi
 
 ## S22 · El robot real sigue la consigna — Maxo · (pendiente)
 
-## S23 · Cuantificando: retardo y ganancia — Maxo · (pendiente)
+## S23 · Cuantificando: retardo y ganancia (incluye el residual R5) — Maxo · (pendiente)
 
-## S24 · Residual de actitud (R5) — Maxo · (pendiente)
+## S24 · Limitaciones y experiencias — empieza Jack · (pendiente)
 
-## S25 · Limitaciones y experiencias — empieza Jack · (pendiente)
+## S25 · Trabajo futuro — empieza Maxo · (pendiente)
 
-## S26 · Trabajo futuro — empieza Maxo · (pendiente)
+## S26 · Conclusiones — empieza Jack · (pendiente)
 
-## S27 · Conclusiones — empieza Jack · (pendiente)
-
-## S28 · Cierre y preguntas — empieza Maxo · 0:30
+## S27 · Cierre y preguntas — empieza Maxo · 0:30
 
 ---
 
 ## Machete de preguntas probables (se va completando)
 
 - **¿Con qué parámetros corrieron?** f = 0,10 Hz · A_roll ±15° · A_pitch ±10° · A_heave ±0,10 m · κ_p = 1,0 · κ_h = 1,5 · desfase π/3 en pitch · α = 0,95 a 20 Hz (τ_filtro ≈ 1 s).
-- **Retardos R5 distintos entre S23 y S24** (0,55/1,20 vs 0,58/1,16 s): dos estimaciones sobre señales distintas — la tabla sale del estado deportivo, el residual se reestimó sobre la odometría del rosbag. No es inconsistencia.
+- **Retardos R5: tabla vs residual de S23** (0,55/1,20 vs 0,58/1,16 s): dos estimaciones sobre señales distintas — la tabla sale del estado deportivo, el residual se reestimó sobre la odometría del rosbag. No es inconsistencia. (El caption del residual ya no muestra los números para no exhibir la diferencia en la lámina.)
 - **Tamaño del ArUco**: mismo diccionario (6x6, id 0) en ambos entornos, pero 0,50 m de lado en simulación y 0,20 m en laboratorio.
 - **¿De dónde salen los ±12,8° / ±8,5° / ±0,074 m de S10?** Efecto del filtro exponencial α = 0,95 sobre la consigna: atenúa al 85 % (roll), 85 % (pitch) y 74 % (heave, que oscila más rápido) con ~1 s de atraso.
 - **¿Por qué esos tres papers y no otros? (S5)** Son los tres del caso marino y cubren las tres estrategias de validación (banco físico / control sobre cubierta oscilante / SIL). El corpus completo está en el informe §1.6: la familia no-marina de aterrizaje completo (Lee 2012, Araar 2017, Falanga 2017, Keipour 2022), el contrapunto no visual (Alarcón 2019: cable físico, precisión centimétrica sin cámara) y las herramientas de percepción (ArUco/Garrido-Jurado 2014, AprilTag/Olson 2011, EPnP/Lepetit 2009).
 - **¿Alguien aterriza en un barco real?** De lo citado, no: los tres usan un sustituto del barco. Sánchez-López: plataforma de movimiento 6 GDL. Cho: simulación numérica (no Gazebo) + vuelos reales outdoor sobre una cubierta montada en un camión que oscila como estado de mar 4 (touchdown medio 0,2 m, camión a >5 m/s) — valida el control (FF-IBVS con velocidad del barco estimada por Kalman como feed-forward). Delbene: SIL en Gazebo/ROS2 alimentado con telemetría real de un catamarán. Punto retórico: toda la literatura usa cubiertas sintéticas; la nuestra es un cuadrúpedo comercial. Ejemplo reciente en embarcación real: Wu 2024 (~5 cm estático, ~10 cm en movimiento), no citado en la lámina.
-- **¿Por qué ArUco y no AprilTag? (puede salir de S5 o S15)** Delbene usa AprilTags: familias equivalentes para el rol (cuadrado + código binario + 4 esquinas → PnP). ArUco por integración directa con OpenCV/cv2.aruco en el pipeline ROS2; probar AprilTags queda declarado en trabajo futuro (S26).
+- **¿Por qué ArUco y no AprilTag? (puede salir de S5 o S15)** Delbene usa AprilTags: familias equivalentes para el rol (cuadrado + código binario + 4 esquinas → PnP). ArUco por integración directa con OpenCV/cv2.aruco en el pipeline ROS2; probar AprilTags queda declarado en trabajo futuro (S25).
 - **¿La consigna de S10 sale de la ecuación de S9?** Sí: evaluada sobre una ola regular, altura y pendientes salen todas sinusoides. Lo que hicimos fue liberar la relación de frecuencias y el desfase entre ejes en vez de atarlos a una única onda plana — dirección correcta porque un mar real es superposición de componentes de distintas direcciones. (Interpretación propia del material, no está escrita así en el informe.)
 - **Dos κ distintas en el informe** — no mezclarlas: κ_φ/κ_θ (S9) = acople pendiente→inclinación (cuánto acompaña la cubierta); κ_p/κ_h (S10) = desacoples temporales de la consigna (1,0 y 1,5). En el deck la segunda ni aparece con nombre (la tabla muestra ω y 1,5ω directo).
 - **¿α = 0,95 no congela el movimiento?** No: se aplica a 20 Hz. 5 % por paso × 20 pasos/s → constante de tiempo ≈ 1 s, contra una consigna de período 10 s: sigue bien, con ~1 s de atraso y 85 % de amplitud. Heave (1,5× más rápido) pierde más: 74 %.
 - **¿El filtro no da simplemente otra sinusoide? ¿No bastaba mandar amplitud y fase ajustadas?** En régimen estacionario sí (misma ω, menos amplitud, fase corrida). Pero el filtro es una barrera genérica de salida: protege contra escalones del modo manual, arranques/paradas y el modo irregular (cada armónico se atenúa solo). No es diseño de señal, es seguridad.
-- **¿Por qué no heave en el robot real?** La API de alto nivel (SportClient) solo expone la actitud como comando continuo (`Euler(roll,pitch,yaw)` a ~50 Hz); la altura solo como ajuste cuasi-estático de parada (`BodyHeight`, límites fijos, no streameable). Mandar heave real exigiría control de bajo nivel de las 12 articulaciones = reemplazar el controlador de fábrica: fuera de alcance y riesgoso. Por eso lab = roll y pitch; heave dinámico → limitación (S25) y trabajo futuro (S26).
+- **¿Por qué no heave en el robot real?** La API de alto nivel (SportClient) solo expone la actitud como comando continuo (`Euler(roll,pitch,yaw)` a ~50 Hz); la altura solo como ajuste cuasi-estático de parada (`BodyHeight`, límites fijos, no streameable). Mandar heave real exigiría control de bajo nivel de las 12 articulaciones = reemplazar el controlador de fábrica: fuera de alcance y riesgoso. Por eso lab = roll y pitch; heave dinámico → limitación (S24) y trabajo futuro (S25).
 - **Vocabulario náutico**: eslora = largo del barco (proa–popa) · manga = ancho (babor–estribor). κ < 1 porque el casco rígido promedia la pendiente a lo largo de su eslora (olas cortas se compensan bajo el casco) y su inercia no sigue cambios rápidos; una balsa chica y liviana copia la pendiente local → κ = 1.
 - **⚠️ PENDIENTE con Jack — filtro del laboratorio**: el nodo del lab NO usa el EMA sino un conformador de 2.º orden (ζ = 0,82, f_n = 0,9 Hz) + límites de velocidad (45°/s roll, 35°/s pitch) a 50 Hz, porque el EMA no acota velocidad y el robot trotaba (commit `5ad01f7`). El informe solo documenta el exponencial. Acordar respuesta: "mismo principio —limitar cambios bruscos—, implementación distinta porque el primer orden no acota velocidad angular".
