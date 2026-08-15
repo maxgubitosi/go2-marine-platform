@@ -45,11 +45,21 @@ Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 mi
 - **Remate (lo central)**: todos evalúan por éxito del aterrizaje completo. Casi no hay trabajos que **aíslen el estimador de pose y lo midan contra una referencia limpia bajo movimiento marino sintetizado** → ese hueco es donde se ubica este trabajo (informe §1.6.5).
 - **Transición a S6**: "y para eso necesitábamos algo que hiciera de cubierta…" → entra el Go2.
 
-## S6 · Unitree Go2 como plataforma marina — Maxo · (pendiente)
+## S6 · Unitree Go2 como plataforma marina — Maxo · 1:00
+
+- Presentar el instrumento: **Go2, cuadrúpedo comercial**, disponible en el laboratorio de la facultad. No construimos un banco de movimiento a medida: usamos un robot que ya existe.
+- La observación que sostiene todo [callback S3]: **con las cuatro patas apoyadas, el torso se mueve con los mismos seis GDL que la cubierta de un barco**. De esos seis, le pedimos los tres retenidos.
+- Señalar los dos mundos en pantalla: el mismo robot recibiendo la consigna marina en Gazebo y el real en el laboratorio. Anticipar en una frase: primero validamos todo en simulación, después vamos al robot real.
+- **Transición a S7 (Jack)**: "así se ve el mundo simulado donde arranca esto".
 
 ## S7 · El escenario de simulación — Jack · (pendiente)
 
-## S8 · Pipeline de trabajo — Maxo arranca, Jack acompaña · (pendiente)
+## S8 · Pipeline de trabajo — Maxo arranca, Jack acompaña · 1:30
+
+- Encuadre en una frase: "este es el recorrido completo; cada caja la vemos en detalle después". **Una sola pasada, sin detalle** (en la práctica se explicó dos veces: no).
+- El camino: **(1) consigna marina** (roll, pitch, heave) → **(2) el robot la realiza** → **(3) una cámara lo observa** → **(4) detección ArUco + PnP** → **(5) registro en rosbag** → **(6) evaluación offline**.
+- La diferencia sim/lab, dicha **una sola vez**: mismo pipeline, cambian el ejecutor (CHAMP / firmware cerrado) y el sensor (cámara sintética fija o en dron / estéreo en trípode); en el lab no hay ground truth. ⚠️ No explicar CHAMP en palabras (acordado en la práctica).
+- Cierre que funcionó en la práctica (Jack): "explicación a propósito genérica; ahora cada parte en detalle".
 
 ## S9 · Modelo reducido del oleaje — Maxo · 2:00
 
@@ -83,15 +93,31 @@ Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 mi
 
 ## S13 · Control PD por junta — Jack · (pendiente)
 
-## S14 · Tres montajes de observación — Maxo · (pendiente)
+## S14 · Tres montajes de observación — Maxo · 1:00
 
-## S15 · Marcador fiducial y estimación de pose — Maxo + Jack acota · (pendiente)
+- Tres disposiciones de cámara, **de menos a más incertidumbre**: dos en simulación, una en el lab.
+- **Cámara fija (Gazebo)**: el sensor no se mueve → toda la variabilidad viene de la plataforma → aísla el error del pipeline visual del problema de saber dónde está la cámara.
+- **Cámara en el dron (Gazebo)**: el sensor también se mueve y su pose entra en la cadena → esta es la geometría real del problema de aterrizaje.
+- **Laboratorio**: cámara estéreo usada como monocular, en trípode. **Jack acota** (una vez, funcionó en la práctica): monocular a propósito porque en un dron la cámara es monocular; y la calibración con el tablero que se ve en la foto.
+
+## S15 · Marcador fiducial y estimación de pose — Maxo + Jack acota · 1:00
+
+- **ArUco sobre el lomo del Go2**, el mismo diccionario en simulación y laboratorio (machete: 6x6 id 0; 0,50 m en sim, 0,20 m en lab).
+- Qué aporta: **identidad inequívoca + cuatro esquinas de geometría conocida**. Cuatro esquinas más cámara calibrada, y **PnP** devuelve posición y actitud cuadro a cuadro, con una sola cámara.
+- El remate de la lámina: la postura del robot **convertida en pose observable** — ya no hay que inferir la geometría de un barco, sino seguir un plano.
+- **Jack acota el montaje**: en simulación, agregado a la configuración del robot sin peso; en el lab, hoja lisa pegada porque una tabla chocaba con el cable de comando.
 
 ## S16 · Ensayos realizados — Jack + Maxo acota · (pendiente)
 
 ## S17 · Cambia la referencia, cambia la pregunta — Jack + Maxo acota · (pendiente)
 
-## S18 · Caso base: cámara fija — Maxo · (pendiente)
+## S18 · Estimación con cámara fija — Maxo · 2:00
+
+- Primera instancia de evaluación, el caso base. Qué se ve: a la izquierda el video con los **ejes dibujados sobre el marcador** (la pose estimada, cuadro a cuadro); a la derecha **estimación (azul) contra referencia del simulador (rojo)** en X, Y y Z.
+- Cifras (en la lámina): 275 muestras útiles en 57,5 s · error posicional medio **5,8 cm** (P95 8,5 cm) · actitud **2,44° roll / 2,00° pitch**.
+- Lectura: la estimación sigue la dinámica en los tres ejes; el error es chico y sin estructura.
+- ⚠️ **Adelantarse a la deriva en Y** con la respuesta única acordada: "se ve una deriva lenta; la hipótesis más plausible es un micro-deslizamiento del robot que su odometría no registra; con estos datos no la podemos confirmar ni descartar". Una sola teoría, no dos.
+- **Transición**: "el paso siguiente es soltar la cámara" → S19 (Jack).
 
 ## S19 · Cámara en el dron: video y series — Jack · (pendiente)
 
@@ -99,17 +125,50 @@ Presupuesto por bloque: contexto+problema ~7 min (S1–S8) · metodología ~8 mi
 
 ## S21 · Repetibilidad entre corridas — Jack · (pendiente)
 
-## S22 · El robot real sigue la consigna — Maxo · (pendiente)
+## S22 · Respuesta del robot real a la consigna — Maxo · 2:00
 
-## S23 · Cuantificando: retardo y ganancia (incluye el residual R5) — Maxo · (pendiente)
+- Cambio de mundo, decirlo explícito: acá **ya no hay ground truth del simulador**. Azul: la consigna enviada; naranja: la actitud que reporta el propio robot — nuestra mejor referencia disponible.
+- Qué se ve: el robot **sigue la forma** de la consigna, con **atenuación y retardo** visibles (ensayo R4, 60 s).
+- El pico del segundo ~33: **episodio de trote** — un mecanismo de seguridad interno que se dispara cuando el robot se siente en configuración peligrosa. No lo comandamos nosotros y no se puede desactivar. [Si preguntan más: backup B9.]
+- **Transición a S23**: "ese desacople entre lo que mandamos y lo que hace, en vez de ignorarlo, lo medimos".
+
+## S23 · Cuantificando: retardo y ganancia (incluye el residual R5) — Maxo · 2:00
+
+- La ecuación, en palabras: **el cuerpo hace lo mismo que el comando, escalado por una ganancia g y corrido un retardo τ**.
+- La tabla: dos ensayos a amplitudes distintas (R4 principal, R5 control), τ y g por eje. **Correlación > 0,93 en todos los casos**: la forma de onda se conserva; el desacople es solo fase más escala.
+- El histograma: residual de R5 **con el retardo ya compensado** — media casi cero (−0,77° / +0,55°); la forma bimodal es consecuencia de la atenuación, no un sesgo.
+- El mensaje: la dinámica propia del robot no se puede remover, entonces **se caracteriza**: quien use el entorno sabe qué esperar. Hipótesis sobre la causa (control interno), no causa probada.
+- ⚠️ Machete: si preguntan por los retardos levemente distintos entre tabla y residual (0,55/1,20 vs 0,58/1,16 s) — dos estimaciones sobre señales distintas, no es inconsistencia.
 
 ## S24 · Limitaciones y experiencias — empieza Jack · (pendiente)
 
-## S25 · Trabajo futuro — empieza Maxo · (pendiente)
+## S25 · Trabajo futuro — empieza Maxo · 1:30
 
-## S26 · Conclusiones — empieza Jack · (pendiente)
+- Encuadre: cinco extensiones, contadas como **el camino natural para quien siga con el entorno** (no como deudas).
+- **1 Validación conjunta**: visión activa mientras el robot se mueve, todo en una corrida con registro sincronizado.
+- **2 Ground truth externo**: OptiTrack del laboratorio. ⚠️ No explicarlo solo: **Jack acota** la frase de los tags ("cámaras montadas + marcadores reflectivos sobre el robot, pose por triangulación").
+- **3 Movimiento más rico**: heave dinámico, yaw/surge/sway, oleaje irregular calibrado — como el tercer paper del estado del arte, partir del track de un barco real.
+- **4 Percepción más robusta**: compensar retardos imagen–referencia, filtrar temporalmente la pose, AprilTags o marcadores múltiples.
+- **5 Aproximaciones de aterrizaje**: que el dron estime la pose moviéndose en vertical, no estático. ⚠️ Aclarar si hace falta: el aterrizaje completo nunca fue el alcance de este trabajo.
+
+## S26 · Síntesis: el camino recorrido — empieza Jack · 1:30–2:00
+
+*(Rehecha tras el simulacro 14-08: fuera las cifras, el cierre va por la síntesis
+del camino y el esfuerzo — pedido de Juan.)*
+
+- Encuadre en una frase: "en vez de conclusiones con números, el camino que recorrimos" — cuatro etapas, cada una con su tropiezo y su logro.
+- **1 Montar el escenario**: la tabla flotaba, el robot amanecía acostado en Gazebo → el Go2 simulado realizando la consigna marina. (Contar liviano: un mes sin encontrar por qué estaba aplastado contra el piso.)
+- **2 Validar la percepción**: la deriva en Y que la odometría no registra → el pipeline validado contra la referencia del simulador.
+- **3 Soltar la cámara**: integrar el dron SJTU → estimación con el sensor en vuelo, la geometría real del aterrizaje.
+- **4 El salto al hardware**: solo cable, otro SDK, sin heave, retardo/atenuación, modo trote → el robot real sigue la consigna y su dinámica quedó **caracterizada**. [Énfasis de Juan: el pasaje sim→real es lo que casi nunca se hace en la carrera; que se note el laburo.]
+- ⚠️ Los tropiezos acá son *beats* de relato rápido, no re-explicación: S24 ya los sistematizó como limitaciones. No leerlos dos veces.
+- **Remate hablado — objetivos cumplidos** (no está escrito en la lámina; los bullets azules lo muestran): mover el robot simulando el movimiento marino y detectarlo con una cámara; en simulación, además, fidelidad a lo comandado y ensayos con dron. Y cerrar leyendo la línea de la lámina: base de investigación progresiva, medible y reproducible.
+- ⚠️ Sin números en toda la lámina (pedido explícito de Juan): si preguntan cifras, están en S18/S23 y en el machete.
 
 ## S27 · Cierre y preguntas — empieza Maxo · 0:30
+
+- Gracias, nombrar mentores, quedar a disposición para preguntas.
+- Machete de abajo a mano; láminas backup con la tecla **B** (B1–B15).
 
 ---
 

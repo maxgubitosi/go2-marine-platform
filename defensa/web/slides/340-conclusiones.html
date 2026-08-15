@@ -1,62 +1,133 @@
-<!-- Fusión de "Lectura conjunta" y "Conclusiones" (corrección 10-08, fase E2).
-     Sigue el capítulo de Conclusiones del informe: objetivo cumplido (título),
-     percepción y dinámica con sus cifras (filas), base de investigación (cierre).
-     Los límites (¶4 del capítulo) viven en la lámina de limitaciones.
-     Práctica 13/8: fuera las pills celestes ("muy chat"); las cifras quedan
-     como línea de texto en cada fila. -->
+<!-- Rehecha tras el simulacro con mentores (14-08). Juan: fuera las cifras
+     (invitan a leer la lámina como una especificación; viven en S18/S23 y en
+     el machete) y el cierre va por la síntesis del camino y el esfuerzo, en
+     particular el pasaje simulación → hardware real.
+     La forma: línea de tiempo de cuatro hitos sobre un riel continuo (el
+     mecanismo del riel es el de .cadena: grilla sin gap, el aire lo pone el
+     padding de cada columna). Por hito: video grande, nodo numerado, título y
+     dos fragmentos, el tropiezo (coral) y el logro (azul). Los tropiezos se
+     cuentan a propósito: el jurado ve el laburo, no solo el resultado. Se
+     repite media con S22/S27 a sabiendas (acordado).
+     El remate: solo la frase de base de investigación. Los objetivos
+     cumplidos ya los dicen los bullets azules; se rematan hablando. -->
 <section class="slide" data-speaker="jack" data-block="4" data-title="Conclusiones">
   <style>
-    /* Las cifras van como lista marks (el patrón del deck), con el cuadradito
-       en el color de la fila. Compactas: son datos de apoyo, no bullets de tesis. */
-    .slide[data-title="Conclusiones"] ul.marks.cifras { gap: .35rem; margin-top: .55rem; }
-    .slide[data-title="Conclusiones"] ul.marks.cifras li {
-      font-size: max(var(--fs-min), 1.02rem);
-      font-variant-numeric: tabular-nums;
-      color: var(--ink-soft);
+    /* Cuatro columnas sin gap para que el riel sea una sola línea; el aire
+       entre hitos lo pone el padding, que el riel atraviesa. */
+    /* Altura natural, sin flex: con flex la grilla se encogía por debajo de su
+       contenido y los bullets desbordaban sobre el cierre. */
+    .slide[data-title="Conclusiones"] .hitos {
+      display: grid; grid-template-columns: repeat(4, 1fr);
     }
-    .slide[data-title="Conclusiones"] .serie-item.lab ul.marks.cifras li::before { background: var(--coral); }
-    /* El remate quedaba apoyado contra el contador de página: se despega del
-       borde inferior y cede ese aire al bloque de filas. */
-    .slide[data-title="Conclusiones"] .conclusion {
-      margin-top: clamp(.9rem, 2.2vh, 1.6rem);
-      margin-bottom: clamp(1.2rem, 3.4vh, 2.4rem);
+    .slide[data-title="Conclusiones"] .hito {
+      display: flex; flex-direction: column; min-width: 0;
+      padding-inline: 0 clamp(.9rem, 1.8vw, 1.6rem);
+    }
+    .slide[data-title="Conclusiones"] .hito-fig {
+      margin: 0; width: 100%; aspect-ratio: 4 / 3;
+      overflow: hidden; border-radius: 10px; background: var(--paper-2);
+    }
+    .slide[data-title="Conclusiones"] .hito-fig video {
+      display: block; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+    }
+    /* El riel con el nodo numerado. La línea cruza la columna entera (también
+       el padding); el número marca el hito y ordena la lectura. */
+    .slide[data-title="Conclusiones"] .nodo {
+      position: relative; height: 30px;
+      margin-top: clamp(.7rem, 1.8vh, 1.1rem);
+    }
+    .slide[data-title="Conclusiones"] .nodo::before {
+      content: ""; position: absolute; top: 50%; left: 0; right: 0;
+      height: 2px; margin-top: -1px; background: var(--line);
+    }
+    .slide[data-title="Conclusiones"] .hito:last-child .nodo::before {
+      right: auto; width: 1.4rem;
+    }
+    .slide[data-title="Conclusiones"] .nodo i {
+      position: absolute; left: 0; top: 0; z-index: 1;
+      width: 30px; height: 30px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--sec); color: #fff;
+      font-style: normal; font-weight: 700; font-size: 1rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .slide[data-title="Conclusiones"] .hito h3 {
+      margin: .55rem 0 0;
+      font-size: clamp(1.18rem, 1.6vw, 1.5rem); font-weight: 700;
+      color: var(--sec); line-height: 1.15; letter-spacing: -.01em;
+    }
+    /* Tropiezo y logro: fragmentos de un renglón con la marca cuadrada del
+       deck, coral y azul. Sin oraciones: el relato lo pone la voz. */
+    .slide[data-title="Conclusiones"] .hito p {
+      position: relative; margin: .5rem 0 0; padding-left: 1.05em;
+      font-size: clamp(1rem, 1.25vw, 1.22rem); line-height: 1.32;
+      color: var(--ink);
+    }
+    .slide[data-title="Conclusiones"] .hito p::before {
+      content: ""; position: absolute; left: 0; top: .38em;
+      width: .5em; height: .5em; border-radius: 2px;
+    }
+    .slide[data-title="Conclusiones"] .hito p.tropiezo { color: var(--ink-soft); }
+    .slide[data-title="Conclusiones"] .hito p.tropiezo::before { background: var(--coral); }
+    .slide[data-title="Conclusiones"] .hito p.logro::before    { background: var(--sea); }
+    /* El cierre: una sola línea con la barra coral (lo que hay que llevarse,
+       aparte del recorrido), sin negrita y a todo el ancho. Los objetivos
+       cumplidos no se dicen: ya los dicen los bullets azules. */
+    .slide[data-title="Conclusiones"] .cierre {
+      margin-top: clamp(1rem, 2.6vh, 1.8rem);
+      margin-bottom: clamp(1rem, 3vh, 2rem);
+      border-left: 3px solid var(--coral);
+      padding-left: clamp(1rem, 2vw, 1.5rem);
+    }
+    .slide[data-title="Conclusiones"] .cierre p {
+      margin: 0;
+      font-size: max(var(--fs-min), clamp(1.05rem, 1.5vw, 1.3rem));
+      font-weight: 430; line-height: 1.45; color: var(--ink);
     }
   </style>
   <div class="slide-inner">
     <header class="s-head">
       <div class="eyebrow"><span class="num">V</span><span class="lbl">Conclusiones<span class="s">: síntesis</span></span></div>
-      <h2 class="head">Síntesis y conclusiones</h2>
+      <h2 class="head">Síntesis: el camino recorrido</h2>
     </header>
     <div class="s-body">
-      <div class="serie filas">
-        <div class="serie-item sim">
-          <span class="serie-k">Percepción<br>simulación</span>
-          <div class="serie-txt">
-            <p>El pipeline visual recupera la dinámica del marcador contra la
-               referencia del simulador, en los dos montajes de cámara.</p>
-            <ul class="marks cifras">
-              <li>5,8 cm de error medio con cámara fija</li>
-              <li>2–3° y 2–2,4 cm con la cámara en el dron</li>
-            </ul>
-          </div>
+      <div class="hitos">
+        <div class="hito">
+          <figure class="hito-fig"><video data-autoplay loop muted playsinline src="assets/media/bloopers/simcontabla.mp4"></video></figure>
+          <div class="nodo"><i>1</i></div>
+          <h3>Montar el escenario</h3>
+          <p class="tropiezo">tabla flotando, robot acostado en Gazebo</p>
+          <p class="logro">la consigna marina en el torso del Go2</p>
         </div>
-        <div class="serie-item lab">
-          <span class="serie-k">Dinámica<br>laboratorio</span>
-          <div class="serie-txt">
-            <p>La consigna llega al robot real sin degradación, y el cuerpo la
-               sigue con retardo y atenuación medibles en roll y pitch a 0,10 Hz.</p>
-            <ul class="marks cifras">
-              <li>comando: r &gt; 0,9999</li>
-              <li>cuerpo: τ = 0,45–0,95 s · g ≈ 0,62 (ensayo principal)</li>
-            </ul>
-          </div>
+        <div class="hito">
+          <figure class="hito-fig"><video data-autoplay loop muted playsinline src="assets/media/sim_01_camara_fija_deteccion.mp4"></video></figure>
+          <div class="nodo"><i>2</i></div>
+          <h3>Validar la percepción</h3>
+          <p class="tropiezo">deriva en Y que la odometría no ve</p>
+          <p class="logro">pipeline validado contra el simulador</p>
+        </div>
+        <div class="hito">
+          <figure class="hito-fig"><video data-autoplay loop muted playsinline src="assets/media/sim_06_dron_escena_exterior.mp4"></video></figure>
+          <div class="nodo"><i>3</i></div>
+          <h3>Soltar la cámara</h3>
+          <p class="tropiezo">integrar el dron SJTU</p>
+          <p class="logro">estimación con el sensor en vuelo</p>
+        </div>
+        <div class="hito">
+          <figure class="hito-fig"><video data-autoplay loop muted playsinline src="assets/media/lab_05_roll_operador.mp4" style="object-position:50% 78%"></video></figure>
+          <div class="nodo"><i>4</i></div>
+          <h3>El salto al hardware</h3>
+          <p class="tropiezo">cable, otro SDK, sin heave, modo trote</p>
+          <p class="logro">consigna seguida, dinámica caracterizada</p>
         </div>
       </div>
-      <p class="conclusion">
-        El resultado principal no es un sistema de aterrizaje: es una base de
-        investigación para estudiar ese problema de forma progresiva, medible
-        y reproducible.
-      </p>
+      <div class="cierre">
+        <p>
+          El resultado es una base de investigación para estudiar el aterrizaje
+          de forma progresiva, medible y reproducible.
+        </p>
+      </div>
     </div>
   </div>
 </section>
