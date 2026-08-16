@@ -1294,12 +1294,14 @@ ul.marks li.warn::before{ background: var(--warn); }
    dos salen del mismo producto vectorial. El nombre de la componente va en el
    acento del deck: es el vocabulario que viene de la introducción. */
 
-.dtable.patron { margin-top: clamp(.8rem, 2.2vh, 1.6rem); }
-/* El aire de la celda venía recortado al mínimo porque esta era la lámina más
-   cargada del deck. Al pasar los cuatro párrafos a viñetas dejó de serlo, así
-   que la tabla respira como cualquier otra. En vh: lo que sobra es alto de
-   lámina. */
-.dtable.patron th, .dtable.patron td { padding-block: clamp(.4rem, 1.1vh, .8rem); }
+.dtable.patron {
+  margin-top: clamp(1rem, 3vh, 2rem);
+  font-size: max(var(--fs-min), clamp(1.05rem, 1.6vw, 1.45rem));
+}
+/* Sin la lista de lectura ni el remate debajo, la tabla cierra la lámina:
+   el alto que dejaron libre va a aire de celda. */
+.dtable.patron th, .dtable.patron td { padding-block: clamp(.6rem, 2vh, 1.3rem); }
+.dtable.patron th { font-size: inherit; }
 .dtable.patron td.term {
   width: 20%;
   color: var(--ink-soft);
@@ -2027,20 +2029,11 @@ code {
    que corre de verdad, y la comparten simulación y robot real. El patrón y la
    garantía del camino la acompañan. `.split` trae flex:1 y acá abriría huecos. */
 .cierre { flex: none; align-items: center; }
-/* Sube sin costo: la fila la marca la columna de la derecha (símbolos más dos
-   viñetas, 127 px) y la fórmula ocupaba 21. Puede crecer hasta llenar ese alto
-   sin mover nada; el tope real es el ancho de su columna. */
-.cierre .eq.hero { font-size: clamp(1.5rem, 2.6vw, 2.4rem); }
-
-/* La lista de lectura va separada de la tabla: pegada se leía como una cuarta
-   fila sin borde. */
-.patron + .lead-bul { margin-top: clamp(.9rem, 2.4vh, 1.7rem); }
-.lead-bul + .conclusion { margin-top: clamp(1rem, 2.8vh, 2rem); }
-/* Con poca altura ceden los aires, nunca el cuerpo del texto: el piso del deck
-   vale igual en 720p que en 1080p, que es justamente para lo que está en vh.
-   Los recortes de esta lámina (paddeo de tabla al mínimo, cuerpo de la
-   ecuación fijo en 1,3rem) eran de cuando encadenaba cinco bloques de texto
-   corrido; con viñetas entra sola y no queda nada que ceder. */
+/* Sin la lista de garantías ni el remate, la lámina queda en tres piezas
+   —ecuación, clave y patrón— y el alto liberado se reparte en cuerpo. */
+.cierre .eq.hero { font-size: clamp(1.9rem, 3.4vw, 3.1rem); }
+.cierre .symkey { font-size: max(var(--fs-min), clamp(1.05rem, 1.6vw, 1.45rem)); }
+.cierre .lead-bul li { font-size: clamp(1.15rem, 1.8vw, 1.6rem); }
 
 /* ===================== Ajustes de altura corta (720p) ===================== */
 
