@@ -84,11 +84,14 @@ def main() -> None:
         return y
 
     CUERPO = 20  # pt a 160 dpi = 44 px; ver el docstring
+    # Los ticks de Y van más chicos que el cuerpo: son tres etiquetas apiladas
+    # en paneles de ~150 px y a 20 pt quedaban rozándose (corrección 15-08).
+    TICKS_Y = 16
     plt.rcParams.update({
         "font.size": CUERPO,
         "axes.labelsize": CUERPO,
         "xtick.labelsize": CUERPO,
-        "ytick.labelsize": CUERPO,
+        "ytick.labelsize": TICKS_Y,
         "legend.fontsize": CUERPO,
         "axes.edgecolor": LINE,
         "axes.labelcolor": INK_SOFT,
@@ -111,7 +114,7 @@ def main() -> None:
             ax.spines[lado].set_visible(False)
     axes[2].set_xlabel("tiempo [s]")
 
-    fig.tight_layout(pad=0.3, h_pad=0.6, rect=(0, 0, 1, 0.88))
+    fig.tight_layout(pad=0.3, h_pad=0.9, rect=(0, 0, 1, 0.88))
     # La leyenda va arriba de todo y no adentro de un panel: metida en el de
     # roll obligaba a estirarle el eje para no pisar la curva, y ese panel
     # terminaba con una escala distinta de la que le corresponde.
